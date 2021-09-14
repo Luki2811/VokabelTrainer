@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Vokabel Trainer</string>
+    <string name="language_english">Englisch</string>
+    <string name="language_swedish">Schwedisch</string>
+    <string name="language_german">Deutsch</string>
+    <string name="language_french">Französisch</string>
+    <string name="close">Schließen</string>
+    <string name="name">Name</string>
+    <string name="lection_name">Name der Lektion</string>
+    <string name="known_word_language">Vokabel übersetzt</string>
+    <string name="new_word_language">Vokabel in der neuen Sprache</string>
+    <string name="native_language">Muttersprache</string>
+    <string name="new_language">Erlernende Sprache</string>
+    <string name="next">Weiter</string>
+    <string name="bsp_name_lection">Bspw. Essen, Unit 2,...</string>
+    <string name="err_missing_name">Fehler: Name fehlt</string>
+    <string name="err_name_not_avaible">Fehler: Name bereits vergeben</string>
+    <string name="err_no_native_selected">Fehler: Es wurde keine Muttersprache ausgewählt</string>
+    <string name="err_no_new_selected">Fehler: Es wurde keine erlernende Sprache ausgewählt</string>
+    <string name="ignore_case">Groß- und Kleinschreibung ignorieren</string>
+    <string name="settings">Einstellungen</string>
+    <string name="create_additional_vocabel">Weitere Vokabel</string>
+</resources>
