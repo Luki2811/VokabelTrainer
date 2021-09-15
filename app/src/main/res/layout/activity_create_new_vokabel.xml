@@ -83,6 +83,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:enabled="false"
+        android:onClick="finishVocActivity"
         android:text="@string/next"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switch_settings_ignoreCase" />
@@ -92,10 +93,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:onClick="createAndRestartActivity"
         android:text="@string/create_additional_vocabel"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toEndOf="@+id/button_vokabel_next"
         app:layout_constraintTop_toBottomOf="@+id/switch_settings_ignoreCase" />
+
+    <TextView
+        android:id="@+id/outputCreateVocabulary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        tools:text="2 von min. 10 hinzugefügt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_vokabel_next" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

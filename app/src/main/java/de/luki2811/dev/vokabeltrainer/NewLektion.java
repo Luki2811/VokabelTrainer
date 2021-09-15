@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -55,6 +56,9 @@ public class NewLektion extends AppCompatActivity {
                     // Einstellungen der Lektion als .json
                     // Name
                     JSONFile.put("name", textName.getText().toString());
+                    // Setzen der Variable für "count"
+                    JSONFile.put("count", 0);
+
                     // Type Native Sprache
                     if(en_native.isChecked())
                         JSONFile.put("languageNative", Language.LANGUAGE_ENGLISH);

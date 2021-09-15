@@ -19,5 +19,8 @@
     <string name="err_no_new_selected">Fehler: Es wurde keine erlernende Sprache ausgewählt</string>
     <string name="ignore_case">Groß- und Kleinschreibung ignorieren</string>
     <string name="settings">Einstellungen</string>
-    <string name="create_additional_vocabel">Weitere Vokabel</string>
+    <string name="create_additional_vocabel">Vokabel hinzufügen</string>
+    <string name="err_missing_input">Fehler: Es wurden nicht alle Felder ausgefüllt !</string>
+    <string name="err">Fehler !</string>
+    <string name="from_at_least_ten_vocs">%1$d von min. 10 Vokabeln hinzugefügt</string>
 </resources>
