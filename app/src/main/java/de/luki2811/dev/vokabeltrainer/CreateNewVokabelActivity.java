@@ -15,6 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.util.Date;
+
 public class CreateNewVokabelActivity extends AppCompatActivity {
 
     public static final String JSON_VOCABULARY = "de.luki2811.dev.vokabeltrainer.JSON_VOCABULARY";
@@ -38,7 +41,7 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             else
                 jsonObject = new JSONObject(intent.getStringExtra(NewLektion.JSON_OBJECT));
 
-            if(jsonObject.getInt("count") >= 10)
+            if(jsonObject.getInt("count") >= 2)
                 button_finish.setEnabled(true);
 
             TextView output = findViewById(R.id.outputCreateVocabulary);
@@ -51,16 +54,51 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
 
     public void finishVocActivity(View view){
         Intent intent = getIntent();
+        JSONObject json = null;
         try{
-            JSONObject json = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
+            json = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
             Datei file = new Datei(json.getString("name") + ".json");
             file.writeInFile(json.toString(), this);
-            Intent sendIntent = new Intent(this, MainActivity.class);
-            startActivity(sendIntent);
-
         } catch (JSONException e){
             e.printStackTrace();
         }
+        // Create new index
+
+        File file = new File(getApplicationContext().getFilesDir(),"indexLections.json");
+        JSONObject indexAsJson;
+        JSONArray jsonArray = null;
+        Datei index = new Datei("indexLections.json");
+        if(file.exists()){
+            try {
+                indexAsJson = new JSONObject(index.loadFromFile(this));
+                jsonArray = indexAsJson.getJSONArray("index");
+            } catch (JSONException e) {
+                e.printStackTrace();
+                indexAsJson = new JSONObject();
+            }
+        }
+        else
+            indexAsJson = new JSONObject();
+
+        try {
+            if (json != null) {
+                if(jsonArray == null)
+                    jsonArray = new JSONArray();
+                JSONObject jo = new JSONObject();
+                jo.put("name", json.getString("name"));
+                jo.put("file",json.getString("name") + ".json");
+                jsonArray.put(jo);
+                indexAsJson.put("index", jsonArray);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(indexAsJson.toString());
+        index.writeInFile(indexAsJson.toString(), this);
+
+        // Back to AppHomeScreen
+        Intent sendIntent = new Intent(this, MainActivity.class);
+        startActivity(sendIntent);
 
     }
 
@@ -100,8 +138,9 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
                 jsonObject = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
             else
                 jsonObject = new JSONObject(intent.getStringExtra(NewLektion.JSON_OBJECT));
-            System.out.println(jsonObject.toString());
+
             count = jsonObject.getInt("count") + 1;
+
             JSONArray jsonArray;
             try {
                 jsonArray = jsonObject.getJSONArray("vocabulary");
@@ -117,6 +156,9 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
+        // Start next activity
 
         Intent newIntent = new Intent(this, CreateNewVokabelActivity.class);
         if (jsonObject != null) {

@@ -23,4 +23,5 @@
     <string name="err_missing_input">Fehler: Es wurden nicht alle Felder ausgefüllt !</string>
     <string name="err">Fehler !</string>
     <string name="from_at_least_ten_vocs">%1$d von min. 10 Vokabeln hinzugefügt</string>
+    <string name="deleted_succesfull">Erfolgreich gelöscht</string>
 </resources>
