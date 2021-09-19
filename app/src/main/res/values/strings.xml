@@ -24,4 +24,8 @@
     <string name="err">Fehler !</string>
     <string name="from_at_least_ten_vocs">%1$d von min. 10 Vokabeln hinzugefügt</string>
     <string name="deleted_succesfull">Erfolgreich gelöscht</string>
+    <string name="delete">Löschen</string>
+    <string name="s_continue">Fortsetzen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="practice">Üben</string>
 </resources>

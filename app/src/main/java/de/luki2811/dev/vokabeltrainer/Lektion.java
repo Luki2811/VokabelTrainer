@@ -32,26 +32,26 @@ public class Lektion {
         this.name = name;
     }
 
-    public void getDataFromJson(){
-        Datei file = new Datei(name + ".json");
-        try {
-            JSONObject json = new JSONObject(file.loadFromFile(file.getApplicationContext()));
-            switch (json.getInt("languageNative")){
-                case Language.LANGUAGE_ENGLISH:
-                    this.languageKnow = new Language("Englisch", Language.LANGUAGE_ENGLISH);
-
-                    case Language.LANGUAGE_GERMAN:
-
-                        this.languageKnow = new Language("Deutsch", Language.LANGUAGE_GERMAN);
-
-
-            }
-
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
+    //public void getDataFromJson(){
+    //    Datei file = new Datei(name + ".json");
+    //    try {
+    //        JSONObject json = new JSONObject(file.loadFromFile(file.getApplicationContext()));
+    //        switch (json.getInt("languageNative")){
+    //            case Language.LANGUAGE_ENGLISH:
+    //                this.languageKnow = new Language("Englisch", Language.LANGUAGE_ENGLISH);
+    //
+    //                case Language.LANGUAGE_GERMAN:
+    //
+    //                    this.languageKnow = new Language("Deutsch", Language.LANGUAGE_GERMAN);
+    //
+    //
+    //        }
+    //
+    //
+    //
+    //
+    //    } catch (JSONException e) {
+    //        e.printStackTrace();
+    //    }
+    //}
 }
