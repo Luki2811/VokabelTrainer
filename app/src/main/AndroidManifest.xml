@@ -12,13 +12,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VokabelTrainer">
         <activity
+            android:name=".FinishedLessonActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".PraticeVocActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".EditLektionActivity"
             android:exported="true" />
         <activity
             android:name=".CreateNewVokabelActivity"
             android:exported="true" />
         <activity
-            android:name=".NewLektion"
+            android:name=".NewLessonActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

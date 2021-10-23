@@ -1,35 +1,40 @@
 package de.luki2811.dev.vokabeltrainer;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.Date;
-
 public class Lektion {
     String name;
     Language languageKnow;
     Language languageNew;
     Vokabel[] vocs;
+    int count;
 
     public String getName() {
         return name;
     }
 
-    public Lektion(String name, Language languageKnow, Language languageNew, Vokabel[] vocs){
+    public Lektion(String name, int count, Language languageKnow, Language languageNew, Vokabel[] vocs){
         this.name = name;
         this.languageKnow = languageKnow;
         this.languageNew = languageNew;
         this.vocs = vocs;
+        this.count = count;
     }
 
-    public Lektion(String name, Language languageKnow, Language languageNew){
-        this.name = name;
-        this.languageKnow = languageKnow;
-        this.languageNew = languageNew;
+    public Vokabel getRandomVokabel(){
+        int random = (int)(Math.random()*count+1);
+        System.out.println("1: " + (random-1));
+        return vocs[(random-1)];
     }
 
-    public Lektion(String name){
-        this.name = name;
+    public Vokabel getVokabelAtPos(int pos){
+        return vocs[pos];
+    }
+
+    public Language getLanguageKnow() {
+        return languageKnow;
+    }
+
+    public Language getLanguageNew() {
+        return languageNew;
     }
 
     //public void getDataFromJson(){

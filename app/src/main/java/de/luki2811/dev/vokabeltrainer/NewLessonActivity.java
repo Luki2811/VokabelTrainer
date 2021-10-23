@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class NewLektion extends AppCompatActivity {
+public class NewLessonActivity extends AppCompatActivity {
 
     public static final String JSON_OBJECT = "de.luki2811.dev.vokabeltrainer.JSON_Object";
 
@@ -42,20 +42,36 @@ public class NewLektion extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.err_missing_name), Toast.LENGTH_SHORT).show();
         }else{
             File file = new File(getApplicationContext().getFilesDir(), textName.getText().toString().trim().toLowerCase() + ".json");
+            File indexFile = new File(getApplicationContext().getFilesDir(), "indexLections.json");
             Datei indexDatei = new Datei("indexLections.json");
-            try {
-                JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
-                JSONArray indexArray = indexJson.getJSONArray("index");
-                for(int i = 0; i <= indexArray.length() - 1; i++){
-                    if(indexArray.getJSONObject(i).getString("name").equals(textName.getText().toString().trim())){
-                        Toast.makeText(this,getString(R.string.err_name_not_avaible),Toast.LENGTH_SHORT).show();
-                        return;
-                    }
+            if(indexFile.exists()){
+                if(textName.getText().toString().trim().contains("/") ||
+                        textName.getText().toString().trim().contains("<") ||
+                        textName.getText().toString().trim().contains(">") ||
+                        textName.getText().toString().trim().contains("\\") ||
+                        textName.getText().toString().trim().contains("|") ||
+                        textName.getText().toString().trim().contains("*") ||
+                        textName.getText().toString().trim().contains(":") ||
+                        textName.getText().toString().trim().contains("\"") ||
+                        textName.getText().toString().trim().contains("?")
+                ){
+                    Toast.makeText(this,getString(R.string.err_name_contains_wrong_letter),Toast.LENGTH_SHORT).show();
+                    return;
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
+                try {
+                    JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
+                    JSONArray indexArray = indexJson.getJSONArray("index");
+                    for(int i = 0; i <= indexArray.length() - 1; i++){
+                        if(indexArray.getJSONObject(i).getString("name").equals(textName.getText().toString().trim())){
+                            Toast.makeText(this,getString(R.string.err_name_not_avaible),Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             Datei datei = new Datei(textName.getText().toString().trim().toLowerCase() + ".json");
             JSONObject JSONFile = new JSONObject();
             try {
@@ -66,24 +82,24 @@ public class NewLektion extends AppCompatActivity {
                 JSONFile.put("count", 0);
                 // Type Native Sprache
                 if(en_native.isChecked())
-                    JSONFile.put("languageNative", Language.LANGUAGE_ENGLISH);
+                    JSONFile.put("languageNative", Language.ENGLISH);
                 else if(de_native.isChecked())
-                    JSONFile.put("languageNative", Language.LANGUAGE_GERMAN);
+                    JSONFile.put("languageNative", Language.GERMAN);
                 else if(fr_native.isChecked())
-                    JSONFile.put("languageNative", Language.LANGUAGE_FRENCH);
+                    JSONFile.put("languageNative", Language.FRENCH);
                 else if(sv_native.isChecked())
-                    JSONFile.put("languageNative", Language.LANGUAGE_SWEDISH);
+                    JSONFile.put("languageNative", Language.SWEDISH);
                 else
                     Toast.makeText(this,getString(R.string.err_no_native_selected), Toast.LENGTH_LONG).show();
                 // Type neue Sprache
                 if(en_new.isChecked())
-                    JSONFile.put("languageNew", Language.LANGUAGE_ENGLISH);
+                    JSONFile.put("languageNew", Language.ENGLISH);
                 else if(de_new.isChecked())
-                    JSONFile.put("languageNew", Language.LANGUAGE_GERMAN);
+                    JSONFile.put("languageNew", Language.GERMAN);
                 else if(fr_new.isChecked())
-                    JSONFile.put("languageNew", Language.LANGUAGE_FRENCH);
+                    JSONFile.put("languageNew", Language.FRENCH);
                 else if(sv_new.isChecked())
-                    JSONFile.put("languageNew", Language.LANGUAGE_SWEDISH);
+                    JSONFile.put("languageNew", Language.SWEDISH);
                 else
                     Toast.makeText(this,getString(R.string.err_no_new_selected), Toast.LENGTH_LONG).show();
             }catch (JSONException e){

@@ -16,37 +16,20 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Date;
 
 public class CreateNewVokabelActivity extends AppCompatActivity {
 
-    public static final String JSON_VOCABULARY = "de.luki2811.dev.vokabeltrainer.JSON_VOCABULARY";
+    private JSONObject allForLesson;
+    private JSONArray allVoc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_new_vokabel);
 
-        Button button_finish = findViewById(R.id.button_vokabel_next);
-        Switch switchSetting = findViewById(R.id.switch_settings_ignoreCase);
-
         Intent intent = getIntent();
         try {
-            JSONObject jsonObject;
-            if(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY) != null){
-                jsonObject = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
-                JSONArray jsonArray = jsonObject.getJSONArray("vocabulary");
-                switchSetting.setChecked(jsonArray.getJSONObject(jsonArray.length() - 1).getBoolean("ignoreCase"));
-            }
-            else
-                jsonObject = new JSONObject(intent.getStringExtra(NewLektion.JSON_OBJECT));
-
-            if(jsonObject.getInt("count") >= 2)
-                button_finish.setEnabled(true);
-
-            TextView output = findViewById(R.id.outputCreateVocabulary);
-            output.setText(getString(R.string.from_at_least_ten_vocs, jsonObject.getInt("count")));
-
+            allForLesson = new JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -56,7 +39,7 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         Intent intent = getIntent();
         JSONObject json = null;
         try{
-            json = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
+            json = allForLesson.put("vocabulary",allVoc);
             Datei file = new Datei(json.getString("name") + ".json");
             file.writeInFile(json.toString(), this);
         } catch (JSONException e){
@@ -96,17 +79,16 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         System.out.println(indexAsJson.toString());
         index.writeInFile(indexAsJson.toString(), this);
 
-        // Back to AppHomeScreen
-        Intent sendIntent = new Intent(this, MainActivity.class);
+        // Zurück zur MainActivity (und Verlauf löschen, damit man nicht zurückgehen kann)
+        Intent sendIntent = new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(sendIntent);
 
     }
 
     private JSONObject getEnteredVocabulary(){
-        EditText newVoc = findViewById(R.id.editTextNewLanguageVokabel);
-        EditText nativeVoc = findViewById(R.id.editTextNativeLanguageVokabel);
-        Switch switchSetting = findViewById(R.id.switch_settings_ignoreCase);
-
+        final EditText newVoc = findViewById(R.id.editTextNewLanguageVokabel);
+        final EditText nativeVoc = findViewById(R.id.editTextNativeLanguageVokabel);
+        final Switch switchSetting = findViewById(R.id.switch_settings_ignoreCase);
         if(newVoc.getText().toString().trim().equals("") || nativeVoc.getText().toString().trim().equals("")){
             Toast.makeText(this, getString(R.string.err_missing_input), Toast.LENGTH_LONG).show();
             return null;
@@ -123,7 +105,41 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         return vocabs;
     }
 
-    public void createAndRestartActivity(View view){
+    public void saveAndResetVocActivity(View view){
+
+        final Switch switchSetting = findViewById(R.id.switch_settings_ignoreCase);
+        final EditText newVoc = findViewById(R.id.editTextNewLanguageVokabel);
+        final EditText nativeVoc = findViewById(R.id.editTextNativeLanguageVokabel);
+        final TextView output = findViewById(R.id.outputCreateVocabulary);
+        final Button button_finish = findViewById(R.id.button_vokabel_next);
+
+        try {
+            // Falls allVoc = null -> Object erstellen
+            if(allVoc == null)
+            allVoc = new JSONArray();
+            // Neue Vokabel zur Sammlung hinzufügen
+            allVoc.put(getEnteredVocabulary());
+            // Zähler erhöhen
+            allForLesson.put("count",allForLesson.getInt("count") + 1);
+            // Zurücksetzen der Eingaben
+            switchSetting.setChecked(allVoc.getJSONObject(allVoc.length() - 1).getBoolean("ignoreCase"));
+            newVoc.setText("");
+            nativeVoc.setText("");
+
+            // Aktualisieren des UI
+            if(allForLesson.getInt("count") >= 10)
+                button_finish.setEnabled(true);
+            output.setText(getString(R.string.from_at_least_ten_vocs, allForLesson.getInt("count")));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(allForLesson.toString());
+
+
+
+        /* TODO
         int count = 0;
         Intent intent = getIntent();
 
@@ -137,7 +153,7 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             if(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY) != null)
                 jsonObject = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
             else
-                jsonObject = new JSONObject(intent.getStringExtra(NewLektion.JSON_OBJECT));
+                jsonObject = new JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT));
 
             count = jsonObject.getInt("count") + 1;
 
@@ -158,6 +174,8 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         }
 
 
+
+
         // Start next activity
 
         Intent newIntent = new Intent(this, CreateNewVokabelActivity.class);
@@ -165,6 +183,6 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             newIntent.putExtra(JSON_VOCABULARY, jsonObject.toString());
         } else
             Toast.makeText(this, getString(R.string.err), Toast.LENGTH_LONG).show();
-        startActivity(newIntent);
+        startActivity(newIntent); */
     }
 }

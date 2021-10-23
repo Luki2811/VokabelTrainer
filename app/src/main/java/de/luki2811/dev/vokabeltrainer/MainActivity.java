@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
                     delete.setOnClickListener(view -> new AlertDialog.Builder(this)
                             .setTitle("")
-                            .setMessage("Möchtest du wirklich die Lektion löschen")
+                            .setMessage("Möchtest du wirklich die Lektion löschen ??")
                             .setIcon(R.drawable.outline_delete_24)
                             .setPositiveButton(R.string.delete, (dialogInterface, i1) -> {
                                 File file = new File(getApplicationContext().getFilesDir(), textInCard.getText() + ".json");
@@ -128,13 +128,15 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra(LEKTION_NAME, textInCard.getText());
                         startActivity(intent);
                     });
-                    // Train Button
+                    // Pratice Button
                     MaterialButton cardLearnButton = new MaterialButton(this, null, R.attr.borderlessButtonStyle);
                     cardLearnButton.setText(R.string.practice);
                     cardLearnButton.setBackgroundDrawable(getDrawable(R.drawable.outline_button));
                     cardLearnButton.setCornerRadius(100);
                     cardLearnButton.setOnClickListener(view -> {
-
+                        Intent intent = new Intent(this, PraticeVocActivity.class);
+                        intent.putExtra(LEKTION_NAME, textInCard.getText());
+                        startActivity(intent);
                     });
 
                     // Add all to a Layout
@@ -156,8 +158,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Rundet den übergebenen Wert auf die Anzahl der übergebenen Nachkommastellen
+     *
+     * @param value ist der zu rundende Wert.
+     * @param decimalPoints ist die Anzahl der Nachkommastellen, auf die gerundet werden soll.
+     */
+    public static double round(double value, int decimalPoints) {
+        double d = Math.pow(10, decimalPoints);
+        return Math.round(value * d) / d;
+    }
+
     public void createNewLektion(View view){
-        Intent intent = new Intent(MainActivity.this, NewLektion.class);
+        Intent intent = new Intent(MainActivity.this, NewLessonActivity.class);
         startActivity(intent);
     }
 }

@@ -28,4 +28,12 @@
     <string name="s_continue">Fortsetzen</string>
     <string name="cancel">Abbrechen</string>
     <string name="practice">Üben</string>
+    <string name="check">Überprüfen</string>
+    <string name="translate">Übersetze:</string>
+    <string name="err_name_contains_wrong_letter">Fehler: Name beinhaltet eines der folgenden Zeichen (:,\",\\,/,|,\?,*,>,\u003C)</string>
+    <string name="correct">Richtig</string>
+    <string name="wrong">Falsch</string>
+    <string name="solution">Lösung:</string>
+    <string name="worng_the_correct_solution_is">Falsch ! Die Lösung ist: \"%1$s\"</string>
+    <string name="correct_in_percent">%1$d %% richtig</string>
 </resources>
