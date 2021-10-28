@@ -4,15 +4,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditLektionActivity">
+    tools:context=".EditLektionActivity" >
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/textViewEditLessonKnown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EditLektionActivity"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEditLessonTop"
+        tools:text="Vokabel auf Deutsch" />
+
+    <EditText
+        android:id="@+id/editTextEditLessonKnown"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewEditLessonKnown"
+        tools:text="Brot" />
+
+    <TextView
+        android:id="@+id/textViewEditLessonNew"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEditLessonKnown"
+        tools:text="Vokabel auf Englisch" />
+
+    <EditText
+        android:id="@+id/editTextEditLessonNew"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewEditLessonNew"
+        tools:text="Bread" />
+
+    <Button
+        android:id="@+id/buttonEditLektionSaveNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="saveAndNext"
+        android:text="@string/save_and_next"
+        app:layout_constraintStart_toEndOf="@+id/buttonEditLektionCancel"
+        app:layout_constraintTop_toBottomOf="@+id/switchEditLektionIgnoreCase" />
+
+    <Button
+        android:id="@+id/buttonEditLektionCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:onClick="cancelOnClick"
+        android:text="@string/cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switchEditLektionIgnoreCase" />
+
+    <TextView
+        android:id="@+id/textViewEditLessonTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Vokabel 3 von 20" />
+
+    <Switch
+        android:id="@+id/switchEditLektionIgnoreCase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/ignore_case"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextEditLessonNew" />
 </androidx.constraintlayout.widget.ConstraintLayout>

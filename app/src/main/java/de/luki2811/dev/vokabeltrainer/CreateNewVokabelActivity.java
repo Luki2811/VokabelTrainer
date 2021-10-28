@@ -29,7 +29,9 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         try {
+            final TextView output = findViewById(R.id.outputCreateVocabulary);
             allForLesson = new JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT));
+            output.setText(getString(R.string.from_at_least_ten_vocs, allForLesson.getInt("count")));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -76,7 +78,6 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(indexAsJson.toString());
         index.writeInFile(indexAsJson.toString(), this);
 
         // Zurück zur MainActivity (und Verlauf löschen, damit man nicht zurückgehen kann)
@@ -118,14 +119,15 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             if(allVoc == null)
             allVoc = new JSONArray();
             // Neue Vokabel zur Sammlung hinzufügen
-            allVoc.put(getEnteredVocabulary());
-            // Zähler erhöhen
-            allForLesson.put("count",allForLesson.getInt("count") + 1);
-            // Zurücksetzen der Eingaben
-            switchSetting.setChecked(allVoc.getJSONObject(allVoc.length() - 1).getBoolean("ignoreCase"));
-            newVoc.setText("");
-            nativeVoc.setText("");
-
+            if(getEnteredVocabulary() != null){
+                allVoc.put(getEnteredVocabulary());
+                // Zähler erhöhen
+                allForLesson.put("count",allForLesson.getInt("count") + 1);
+                // Zurücksetzen der Eingaben
+                switchSetting.setChecked(allVoc.getJSONObject(allVoc.length() - 1).getBoolean("ignoreCase"));
+                newVoc.setText("");
+                nativeVoc.setText("");
+            }
             // Aktualisieren des UI
             if(allForLesson.getInt("count") >= 10)
                 button_finish.setEnabled(true);
@@ -135,11 +137,7 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        System.out.println(allForLesson.toString());
-
-
-
-        /* TODO
+        /*
         int count = 0;
         Intent intent = getIntent();
 
@@ -167,7 +165,6 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
             jsonArray.put(enteredVocabulary);
             jsonObject.put("vocabulary", jsonArray);
             jsonObject.put("count", count);
-            System.out.println(jsonObject.toString());
 
         } catch (JSONException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,6 +22,7 @@ import com.google.android.material.button.MaterialButton;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.File;
 
@@ -33,6 +35,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // set Streak
+
+        Streak streak = new Streak(this);
+
+        final TextView textViewStreakTop = findViewById(R.id.textViewMainStreakTop);
+        final TextView textViewStreakProgress = findViewById(R.id.textViewMainProgressStreak);
+        final TextView textViewStreakBottom = findViewById(R.id.textViewMainStreakBottom);
+        final ProgressBar progressBarStreak = findViewById(R.id.progressBarFinishedLesson);
+
+        progressBarStreak.setMax(streak.getXpGoal());
+        progressBarStreak.setProgress(streak.getXpReached());
+
+        textViewStreakTop.setText(getString(R.string.streak_in_days, streak.getLength()));
+        textViewStreakProgress.setText(getString(R.string.streak_have_of_goal, streak.getXpReached(), streak.getXpGoal()));
+        if(streak.getXpReached()<streak.getXpGoal())
+            textViewStreakBottom.setText(getString(R.string.streak_left_to_do_for_next_day, streak.getXpGoal()-streak.getXpReached(), streak.getLength()+1));
+        else
+            textViewStreakBottom.setText(R.string.streak_reached_goal);
         File indexFile = new File(getApplicationContext().getFilesDir(),"indexLections.json");
         if(indexFile.exists()){
             Datei indexDatei = new Datei("indexLections.json");
@@ -41,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                 JSONArray indexArrayJson = indexJson.getJSONArray("index");
 
                 LinearLayout layout = findViewById(R.id.cardsLayoutHome);
-                System.out.println("Array Length: " + indexArrayJson.length());
 
                 for(int i = 0; i <= indexArrayJson.length() - 1; i++){
                     RelativeLayout.LayoutParams layoutparams = new RelativeLayout.LayoutParams(
@@ -101,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
                                         try {
                                             for(int i2 = 0; i2 <= indexArrayJson.length() - 1; i2++){
                                                 if(indexArrayJson.getJSONObject(i2).getString("name").contentEquals(textInCard.getText())){
-                                                    System.out.println(indexArrayJson.toString());
                                                     indexArrayJson.remove(i2);
                                                     indexJson.put("index", indexArrayJson);
                                                     indexDatei.writeInFile(indexJson.toString(),getApplicationContext());

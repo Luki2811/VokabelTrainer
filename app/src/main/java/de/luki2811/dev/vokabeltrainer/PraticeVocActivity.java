@@ -40,7 +40,6 @@ public class PraticeVocActivity extends AppCompatActivity {
         Intent comingInt = getIntent();
         String lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME);
 
-
         Datei datei = new Datei(lektionName + ".json");
         try {
             JSONObject lektionAsJSON = new JSONObject(datei.loadFromFile(this));
@@ -115,6 +114,7 @@ public class PraticeVocActivity extends AppCompatActivity {
             buttonCheck.setOnClickListener(v -> {
                 Intent intent = new Intent(this, FinishedLessonActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("counterRest",counterRest);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
             });
         }
@@ -139,10 +139,9 @@ public class PraticeVocActivity extends AppCompatActivity {
             voc = newVoc;
         }else
             while(!newVoc.isWrong())
-                newVoc = lektion.getRandomVokabel();
-            voc = newVoc;
 
-
+        newVoc = lektion.getRandomVokabel();
+        voc = newVoc;
         textViewToTranslate.setText(voc.getKnownWord());
     }
 

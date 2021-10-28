@@ -1,5 +1,9 @@
 package de.luki2811.dev.vokabeltrainer;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Lektion {
     String name;
     Language languageKnow;
@@ -19,14 +23,68 @@ public class Lektion {
         this.count = count;
     }
 
+    public Lektion(JSONObject json){
+        try {
+            name = json.getString("name");
+            languageKnow = new Language(json.getInt("languageNative"));
+            languageNew = new Language(json.getInt("languageNew"));
+
+            vocs = new Vokabel[json.getJSONArray("vocabulary").length()];
+            for (int i = 0; i < json.getJSONArray("vocabulary").length(); i++) {
+                vocs[i] = new Vokabel(
+                        json.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
+                        json.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
+                        json.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
+                );
+            }
+
+            count = json.getInt("count");
+        }catch (JSONException e){
+            e.printStackTrace();
+        }
+    }
+
     public Vokabel getRandomVokabel(){
         int random = (int)(Math.random()*count+1);
-        System.out.println("1: " + (random-1));
         return vocs[(random-1)];
     }
 
     public Vokabel getVokabelAtPos(int pos){
         return vocs[pos];
+    }
+
+    public void setVokabelAtPos(int pos, Vokabel voc){
+        vocs[pos] = voc;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+
+    public JSONObject getLektionAsJSON(){
+        JSONObject lektionAsJSON = new JSONObject();
+        try {
+            lektionAsJSON.put("name", name);
+            lektionAsJSON.put("count", count);
+            lektionAsJSON.put("languageNative", languageKnow.getType());
+            lektionAsJSON.put("languageNew", languageNew.getType());
+
+            JSONArray jsonArray = new JSONArray();
+            for(int i = 0; i < vocs.length; i++){
+                JSONObject voc = new JSONObject();
+                voc.put("ignoreCase", vocs[i].isIgnoreCase());
+                voc.put("new", vocs[i].getNewWord());
+                voc.put("native", vocs[i].getKnownWord());
+                jsonArray.put(voc);
+            }
+            lektionAsJSON.put("vocabulary", jsonArray);
+            return lektionAsJSON;
+
+        }catch (JSONException e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Language getLanguageKnow() {
