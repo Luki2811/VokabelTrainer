@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -16,13 +17,13 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.File;
 
@@ -146,7 +147,21 @@ public class MainActivity extends AppCompatActivity {
                         intent.putExtra(LEKTION_NAME, textInCard.getText());
                         startActivity(intent);
                     });
-                    // Pratice Button
+                    // Export Button
+                    ImageButton exportButtonCard = new ImageButton(this);
+                    exportButtonCard.setBackgroundResource(R.drawable.rounded_orange_button);
+                    exportButtonCard.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_baseline_share_24));
+                    exportButtonCard.setLayoutParams(layoutparamsIcons);
+                    exportButtonCard.setOnClickListener(view -> {
+                        Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                        Uri fileUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".provider", new File(getApplicationContext().getFilesDir(), textInCard.getText() + ".json"));
+                        sharingIntent.setType("application/json");
+                        sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                        startActivity(Intent.createChooser(sharingIntent, "Lektion teilen mit"));
+                    });
+
+
+                    // Practice Button
                     MaterialButton cardLearnButton = new MaterialButton(this, null, R.attr.borderlessButtonStyle);
                     cardLearnButton.setText(R.string.practice);
                     cardLearnButton.setBackgroundDrawable(getDrawable(R.drawable.outline_button));
@@ -163,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
                     cardLayout.addView(delete);
                     cardLayout.addView(cardEdit);
+                    cardLayout.addView(exportButtonCard);
                     cardLayout.addView(textInCard);
                     cardLayout.addView(cardLearnButton);
 

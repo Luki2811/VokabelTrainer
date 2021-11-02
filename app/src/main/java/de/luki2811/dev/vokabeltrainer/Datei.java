@@ -61,7 +61,7 @@ public class Datei extends Application {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Log.e("Exception", "File load failed: " + e.toString());
         }
         InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
         StringBuilder stringBuilder = new StringBuilder();

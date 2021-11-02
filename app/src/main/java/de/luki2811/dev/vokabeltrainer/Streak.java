@@ -15,7 +15,7 @@ public class Streak {
     private int xpGoal;
     LocalDate lastTimeReachedGoal;
     LocalDate lastTimeChecked;
-    boolean reachedToday;
+    private boolean reachedToday;
     Context context;
 
     public Streak(Context con){

@@ -87,7 +87,7 @@ public class PraticeVocActivity extends AppCompatActivity {
                 correctionTextView.setText(R.string.correct);
                 voc.setWrong(false);
             }else{
-                correctionTextView.setText(getString(R.string.worng_the_correct_solution_is, voc.getNewWord()));
+                correctionTextView.setText(getString(R.string.wrong_the_correct_solution_is, voc.getNewWord()));
                 counterRest = counterRest + 1;
                 voc.setWrong(true);
             }
@@ -97,7 +97,7 @@ public class PraticeVocActivity extends AppCompatActivity {
                 voc.setWrong(false);
             }
             else{
-                correctionTextView.setText(getString(R.string.worng_the_correct_solution_is, voc.getNewWord()));
+                correctionTextView.setText(getString(R.string.wrong_the_correct_solution_is, voc.getNewWord()));
                 counterRest = counterRest + 1;
                 voc.setWrong(true);
             }

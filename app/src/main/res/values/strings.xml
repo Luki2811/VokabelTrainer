@@ -34,7 +34,7 @@
     <string name="correct">Richtig</string>
     <string name="wrong">Falsch</string>
     <string name="solution">Lösung:</string>
-    <string name="worng_the_correct_solution_is">Falsch ! Die Lösung ist: \"%1$s\"</string>
+    <string name="wrong_the_correct_solution_is">Falsch ! Die Lösung ist: \"%1$s\"</string>
     <string name="correct_in_percent">%1$d %% richtig</string>
     <string name="finish_lesson">Übung geschafft !</string>
     <string name="voc_in">Vokabel auf %1$s</string>
@@ -48,4 +48,5 @@
     <string name="import_lesson">Importieren aus Datei</string>
     <string name="err_could_not_import_lesson">Fehler: Lektion konnte nicht erstellt werden !</string>
     <string name="import_lesson_successful">Neue Lektion erfolgreich importiert !</string>
+    <string name="err_no_permission">Fehler: Keine Berechtigung !</string>
 </resources>

@@ -38,7 +38,6 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
     }
 
     public void finishVocActivity(View view){
-        Intent intent = getIntent();
         JSONObject json = null;
         try{
             json = allForLesson.put("vocabulary",allVoc);
@@ -136,50 +135,5 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-        /*
-        int count = 0;
-        Intent intent = getIntent();
-
-        JSONObject enteredVocabulary = getEnteredVocabulary();
-        if(enteredVocabulary == null)
-            return;
-
-        JSONObject jsonObject = null;
-
-        try {
-            if(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY) != null)
-                jsonObject = new JSONObject(intent.getStringExtra(CreateNewVokabelActivity.JSON_VOCABULARY));
-            else
-                jsonObject = new JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT));
-
-            count = jsonObject.getInt("count") + 1;
-
-            JSONArray jsonArray;
-            try {
-                jsonArray = jsonObject.getJSONArray("vocabulary");
-            } catch (JSONException e){
-                jsonArray = new JSONArray();
-                e.printStackTrace();
-            }
-            jsonArray.put(enteredVocabulary);
-            jsonObject.put("vocabulary", jsonArray);
-            jsonObject.put("count", count);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-
-
-        // Start next activity
-
-        Intent newIntent = new Intent(this, CreateNewVokabelActivity.class);
-        if (jsonObject != null) {
-            newIntent.putExtra(JSON_VOCABULARY, jsonObject.toString());
-        } else
-            Toast.makeText(this, getString(R.string.err), Toast.LENGTH_LONG).show();
-        startActivity(newIntent); */
     }
 }
