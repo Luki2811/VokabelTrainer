@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 
-public class CreateNewVokabelActivity extends AppCompatActivity {
+public class CreateNewVocabularyActivity extends AppCompatActivity {
 
     private JSONObject allForLesson;
     private JSONArray allVoc;
@@ -48,10 +48,10 @@ public class CreateNewVokabelActivity extends AppCompatActivity {
         }
         // Create new index
 
-        File file = new File(getApplicationContext().getFilesDir(),"indexLections.json");
+        File file = new File(getApplicationContext().getFilesDir(),Datei.NAME_FILE_INDEX);
         JSONObject indexAsJson;
         JSONArray jsonArray = null;
-        Datei index = new Datei("indexLections.json");
+        Datei index = new Datei(Datei.NAME_FILE_INDEX);
         if(file.exists()){
             try {
                 indexAsJson = new JSONObject(index.loadFromFile(this));

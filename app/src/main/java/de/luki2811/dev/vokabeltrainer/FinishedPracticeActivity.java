@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class FinishedLessonActivity extends AppCompatActivity {
+public class FinishedPracticeActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_finished_lesson);
+        setContentView(R.layout.activity_finished_practice);
 
         final TextView textViewFinXP = findViewById(R.id.textViewFinishedXP);
 

@@ -15,17 +15,17 @@ import android.widget.TextView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class PraticeVocActivity extends AppCompatActivity {
+public class PracticeVocabularyActivity extends AppCompatActivity {
 
-    private Lektion lektion;
-    private Vokabel voc;
+    private Lesson lesson;
+    private VocabularyWord voc;
     private int counter = 0;
     private int counterRest = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pratice_voc);
+        setContentView(R.layout.activity_practice_vocabulary);
 
         ImageButton closeLessonImageButton = findViewById(R.id.imageButtonCloseLesson);
         closeLessonImageButton.setOnClickListener(view -> new AlertDialog.Builder(this)
@@ -46,9 +46,9 @@ public class PraticeVocActivity extends AppCompatActivity {
             Language nativeLan = new Language(lektionAsJSON.getInt("languageNative"));
             Language newLan = new Language(lektionAsJSON.getInt("languageNew"));
 
-            Vokabel[] vocabulary = new Vokabel[lektionAsJSON.getJSONArray("vocabulary").length()];
+            VocabularyWord[] vocabulary = new VocabularyWord[lektionAsJSON.getJSONArray("vocabulary").length()];
             for(int i = 0; i < lektionAsJSON.getJSONArray("vocabulary").length(); i++){
-                vocabulary[i] = new Vokabel(
+                vocabulary[i] = new VocabularyWord(
                     lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
                     lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
                     lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
@@ -57,15 +57,15 @@ public class PraticeVocActivity extends AppCompatActivity {
 
             int countForLektion = lektionAsJSON.getInt("count");
 
-            lektion = new Lektion(lektionAsJSON.getString("name"),countForLektion,nativeLan,newLan,vocabulary);
+            lesson = new Lesson(lektionAsJSON.getString("name"),countForLektion,nativeLan,newLan,vocabulary);
 
             TextView lessonTranslateTo = findViewById(R.id.lessonTranslateTo);
             TextView lessonTranslateFrom = findViewById(R.id.lessonTranslateFrom);
 
-            lessonTranslateFrom.setText(lektion.getLanguageKnow().getName());
-            lessonTranslateTo.setText(lektion.getLanguageNew().getName());
+            lessonTranslateFrom.setText(lesson.getLanguageKnow().getName());
+            lessonTranslateTo.setText(lesson.getLanguageNew().getName());
 
-            voc = lektion.getRandomVokabel();
+            voc = lesson.getRandomWord();
 
             TextView textViewToTranslate = findViewById(R.id.textViewLessonToTranslate);
             textViewToTranslate.setText(voc.getKnownWord());
@@ -112,7 +112,7 @@ public class PraticeVocActivity extends AppCompatActivity {
             buttonCheck.setOnClickListener(v -> continueToNext());
         }else {
             buttonCheck.setOnClickListener(v -> {
-                Intent intent = new Intent(this, FinishedLessonActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                Intent intent = new Intent(this, FinishedPracticeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("counterRest",counterRest);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
@@ -132,15 +132,15 @@ public class PraticeVocActivity extends AppCompatActivity {
         buttonCheck.setOnClickListener(v -> checkVoc(v));
 
 
-        Vokabel newVoc = lektion.getRandomVokabel();
+        VocabularyWord newVoc = lesson.getRandomWord();
         if(counter < 10){
             while(voc.equals(newVoc) || newVoc.isAlreadyUsed())
-                newVoc = lektion.getRandomVokabel();
+                newVoc = lesson.getRandomWord();
             voc = newVoc;
         }else
             while(!newVoc.isWrong())
 
-        newVoc = lektion.getRandomVokabel();
+        newVoc = lesson.getRandomWord();
         voc = newVoc;
         textViewToTranslate.setText(voc.getKnownWord());
     }

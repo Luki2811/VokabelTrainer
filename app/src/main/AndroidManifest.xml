@@ -25,24 +25,24 @@
                 android:resource="@xml/provider_paths" />
         </provider>
         <activity
-            android:name=".FinishedLessonActivity"
+            android:name=".FinishedPracticeActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:noHistory="true"/>
         <activity
-            android:name=".PraticeVocActivity"
+            android:name=".PracticeVocabularyActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize"
             android:noHistory="true" />
         <activity
-            android:name=".EditLektionActivity"
+            android:name=".EditLessonActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:noHistory="true" />
 
         <activity
-            android:name=".CreateNewVokabelActivity"
+            android:name=".CreateNewVocabularyActivity"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar"
             android:noHistory="true"/>

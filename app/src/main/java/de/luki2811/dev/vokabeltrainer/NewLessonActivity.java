@@ -35,7 +35,7 @@ public class NewLessonActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_lektion);
+        setContentView(R.layout.activity_new_lesson);
         RadioButton en_new = findViewById(R.id.radioButton_new_english);
         en_new.setChecked(true);
         RadioButton de_native = findViewById(R.id.radioButton_native_german);
@@ -55,8 +55,8 @@ public class NewLessonActivity extends AppCompatActivity {
             Toast.makeText(this, getString(R.string.err_missing_name), Toast.LENGTH_SHORT).show();
         }else{
 
-            File indexFile = new File(getApplicationContext().getFilesDir(), "indexLections.json");
-            Datei indexDatei = new Datei("indexLections.json");
+            File indexFile = new File(getApplicationContext().getFilesDir(), Datei.NAME_FILE_INDEX);
+            Datei indexDatei = new Datei(Datei.NAME_FILE_INDEX);
             if(indexFile.exists()){
                 if(textName.getText().toString().trim().contains("/") ||
                         textName.getText().toString().trim().contains("<") ||
@@ -120,7 +120,7 @@ public class NewLessonActivity extends AppCompatActivity {
             }catch (JSONException e){
                 e.printStackTrace();
             }
-            Intent intent = new Intent(this, CreateNewVokabelActivity.class);
+            Intent intent = new Intent(this, CreateNewVocabularyActivity.class);
             intent.putExtra(JSON_OBJECT, JSONFile.toString());
             startActivity(intent);
 
@@ -224,7 +224,7 @@ public class NewLessonActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.err_could_not_import_lesson) , Toast.LENGTH_LONG).show();
                 return;
             }
-            Lektion lektion = new Lektion(lessonAsJSON);
+            Lesson lesson = new Lesson(lessonAsJSON);
 
             // Check if lesson is correct
             File indexFile = new File(getApplicationContext().getFilesDir(), Datei.NAME_FILE_INDEX);
@@ -234,15 +234,15 @@ public class NewLessonActivity extends AppCompatActivity {
                 indexDatei.writeInFile("",this);
             }
 
-            if(lektion.getName().contains("/") ||
-                    lektion.getName().contains("<") ||
-                    lektion.getName().contains(">") ||
-                    lektion.getName().contains("\\") ||
-                    lektion.getName().contains("|") ||
-                    lektion.getName().contains("*") ||
-                    lektion.getName().contains(":") ||
-                    lektion.getName().contains("\"") ||
-                    lektion.getName().contains("?")
+            if(lesson.getName().contains("/") ||
+                    lesson.getName().contains("<") ||
+                    lesson.getName().contains(">") ||
+                    lesson.getName().contains("\\") ||
+                    lesson.getName().contains("|") ||
+                    lesson.getName().contains("*") ||
+                    lesson.getName().contains(":") ||
+                    lesson.getName().contains("\"") ||
+                    lesson.getName().contains("?")
             ){
                 Toast.makeText(this,getString(R.string.err_name_contains_wrong_letter),Toast.LENGTH_SHORT).show();
                 return;
@@ -252,10 +252,10 @@ public class NewLessonActivity extends AppCompatActivity {
                 JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
                 JSONArray indexArray = indexJson.getJSONArray("index");
                 for(int i = 0; i <= indexArray.length() - 1; i++){
-                    if(indexArray.getJSONObject(i).getString("name").equals(lektion.getName())
-                            || lektion.getName().equalsIgnoreCase("streak")
-                            || lektion.getName().equalsIgnoreCase("settings")
-                            || lektion.getName().equalsIgnoreCase("indexLections")){
+                    if(indexArray.getJSONObject(i).getString("name").equals(lesson.getName())
+                            || lesson.getName().equalsIgnoreCase("streak")
+                            || lesson.getName().equalsIgnoreCase("settings")
+                            || lesson.getName().equalsIgnoreCase("indexLections")){
                         Toast.makeText(this,getString(R.string.err_name_not_avaible),Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -283,8 +283,8 @@ public class NewLessonActivity extends AppCompatActivity {
                 if(jsonArray == null)
                     jsonArray = new JSONArray();
                 JSONObject jo = new JSONObject();
-                jo.put("name", lektion.getName());
-                jo.put("file",lektion.getName() + ".json");
+                jo.put("name", lesson.getName());
+                jo.put("file", lesson.getName() + ".json");
                 jsonArray.put(jo);
                 indexAsJson.put("index", jsonArray);
             } catch (JSONException e) {
@@ -294,8 +294,8 @@ public class NewLessonActivity extends AppCompatActivity {
 
             // Save lesson as .json
 
-            Datei saveDatei = new Datei(lektion.getName()+ ".json");
-            saveDatei.writeInFile(lektion.getLektionAsJSON().toString(), this);
+            Datei saveDatei = new Datei(lesson.getName()+ ".json");
+            saveDatei.writeInFile(lesson.getLessonAsJson().toString(), this);
 
             Toast.makeText(this, getString(R.string.import_lesson_successful), Toast.LENGTH_LONG).show();
 

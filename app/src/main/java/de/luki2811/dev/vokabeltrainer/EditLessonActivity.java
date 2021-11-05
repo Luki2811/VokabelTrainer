@@ -13,23 +13,23 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditLektionActivity extends AppCompatActivity {
+public class EditLessonActivity extends AppCompatActivity {
 
-    Lektion lektion;
+    Lesson lesson;
     int counter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_lektion);
+        setContentView(R.layout.activity_edit_lesson);
 
         Intent comingInt = getIntent();
-        String lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME);
+        String lessonName = comingInt.getStringExtra(MainActivity.LEKTION_NAME);
 
-        Datei datei = new Datei(lektionName + ".json");
+        Datei datei = new Datei(lessonName + ".json");
         try {
             JSONObject lektionAsJSON = new JSONObject(datei.loadFromFile(this));
-            lektion = new Lektion(lektionAsJSON);
+            lesson = new Lesson(lektionAsJSON);
 
         }catch (JSONException e){
             e.printStackTrace();
@@ -40,20 +40,20 @@ public class EditLektionActivity extends AppCompatActivity {
         final TextView textViewNew = findViewById(R.id.textViewEditLessonNew);
         final TextView textViewTop = findViewById(R.id.textViewEditLessonTop);
 
-        textViewKnown.setText(getString(R.string.voc_in, lektion.getLanguageKnow().getName()));
-        textViewNew.setText(getString(R.string.voc_in, lektion.getLanguageNew().getName()));
-        textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lektion.getCount()));
+        textViewKnown.setText(getString(R.string.voc_in, lesson.getLanguageKnow().getName()));
+        textViewNew.setText(getString(R.string.voc_in, lesson.getLanguageNew().getName()));
+        textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lesson.getCount()));
 
         final EditText editTextKnown = findViewById(R.id.editTextEditLessonKnown);
         final EditText editTextNew = findViewById(R.id.editTextEditLessonNew);
         final Switch switchIgnoreCase = findViewById(R.id.switchEditLektionIgnoreCase);
 
-        editTextKnown.setText(lektion.getVokabelAtPos(counter-1).getKnownWord());
-        editTextKnown.setHint(lektion.getVokabelAtPos(counter-1).getKnownWord());
-        editTextNew.setText(lektion.getVokabelAtPos(counter-1).getNewWord());
-        editTextNew.setHint(lektion.getVokabelAtPos(counter-1).getNewWord());
+        editTextKnown.setText(lesson.getWordAtPos(counter-1).getKnownWord());
+        editTextKnown.setHint(lesson.getWordAtPos(counter-1).getKnownWord());
+        editTextNew.setText(lesson.getWordAtPos(counter-1).getNewWord());
+        editTextNew.setHint(lesson.getWordAtPos(counter-1).getNewWord());
 
-        switchIgnoreCase.setChecked(lektion.getVokabelAtPos(counter-1).isIgnoreCase());
+        switchIgnoreCase.setChecked(lesson.getWordAtPos(counter-1).isIgnoreCase());
 
     }
 
@@ -70,25 +70,25 @@ public class EditLektionActivity extends AppCompatActivity {
             return;
         }
 
-        Vokabel vocNew = new Vokabel(editTextKnown.getText().toString(), editTextNew.getText().toString(), switchIgnoreCase.isChecked());
-        lektion.setVokabelAtPos(counter-1, vocNew);
+        VocabularyWord vocNew = new VocabularyWord(editTextKnown.getText().toString(), editTextNew.getText().toString(), switchIgnoreCase.isChecked());
+        lesson.setWordAtPos(counter-1, vocNew);
 
-        Datei datei = new Datei(lektion.getName() + ".json");
-        datei.writeInFile(lektion.getLektionAsJSON().toString(),this);
+        Datei datei = new Datei(lesson.getName() + ".json");
+        datei.writeInFile(lesson.getLessonAsJson().toString(),this);
 
         counter = counter+1;
 
-        if(counter <= lektion.getCount()){
+        if(counter <= lesson.getCount()){
             // UI ändern auf die nächste Vokabel
 
-            editTextKnown.setText(lektion.getVokabelAtPos(counter-1).getKnownWord());
-            editTextKnown.setHint(lektion.getVokabelAtPos(counter-1).getKnownWord());
-            editTextNew.setText(lektion.getVokabelAtPos(counter-1).getNewWord());
-            editTextNew.setHint(lektion.getVokabelAtPos(counter-1).getNewWord());
+            editTextKnown.setText(lesson.getWordAtPos(counter-1).getKnownWord());
+            editTextKnown.setHint(lesson.getWordAtPos(counter-1).getKnownWord());
+            editTextNew.setText(lesson.getWordAtPos(counter-1).getNewWord());
+            editTextNew.setHint(lesson.getWordAtPos(counter-1).getNewWord());
 
-            switchIgnoreCase.setChecked(lektion.getVokabelAtPos(counter-1).isIgnoreCase());
+            switchIgnoreCase.setChecked(lesson.getWordAtPos(counter-1).isIgnoreCase());
 
-            textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lektion.getCount()));
+            textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lesson.getCount()));
         }else{
             startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
         }

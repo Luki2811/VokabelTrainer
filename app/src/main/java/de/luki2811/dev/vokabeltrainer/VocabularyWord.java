@@ -1,13 +1,13 @@
 package de.luki2811.dev.vokabeltrainer;
 
-public class Vokabel {
+public class VocabularyWord {
     String knownWord;
     String newWord;
     boolean ignoreCase;
     boolean wrong;
     boolean used;
 
-    public Vokabel(String knownWord, String newWord, Boolean ignoreCase){
+    public VocabularyWord(String knownWord, String newWord, Boolean ignoreCase){
         this.knownWord = knownWord;
         this.newWord = newWord;
         this.ignoreCase = ignoreCase;

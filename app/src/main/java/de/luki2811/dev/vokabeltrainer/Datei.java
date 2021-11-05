@@ -3,7 +3,6 @@ package de.luki2811.dev.vokabeltrainer;
 
 import android.app.Application;
 import android.content.Context;
-import android.net.Uri;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -14,12 +13,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 
 public class Datei extends Application {
 
     public static String NAME_FILE_STREAK = "streak.json";
-    public static String NAME_FILE_INDEX = "indexLections.json";
+    public static String NAME_FILE_INDEX = "indexLesson.json";
+    public static String NAME_FILE_SETTINGS = "settings.json";
 
     String name;
 
@@ -61,7 +60,7 @@ public class Datei extends Application {
         try {
             fis = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            Log.e("Exception", "File load failed: " + e.toString());
+            Log.e("Exception", "File load failed: " + e);
         }
         InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
         StringBuilder stringBuilder = new StringBuilder();
@@ -84,7 +83,7 @@ public class Datei extends Application {
             outputStreamWriter.close();
         }
         catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
+            Log.e("Exception", "File write failed: " + e);
         }
     }
 }

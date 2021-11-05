@@ -54,9 +54,9 @@ public class MainActivity extends AppCompatActivity {
             textViewStreakBottom.setText(getString(R.string.streak_left_to_do_for_next_day, streak.getXpGoal()-streak.getXpReached(), streak.getLength()+1));
         else
             textViewStreakBottom.setText(R.string.streak_reached_goal);
-        File indexFile = new File(getApplicationContext().getFilesDir(),"indexLections.json");
+        File indexFile = new File(getApplicationContext().getFilesDir(),Datei.NAME_FILE_INDEX);
         if(indexFile.exists()){
-            Datei indexDatei = new Datei("indexLections.json");
+            Datei indexDatei = new Datei(Datei.NAME_FILE_INDEX);
             try {
                 JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
                 JSONArray indexArrayJson = indexJson.getJSONArray("index");
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                     cardEdit.setImageDrawable(ContextCompat.getDrawable(getApplicationContext(),R.drawable.ic_outline_edit_24));
                     cardEdit.setLayoutParams(layoutparamsIcons);
                     cardEdit.setOnClickListener(view -> {
-                        Intent intent = new Intent(this, EditLektionActivity.class);
+                        Intent intent = new Intent(this, EditLessonActivity.class);
                         intent.putExtra(LEKTION_NAME, textInCard.getText());
                         startActivity(intent);
                     });
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                     cardLearnButton.setBackgroundDrawable(getDrawable(R.drawable.outline_button));
                     cardLearnButton.setCornerRadius(100);
                     cardLearnButton.setOnClickListener(view -> {
-                        Intent intent = new Intent(this, PraticeVocActivity.class);
+                        Intent intent = new Intent(this, PracticeVocabularyActivity.class);
                         intent.putExtra(LEKTION_NAME, textInCard.getText());
                         startActivity(intent);
                     });
