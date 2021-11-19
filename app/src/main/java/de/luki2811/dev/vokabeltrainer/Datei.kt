@@ -1,89 +1,76 @@
-package de.luki2811.dev.vokabeltrainer;
+package de.luki2811.dev.vokabeltrainer
 
+import android.app.Application
+import android.content.Context
+import android.util.Log
+import java.io.*
+import java.nio.charset.StandardCharsets
 
-import android.app.Application;
-import android.content.Context;
-import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-
-public class Datei extends Application {
-
-    public static String NAME_FILE_STREAK = "streak.json";
-    public static String NAME_FILE_INDEX = "indexLesson.json";
-    public static String NAME_FILE_SETTINGS = "settings.json";
-
-    String name;
-
-    public Datei(String name) {
-        setName(name);
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String loadFromFile(Context context){
-        FileInputStream fis = null;
+class Datei(name: String?) : Application() {
+    var name: String? = null
+    fun loadFromFile(context: Context): String {
+        var fis: FileInputStream? = null
         try {
-            fis = context.openFileInput(name);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            fis = context.openFileInput(name)
+        } catch (e: FileNotFoundException) {
+            e.printStackTrace()
         }
-        InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-            String line = reader.readLine();
-            while (line != null) {
-                stringBuilder.append(line).append('\n');
-                line = reader.readLine();
+        val inputStreamReader = InputStreamReader(fis, StandardCharsets.UTF_8)
+        val stringBuilder = StringBuilder()
+        try {
+            BufferedReader(inputStreamReader).use { reader ->
+                var line = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line).append('\n')
+                    line = reader.readLine()
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString()
     }
 
-    public String loadFromFile(File file){
-        FileInputStream fis = null;
+    fun loadFromFile(file: File?): String {
+        var fis: FileInputStream? = null
         try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            Log.e("Exception", "File load failed: " + e);
+            fis = FileInputStream(file)
+        } catch (e: FileNotFoundException) {
+            Log.e("Exception", "File load failed: $e")
         }
-        InputStreamReader inputStreamReader = new InputStreamReader(fis, StandardCharsets.UTF_8);
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(inputStreamReader)) {
-            String line = reader.readLine();
-            while (line != null) {
-                stringBuilder.append(line).append('\n');
-                line = reader.readLine();
+        val inputStreamReader = InputStreamReader(fis, StandardCharsets.UTF_8)
+        val stringBuilder = StringBuilder()
+        try {
+            BufferedReader(inputStreamReader).use { reader ->
+                var line = reader.readLine()
+                while (line != null) {
+                    stringBuilder.append(line).append('\n')
+                    line = reader.readLine()
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
-        return stringBuilder.toString();
+        return stringBuilder.toString()
     }
 
-    public void writeInFile(String text, Context context){
+    fun writeInFile(text: String?, context: Context) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(name, Context.MODE_PRIVATE));
-            outputStreamWriter.write(text);
-            outputStreamWriter.close();
+            val outputStreamWriter = OutputStreamWriter(context.openFileOutput(name, MODE_PRIVATE))
+            outputStreamWriter.write(text)
+            outputStreamWriter.close()
+        } catch (e: IOException) {
+            Log.e("Exception", "File write failed: $e")
         }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e);
-        }
+    }
+
+    companion object {
+        var NAME_FILE_STREAK = "streak.json"
+        var NAME_FILE_INDEX = "indexLesson.json"
+        var NAME_FILE_SETTINGS = "settings.json"
+    }
+
+    init {
+        this@Datei.name = name
     }
 }

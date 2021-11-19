@@ -1,34 +1,22 @@
-package de.luki2811.dev.vokabeltrainer;
+package de.luki2811.dev.vokabeltrainer
 
-public class Language {
-    String name;
-    int type;
-
-    final static int ENGLISH = 0;
-    final static int GERMAN = 1;
-    final static int FRENCH = 2;
-    final static int SWEDISH = 3;
-
-    public Language(int type){
-        this.type = type;
-    }
-
-    public int getType(){
-        return type;
-    }
-
-    public String getName() {
-        switch (getType()){
-            case 0:
-                return "Englisch";
-            case 1:
-                return "Deutsch";
-            case 2:
-                return "Französisch";
-            case 3:
-                return "Schwedisch";
-            default:
-                return null;
+class Language(var type: Int) {
+    var name: String? = null
+    @JvmName("getName1")
+    fun getName(): String? {
+        return when (type) {
+            0 -> "Englisch"
+            1 -> "Deutsch"
+            2 -> "Französisch"
+            3 -> "Schwedisch"
+            else -> null
         }
+    }
+
+    companion object {
+        const val ENGLISH = 0
+        const val GERMAN = 1
+        const val FRENCH = 2
+        const val SWEDISH = 3
     }
 }

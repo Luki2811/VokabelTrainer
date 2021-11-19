@@ -1,307 +1,344 @@
-package de.luki2811.dev.vokabeltrainer;
+package de.luki2811.dev.vokabeltrainer
 
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static android.os.Build.VERSION.SDK_INT;
+import android.Manifest.permission
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION
+import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
+import android.view.View
+import android.widget.EditText
+import android.widget.RadioButton
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.File
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.provider.Settings;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-
-public class NewLessonActivity extends AppCompatActivity {
-
-    public static final String JSON_OBJECT = "de.luki2811.dev.vokabeltrainer.JSON_Object";
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_lesson);
-        RadioButton en_new = findViewById(R.id.radioButton_new_english);
-        en_new.setChecked(true);
-        RadioButton de_native = findViewById(R.id.radioButton_native_german);
-        de_native.setChecked(true);
+class NewLessonActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_new_lesson)
+        val en_new = findViewById<RadioButton>(R.id.radioButton_new_english)
+        en_new.isChecked = true
+        val de_native = findViewById<RadioButton>(R.id.radioButton_native_german)
+        de_native.isChecked = true
     }
-    public void checkAndGoNext(View view) {
-        EditText textName = findViewById(R.id.TextLektionName);
-        RadioButton en_native = findViewById(R.id.radioButton_native_english);
-        RadioButton de_native = findViewById(R.id.radioButton_native_german);
-        RadioButton sv_native = findViewById(R.id.radioButton_native_swedish);
-        RadioButton fr_native = findViewById(R.id.radioButton_native_french);
-        RadioButton en_new = findViewById(R.id.radioButton_new_english);
-        RadioButton de_new = findViewById(R.id.radioButton_new_german);
-        RadioButton sv_new = findViewById(R.id.radioButton_new_swedish);
-        RadioButton fr_new = findViewById(R.id.radioButton_new_french);
-        if(textName.getText() == null || textName.getText().toString().trim().isEmpty()){
-            Toast.makeText(this, getString(R.string.err_missing_name), Toast.LENGTH_SHORT).show();
-        }else{
 
-            File indexFile = new File(getApplicationContext().getFilesDir(), Datei.NAME_FILE_INDEX);
-            Datei indexDatei = new Datei(Datei.NAME_FILE_INDEX);
-            if(indexFile.exists()){
-                if(textName.getText().toString().trim().contains("/") ||
-                        textName.getText().toString().trim().contains("<") ||
-                        textName.getText().toString().trim().contains(">") ||
-                        textName.getText().toString().trim().contains("\\") ||
-                        textName.getText().toString().trim().contains("|") ||
-                        textName.getText().toString().trim().contains("*") ||
-                        textName.getText().toString().trim().contains(":") ||
-                        textName.getText().toString().trim().contains("\"") ||
-                        textName.getText().toString().trim().contains("?")
-                ){
-                    Toast.makeText(this,getString(R.string.err_name_contains_wrong_letter),Toast.LENGTH_SHORT).show();
-                    return;
+    fun checkAndGoNext(view: View?) {
+        val textName = findViewById<EditText>(R.id.TextLektionName)
+        val en_native = findViewById<RadioButton>(R.id.radioButton_native_english)
+        val de_native = findViewById<RadioButton>(R.id.radioButton_native_german)
+        val sv_native = findViewById<RadioButton>(R.id.radioButton_native_swedish)
+        val fr_native = findViewById<RadioButton>(R.id.radioButton_native_french)
+        val en_new = findViewById<RadioButton>(R.id.radioButton_new_english)
+        val de_new = findViewById<RadioButton>(R.id.radioButton_new_german)
+        val sv_new = findViewById<RadioButton>(R.id.radioButton_new_swedish)
+        val fr_new = findViewById<RadioButton>(R.id.radioButton_new_french)
+        if (textName.text == null || textName.text.toString().trim { it <= ' ' }.isEmpty()) {
+            Toast.makeText(this, getString(R.string.err_missing_name), Toast.LENGTH_SHORT).show()
+        } else {
+            val indexFile = File(applicationContext.filesDir, Datei.NAME_FILE_INDEX)
+            val indexDatei = Datei(Datei.NAME_FILE_INDEX)
+            if (indexFile.exists()) {
+                if (textName.text.toString().trim { it <= ' ' }.contains("/") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("<") ||
+                    textName.text.toString().trim { it <= ' ' }.contains(">") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("\\") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("|") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("*") ||
+                    textName.text.toString().trim { it <= ' ' }.contains(":") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("\"") ||
+                    textName.text.toString().trim { it <= ' ' }.contains("?")
+                ) {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.err_name_contains_wrong_letter),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
                 }
-
                 try {
-                    JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
-                    JSONArray indexArray = indexJson.getJSONArray("index");
-                    for(int i = 0; i <= indexArray.length() - 1; i++){
-                        if(indexArray.getJSONObject(i).getString("name").equals(textName.getText().toString().trim())
-                        || textName.getText().toString().trim().equalsIgnoreCase("streak")
-                        || textName.getText().toString().trim().equalsIgnoreCase("settings")
-                        || textName.getText().toString().trim().equalsIgnoreCase("indexLections")){
-                            Toast.makeText(this,getString(R.string.err_name_not_avaible),Toast.LENGTH_SHORT).show();
-                            return;
+                    val indexJson = JSONObject(indexDatei.loadFromFile(this))
+                    val indexArray = indexJson.getJSONArray("index")
+                    for (i in 0..indexArray.length() - 1) {
+                        if (indexArray.getJSONObject(i)
+                                .getString("name") == textName.text.toString()
+                                .trim { it <= ' ' } || textName.text.toString().trim { it <= ' ' }
+                                .equals("streak", ignoreCase = true)
+                            || textName.text.toString().trim { it <= ' ' }
+                                .equals("settings", ignoreCase = true)
+                            || textName.text.toString().trim { it <= ' ' }
+                                .equals("indexLections", ignoreCase = true)
+                        ) {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.err_name_not_avaible),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            return
                         }
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } catch (e: JSONException) {
+                    e.printStackTrace()
                 }
             }
-            JSONObject JSONFile = new JSONObject();
+            val JSONFile = JSONObject()
             try {
                 // Einstellungen der Lektion als .json
                 // Name
-                JSONFile.put("name", textName.getText().toString());
+                JSONFile.put("name", textName.text.toString())
                 // Setzen der Variable für "count"
-                JSONFile.put("count", 0);
+                JSONFile.put("count", 0)
                 // Type Native Sprache
-                if(en_native.isChecked())
-                    JSONFile.put("languageNative", Language.ENGLISH);
-                else if(de_native.isChecked())
-                    JSONFile.put("languageNative", Language.GERMAN);
-                else if(fr_native.isChecked())
-                    JSONFile.put("languageNative", Language.FRENCH);
-                else if(sv_native.isChecked())
-                    JSONFile.put("languageNative", Language.SWEDISH);
-                else
-                    Toast.makeText(this,getString(R.string.err_no_native_selected), Toast.LENGTH_LONG).show();
+                if (en_native.isChecked) JSONFile.put(
+                    "languageNative",
+                    Language.ENGLISH
+                ) else if (de_native.isChecked) JSONFile.put(
+                    "languageNative",
+                    Language.GERMAN
+                ) else if (fr_native.isChecked) JSONFile.put(
+                    "languageNative",
+                    Language.FRENCH
+                ) else if (sv_native.isChecked) JSONFile.put(
+                    "languageNative",
+                    Language.SWEDISH
+                ) else Toast.makeText(
+                    this,
+                    getString(R.string.err_no_native_selected),
+                    Toast.LENGTH_LONG
+                ).show()
                 // Type neue Sprache
-                if(en_new.isChecked())
-                    JSONFile.put("languageNew", Language.ENGLISH);
-                else if(de_new.isChecked())
-                    JSONFile.put("languageNew", Language.GERMAN);
-                else if(fr_new.isChecked())
-                    JSONFile.put("languageNew", Language.FRENCH);
-                else if(sv_new.isChecked())
-                    JSONFile.put("languageNew", Language.SWEDISH);
-                else
-                    Toast.makeText(this,getString(R.string.err_no_new_selected), Toast.LENGTH_LONG).show();
-            }catch (JSONException e){
-                e.printStackTrace();
+                if (en_new.isChecked) JSONFile.put(
+                    "languageNew",
+                    Language.ENGLISH
+                ) else if (de_new.isChecked) JSONFile.put(
+                    "languageNew",
+                    Language.GERMAN
+                ) else if (fr_new.isChecked) JSONFile.put(
+                    "languageNew",
+                    Language.FRENCH
+                ) else if (sv_new.isChecked) JSONFile.put(
+                    "languageNew",
+                    Language.SWEDISH
+                ) else Toast.makeText(
+                    this,
+                    getString(R.string.err_no_new_selected),
+                    Toast.LENGTH_LONG
+                ).show()
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            Intent intent = new Intent(this, CreateNewVocabularyActivity.class);
-            intent.putExtra(JSON_OBJECT, JSONFile.toString());
-            startActivity(intent);
-
+            val intent = Intent(this, CreateNewVocabularyActivity::class.java)
+            intent.putExtra(JSON_OBJECT, JSONFile.toString())
+            startActivity(intent)
         }
-
     }
 
-    int requestCode = 1;
-
-    public void importLesson(View view){
-        if(checkPermission()){
-            Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-            chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-            chooseFile.setType("application/json");
-            startActivityForResult(chooseFile, requestCode);
-        }else
-            requestPermission();
-
+    var requestCode = 1
+    fun importLesson(view: View?) {
+        if (checkPermission()) {
+            val chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+            chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
+            chooseFile.type = "application/json"
+            startActivityForResult(chooseFile, requestCode)
+        } else requestPermission()
     }
 
-    int PERMISSION_REQUEST_CODE = 100;
-
-    private boolean checkPermission() {
-        if (SDK_INT >= Build.VERSION_CODES.R) {
-            return Environment.isExternalStorageManager();
+    var PERMISSION_REQUEST_CODE = 100
+    private fun checkPermission(): Boolean {
+        return if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            Environment.isExternalStorageManager()
         } else {
-            int result = ContextCompat.checkSelfPermission(NewLessonActivity.this, READ_EXTERNAL_STORAGE);
-            int result1 = ContextCompat.checkSelfPermission(NewLessonActivity.this, WRITE_EXTERNAL_STORAGE);
-            return result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED;
+            val result = ContextCompat.checkSelfPermission(
+                this@NewLessonActivity,
+                permission.READ_EXTERNAL_STORAGE
+            )
+            val result1 = ContextCompat.checkSelfPermission(
+                this@NewLessonActivity,
+                permission.WRITE_EXTERNAL_STORAGE
+            )
+            result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED
         }
     }
 
-    private void requestPermission() {
-        if (SDK_INT >= Build.VERSION_CODES.R) {
+    private fun requestPermission() {
+        if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             try {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-                intent.addCategory("android.intent.category.DEFAULT");
-                intent.setData(Uri.parse(String.format("package:%s",getApplicationContext().getPackageName())));
-                startActivityForResult(intent, 2296);
-            } catch (Exception e) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-                startActivityForResult(intent, 2296);
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                intent.addCategory("android.intent.category.DEFAULT")
+                intent.data = Uri.parse(String.format("package:%s", applicationContext.packageName))
+                startActivityForResult(intent, 2296)
+            } catch (e: Exception) {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                startActivityForResult(intent, 2296)
             }
         } else {
             //below android 11
-            ActivityCompat.requestPermissions(NewLessonActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            ActivityCompat.requestPermissions(
+                this@NewLessonActivity,
+                arrayOf(permission.WRITE_EXTERNAL_STORAGE),
+                PERMISSION_REQUEST_CODE
+            )
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == 2296) {
-            if (SDK_INT >= Build.VERSION_CODES.R) {
+            if (VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 if (Environment.isExternalStorageManager()) {
-                    Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                    chooseFile.setType("application/json");
-                    startActivityForResult(chooseFile, requestCode);
+                    val chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
+                    chooseFile.type = "application/json"
+                    startActivityForResult(chooseFile, requestCode)
                 } else {
-                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
+                        .show()
                 }
-            } else if (grantResults.length > 0) {
-                boolean READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                boolean WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-
+            } else if (grantResults.size > 0) {
+                val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
-                    Intent chooseFile = new Intent(Intent.ACTION_GET_CONTENT);
-                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE);
-                    chooseFile.setType("application/json");
-                    startActivityForResult(chooseFile, requestCode);
+                    val chooseFile = Intent(Intent.ACTION_GET_CONTENT)
+                    chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
+                    chooseFile.type = "application/json"
+                    startActivityForResult(chooseFile, requestCode)
                 } else {
-                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Allow permission for storage access!", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
-
     }
 
-    @Override
-    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode,data);
-        if(resultCode == Activity.RESULT_OK){
-            if(data == null){
-                return;
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK) {
+            if (data == null) {
+                return
             }
-            Uri uri = data.getData();
-            File file = new File(RealPathUtil.getRealPath(this, uri));
-            Datei datei = new Datei(file.getName());
+            val uri = data.data
+            val file = File(uri?.let { RealPathUtil.getRealPath(this, it) })
+            val datei = Datei(file.name)
 
             // Create new Lesson
-
-            JSONObject lessonAsJSON = null;
+            var lessonAsJSON: JSONObject? = null
             try {
-                lessonAsJSON = new JSONObject(datei.loadFromFile(file));
-            }catch (JSONException e){
-                e.printStackTrace();
+                lessonAsJSON = JSONObject(datei.loadFromFile(file))
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            if(lessonAsJSON == null){
-                Toast.makeText(this, getString(R.string.err_could_not_import_lesson) , Toast.LENGTH_LONG).show();
-                return;
+            if (lessonAsJSON == null) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.err_could_not_import_lesson),
+                    Toast.LENGTH_LONG
+                ).show()
+                return
             }
-            Lesson lesson = new Lesson(lessonAsJSON);
+            val lesson = Lesson(lessonAsJSON)
 
             // Check if lesson is correct
-            File indexFile = new File(getApplicationContext().getFilesDir(), Datei.NAME_FILE_INDEX);
-            Datei indexDatei = new Datei(indexFile.getName());
-
-            if(!indexFile.exists()){
-                indexDatei.writeInFile("",this);
+            val indexFile = File(applicationContext.filesDir, Datei.NAME_FILE_INDEX)
+            val indexDatei = Datei(indexFile.name)
+            if (!indexFile.exists()) {
+                indexDatei.writeInFile("", this)
             }
-
-            if(lesson.getName().contains("/") ||
-                    lesson.getName().contains("<") ||
-                    lesson.getName().contains(">") ||
-                    lesson.getName().contains("\\") ||
-                    lesson.getName().contains("|") ||
-                    lesson.getName().contains("*") ||
-                    lesson.getName().contains(":") ||
-                    lesson.getName().contains("\"") ||
-                    lesson.getName().contains("?")
-            ){
-                Toast.makeText(this,getString(R.string.err_name_contains_wrong_letter),Toast.LENGTH_SHORT).show();
-                return;
+            if (lesson.name!!.contains("/") ||
+                lesson.name!!.contains("<") ||
+                lesson.name!!.contains(">") ||
+                lesson.name!!.contains("\\") ||
+                lesson.name!!.contains("|") ||
+                lesson.name!!.contains("*") ||
+                lesson.name!!.contains(":") ||
+                lesson.name!!.contains("\"") ||
+                lesson.name!!.contains("?")
+            ) {
+                Toast.makeText(
+                    this,
+                    getString(R.string.err_name_contains_wrong_letter),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
             }
-
             try {
-                JSONObject indexJson = new JSONObject(indexDatei.loadFromFile(this));
-                JSONArray indexArray = indexJson.getJSONArray("index");
-                for(int i = 0; i <= indexArray.length() - 1; i++){
-                    if(indexArray.getJSONObject(i).getString("name").equals(lesson.getName())
-                            || lesson.getName().equalsIgnoreCase("streak")
-                            || lesson.getName().equalsIgnoreCase("settings")
-                            || lesson.getName().equalsIgnoreCase("indexLections")){
-                        Toast.makeText(this,getString(R.string.err_name_not_avaible),Toast.LENGTH_SHORT).show();
-                        return;
+                val indexJson = JSONObject(indexDatei.loadFromFile(this))
+                val indexArray = indexJson.getJSONArray("index")
+                for (i in 0..indexArray.length() - 1) {
+                    if (indexArray.getJSONObject(i)
+                            .getString("name") == lesson.name || lesson.name.equals(
+                            "streak",
+                            ignoreCase = true
+                        )
+                        || lesson.name.equals("settings", ignoreCase = true)
+                        || lesson.name.equals("indexLections", ignoreCase = true)
+                    ) {
+                        Toast.makeText(
+                            this,
+                            getString(R.string.err_name_not_avaible),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
 
             // Create index
-            JSONObject indexAsJson;
-            JSONArray jsonArray = null;
-
-            if(indexFile.exists()){
+            var indexAsJson: JSONObject
+            var jsonArray: JSONArray? = null
+            if (indexFile.exists()) {
                 try {
-                    indexAsJson = new JSONObject(indexDatei.loadFromFile(this));
-                    jsonArray = indexAsJson.getJSONArray("index");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    indexAsJson = new JSONObject();
+                    indexAsJson = JSONObject(indexDatei.loadFromFile(this))
+                    jsonArray = indexAsJson.getJSONArray("index")
+                } catch (e: JSONException) {
+                    e.printStackTrace()
+                    indexAsJson = JSONObject()
                 }
-            }
-            else
-                indexAsJson = new JSONObject();
+            } else indexAsJson = JSONObject()
             try {
-                if(jsonArray == null)
-                    jsonArray = new JSONArray();
-                JSONObject jo = new JSONObject();
-                jo.put("name", lesson.getName());
-                jo.put("file", lesson.getName() + ".json");
-                jsonArray.put(jo);
-                indexAsJson.put("index", jsonArray);
-            } catch (JSONException e) {
-                e.printStackTrace();
+                if (jsonArray == null) jsonArray = JSONArray()
+                val jo = JSONObject()
+                jo.put("name", lesson.name)
+                jo.put("file", lesson.name + ".json")
+                jsonArray.put(jo)
+                indexAsJson.put("index", jsonArray)
+            } catch (e: JSONException) {
+                e.printStackTrace()
             }
-            indexDatei.writeInFile(indexAsJson.toString(), this);
+            indexDatei.writeInFile(indexAsJson.toString(), this)
 
             // Save lesson as .json
-
-            Datei saveDatei = new Datei(lesson.getName()+ ".json");
-            saveDatei.writeInFile(lesson.getLessonAsJson().toString(), this);
-
-            Toast.makeText(this, getString(R.string.import_lesson_successful), Toast.LENGTH_LONG).show();
-
-            startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        }else{
-            Toast.makeText(NewLessonActivity.this, getString(R.string.err), Toast.LENGTH_LONG).show();
+            val saveDatei = Datei(lesson.name + ".json")
+            saveDatei.writeInFile(lesson.lessonAsJson.toString(), this)
+            Toast.makeText(this, getString(R.string.import_lesson_successful), Toast.LENGTH_LONG)
+                .show()
+            startActivity(
+                Intent(
+                    this,
+                    MainActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
+        } else {
+            Toast.makeText(this@NewLessonActivity, getString(R.string.err), Toast.LENGTH_LONG)
+                .show()
         }
+    }
+
+    companion object {
+        const val JSON_OBJECT = "de.luki2811.dev.vokabeltrainer.JSON_Object"
     }
 }

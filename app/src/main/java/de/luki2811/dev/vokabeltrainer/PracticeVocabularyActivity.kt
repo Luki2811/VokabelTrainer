@@ -1,148 +1,135 @@
-package de.luki2811.dev.vokabeltrainer;
+package de.luki2811.dev.vokabeltrainer
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
+import org.json.JSONException
+import org.json.JSONObject
 
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class PracticeVocabularyActivity extends AppCompatActivity {
-
-    private Lesson lesson;
-    private VocabularyWord voc;
-    private int counter = 0;
-    private int counterRest = 10;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_practice_vocabulary);
-
-        ImageButton closeLessonImageButton = findViewById(R.id.imageButtonCloseLesson);
-        closeLessonImageButton.setOnClickListener(view -> new AlertDialog.Builder(this)
+class PracticeVocabularyActivity : AppCompatActivity() {
+    private var lesson: Lesson? = null
+    private var voc: VocabularyWord? = null
+    private var counter = 0
+    private var counterRest = 10
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_practice_vocabulary)
+        val closeLessonImageButton = findViewById<ImageButton>(R.id.imageButtonCloseLesson)
+        closeLessonImageButton.setOnClickListener { view: View? ->
+            AlertDialog.Builder(this)
                 .setTitle("").setMessage("Möchtest du wirklich die Übung verlassen ??")
                 .setIcon(R.drawable.ic_baseline_close_24)
-                .setPositiveButton("Verlassen", (dialogInterface, i1) -> {
-                    Intent intent = new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
-                })
-                .setNegativeButton("Zurück zur Übung", null).show());
-
-        Intent comingInt = getIntent();
-        String lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME);
-
-        Datei datei = new Datei(lektionName + ".json");
+                .setPositiveButton("Verlassen") { dialogInterface: DialogInterface?, i1: Int ->
+                    val intent = Intent(
+                        this,
+                        MainActivity::class.java
+                    ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                }
+                .setNegativeButton("Zurück zur Übung", null).show()
+        }
+        val comingInt = intent
+        val lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME)
+        val datei = Datei("$lektionName.json")
         try {
-            JSONObject lektionAsJSON = new JSONObject(datei.loadFromFile(this));
-            Language nativeLan = new Language(lektionAsJSON.getInt("languageNative"));
-            Language newLan = new Language(lektionAsJSON.getInt("languageNew"));
-
-            VocabularyWord[] vocabulary = new VocabularyWord[lektionAsJSON.getJSONArray("vocabulary").length()];
-            for(int i = 0; i < lektionAsJSON.getJSONArray("vocabulary").length(); i++){
-                vocabulary[i] = new VocabularyWord(
+            val lektionAsJSON = JSONObject(datei.loadFromFile(this))
+            val nativeLan = Language(lektionAsJSON.getInt("languageNative"))
+            val newLan = Language(lektionAsJSON.getInt("languageNew"))
+            val vocabulary = Array(lektionAsJSON.getJSONArray("vocabulary").length()){ VocabularyWord("","",false ) }
+            for (i in 0 until lektionAsJSON.getJSONArray("vocabulary").length()) {
+                vocabulary[i] = VocabularyWord(
                     lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
                     lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
-                    lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
-                );
+                    lektionAsJSON.getJSONArray("vocabulary").getJSONObject(i)
+                        .getBoolean("ignoreCase")
+                )
             }
-
-            int countForLektion = lektionAsJSON.getInt("count");
-
-            lesson = new Lesson(lektionAsJSON.getString("name"),countForLektion,nativeLan,newLan,vocabulary);
-
-            TextView lessonTranslateTo = findViewById(R.id.lessonTranslateTo);
-            TextView lessonTranslateFrom = findViewById(R.id.lessonTranslateFrom);
-
-            lessonTranslateFrom.setText(lesson.getLanguageKnow().getName());
-            lessonTranslateTo.setText(lesson.getLanguageNew().getName());
-
-            voc = lesson.getRandomWord();
-
-            TextView textViewToTranslate = findViewById(R.id.textViewLessonToTranslate);
-            textViewToTranslate.setText(voc.getKnownWord());
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public void checkVoc(View view){
-        TextView correctionTextView = findViewById(R.id.textViewLessonCorrection);
-        EditText inputAnswer = findViewById(R.id.editTextTranslatedInput);
-        Button buttonCheck = findViewById(R.id.buttonCheckLesson);
-
-        if(voc.isIgnoreCase()){
-            if(inputAnswer.getText().toString().trim().equalsIgnoreCase(voc.getNewWord())){
-                correctionTextView.setText(R.string.correct);
-                voc.setWrong(false);
-            }else{
-                correctionTextView.setText(getString(R.string.wrong_the_correct_solution_is, voc.getNewWord()));
-                counterRest = counterRest + 1;
-                voc.setWrong(true);
-            }
-        }else{
-            if(inputAnswer.getText().toString().trim().equals(voc.getNewWord())){
-                correctionTextView.setText(R.string.correct);
-                voc.setWrong(false);
-            }
-            else{
-                correctionTextView.setText(getString(R.string.wrong_the_correct_solution_is, voc.getNewWord()));
-                counterRest = counterRest + 1;
-                voc.setWrong(true);
-            }
-        }
-        counter = counter + 1;
-        voc.setUsed(true);
-        buttonCheck.setText(R.string.next);
-        ProgressBar progressBar = findViewById(R.id.progressBarLesson);
-        double progress = ((double) counter/counterRest)*100;
-        progressBar.setProgress((int) progress, true);
-        if(counter < counterRest){
-            buttonCheck.setOnClickListener(v -> continueToNext());
-        }else {
-            buttonCheck.setOnClickListener(v -> {
-                Intent intent = new Intent(this, FinishedPracticeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.putExtra("counterRest",counterRest);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-            });
+            val countForLektion = lektionAsJSON.getInt("count")
+            lesson = Lesson(
+                lektionAsJSON.getString("name"),
+                countForLektion,
+                nativeLan,
+                newLan,
+                vocabulary
+            )
+            val lessonTranslateTo = findViewById<TextView>(R.id.lessonTranslateTo)
+            val lessonTranslateFrom = findViewById<TextView>(R.id.lessonTranslateFrom)
+            lessonTranslateFrom.text = lesson!!.languageKnow.getName()
+            lessonTranslateTo.text = lesson!!.languageNew.getName()
+            voc = lesson!!.randomWord
+            val textViewToTranslate = findViewById<TextView>(R.id.textViewLessonToTranslate)
+            textViewToTranslate.text = voc!!.knownWord
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
     }
 
-    private void continueToNext(){
-        TextView correctionTextView = findViewById(R.id.textViewLessonCorrection);
-        TextView textViewToTranslate = findViewById(R.id.textViewLessonToTranslate);
-        EditText inputAnswer = findViewById(R.id.editTextTranslatedInput);
-        Button buttonCheck = findViewById(R.id.buttonCheckLesson);
-
-        correctionTextView.setText("");
-        inputAnswer.setText("");
-        buttonCheck.setText(R.string.check);
-        buttonCheck.setOnClickListener(v -> checkVoc(v));
-
-
-        VocabularyWord newVoc = lesson.getRandomWord();
-        if(counter < 10){
-            while(voc.equals(newVoc) || newVoc.isAlreadyUsed())
-                newVoc = lesson.getRandomWord();
-            voc = newVoc;
-        }else
-            while(!newVoc.isWrong())
-
-        newVoc = lesson.getRandomWord();
-        voc = newVoc;
-        textViewToTranslate.setText(voc.getKnownWord());
+    fun checkVoc() {
+        val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
+        val inputAnswer = findViewById<EditText>(R.id.editTextTranslatedInput)
+        val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
+        if (voc!!.isIgnoreCase) {
+            if (inputAnswer.text.toString().trim { it <= ' ' }
+                    .equals(voc!!.newWord, ignoreCase = true)) {
+                correctionTextView.setText(R.string.correct)
+                voc!!.isWrong = false
+            } else {
+                correctionTextView.text =
+                    getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
+                counterRest = counterRest + 1
+                voc!!.isWrong = true
+            }
+        } else {
+            if (inputAnswer.text.toString().trim { it <= ' ' } == voc!!.newWord) {
+                correctionTextView.setText(R.string.correct)
+                voc!!.isWrong = false
+            } else {
+                correctionTextView.text =
+                    getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
+                counterRest = counterRest + 1
+                voc!!.isWrong = true
+            }
+        }
+        counter = counter + 1
+        voc!!.setUsed(true)
+        buttonCheck.setText(R.string.next)
+        val progressBar = findViewById<ProgressBar>(R.id.progressBarLesson)
+        val progress = counter.toDouble() / counterRest * 100
+        progressBar.setProgress(progress.toInt(), true)
+        if (counter < counterRest) {
+            buttonCheck.setOnClickListener { v: View? -> continueToNext() }
+        } else {
+            buttonCheck.setOnClickListener { v: View? ->
+                val intent = Intent(
+                    this,
+                    FinishedPracticeActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                intent.putExtra("counterRest", counterRest)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                startActivity(intent)
+            }
+        }
     }
 
+    private fun continueToNext() {
+        val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
+        val textViewToTranslate = findViewById<TextView>(R.id.textViewLessonToTranslate)
+        val inputAnswer = findViewById<EditText>(R.id.editTextTranslatedInput)
+        val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
+        correctionTextView.text = ""
+        inputAnswer.setText("")
+        buttonCheck.setText(R.string.check)
+        buttonCheck.setOnClickListener { v: View? -> checkVoc() }
+        var newVoc = lesson!!.randomWord
+        if (counter < 10) {
+            while (voc == newVoc || newVoc.isAlreadyUsed) newVoc = lesson!!.randomWord
+            voc = newVoc
+        } else while (!newVoc.isWrong) newVoc = lesson!!.randomWord
+        voc = newVoc
+        textViewToTranslate.text = voc!!.knownWord
+    }
 }

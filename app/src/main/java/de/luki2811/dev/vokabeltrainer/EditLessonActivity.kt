@@ -1,101 +1,94 @@
-package de.luki2811.dev.vokabeltrainer;
+package de.luki2811.dev.vokabeltrainer
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent
+import android.os.Bundle
+import android.view.View
+import android.widget.EditText
+import android.widget.Switch
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import de.luki2811.dev.vokabeltrainer.MainActivity
+import org.json.JSONException
+import org.json.JSONObject
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.EditText;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-public class EditLessonActivity extends AppCompatActivity {
-
-    Lesson lesson;
-    int counter;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_lesson);
-
-        Intent comingInt = getIntent();
-        String lessonName = comingInt.getStringExtra(MainActivity.LEKTION_NAME);
-
-        Datei datei = new Datei(lessonName + ".json");
+class EditLessonActivity : AppCompatActivity() {
+    var lesson: Lesson? = null
+    var counter = 0
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_edit_lesson)
+        val comingInt = intent
+        val lessonName = comingInt.getStringExtra(MainActivity.LEKTION_NAME)
+        val datei = Datei("$lessonName.json")
         try {
-            JSONObject lektionAsJSON = new JSONObject(datei.loadFromFile(this));
-            lesson = new Lesson(lektionAsJSON);
-
-        }catch (JSONException e){
-            e.printStackTrace();
+            val lektionAsJSON = JSONObject(datei.loadFromFile(this))
+            lesson = Lesson(lektionAsJSON)
+        } catch (e: JSONException) {
+            e.printStackTrace()
         }
-
-        counter = 1;
-        final TextView textViewKnown = findViewById(R.id.textViewEditLessonKnown);
-        final TextView textViewNew = findViewById(R.id.textViewEditLessonNew);
-        final TextView textViewTop = findViewById(R.id.textViewEditLessonTop);
-
-        textViewKnown.setText(getString(R.string.voc_in, lesson.getLanguageKnow().getName()));
-        textViewNew.setText(getString(R.string.voc_in, lesson.getLanguageNew().getName()));
-        textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lesson.getCount()));
-
-        final EditText editTextKnown = findViewById(R.id.editTextEditLessonKnown);
-        final EditText editTextNew = findViewById(R.id.editTextEditLessonNew);
-        final Switch switchIgnoreCase = findViewById(R.id.switchEditLektionIgnoreCase);
-
-        editTextKnown.setText(lesson.getWordAtPos(counter-1).getKnownWord());
-        editTextKnown.setHint(lesson.getWordAtPos(counter-1).getKnownWord());
-        editTextNew.setText(lesson.getWordAtPos(counter-1).getNewWord());
-        editTextNew.setHint(lesson.getWordAtPos(counter-1).getNewWord());
-
-        switchIgnoreCase.setChecked(lesson.getWordAtPos(counter-1).isIgnoreCase());
-
+        counter = 1
+        val textViewKnown = findViewById<TextView>(R.id.textViewEditLessonKnown)
+        val textViewNew = findViewById<TextView>(R.id.textViewEditLessonNew)
+        val textViewTop = findViewById<TextView>(R.id.textViewEditLessonTop)
+        textViewKnown.text = getString(R.string.voc_in, lesson!!.languageKnow.getName())
+        textViewNew.text = getString(R.string.voc_in, lesson!!.languageNew.getName())
+        textViewTop.text = getString(R.string.number_voc_of_rest, counter, lesson!!.count)
+        val editTextKnown = findViewById<EditText>(R.id.editTextEditLessonKnown)
+        val editTextNew = findViewById<EditText>(R.id.editTextEditLessonNew)
+        val switchIgnoreCase = findViewById<Switch>(R.id.switchEditLektionIgnoreCase)
+        editTextKnown.setText(lesson!!.getWordAtPos(counter - 1).knownWord)
+        editTextKnown.hint = lesson!!.getWordAtPos(counter - 1).knownWord
+        editTextNew.setText(lesson!!.getWordAtPos(counter - 1).newWord)
+        editTextNew.hint = lesson!!.getWordAtPos(counter - 1).newWord
+        switchIgnoreCase.isChecked = lesson!!.getWordAtPos(counter - 1).isIgnoreCase
     }
 
-    public void saveAndNext(View view){
+    fun saveAndNext(view: View?) {
 
         // Speichern der Vokabel in der Datei
-        final EditText editTextKnown = findViewById(R.id.editTextEditLessonKnown);
-        final EditText editTextNew = findViewById(R.id.editTextEditLessonNew);
-        final Switch switchIgnoreCase = findViewById(R.id.switchEditLektionIgnoreCase);
-        final TextView textViewTop = findViewById(R.id.textViewEditLessonTop);
-
-        if(editTextKnown.getText().toString().trim().isEmpty() || editTextNew.getText().toString().trim().isEmpty()){
-            Toast.makeText(this, getText(R.string.err_missing_input),Toast.LENGTH_LONG).show();
-            return;
+        val editTextKnown = findViewById<EditText>(R.id.editTextEditLessonKnown)
+        val editTextNew = findViewById<EditText>(R.id.editTextEditLessonNew)
+        val switchIgnoreCase = findViewById<Switch>(R.id.switchEditLektionIgnoreCase)
+        val textViewTop = findViewById<TextView>(R.id.textViewEditLessonTop)
+        if (editTextKnown.text.toString().trim { it <= ' ' }
+                .isEmpty() || editTextNew.text.toString().trim { it <= ' ' }.isEmpty()) {
+            Toast.makeText(this, getText(R.string.err_missing_input), Toast.LENGTH_LONG).show()
+            return
         }
-
-        VocabularyWord vocNew = new VocabularyWord(editTextKnown.getText().toString(), editTextNew.getText().toString(), switchIgnoreCase.isChecked());
-        lesson.setWordAtPos(counter-1, vocNew);
-
-        Datei datei = new Datei(lesson.getName() + ".json");
-        datei.writeInFile(lesson.getLessonAsJson().toString(),this);
-
-        counter = counter+1;
-
-        if(counter <= lesson.getCount()){
+        val vocNew = VocabularyWord(
+            editTextKnown.text.toString(),
+            editTextNew.text.toString(),
+            switchIgnoreCase.isChecked
+        )
+        lesson!!.setWordAtPos(counter - 1, vocNew)
+        val datei = Datei(lesson!!.name + ".json")
+        datei.writeInFile(lesson!!.lessonAsJson.toString(), this)
+        counter = counter + 1
+        if (counter <= lesson!!.count) {
             // UI ändern auf die nächste Vokabel
-
-            editTextKnown.setText(lesson.getWordAtPos(counter-1).getKnownWord());
-            editTextKnown.setHint(lesson.getWordAtPos(counter-1).getKnownWord());
-            editTextNew.setText(lesson.getWordAtPos(counter-1).getNewWord());
-            editTextNew.setHint(lesson.getWordAtPos(counter-1).getNewWord());
-
-            switchIgnoreCase.setChecked(lesson.getWordAtPos(counter-1).isIgnoreCase());
-
-            textViewTop.setText(getString(R.string.number_voc_of_rest,counter, lesson.getCount()));
-        }else{
-            startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+            editTextKnown.setText(lesson!!.getWordAtPos(counter - 1).knownWord)
+            editTextKnown.hint = lesson!!.getWordAtPos(counter - 1).knownWord
+            editTextNew.setText(lesson!!.getWordAtPos(counter - 1).newWord)
+            editTextNew.hint = lesson!!.getWordAtPos(counter - 1).newWord
+            switchIgnoreCase.isChecked = lesson!!.getWordAtPos(counter - 1).isIgnoreCase
+            textViewTop.text = getString(R.string.number_voc_of_rest, counter, lesson!!.count)
+        } else {
+            startActivity(
+                Intent(
+                    this,
+                    MainActivity::class.java
+                ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            )
         }
     }
 
-    public void cancelOnClick(View view){
-        startActivity(new Intent(this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+    fun cancelOnClick(view: View?) {
+        startActivity(
+            Intent(
+                this,
+                MainActivity::class.java
+            ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        )
     }
-
 }
