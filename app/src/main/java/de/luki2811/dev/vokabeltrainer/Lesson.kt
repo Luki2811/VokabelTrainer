@@ -1,8 +1,11 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.content.Context
+import android.widget.Toast
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.File
 
 class Lesson {
     var name: String = ""
@@ -12,11 +15,11 @@ class Lesson {
     var count = 0
 
     constructor(
-        name: String,
-        count: Int,
-        languageKnow: Language,
-        languageNew: Language,
-        vocs: Array<VocabularyWord>
+        name: String = "",
+        count: Int = 0,
+        languageKnow: Language = Language(0),
+        languageNew: Language = Language(0),
+        vocs: Array<VocabularyWord> = arrayOf()
     ) {
         this.name = name
         this.languageKnow = languageKnow
@@ -52,6 +55,55 @@ class Lesson {
 
     fun getWordAtPos(pos: Int): VocabularyWord {
         return vocs[pos]
+    }
+
+    fun isNameValid(context: Context): Boolean{
+
+        if(name.length <= 50){
+            Toast.makeText(context, context.getString(R.string.err_name_too_long_max, 50), Toast.LENGTH_LONG).show()
+            return false
+        }
+
+        if (name.contains("/") ||
+            name.contains("<") ||
+            name.contains(">") ||
+            name.contains("\\") ||
+            name.contains("|") ||
+            name.contains("*") ||
+            name.contains(":") ||
+            name.contains("\"") ||
+            name.contains("?")
+        ) {
+            Toast.makeText(context, context.getString(R.string.err_name_contains_wrong_letter), Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        if (name.equals("streak", ignoreCase = true) ||
+            name.equals("settings", ignoreCase = true) ||
+            name.equals("indexLections", ignoreCase = true)
+        ){
+            Toast.makeText(context, context.getString(R.string.err_name_not_available), Toast.LENGTH_LONG).show()
+            return false
+        }
+
+        try {
+            val indexFile = File(context.filesDir, Datei.NAME_FILE_INDEX)
+            val indexDatei = Datei(indexFile.name)
+            val indexJson = JSONObject(indexDatei.loadFromFile(context))
+            val indexArray = indexJson.getJSONArray("index")
+
+            for (i in 0 until indexArray.length()) {
+                if (indexArray.getJSONObject(i).getString("name") == name){
+                    Toast.makeText(context, context.getString(R.string.err_name_already_taken), Toast.LENGTH_SHORT).show()
+                    return false
+                }
+            }
+
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        return true
     }
 
     fun setWordAtPos(pos: Int, voc: VocabularyWord) {

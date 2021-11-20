@@ -68,7 +68,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
         }
     }
 
-    fun checkVoc() {
+    fun checkVoc(view: View) {
         val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
         val inputAnswer = findViewById<EditText>(R.id.editTextTranslatedInput)
         val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
@@ -95,7 +95,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
             }
         }
         counter = counter + 1
-        voc!!.setUsed(true)
+        voc!!.isAlreadyUsed = true
         buttonCheck.setText(R.string.next)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLesson)
         val progress = counter.toDouble() / counterRest * 100
@@ -123,7 +123,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
         correctionTextView.text = ""
         inputAnswer.setText("")
         buttonCheck.setText(R.string.check)
-        buttonCheck.setOnClickListener { v: View? -> checkVoc() }
+        buttonCheck.setOnClickListener { v: View -> checkVoc(v) }
         var newVoc = lesson!!.randomWord
         if (counter < 10) {
             while (voc == newVoc || newVoc.isAlreadyUsed) newVoc = lesson!!.randomWord

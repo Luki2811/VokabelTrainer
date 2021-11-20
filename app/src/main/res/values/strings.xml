@@ -14,7 +14,8 @@
     <string name="next">Weiter</string>
     <string name="bsp_name_lection">Bspw. Essen, Unit 2,…</string>
     <string name="err_missing_name">Fehler: Name fehlt</string>
-    <string name="err_name_not_avaible">Fehler: Name bereits vergeben</string>
+    <string name="err_name_already_taken">Fehler: Name bereits vergeben</string>
+    <string name="err_name_not_available">Fehler: Name nicht verfügbar</string>
     <string name="err_no_native_selected">Fehler: Es wurde keine Muttersprache ausgewählt</string>
     <string name="err_no_new_selected">Fehler: Es wurde keine erlernende Sprache ausgewählt</string>
     <string name="ignore_case">Groß- und Kleinschreibung ignorieren</string>
@@ -49,4 +50,6 @@
     <string name="err_could_not_import_lesson">Fehler: Lektion konnte nicht erstellt werden !</string>
     <string name="import_lesson_successful">Neue Lektion erfolgreich importiert !</string>
     <string name="err_no_permission">Fehler: Keine Berechtigung !</string>
+    <string name="import_">importieren</string>
+    <string name="err_name_too_long_max">Fehler: Name zu lang ! (max. %1$d Zeichen)</string>
 </resources>

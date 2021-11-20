@@ -2,10 +2,8 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import de.luki2811.dev.vokabeltrainer.MainActivity
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -27,7 +25,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         }
     }
 
-    fun finishVocActivity(view: View?) {
+    fun finishVocActivity() {
         var json: JSONObject? = null
         try {
             json = allForLesson!!.put("vocabulary", allVoc)
@@ -71,7 +69,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
     }
 
     private val enteredVocabulary: JSONObject?
-        private get() {
+        get() {
             val newVoc = findViewById<EditText>(R.id.editTextNewLanguageVokabel)
             val nativeVoc = findViewById<EditText>(R.id.editTextNativeLanguageVokabel)
             val switchSetting = findViewById<Switch>(R.id.switch_settings_ignoreCase)
@@ -92,12 +90,12 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
             return vocabs
         }
 
-    fun saveAndResetVocActivity(view: View?) {
+    fun saveAndResetVocActivity() {
         val switchSetting = findViewById<Switch>(R.id.switch_settings_ignoreCase)
         val newVoc = findViewById<EditText>(R.id.editTextNewLanguageVokabel)
         val nativeVoc = findViewById<EditText>(R.id.editTextNativeLanguageVokabel)
         val output = findViewById<TextView>(R.id.outputCreateVocabulary)
-        val button_finish = findViewById<Button>(R.id.button_vokabel_next)
+        val buttonFinish = findViewById<Button>(R.id.button_vokabel_next)
         try {
             // Falls allVoc = null -> Object erstellen
             if (allVoc == null) allVoc = JSONArray()
@@ -113,7 +111,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
                 nativeVoc.setText("")
             }
             // Aktualisieren des UI
-            if (allForLesson!!.getInt("count") >= 10) button_finish.isEnabled = true
+            if (allForLesson!!.getInt("count") >= 10) buttonFinish.isEnabled = true
             output.text = getString(R.string.from_at_least_ten_vocs, allForLesson!!.getInt("count"))
         } catch (e: JSONException) {
             e.printStackTrace()

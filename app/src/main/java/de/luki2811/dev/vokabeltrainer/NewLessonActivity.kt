@@ -16,7 +16,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -31,7 +30,7 @@ class NewLessonActivity : AppCompatActivity() {
         de_native.isChecked = true
     }
 
-    fun checkAndGoNext(view: View?) {
+    fun checkAndGoNext() {
         val textName = findViewById<EditText>(R.id.TextLektionName)
         val en_native = findViewById<RadioButton>(R.id.radioButton_native_english)
         val de_native = findViewById<RadioButton>(R.id.radioButton_native_german)
@@ -79,7 +78,7 @@ class NewLessonActivity : AppCompatActivity() {
                         ) {
                             Toast.makeText(
                                 this,
-                                getString(R.string.err_name_not_avaible),
+                                getString(R.string.err_name_already_taken),
                                 Toast.LENGTH_SHORT
                             ).show()
                             return
@@ -141,8 +140,8 @@ class NewLessonActivity : AppCompatActivity() {
         }
     }
 
-    var requestCode = 1
-    fun importLesson(view: View?) {
+    private var requestCode = 1
+    fun importLesson(view: View) {
         if (checkPermission()) {
             val chooseFile = Intent(Intent.ACTION_GET_CONTENT)
             chooseFile.addCategory(Intent.CATEGORY_OPENABLE)
@@ -230,108 +229,12 @@ class NewLessonActivity : AppCompatActivity() {
                 return
             }
             val uri = data.data
-            val file = File(uri?.let { RealPathUtil.getRealPath(this, it) })
-            val datei = Datei(file.name)
 
-            // Create new Lesson
-            var lessonAsJSON: JSONObject? = null
-            try {
-                lessonAsJSON = JSONObject(datei.loadFromFile(file))
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-            if (lessonAsJSON == null) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.err_could_not_import_lesson),
-                    Toast.LENGTH_LONG
-                ).show()
-                return
-            }
-            val lesson = Lesson(lessonAsJSON)
 
-            // Check if lesson is correct
-            val indexFile = File(applicationContext.filesDir, Datei.NAME_FILE_INDEX)
-            val indexDatei = Datei(indexFile.name)
-            if (!indexFile.exists()) {
-                indexDatei.writeInFile("", this)
-            }
-            if (lesson.name!!.contains("/") ||
-                lesson.name!!.contains("<") ||
-                lesson.name!!.contains(">") ||
-                lesson.name!!.contains("\\") ||
-                lesson.name!!.contains("|") ||
-                lesson.name!!.contains("*") ||
-                lesson.name!!.contains(":") ||
-                lesson.name!!.contains("\"") ||
-                lesson.name!!.contains("?")
-            ) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.err_name_contains_wrong_letter),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
-            }
-            try {
-                val indexJson = JSONObject(indexDatei.loadFromFile(this))
-                val indexArray = indexJson.getJSONArray("index")
-                for (i in 0..indexArray.length() - 1) {
-                    if (indexArray.getJSONObject(i)
-                            .getString("name") == lesson.name || lesson.name.equals(
-                            "streak",
-                            ignoreCase = true
-                        )
-                        || lesson.name.equals("settings", ignoreCase = true)
-                        || lesson.name.equals("indexLections", ignoreCase = true)
-                    ) {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.err_name_not_avaible),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        return
-                    }
-                }
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
 
-            // Create index
-            var indexAsJson: JSONObject
-            var jsonArray: JSONArray? = null
-            if (indexFile.exists()) {
-                try {
-                    indexAsJson = JSONObject(indexDatei.loadFromFile(this))
-                    jsonArray = indexAsJson.getJSONArray("index")
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                    indexAsJson = JSONObject()
-                }
-            } else indexAsJson = JSONObject()
-            try {
-                if (jsonArray == null) jsonArray = JSONArray()
-                val jo = JSONObject()
-                jo.put("name", lesson.name)
-                jo.put("file", lesson.name + ".json")
-                jsonArray.put(jo)
-                indexAsJson.put("index", jsonArray)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-            indexDatei.writeInFile(indexAsJson.toString(), this)
-
-            // Save lesson as .json
-            val saveDatei = Datei(lesson.name + ".json")
-            saveDatei.writeInFile(lesson.lessonAsJson.toString(), this)
-            Toast.makeText(this, getString(R.string.import_lesson_successful), Toast.LENGTH_LONG)
-                .show()
-            startActivity(
-                Intent(
-                    this,
-                    MainActivity::class.java
-                ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            )
+            val intent = Intent(this, ImportLessonActivity::class.java)
+            intent.putExtra("uriOfLesson", uri.toString())
+            startActivity(intent)
         } else {
             Toast.makeText(this@NewLessonActivity, getString(R.string.err), Toast.LENGTH_LONG)
                 .show()

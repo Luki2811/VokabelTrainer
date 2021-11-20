@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 val indexJson = JSONObject(indexDatei.loadFromFile(this))
                 val indexArrayJson = indexJson.getJSONArray("index")
                 val layout = findViewById<LinearLayout>(R.id.cardsLayoutHome)
-                for (i in 0..indexArrayJson.length() - 1) {
+                for (i in 0 until indexArrayJson.length()) {
                     val layoutparams = RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -105,10 +105,8 @@ class MainActivity : AppCompatActivity() {
                                     val deleted = file.delete()
                                     if (deleted) {
                                         try {
-                                            for (i2 in 0..indexArrayJson.length() - 1) {
-                                                if (indexArrayJson.getJSONObject(i2)
-                                                        .getString("name")
-                                                        .contentEquals(textInCard.text)
+                                            for (i2 in 0 until indexArrayJson.length()) {
+                                                if (indexArrayJson.getJSONObject(i2).getString("name").contentEquals(textInCard.text)
                                                 ) {
                                                     indexArrayJson.remove(i2)
                                                     indexJson.put("index", indexArrayJson)
