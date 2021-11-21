@@ -75,29 +75,19 @@ class PracticeVocabularyActivity : AppCompatActivity() {
         val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
         val inputAnswer = findViewById<TextInputLayout>(R.id.editTextTranslatedInput)
         val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
-        if (voc!!.isIgnoreCase) {
-            if (inputAnswer.editText?.text.toString().trim { it <= ' ' }
-                    .equals(voc!!.newWord, ignoreCase = true)) {
-                correctionTextView.setText(R.string.correct)
-                voc!!.isWrong = false
-                inputAnswer.isEnabled = false
-            } else {
-                correctionTextView.text =
-                    getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
-                counterRest += 1
-                voc!!.isWrong = true
-            }
+
+        if (inputAnswer.editText?.text.toString().trim { it <= ' ' }.equals(voc!!.newWord, ignoreCase = voc!!.isIgnoreCase)) {
+            correctionTextView.setText(R.string.correct)
+            voc!!.isWrong = false
+            inputAnswer.isEnabled = false
+
         } else {
-            if (inputAnswer.editText?.text.toString().trim { it <= ' ' } == voc!!.newWord) {
-                correctionTextView.setText(R.string.correct)
-                voc!!.isWrong = false
-            } else {
-                correctionTextView.text =
-                    getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
-                counterRest += 1
-                voc!!.isWrong = true
-            }
+            correctionTextView.text =
+                getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
+            counterRest += 1
+            voc!!.isWrong = true
         }
+
         counter += 1
         voc!!.isAlreadyUsed = true
         buttonCheck.setText(R.string.next)
