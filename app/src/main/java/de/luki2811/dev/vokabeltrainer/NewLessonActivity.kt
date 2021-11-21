@@ -30,7 +30,7 @@ class NewLessonActivity : AppCompatActivity() {
         de_native.isChecked = true
     }
 
-    fun checkAndGoNext() {
+    fun checkAndGoNext(view: View) {
         val textName = findViewById<EditText>(R.id.TextLektionName)
         val en_native = findViewById<RadioButton>(R.id.radioButton_native_english)
         val de_native = findViewById<RadioButton>(R.id.radioButton_native_german)

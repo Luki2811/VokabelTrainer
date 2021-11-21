@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -32,6 +34,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
                 }
                 .setNegativeButton("Zurück zur Übung", null).show()
         }
+
         val comingInt = intent
         val lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME)
         val datei = Datei("$lektionName.json")
@@ -70,31 +73,32 @@ class PracticeVocabularyActivity : AppCompatActivity() {
 
     fun checkVoc(view: View) {
         val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
-        val inputAnswer = findViewById<EditText>(R.id.editTextTranslatedInput)
+        val inputAnswer = findViewById<TextInputLayout>(R.id.editTextTranslatedInput)
         val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
         if (voc!!.isIgnoreCase) {
-            if (inputAnswer.text.toString().trim { it <= ' ' }
+            if (inputAnswer.editText?.text.toString().trim { it <= ' ' }
                     .equals(voc!!.newWord, ignoreCase = true)) {
                 correctionTextView.setText(R.string.correct)
                 voc!!.isWrong = false
+                inputAnswer.isEnabled = false
             } else {
                 correctionTextView.text =
                     getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
-                counterRest = counterRest + 1
+                counterRest += 1
                 voc!!.isWrong = true
             }
         } else {
-            if (inputAnswer.text.toString().trim { it <= ' ' } == voc!!.newWord) {
+            if (inputAnswer.editText?.text.toString().trim { it <= ' ' } == voc!!.newWord) {
                 correctionTextView.setText(R.string.correct)
                 voc!!.isWrong = false
             } else {
                 correctionTextView.text =
                     getString(R.string.wrong_the_correct_solution_is, voc!!.newWord)
-                counterRest = counterRest + 1
+                counterRest += 1
                 voc!!.isWrong = true
             }
         }
-        counter = counter + 1
+        counter += 1
         voc!!.isAlreadyUsed = true
         buttonCheck.setText(R.string.next)
         val progressBar = findViewById<ProgressBar>(R.id.progressBarLesson)
@@ -118,10 +122,11 @@ class PracticeVocabularyActivity : AppCompatActivity() {
     private fun continueToNext() {
         val correctionTextView = findViewById<TextView>(R.id.textViewLessonCorrection)
         val textViewToTranslate = findViewById<TextView>(R.id.textViewLessonToTranslate)
-        val inputAnswer = findViewById<EditText>(R.id.editTextTranslatedInput)
+        val inputAnswer = findViewById<TextInputLayout>(R.id.editTextTranslatedInput)
         val buttonCheck = findViewById<Button>(R.id.buttonCheckLesson)
         correctionTextView.text = ""
-        inputAnswer.setText("")
+        inputAnswer.editText?.setText("")
+        inputAnswer.isEnabled = true
         buttonCheck.setText(R.string.check)
         buttonCheck.setOnClickListener { v: View -> checkVoc(v) }
         var newVoc = lesson!!.randomWord

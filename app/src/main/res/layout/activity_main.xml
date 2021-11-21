@@ -15,7 +15,7 @@
         android:clickable="true"
         android:contentDescription="+"
         android:onClick="createNewLektion"
-        app:backgroundTint="@color/Teal"
+        app:backgroundTint="@color/White"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_outline_add_24" />

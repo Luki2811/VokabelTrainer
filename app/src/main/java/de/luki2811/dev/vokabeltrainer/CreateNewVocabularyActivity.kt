@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONArray
@@ -25,7 +26,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         }
     }
 
-    fun finishVocActivity() {
+    fun finishVocActivity(view: View) {
         var json: JSONObject? = null
         try {
             json = allForLesson!!.put("vocabulary", allVoc)
@@ -90,7 +91,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
             return vocabs
         }
 
-    fun saveAndResetVocActivity() {
+    fun saveAndResetVocActivity(view: View) {
         val switchSetting = findViewById<Switch>(R.id.switch_settings_ignoreCase)
         val newVoc = findViewById<EditText>(R.id.editTextNewLanguageVokabel)
         val nativeVoc = findViewById<EditText>(R.id.editTextNativeLanguageVokabel)

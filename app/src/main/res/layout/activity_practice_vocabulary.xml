@@ -18,19 +18,20 @@
 
     <Button
         android:id="@+id/buttonCheckLesson"
+        android:backgroundTint="@color/LightBlue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:onClick="checkVoc"
-
+        android:textColor="@color/Black"
         android:text="@string/check"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/editTextTranslatedInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -39,10 +40,18 @@
         android:layout_marginEnd="16dp"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/translate"
+        android:hint="@string/translation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewLessonToTranslate" />
+        app:layout_constraintTop_toBottomOf="@+id/textViewLessonToTranslate"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
         android:id="@+id/textViewLesson"
@@ -75,7 +84,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_close_24" />
+        android:background="@drawable/ic_baseline_close_24" />
 
     <TextView
         android:id="@+id/textViewLessonCorrection"

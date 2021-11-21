@@ -9,13 +9,16 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.setPadding
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,20 +53,21 @@ class MainActivity : AppCompatActivity() {
                         RelativeLayout.LayoutParams.MATCH_PARENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT
                     )
-                    layoutparams.bottomMargin = 25
+                    layoutparams.bottomMargin = 5
                     layoutparams.rightMargin = 25
                     layoutparams.leftMargin = 25
                     layoutparams.topMargin = 25
-                    val cardView = CardView(this)
+                    val cardView = MaterialCardView(this)
                     cardView.layoutParams = layoutparams
                     cardView.radius = 25f
                     cardView.setContentPadding(10, 10, 10, 10)
-                    cardView.setCardBackgroundColor(getColor(R.color.Aquamarine))
+                    cardView.setCardBackgroundColor(Color.WHITE)
                     cardView.cardElevation = 3f
                     cardView.maxCardElevation = 5f
                     layout.addView(cardView)
+
+                    // TextView Name
                     val textInCard = TextView(this)
-                    textInCard.id = i + 2000
                     val layoutparamsText = RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.WRAP_CONTENT,
                         RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -75,14 +79,15 @@ class MainActivity : AppCompatActivity() {
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
-                    textInCard.setTextColor(Color.WHITE)
-                    textInCard.gravity = Gravity.TOP
+                    textInCard.setTextColor(Color.BLACK)
+                    textInCard.textSize = 18F
 
                     // H+W for icons
                     val layoutparamsIcons = RelativeLayout.LayoutParams(100, 100)
 
                     // Delete button
                     val delete = ImageButton(this)
+                    delete.id = View.generateViewId()
                     delete.setBackgroundResource(R.drawable.rounded_red_button)
                     delete.setImageDrawable(
                         ContextCompat.getDrawable(
@@ -91,11 +96,11 @@ class MainActivity : AppCompatActivity() {
                         )
                     )
                     delete.layoutParams = layoutparamsIcons
+                    delete.setPadding(10, 10, 10, 10)
                     delete.setOnClickListener { view: View? ->
-                        AlertDialog.Builder(this)
+                        MaterialAlertDialogBuilder(this)
                             .setTitle("")
                             .setMessage("Möchtest du wirklich die Lektion löschen ??")
-                            .setIcon(R.drawable.outline_delete_24)
                             .setPositiveButton(R.string.delete) { dialogInterface: DialogInterface?, i1: Int ->
                                 val file = File(
                                     applicationContext.filesDir,
@@ -140,31 +145,33 @@ class MainActivity : AppCompatActivity() {
                             .show()
                     }
                     // Edit Button
-                    val cardEdit = ImageButton(this)
-                    cardEdit.setBackgroundResource(R.drawable.rounded_blue_button)
-                    cardEdit.setImageDrawable(
+                    val edit = ImageButton(this)
+                    delete.id = View.generateViewId()
+                    edit.setBackgroundResource(R.drawable.rounded_blue_button)
+                    edit.setImageDrawable(
                         ContextCompat.getDrawable(
                             applicationContext,
                             R.drawable.ic_outline_edit_24
                         )
                     )
-                    cardEdit.layoutParams = layoutparamsIcons
-                    cardEdit.setOnClickListener { view: View? ->
+                    edit.layoutParams = layoutparamsIcons
+                    edit.setOnClickListener { view: View? ->
                         val intent = Intent(this, EditLessonActivity::class.java)
                         intent.putExtra(LEKTION_NAME, textInCard.text)
                         startActivity(intent)
                     }
                     // Export Button
-                    val exportButtonCard = ImageButton(this)
-                    exportButtonCard.setBackgroundResource(R.drawable.rounded_orange_button)
-                    exportButtonCard.setImageDrawable(
+                    val export = ImageButton(this)
+                    export.id = View.generateViewId()
+                    export.setBackgroundResource(R.drawable.rounded_orange_button)
+                    export.setImageDrawable(
                         ContextCompat.getDrawable(
                             applicationContext,
                             R.drawable.ic_baseline_share_24
                         )
                     )
-                    exportButtonCard.layoutParams = layoutparamsIcons
-                    exportButtonCard.setOnClickListener { view: View? ->
+                    export.layoutParams = layoutparamsIcons
+                    export.setOnClickListener { view: View? ->
                         val sharingIntent = Intent(Intent.ACTION_SEND)
                         val fileUri = FileProvider.getUriForFile(
                             this, this.applicationContext.packageName + ".provider", File(
@@ -178,9 +185,9 @@ class MainActivity : AppCompatActivity() {
 
 
                     // Practice Button
-                    val cardLearnButton = MaterialButton(this, null, R.attr.borderlessButtonStyle)
+                    val cardLearnButton = MaterialButton(this, null, R.attr.materialButtonOutlinedStyle)
                     cardLearnButton.setText(R.string.practice)
-                    cardLearnButton.setBackgroundDrawable(getDrawable(R.drawable.outline_button))
+                    cardLearnButton.setTextColor(getColor(R.color.Black))
                     cardLearnButton.cornerRadius = 100
                     cardLearnButton.setOnClickListener { view: View? ->
                         val intent = Intent(this, PracticeVocabularyActivity::class.java)
@@ -188,14 +195,43 @@ class MainActivity : AppCompatActivity() {
                         startActivity(intent)
                     }
 
-                    // Add all to a Layout
-                    // TEMP without structure
+                    // Add all to several Layouts
+
                     val cardLayout = LinearLayout(this)
-                    cardLayout.addView(delete)
-                    cardLayout.addView(cardEdit)
-                    cardLayout.addView(exportButtonCard)
-                    cardLayout.addView(textInCard)
-                    cardLayout.addView(cardLearnButton)
+                    cardLayout.orientation = LinearLayout.VERTICAL
+
+                    val deleteIconLayout = LinearLayout(this)
+                    deleteIconLayout.addView(delete)
+                    deleteIconLayout.setPadding(0,0,7,0)
+                    val editIconLayout = LinearLayout(this)
+                    editIconLayout.addView(edit)
+                    editIconLayout.setPadding(0,0,7,0)
+                    val exportIconLayout = LinearLayout(this)
+                    exportIconLayout.addView(export)
+                    exportIconLayout.setPadding(0,0,7,0)
+
+                    val iconsLayout = LinearLayout(this)
+                    iconsLayout.addView(exportIconLayout)
+                    iconsLayout.addView(editIconLayout)
+                    iconsLayout.addView(deleteIconLayout)
+                    iconsLayout.gravity = Gravity.END
+
+                    val textLayout = LinearLayout(this)
+                    textLayout.setPadding(5)
+
+                    val buttonLayout = LinearLayout(this)
+                    buttonLayout.gravity = Gravity.CENTER_HORIZONTAL
+
+
+                    buttonLayout.addView(cardLearnButton)
+
+
+
+                    textLayout.addView(textInCard)
+
+                    cardLayout.addView(iconsLayout)
+                    cardLayout.addView(textLayout)
+                    cardLayout.addView(buttonLayout)
                     cardView.addView(cardLayout)
                 }
             } catch (e: JSONException) {

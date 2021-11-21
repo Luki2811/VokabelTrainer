@@ -31,6 +31,7 @@
     <string name="practice">Üben</string>
     <string name="check">Überprüfen</string>
     <string name="translate">Übersetze:</string>
+    <string name="translation">Übersetzung</string>
     <string name="err_name_contains_wrong_letter">Fehler: Name beinhaltet eines der folgenden Zeichen (:,\",\\,/,|,\?,*,>,\u003C)</string>
     <string name="correct">Richtig</string>
     <string name="wrong">Falsch</string>
