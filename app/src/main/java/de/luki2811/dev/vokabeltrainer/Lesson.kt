@@ -59,7 +59,7 @@ class Lesson {
 
     fun isNameValid(context: Context): Boolean{
 
-        if(name.length <= 50){
+        if(name.length >= 50){
             Toast.makeText(context, context.getString(R.string.err_name_too_long_max, 50), Toast.LENGTH_LONG).show()
             return false
         }
