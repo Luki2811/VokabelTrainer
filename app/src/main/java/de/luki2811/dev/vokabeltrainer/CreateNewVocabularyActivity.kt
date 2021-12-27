@@ -16,10 +16,10 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_new_vokabel)
-        val intent = intent
+        intent
         try {
             val output = findViewById<TextView>(R.id.outputCreateVocabulary)
-            allForLesson = JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT))
+            // allForLesson = JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT))
             output.text = getString(R.string.from_at_least_ten_vocs, allForLesson!!.getInt("count"))
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -30,16 +30,16 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         var json: JSONObject? = null
         try {
             json = allForLesson!!.put("vocabulary", allVoc)
-            val file = Datei(json.getString("name") + ".json")
+            val file = AppFile(json.getString("name") + ".json")
             file.writeInFile(json.toString(), this)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
         // Create new index
-        val file = File(applicationContext.filesDir, Datei.NAME_FILE_INDEX)
+        val file = File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
         var indexAsJson: JSONObject
         var jsonArray: JSONArray? = null
-        val index = Datei(Datei.NAME_FILE_INDEX)
+        val index = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
         if (file.exists()) {
             try {
                 indexAsJson = JSONObject(index.loadFromFile(this))

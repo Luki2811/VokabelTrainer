@@ -7,12 +7,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import org.json.JSONException
 import org.json.JSONObject
 
 class PracticeVocabularyActivity : AppCompatActivity() {
+
+    // TODO: Als Fragment hinzufügen und Überarbeiten
+    // TODO: Weitere Typen hinzufügen zum Abfragen
+    // TODO: Vokabelgruppen "importieren" anhand von ID zur Lektion hinzufügen
+
     private var lesson: Lesson? = null
     private var voc: VocabularyWord? = null
     private var counter = 0
@@ -37,7 +41,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
 
         val comingInt = intent
         val lektionName = comingInt.getStringExtra(MainActivity.LEKTION_NAME)
-        val datei = Datei("$lektionName.json")
+        val datei = AppFile("$lektionName.json")
         try {
             val lektionAsJSON = JSONObject(datei.loadFromFile(this))
             val nativeLan = Language(lektionAsJSON.getInt("languageNative"))

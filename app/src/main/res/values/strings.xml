@@ -6,7 +6,7 @@
     <string name="language_french">Französisch</string>
     <string name="close">Schließen</string>
     <string name="name">Name</string>
-    <string name="lection_name">Name der Lektion</string>
+    <string name="lesson_name">Name der Lektion</string>
     <string name="known_word_language">Vokabel übersetzt</string>
     <string name="new_word_language">Vokabel in der neuen Sprache</string>
     <string name="native_language">Muttersprache</string>
@@ -53,4 +53,13 @@
     <string name="err_no_permission">Fehler: Keine Berechtigung !</string>
     <string name="import_">importieren</string>
     <string name="err_name_too_long_max">Fehler: Name zu lang ! (max. %1$d Zeichen)</string>
+    <string name="streak">Streak</string>
+    <string name="daily_xp_objective">Tägliches Tagesziel</string>
+    <string name="learn">Lernen</string>
+    <string name="plus">+</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="create_new_lesson">Neue Lektion erstellen</string>
+    <string name="create_new_vocabulary_group">Neue Vokabelgruppe erstellen</string>
+    <string name="vocabulary_group_name">Name der Vokabelgruppe</string>
+    <string name="get_with_nfc">Empfangen mit NFC</string>
 </resources>

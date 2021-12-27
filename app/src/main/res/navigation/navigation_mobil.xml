@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/streakFragment">
+
+    <fragment
+        android:id="@+id/learnFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.LearnFragment"
+        android:label="fragment_learn"
+        tools:layout="@layout/fragment_learn" />
+    <fragment
+        android:id="@+id/streakFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.StreakFragment"
+        android:label="fragment_streak"
+        tools:layout="@layout/fragment_streak" />
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

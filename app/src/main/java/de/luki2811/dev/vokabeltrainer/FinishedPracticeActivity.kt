@@ -11,6 +11,9 @@ import android.content.Intent
 import android.view.View
 
 class FinishedPracticeActivity : AppCompatActivity() {
+
+    //TODO: Als Fragment ersetzen und überarbeiten
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_finished_practice)

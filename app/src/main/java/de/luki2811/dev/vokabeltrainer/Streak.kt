@@ -15,7 +15,7 @@ class Streak(var context: Context) {
     var lastTimeChecked: LocalDate = LocalDate.now()
     var isReachedToday = false
     fun addXP(value: Int) {
-        val streakDatei = Datei(Datei.NAME_FILE_STREAK)
+        val streakDatei = AppFile(AppFile.NAME_FILE_STREAK)
         try {
             val streakData = JSONObject(streakDatei.loadFromFile(context))
             streakData.put("reachedInXPToday", value + xpReached)
@@ -27,8 +27,8 @@ class Streak(var context: Context) {
     }
 
     init {
-        val streakFile = File(context.filesDir, Datei.NAME_FILE_STREAK)
-        val streakDatei = Datei(Datei.NAME_FILE_STREAK)
+        val streakFile = File(context.filesDir, AppFile.NAME_FILE_STREAK)
+        val streakDatei = AppFile(AppFile.NAME_FILE_STREAK)
         if (streakFile.exists()) {
             try {
                 val streakData = JSONObject(streakDatei.loadFromFile(context))

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="streak_xp_objectives">
+        <item>100</item>
+        <item>50</item>
+        <item>25</item>
+        <item>10</item>
+    </array>
+</resources>

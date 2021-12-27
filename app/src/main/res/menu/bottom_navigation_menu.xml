@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/learnFragment"
+        android:icon="@drawable/ic_baseline_menu_book_24"
+        android:title="@string/learn"/>
+    <item
+        android:id="@+id/streakFragment"
+        android:icon="@drawable/ic_baseline_streak_24"
+        android:title="@string/streak"/>
+    <item
+        android:id="@+id/settingsFragment"
+        android:icon="@drawable/ic_outline_settings_24"
+        android:title="@string/settings"/>
+</menu>

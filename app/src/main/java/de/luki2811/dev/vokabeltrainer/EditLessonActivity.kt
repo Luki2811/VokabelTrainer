@@ -8,11 +8,13 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import de.luki2811.dev.vokabeltrainer.MainActivity
 import org.json.JSONException
 import org.json.JSONObject
 
 class EditLessonActivity : AppCompatActivity() {
+
+    // TODO: Komplett überarbeiten
+
     var lesson: Lesson? = null
     var counter = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,7 +22,7 @@ class EditLessonActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_lesson)
         val comingInt = intent
         val lessonName = comingInt.getStringExtra(MainActivity.LEKTION_NAME)
-        val datei = Datei("$lessonName.json")
+        val datei = AppFile("$lessonName.json")
         try {
             val lektionAsJSON = JSONObject(datei.loadFromFile(this))
             lesson = Lesson(lektionAsJSON)
@@ -62,7 +64,7 @@ class EditLessonActivity : AppCompatActivity() {
             switchIgnoreCase.isChecked
         )
         lesson!!.setWordAtPos(counter - 1, vocNew)
-        val datei = Datei(lesson!!.name + ".json")
+        val datei = AppFile(lesson!!.name + ".json")
         datei.writeInFile(lesson!!.lessonAsJson.toString(), this)
         counter = counter + 1
         if (counter <= lesson!!.count) {
