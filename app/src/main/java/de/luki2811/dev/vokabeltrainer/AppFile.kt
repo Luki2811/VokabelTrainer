@@ -9,29 +9,14 @@ import java.nio.charset.StandardCharsets
 class AppFile(var name: String) : Application() {
 
     fun loadFromFile(context: Context): String {
-        var fis: FileInputStream? = null
-        try {
-            fis = context.openFileInput(name)
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        }
-        val inputStreamReader = InputStreamReader(fis, StandardCharsets.UTF_8)
-        val stringBuilder = StringBuilder()
-        try {
-            BufferedReader(inputStreamReader).use { reader ->
-                var line = reader.readLine()
-                while (line != null) {
-                    stringBuilder.append(line).append('\n')
-                    line = reader.readLine()
-                }
+        return context.openFileInput(name).bufferedReader().useLines { lines ->
+            lines.fold("") { some, text ->
+                "$some\n$text"
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
-        return stringBuilder.toString()
     }
 
-    fun writeInFile(text: String?, context: Context) {
+    fun writeInFile(text: String, context: Context) {
         try {
             val outputStreamWriter = OutputStreamWriter(context.openFileOutput(name, MODE_PRIVATE))
             outputStreamWriter.write(text)
@@ -43,8 +28,19 @@ class AppFile(var name: String) : Application() {
 
     companion object {
 
+        fun writeInFile(text: String ,file: File){
+            try {
+                val outputStreamWriter = OutputStreamWriter(FileOutputStream(file))
+                outputStreamWriter.write(text)
+                outputStreamWriter.close()
+            } catch (e: IOException) {
+                Log.e("Exception", "File write failed: $e")
+            }
+        }
+
         fun loadFromFile(file: File): String {
             var fis: FileInputStream? = null
+            println(file.toURI().toString())
             try {
                 fis = FileInputStream(file)
             } catch (e: FileNotFoundException) {
@@ -71,6 +67,19 @@ class AppFile(var name: String) : Application() {
         const val NAME_FILE_INDEX_VOCABULARYGROUPS = "indexVocabularyGroups.json"
         const val NAME_FILE_INDEX_ID = "indexId.json"
         const val NAME_FILE_SETTINGS = "settings.json"
+
+        fun isAppFile(name: String): Boolean{
+            if(
+                name == NAME_FILE_STREAK ||
+                name == NAME_FILE_INDEX_LESSONS ||
+                name == NAME_FILE_INDEX_VOCABULARYGROUPS ||
+                name == NAME_FILE_INDEX_ID ||
+                name == NAME_FILE_SETTINGS)
+                    return true
+            return false
+        }
+
+
 
     }
 

@@ -26,6 +26,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupViews() {
+        // TODO: TopBar Namen berarbeiten
+
         val navView: BottomNavigationView = binding.bottomNavigation
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment

@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer
 import android.content.Context
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputEditText
+import de.luki2811.dev.vokabeltrainer.AppFile.Companion.isAppFile
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -57,48 +58,6 @@ class Lesson {
 
     fun getWordAtPos(pos: Int): VocabularyWord {
         return vocs[pos]
-    }
-
-    fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
-        val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
-        val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
-
-        if (textInputEditText.text.toString().length > 50)
-            return 3
-
-        if(textInputEditText.text.toString().trim().isEmpty())
-            return 4
-
-        if (textInputEditText.text.toString().trim().contains("/") ||
-            textInputEditText.text.toString().trim().contains("<") ||
-            textInputEditText.text.toString().trim().contains(">") ||
-            textInputEditText.text.toString().trim().contains("\\") ||
-            textInputEditText.text.toString().trim().contains("|") ||
-            textInputEditText.text.toString().trim().contains("*") ||
-            textInputEditText.text.toString().trim().contains(":") ||
-            textInputEditText.text.toString().trim().contains("\"") ||
-            textInputEditText.text.toString().trim().contains("?")
-        ) return 1
-
-        if (indexFile.exists()) {
-
-            val indexLessons =
-                JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
-            for (i in 0 until indexLessons.length()) {
-                if (indexLessons.getJSONObject(i)
-                        .getString("name") == textInputEditText.text.toString().trim() ||
-                    textInputEditText.toString().trim()
-                        .equals("streak", ignoreCase = true)
-                    || textInputEditText.text.toString().trim()
-                        .equals("settings", ignoreCase = true)
-                    || textInputEditText.text.toString().trim()
-                        .equals("indexLections", ignoreCase = true)
-                ) {
-                    return 2
-                }
-            }
-        }
-        return 0
     }
 
     fun isNameValid(context: Context): Boolean{
@@ -177,4 +136,43 @@ class Lesson {
                 null
             }
         }
+
+    companion object{
+        fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
+            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+            val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
+
+            if (textInputEditText.text.toString().length > 50)
+                return 3
+
+            if(textInputEditText.text.toString().trim().isEmpty())
+                return 4
+
+            if(isAppFile(textInputEditText.text.toString().trim()))
+                return 2
+
+            if (textInputEditText.text.toString().trim().contains("/") ||
+                textInputEditText.text.toString().trim().contains("<") ||
+                textInputEditText.text.toString().trim().contains(">") ||
+                textInputEditText.text.toString().trim().contains("\\") ||
+                textInputEditText.text.toString().trim().contains("|") ||
+                textInputEditText.text.toString().trim().contains("*") ||
+                textInputEditText.text.toString().trim().contains(":") ||
+                textInputEditText.text.toString().trim().contains("\"") ||
+                textInputEditText.text.toString().trim().contains("?")
+            ) return 1
+
+            if (indexFile.exists()) {
+
+                val indexLessons =
+                    JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
+                for (i in 0 until indexLessons.length()) {
+                    if (indexLessons.getJSONObject(i).getString("name") == textInputEditText.text.toString().trim())
+                        return 2
+
+                }
+            }
+            return 0
+        }
+    }
 }

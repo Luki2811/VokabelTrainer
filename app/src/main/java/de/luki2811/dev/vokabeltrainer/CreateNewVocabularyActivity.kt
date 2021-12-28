@@ -10,7 +10,10 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
+// TODO: Klasse entfernen !! -> ersetzt durch NewAddVocabularyToGroupFragment.kt
+
 class CreateNewVocabularyActivity : AppCompatActivity() {
+    /**
     private var allForLesson: JSONObject? = null
     private var allVoc: JSONArray? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,7 +21,7 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         setContentView(R.layout.activity_create_new_vokabel)
         intent
         try {
-            val output = findViewById<TextView>(R.id.outputCreateVocabulary)
+            val output = findViewById<TextView>(R.id.textViewNumberOfVoc)
             // allForLesson = JSONObject(intent.getStringExtra(NewLessonActivity.JSON_OBJECT))
             output.text = getString(R.string.from_at_least_ten_vocs, allForLesson!!.getInt("count"))
         } catch (e: JSONException) {
@@ -71,9 +74,9 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
 
     private val enteredVocabulary: JSONObject?
         get() {
-            val newVoc = findViewById<EditText>(R.id.editTextNewLanguageVokabel)
-            val nativeVoc = findViewById<EditText>(R.id.editTextNativeLanguageVokabel)
-            val switchSetting = findViewById<Switch>(R.id.switch_settings_ignoreCase)
+            val newVoc = findViewById<EditText>(R.id.textEditVocabularyWordNewLayout)
+            val nativeVoc = findViewById<EditText>(R.id.editTextVocabularyWordKnownLayout)
+            val switchSetting = findViewById<Switch>(R.id.switchVocabularyWordIgnoreCase)
             if (newVoc.text.toString().trim { it <= ' ' } == "" || nativeVoc.text.toString()
                     .trim { it <= ' ' } == "") {
                 Toast.makeText(this, getString(R.string.err_missing_input), Toast.LENGTH_LONG)
@@ -92,11 +95,11 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         }
 
     fun saveAndResetVocActivity(view: View) {
-        val switchSetting = findViewById<Switch>(R.id.switch_settings_ignoreCase)
-        val newVoc = findViewById<EditText>(R.id.editTextNewLanguageVokabel)
-        val nativeVoc = findViewById<EditText>(R.id.editTextNativeLanguageVokabel)
-        val output = findViewById<TextView>(R.id.outputCreateVocabulary)
-        val buttonFinish = findViewById<Button>(R.id.button_vokabel_next)
+        val switchSetting = findViewById<Switch>(R.id.switchVocabularyWordIgnoreCase)
+        val newVoc = findViewById<EditText>(R.id.textEditVocabularyWordNewLayout)
+        val nativeVoc = findViewById<EditText>(R.id.editTextVocabularyWordKnownLayout)
+        val output = findViewById<TextView>(R.id.textViewNumberOfVoc)
+        val buttonFinish = findViewById<Button>(R.id.buttonFinishAddVocabulary)
         try {
             // Falls allVoc = null -> Object erstellen
             if (allVoc == null) allVoc = JSONArray()
@@ -117,5 +120,5 @@ class CreateNewVocabularyActivity : AppCompatActivity() {
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-    }
+    } **/
 }

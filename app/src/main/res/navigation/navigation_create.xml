@@ -38,5 +38,14 @@
         android:id="@+id/newVocabularyGroupFragment"
         android:name="de.luki2811.dev.vokabeltrainer.NewVocabularyGroupFragment"
         android:label="fragment_new_vocabulary_group"
-        tools:layout="@layout/fragment_new_vocabulary_group" />
+        tools:layout="@layout/fragment_new_vocabulary_group" >
+        <action
+            android:id="@+id/action_newVocabularyGroupFragment_to_newAddVocabularyToGroupFragment"
+            app:destination="@id/newAddVocabularyToGroupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newAddVocabularyToGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.NewAddVocabularyToGroupFragment"
+        android:label="fragment_new_add_vocabulary_to_group"
+        tools:layout="@layout/fragment_new_add_vocabulary_to_group" />
 </navigation>

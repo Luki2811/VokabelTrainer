@@ -62,4 +62,5 @@
     <string name="create_new_vocabulary_group">Neue Vokabelgruppe erstellen</string>
     <string name="vocabulary_group_name">Name der Vokabelgruppe</string>
     <string name="get_with_nfc">Empfangen mit NFC</string>
+    <string name="number_vocs">Anzahl Vokabeln: %1$d</string>
 </resources>

@@ -8,8 +8,6 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
-import org.json.JSONObject
-import java.io.File
 
 class NewLessonFragment : Fragment() {
 
@@ -32,7 +30,7 @@ class NewLessonFragment : Fragment() {
         val lesson = Lesson(binding.textLessonName.text.toString())
 
         // Check Name
-        when (lesson.isNameValid(requireContext(), binding.textLessonName)) {
+        when (Lesson.isNameValid(requireContext(), binding.textLessonName)) {
             0 -> binding.textLessonName.error = null
             1 -> {
                 binding.textLessonName.error = getString(R.string.err_name_contains_wrong_letter)

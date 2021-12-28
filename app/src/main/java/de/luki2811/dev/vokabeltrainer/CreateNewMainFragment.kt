@@ -40,6 +40,7 @@ class CreateNewMainFragment : Fragment() {
 
         // TODO: Fragment hinzufügen, um es mit NFC zu empfangen -> https://developer.android.com/training/beam-files
         binding.getWithNFC.isEnabled = false
+        binding.getWithNFC.setOnClickListener { Toast.makeText(requireContext(), "NFC deaktiviert", Toast.LENGTH_LONG).show() }
 
         return binding.root
     }
