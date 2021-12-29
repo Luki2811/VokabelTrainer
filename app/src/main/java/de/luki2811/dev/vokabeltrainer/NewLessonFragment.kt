@@ -19,13 +19,13 @@ class NewLessonFragment : Fragment() {
     ): View {
         _binding = FragmentNewLessonBinding.inflate(inflater, container, false)
 
-        binding.buttonNext.setOnClickListener { goNext() }
+        // binding.buttonNext.setOnClickListener { goNext() }
 
         return binding.root
     }
 
 
-    private fun goNext() {
+    /** private fun goNext() {
 
         val lesson = Lesson(binding.textLessonName.text.toString())
 
@@ -80,7 +80,7 @@ class NewLessonFragment : Fragment() {
 
     }
 
-    /** fun checkAndGoNext(view: View) {
+    fun checkAndGoNext(view: View) {
     val textName = findViewById<EditText>(R.id.TextLektionName)
     val en_native = findViewById<RadioButton>(R.id.radioButton_native_english)
     val de_native = findViewById<RadioButton>(R.id.radioButton_native_german)

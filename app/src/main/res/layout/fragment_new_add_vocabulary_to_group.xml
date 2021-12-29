@@ -1,133 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".NewAddVocabularyToGroupFragment">
 
-    <ScrollView
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/textViewVocabularyWordNew"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/new_word_language"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textEditVocabularyWordNewLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyWordNew">
 
-            <TextView
-                android:id="@+id/textViewVocabularyWordNew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/new_word_language"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textEditVocabularyWordNewLayout"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/textEditVocabularyWordNew"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyWordNew">
+                android:layout_height="match_parent"
+                android:hint=""
+                android:inputType="textPersonName" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textEditVocabularyWordNew"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint=""
-                    android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/textViewVocabularyWordKnown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/known_word_language"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textEditVocabularyWordNewLayout" />
 
-            <TextView
-                android:id="@+id/textViewVocabularyWordKnown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/known_word_language"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textEditVocabularyWordNewLayout" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editTextVocabularyWordKnownLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyWordKnown">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editTextVocabularyWordKnownLayout"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextVocabularyWordKnown"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyWordKnown">
+                android:layout_height="match_parent"
+                android:hint=""
+                android:inputType="textPersonName" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/editTextVocabularyWordKnown"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint=""
-                    android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <TextView
+            android:id="@+id/textViewSettingsVocabularyWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/settings"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyWordKnownLayout" />
 
-            <TextView
-                android:id="@+id/textViewSettingsVocabularyWord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/settings"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyWordKnownLayout" />
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switchVocabularyWordIgnoreCase"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/ignore_case"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVocabularyWord" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
-                android:id="@+id/switchVocabularyWordIgnoreCase"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="4dp"
-                android:text="@string/ignore_case"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVocabularyWord" />
+        <Button
+            android:id="@+id/buttonFinishAddVocabulary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="20dp"
+            android:enabled="false"
+            android:text="@string/next"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCase" />
 
-            <Button
-                android:id="@+id/buttonFinishAddVocabulary"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
-                android:enabled="false"
-                android:text="@string/next"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCase" />
+        <Button
+            android:id="@+id/buttonAddNewVocabularyWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/create_additional_vocabel"
+            app:layout_constraintStart_toEndOf="@+id/buttonFinishAddVocabulary"
+            app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCase" />
 
-            <Button
-                android:id="@+id/buttonAddNewVocabularyWord"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
-                android:text="@string/create_additional_vocabel"
-                app:layout_constraintStart_toEndOf="@+id/buttonFinishAddVocabulary"
-                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCase" />
+        <TextView
+            android:id="@+id/textViewNumberOfVoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/number_vocs"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonFinishAddVocabulary" />
 
-            <TextView
-                android:id="@+id/textViewNumberOfVoc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/number_vocs"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonFinishAddVocabulary" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
-
-</FrameLayout>
+</ScrollView>

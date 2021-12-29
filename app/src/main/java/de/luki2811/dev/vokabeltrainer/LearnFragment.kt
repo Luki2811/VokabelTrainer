@@ -155,7 +155,7 @@ class LearnFragment : Fragment() {
                         startActivity(intent)
                     }
                     // Export Button
-                    val export = ImageButton(context)
+                    /** val export = ImageButton(context)
                     export.id = View.generateViewId()
                     export.setBackgroundResource(R.drawable.rounded_orange_button)
                     export.setImageDrawable(
@@ -166,7 +166,6 @@ class LearnFragment : Fragment() {
                     )
                     export.layoutParams = layoutparamsIcons
                     export.setOnClickListener {
-                        // TODO: Vorerst sollen nur VokabelGruppen teilbar sein !!
                         val sharingIntent = Intent(Intent.ACTION_SEND)
                         val fileUri = FileProvider.getUriForFile(
                             context, this.requireContext().packageName + ".provider", File(
@@ -176,7 +175,7 @@ class LearnFragment : Fragment() {
                         sharingIntent.type = "application/json"
                         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
                         startActivity(Intent.createChooser(sharingIntent, "Lektion teilen mit"))
-                    }
+                    } **/
 
 
                     // Practice Button
@@ -202,7 +201,7 @@ class LearnFragment : Fragment() {
                     editIconLayout.addView(edit)
                     editIconLayout.setPadding(0,0,7,0)
                     val exportIconLayout = LinearLayout(context)
-                    exportIconLayout.addView(export)
+                    // exportIconLayout.addView(export)
                     exportIconLayout.setPadding(0,0,7,0)
 
                     val iconsLayout = LinearLayout(context)

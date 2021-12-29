@@ -9,101 +9,90 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportBinding
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.net.URI
 
 class ImportFragment : Fragment() {
 
     private var _binding: FragmentImportBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var lesson: Lesson
+    private lateinit var vocabularyGroup: VocabularyGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentImportBinding.inflate(inflater, container, false)
 
-        val _context = requireContext()
+        val context = requireContext()
 
-        binding.buttonImportLessonCancel.setOnClickListener { cancelImportLesson() }
-        binding.buttonImportLessonFinish.setOnClickListener { finishImport() }
+        binding.buttonImportVocabularyGroupCancel.setOnClickListener { cancelImportLesson() }
+        binding.buttonImportVocabularyGroupFinish.setOnClickListener { finishImport() }
 
 
-        val uri: Uri? = arguments?.getParcelable("KEY_DATA")
-        if(uri == null){
-            Toast.makeText(_context, getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
-            findNavController().navigate(R.id.action_importFragment_to_createNewMainFragment)
-        }else{
-            val file = File(RealPathUtil.getRealPath(_context, uri)!!)
-            val datei = AppFile(file.name)
-            // Create new Lesson
-            try {
-                val lessonAsJSON = JSONObject(datei.loadFromFile(requireContext()))
-                if(lessonAsJSON.getJSONArray("vocabulary").length() >= 10){
-                    lesson = Lesson(lessonAsJSON)
-                    binding.EditLessonNameImport.setText(lesson.name)
-                    binding.EditLessonNameImport.hint = lesson.name
-                }
+        val uri: Uri = Uri.parse(arguments?.getString("KEY_DATA"))
+        println(uri.toString())
+        val file = File(RealPathUtil.getRealPath(context, uri)!!)
 
-            } catch (e: JSONException) {
-                e.printStackTrace()
-                Toast.makeText(_context, getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
-                findNavController().navigate(R.id.action_importFragment_to_createNewMainFragment)
+        // Create new Lesson
+        try {
+            val groupAsJSON = JSONObject(loadFromFile(file))
+            if(groupAsJSON.getJSONArray("vocabulary").length() >= 2){
+                vocabularyGroup = VocabularyGroup(groupAsJSON, requireContext())
+                binding.editVocabularyGroupNameImport.setText(vocabularyGroup.name)
+                binding.editVocabularyGroupNameImport.hint = vocabularyGroup.name
             }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+            Toast.makeText(context, getText(R.string.err_could_not_import_vocabulary_group), Toast.LENGTH_LONG).show()
+            findNavController().navigate(R.id.action_importFragment_to_createNewMainFragment)
         }
         return binding.root
     }
 
     private fun finishImport() {
-        val _context = requireContext()
-        // Set Text
-        val editTextName = binding.EditLessonNameImport
-        if(editTextName.text.toString().trim().isNotEmpty())
-            lesson.name = editTextName.text.toString()
-        // Check if lesson is correct
-        if(!lesson.isNameValid(_context))
-            return
+        val context = requireContext()
 
-        val indexFile = File(_context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
-        val indexDatei = AppFile(indexFile.name)
+        // Create and register ID
+        vocabularyGroup.id = Id(context)
 
-        // Create index
-        if (!indexFile.exists()) {
-            indexDatei.writeInFile("", _context)
-        }
-        var indexAsJson: JSONObject
-        var jsonArray: JSONArray? = null
-        if (indexFile.exists()) {
-            try {
-                indexAsJson = JSONObject(indexDatei.loadFromFile(_context))
-                jsonArray = indexAsJson.getJSONArray("index")
-            } catch (e: JSONException) {
-                e.printStackTrace()
-                indexAsJson = JSONObject()
+        // set Name
+        when (VocabularyGroup.isNameValid(requireContext(), binding.editVocabularyGroupNameImport)) {
+            0 -> {
+                binding.editVocabularyGroupNameImport.error = null
+                vocabularyGroup.name = binding.editVocabularyGroupNameImport.text.toString()
             }
-        } else indexAsJson = JSONObject()
-        try {
-            if (jsonArray == null) jsonArray = JSONArray()
-            val jo = JSONObject()
-            jo.put("name", lesson.name)
-            jo.put("file", lesson.name + ".json")
-            jsonArray.put(jo)
-            indexAsJson.put("index", jsonArray)
-        } catch (e: JSONException) {
-            e.printStackTrace()
+            1 -> {
+                binding.editVocabularyGroupNameImport.error = getString(R.string.err_name_contains_wrong_letter)
+                return
+            }
+            2 -> {
+                binding.editVocabularyGroupNameImport.error = getString(R.string.err_name_already_taken)
+                return
+            }
+            3 -> {
+                binding.editVocabularyGroupNameImport.error = getString(R.string.err_name_too_long_max, 50)
+                return
+            }
+            4 -> {
+                binding.editVocabularyGroupNameImport.error = getString(R.string.err_missing_name)
+                return
+            }
         }
-        indexDatei.writeInFile(indexAsJson.toString(), _context)
+
+        // Save in Index
+        vocabularyGroup.saveInIndex(context)
 
         // Save lesson as .json
-        val saveDatei = AppFile(lesson.name + ".json")
-        saveDatei.writeInFile(lesson.lessonAsJson.toString(), _context)
-        Toast.makeText(_context, getString(R.string.import_lesson_successful), Toast.LENGTH_LONG).show()
-        startActivity(
-            Intent(_context, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        )
+        var file = File(requireContext().filesDir, "vocabularyGroups")
+        file.mkdirs()
+        file = File(file, vocabularyGroup.id.number.toString() + ".json" )
+        AppFile.writeInFile(vocabularyGroup.getAsJson().toString(), file)
+
+        startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
     private fun cancelImportLesson(){

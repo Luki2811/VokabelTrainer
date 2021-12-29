@@ -10,6 +10,9 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,6 +26,16 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupViews()
+
+        // Erstellen der IndexDatein mit leerem Index
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).exists())
+            AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)
+
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_ID).exists())
+            AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)
+
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_LESSONS).exists())
+            AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)
     }
 
     private fun setupViews() {
@@ -42,12 +55,11 @@ class MainActivity : AppCompatActivity() {
 
 
     fun createNewButtonOnClick(view: View?) {
-        startActivity(Intent(this@MainActivity, CreateNewActivity::class.java))
+        startActivity(Intent(applicationContext, CreateNewActivity::class.java))
     }
 
     companion object {
         const val LEKTION_NAME = "de.luki2811.dev.vokabeltrainer"
-
         /**
          * Rundet den übergebenen Wert auf die Anzahl der übergebenen Nachkommastellen
          *

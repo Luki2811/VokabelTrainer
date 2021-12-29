@@ -15,7 +15,7 @@ class EditLessonActivity : AppCompatActivity() {
 
     // TODO: Komplett überarbeiten
 
-    var lesson: Lesson? = null
+    /** var lesson: Lesson? = null
     var counter = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,5 +92,5 @@ class EditLessonActivity : AppCompatActivity() {
                 MainActivity::class.java
             ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         )
-    }
+    } **/
 }

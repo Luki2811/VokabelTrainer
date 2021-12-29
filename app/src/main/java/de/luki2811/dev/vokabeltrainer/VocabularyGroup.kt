@@ -10,10 +10,13 @@ import java.io.File
 // Jede Vokabelgruppe bekommt eine id, mit der sie wiedererkannt wird, falls der Name geändert wird.
 // Vokabelgruppen sind wie Lektionen, nur das sie NUR Vokabeln speichern können
 
+// TODO: Methode erstellen, damit Vokabelgruppen geteilt werden können
+// TODO: NFC teilen hinzufügen https://developer.android.com/training/beam-files
+
 class VocabularyGroup{
 
     var name: String
-    var vocabulary: Array<VocabularyWord> = arrayOf()
+    var vocabulary: Array<VocabularyWord>
     var id: Id
 
     constructor(name: String, vocabulary: Array<VocabularyWord>, context: Context){
@@ -25,12 +28,17 @@ class VocabularyGroup{
     constructor(jsonObj: JSONObject, context: Context) {
         name = jsonObj.getString("name")
         id = Id(context,jsonObj.getInt("id"))
-        for (i in 0..jsonObj.getJSONArray("vocabulary").length()){
-            vocabulary[i] = VocabularyWord(
-                jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
-                jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
-                jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase"))
+        val vocabularyTemp = ArrayList<VocabularyWord>()
+        for (i in 0 until jsonObj.getJSONArray("vocabulary").length()){
+            vocabularyTemp.add(
+                VocabularyWord(
+                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
+                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
+                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
+                )
+            )
         }
+        vocabulary = vocabularyTemp.toTypedArray()
     }
 
     fun saveInIndex(context: Context){
@@ -70,6 +78,19 @@ class VocabularyGroup{
         return jsonObj.put("vocabulary", jsonArray)
     }
 
+    fun setWordAtPos(pos: Int, voc: VocabularyWord) {
+        vocabulary[pos] = voc
+    }
+
+    fun getWordAtPos(pos: Int): VocabularyWord {
+        return vocabulary[pos]
+    }
+
+    fun getRandomWord(): VocabularyWord {
+            val random = (Math.random() * vocabulary.size + 1).toInt()
+            return vocabulary[random-1]
+        }
+
     companion object{
         fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
             // val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
@@ -78,7 +99,7 @@ class VocabularyGroup{
             if (textInputEditText.text.toString().length > 50)
                 return 3
 
-             if(textInputEditText.text.toString().trim().isBlank())
+             if(textInputEditText.text.toString().trim().isEmpty())
                 return 4
             /**
             if (textInputEditText.text.toString().trim().contains("/") ||
@@ -109,10 +130,3 @@ class VocabularyGroup{
     }
 
 }
-
-
-// TODO: Methode erstellen, damit Vokabelgruppen geteilt werden können
-
-
-
-    // TODO: NFC teilen hinzufügen https://developer.android.com/training/beam-files

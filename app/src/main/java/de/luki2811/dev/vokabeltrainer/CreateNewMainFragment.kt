@@ -132,7 +132,7 @@ class CreateNewMainFragment : Fragment() {
                 return
             }
             val uri = data.data
-            findNavController().navigate(R.id.action_createNewMainFragment_to_importFragment, bundleOf("KEY_DATA" to uri))
+            findNavController().navigate(R.id.action_createNewMainFragment_to_importFragment, bundleOf("KEY_DATA" to uri.toString()))
 
         } else {
             Toast.makeText(requireContext(), getString(R.string.err), Toast.LENGTH_LONG).show()

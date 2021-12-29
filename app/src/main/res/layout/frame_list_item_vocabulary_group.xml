@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="60dp">
+
+    <TextView
+        android:id="@+id/textViewlistVocabularyGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Name der Vokabelgruppe" />
+
+    <ImageButton
+        android:id="@+id/buttonEditVocabularyGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:padding="7dp"
+        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@drawable/rounded_blue_button"
+        app:srcCompat="@drawable/ic_outline_edit_24"
+        android:contentDescription="@string/edit"
+        app:tint="@color/White" />
+
+    <ImageButton
+        android:id="@+id/buttonShareVocabularyGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:padding="7dp"
+        android:contentDescription="@string/share"
+        android:background="@drawable/rounded_orange_button"
+        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:layout_constraintEnd_toStartOf="@+id/buttonEditVocabularyGroup"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/White"
+        app:srcCompat="@drawable/ic_baseline_share_24" />
+
+    <View
+        android:id="@+id/hr1"
+        android:layout_width="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_height="1dp"
+        android:background="@color/Gray"
+        app:layout_constraintBottom_toBottomOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

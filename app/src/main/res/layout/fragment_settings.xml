@@ -5,18 +5,72 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".SettingsFragment">
-    <androidx.constraintlayout.widget.ConstraintLayout
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/textViewSettingsAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="0dp"
+                android:text="@string/app_name"
+                app:layout_constraintBottom_toTopOf="@+id/textViewSettingsVersion"
+                app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
+                app:layout_constraintTop_toTopOf="@+id/imageViewSettingsAppIco"
+                app:layout_constraintVertical_chainStyle="spread_inside" />
+
+            <ImageView
+                android:id="@+id/imageViewSettingsAppIco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/app_icon"
+                android:src="@mipmap/ic_launcher_round"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewSettingsVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/textViewSettingsAppStatus"
+                app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsAppName"
+                app:layout_constraintVertical_chainStyle="spread"
+                tools:text="Version: 1.0.0" />
+
+            <Button
+                android:id="@+id/buttonSettingsManageVocabularyGroups"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/manage_vocabulary_groups"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
+
+            <TextView
+                android:id="@+id/textViewSettingsAppStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/developed_by_luki2811"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewSettingsAppIco"
+                app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVersion" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+
 </FrameLayout>

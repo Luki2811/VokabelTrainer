@@ -7,15 +7,18 @@ import java.io.File
 
 class Id(var context: Context, var number: Int = 0) {
     init {
-        if(number == 0) number = generateRandomNumber()
-        // Regestrieren der ID ins Index
-        val index: JSONObject =
-            if (File(context.filesDir,AppFile.NAME_FILE_INDEX_ID).exists())
-                JSONObject(AppFile(AppFile.NAME_FILE_INDEX_ID).loadFromFile(context))
-            else JSONObject().put("index", JSONArray())
-        index.getJSONArray("index").put(number)
-        println(index.toString())
-        AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(index.toString(), context)
+        if(number == 0){
+            number = generateRandomNumber()
+
+            // Regestrieren der ID ins Index
+            val index: JSONObject =
+                if (File(context.filesDir,AppFile.NAME_FILE_INDEX_ID).exists())
+                    JSONObject(AppFile(AppFile.NAME_FILE_INDEX_ID).loadFromFile(context))
+                else JSONObject().put("index", JSONArray())
+            index.getJSONArray("index").put(number)
+            println(index.toString())
+            AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(index.toString(), context)
+        }
     }
 
      private fun generateRandomNumber(): Int {

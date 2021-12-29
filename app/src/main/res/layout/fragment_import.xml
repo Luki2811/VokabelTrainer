@@ -12,7 +12,7 @@
         tools:context=".ImportLessonActivity">
 
         <TextView
-            android:id="@+id/textViewNewLessonImport"
+            android:id="@+id/textViewNewImport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -21,33 +21,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/EditLessonNameImport"
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editVocabularyGroupNameImportLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:ems="10"
-            android:inputType="textPersonName"
+            app:errorEnabled="true"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textViewNewLessonImport"
-            tools:hint="NAME_DER_LEKTION" />
+            app:layout_constraintTop_toBottomOf="@+id/textViewNewImport">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editVocabularyGroupNameImport"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:ems="10"
+                android:inputType="textPersonName"
+                tools:hint="NAME_DER_LEKTION" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/buttonImportLessonFinish"
+            android:id="@+id/buttonImportVocabularyGroupFinish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:text="@string/import_"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/EditLessonNameImport" />
+            app:layout_constraintTop_toBottomOf="@+id/editVocabularyGroupNameImportLayout" />
 
         <Button
-            android:id="@+id/buttonImportLessonCancel"
+            android:id="@+id/buttonImportVocabularyGroupCancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -55,7 +64,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonImportLessonFinish" />
+            app:layout_constraintTop_toBottomOf="@+id/buttonImportVocabularyGroupFinish" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -17,7 +17,7 @@ class PracticeVocabularyActivity : AppCompatActivity() {
     // TODO: Weitere Typen hinzufügen zum Abfragen
     // TODO: Vokabelgruppen "importieren" anhand von ID zur Lektion hinzufügen
 
-    private var lesson: Lesson? = null
+    /** private var lesson: Lesson? = null
     private var voc: VocabularyWord? = null
     private var counter = 0
     private var counterRest = 10
@@ -130,5 +130,5 @@ class PracticeVocabularyActivity : AppCompatActivity() {
         } else while (!newVoc.isWrong) newVoc = lesson!!.randomWord
         voc = newVoc
         textViewToTranslate.text = voc!!.knownWord
-    }
+    } **/
 }

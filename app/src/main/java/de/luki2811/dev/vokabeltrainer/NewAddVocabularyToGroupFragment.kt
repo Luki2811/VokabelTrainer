@@ -81,7 +81,7 @@ class NewAddVocabularyToGroupFragment : Fragment() {
         file = File(file, vocabularyGroup.id.number.toString() + ".json" )
         writeInFile(vocabularyGroup.getAsJson().toString(), file)
 
-        startActivity(Intent(requireContext(), MainActivity::class.java))
+        startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }
 
     override fun onDestroyView() {
