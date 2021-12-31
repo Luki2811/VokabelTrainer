@@ -1,13 +1,12 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import androidx.navigation.fragment.findNavController
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Streak
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentStreakBinding
 
 class StreakFragment : Fragment() {

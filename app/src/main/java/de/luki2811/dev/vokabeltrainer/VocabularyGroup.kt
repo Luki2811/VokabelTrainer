@@ -57,10 +57,15 @@ class VocabularyGroup{
     fun deleteFromIndex(context: Context){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(context))
 
+        var temp = -1
+        println(index.getJSONArray("index").toString())
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
-                index.getJSONArray("index").remove(i)
+                temp = i
         }
+        if(temp != -1)
+            index.getJSONArray("index").remove(temp)
+
         AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).writeInFile(index.toString(),context)
     }
 
@@ -93,8 +98,8 @@ class VocabularyGroup{
 
     companion object{
         fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
-            // val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
-            // val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
+            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
+            val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
 
             if (textInputEditText.text.toString().length > 50)
                 return 3
@@ -115,8 +120,7 @@ class VocabularyGroup{
 
             if(AppFile.isAppFile(textInputEditText.text.toString().trim()))
                 return 2
-
-            // TEMP
+             **/
             if (indexFile.exists()) {
                 val indexVocabularyGroups = JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
                 for (i in 0 until indexVocabularyGroups.length()) {
@@ -124,7 +128,7 @@ class VocabularyGroup{
                         return 2
                     }
                 }
-            }**/
+            }
             return 0
         }
     }

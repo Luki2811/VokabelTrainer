@@ -1,24 +1,17 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getColor
-import androidx.core.content.FileProvider
-import androidx.core.view.setPadding
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.MainActivity.Companion.LEKTION_NAME
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.Lesson
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.adapter.ListLessonsLearnAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentLearnBinding
 import org.json.JSONException
 import org.json.JSONObject
@@ -33,7 +26,27 @@ class LearnFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
-        val context: Context = requireContext()
+        binding.listOfLessonsCards.layoutManager = LinearLayoutManager(requireContext())
+
+        val indexAsJson = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(requireContext()))
+        val arrayList = ArrayList<Lesson>()
+
+        try {
+            for(i in 0 until indexAsJson.getJSONArray("index").length()){
+                var file = File(requireContext().filesDir, "lessons")
+                file.mkdirs()
+                file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
+                val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
+                println(jsonOfVocGroup.toString())
+                arrayList.add(Lesson(jsonOfVocGroup, requireContext()))
+            }
+        }catch (e: JSONException){
+            e.printStackTrace()
+        }
+
+        binding.listOfLessonsCards.adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext())
+
+        /** Ersetzt durch RecyclerView
 
         val indexFile = File(requireActivity().filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
         if (indexFile.exists()) {
@@ -179,9 +192,11 @@ class LearnFragment : Fragment() {
 
 
                     // Practice Button
-                    val cardLearnButton = MaterialButton(context, null, R.attr.materialButtonOutlinedStyle)
+                    val cardLearnButton = MaterialButton(context, null,
+                        R.attr.materialButtonOutlinedStyle
+                    )
                     cardLearnButton.setText(R.string.practice)
-                    cardLearnButton.setTextColor(getColor(context,R.color.Black))
+                    cardLearnButton.setTextColor(getColor(context, R.color.Black))
                     cardLearnButton.cornerRadius = 100
                     cardLearnButton.setOnClickListener {
                         val intent = Intent(context, PracticeVocabularyActivity::class.java)
@@ -228,7 +243,7 @@ class LearnFragment : Fragment() {
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-        }
+        }**/
 
         return binding.root
     }

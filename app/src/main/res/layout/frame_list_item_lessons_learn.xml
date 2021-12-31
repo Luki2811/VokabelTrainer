@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/buttonCardEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/ic_outline_edit_24"
+                app:layout_constraintEnd_toStartOf="@id/buttonCardDelete"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@+id/buttonCardDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/outline_delete_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:contentDescription="@string/delete" />
+
+            <TextView
+                android:id="@+id/textCardLessonName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:textSize="19sp"
+                app:layout_constraintTop_toBottomOf="@+id/buttonCardDelete"
+                tools:layout_editor_absoluteX="16dp"
+                tools:text="Test 1-10" />
+
+            <Button
+                android:id="@+id/buttonCardPracticeLesson"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/practice"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textCardLanguageKnown"
+                app:layout_constraintVertical_bias="1.0" />
+
+            <TextView
+                android:id="@+id/textCardLanguageKnown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/imageViewCardArrow"
+                app:layout_constraintTop_toBottomOf="@+id/textCardLessonName"
+                tools:text="Deutsch" />
+
+            <TextView
+                android:id="@+id/textCardLanguageNew"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                tools:text="Schwedisch"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textCardLanguageKnown"
+                app:layout_constraintStart_toEndOf="@+id/imageViewCardArrow" />
+
+            <ImageView
+                android:id="@+id/imageViewCardArrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/to"
+                app:layout_constraintBottom_toBottomOf="@+id/textCardLanguageKnown"
+                app:layout_constraintEnd_toEndOf="@+id/buttonCardPracticeLesson"
+
+                app:layout_constraintStart_toStartOf="@+id/buttonCardPracticeLesson"
+                app:layout_constraintTop_toTopOf="@+id/textCardLanguageKnown"
+                app:srcCompat="@drawable/ic_baseline_arrow_forward_24" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    </com.google.android.material.card.MaterialCardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/createNewMainFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.CreateNewMainFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.CreateNewMainFragment"
         android:label="fragment_create_new_main"
         tools:layout="@layout/fragment_create_new_main" >
         <action
@@ -22,22 +22,21 @@
     </fragment>
     <fragment
         android:id="@+id/importFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ImportFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.ImportFragment"
         android:label="fragment_import"
         tools:layout="@layout/fragment_import" >
         <action
             android:id="@+id/action_importFragment_to_createNewMainFragment"
-            app:destination="@id/createNewMainFragment"
-            app:popUpTo="@id/createNewMainFragment" />
+            app:destination="@id/createNewMainFragment"/>
     </fragment>
     <fragment
         android:id="@+id/newLessonFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.NewLessonFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.CreateNewLessonFragment"
         android:label="fragment_new_lesson"
         tools:layout="@layout/fragment_new_lesson" />
     <fragment
         android:id="@+id/newVocabularyGroupFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.NewVocabularyGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.NewVocabularyGroupFragment"
         android:label="fragment_new_vocabulary_group"
         tools:layout="@layout/fragment_new_vocabulary_group" >
         <action
@@ -46,7 +45,7 @@
     </fragment>
     <fragment
         android:id="@+id/newAddVocabularyToGroupFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.NewAddVocabularyToGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.NewAddVocabularyToGroupFragment"
         android:label="fragment_new_add_vocabulary_to_group"
         tools:layout="@layout/fragment_new_add_vocabulary_to_group" />
 </navigation>

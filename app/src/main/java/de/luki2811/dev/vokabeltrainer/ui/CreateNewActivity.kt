@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

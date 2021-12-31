@@ -8,7 +8,6 @@ import org.json.JSONObject
 import java.io.File
 
 class Lesson {
-    // TODO: Bearbeiten der Lektionen, das sie VokabelGruppen speichern (nur ID) und nicht die Wörter
 
     lateinit var name: String
     lateinit var id: Id
@@ -55,11 +54,14 @@ class Lesson {
 
     fun deleteFromIndex(context: Context){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(context))
-
+        var temp = -1
+        println(index.getJSONArray("index").toString())
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
-                index.getJSONArray("index").remove(i)
+                temp = i
         }
+        if(temp != -1)
+            index.getJSONArray("index").remove(temp)
         AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(index.toString(),context)
     }
 
@@ -78,8 +80,8 @@ class Lesson {
 
     companion object{
         fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
-            // val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
-            // val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
+            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+            val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
 
             if (textInputEditText.text.toString().length > 50)
                 return 3
@@ -101,6 +103,8 @@ class Lesson {
                 textInputEditText.text.toString().trim().contains("?")
             ) return 1
 
+             **/
+
             if (indexFile.exists()) {
 
                 val indexLessons =
@@ -110,7 +114,7 @@ class Lesson {
                         return 2
 
                 }
-            }**/
+            }
             return 0
         }
     }

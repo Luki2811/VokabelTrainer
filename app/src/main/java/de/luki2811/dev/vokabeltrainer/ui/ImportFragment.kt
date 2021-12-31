@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import android.content.Intent
 import android.net.Uri
@@ -9,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportBinding
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.net.URI
 
 class ImportFragment : Fragment() {
 

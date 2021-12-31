@@ -1,20 +1,17 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import de.luki2811.dev.vokabeltrainer.AppFile.Companion.writeInFile
-import de.luki2811.dev.vokabeltrainer.databinding.FragmentLearnBinding
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewAddVocabularyToGroupBinding
-import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
-import java.net.URI
 
 class NewAddVocabularyToGroupFragment : Fragment() {
 

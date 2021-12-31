@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -12,6 +12,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
 import org.json.JSONObject
 import java.io.File
@@ -160,9 +164,13 @@ class EditVocabularyGroupFragment : Fragment() {
 
         binding.buttonDeleteVocabularyWord.isEnabled = vocabulary.size > 2
         if(vocabulary.size <= 2){
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(), R.color.Gray), android.graphics.PorterDuff.Mode.SRC_IN)
+            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(),
+                R.color.Gray
+            ), android.graphics.PorterDuff.Mode.SRC_IN)
         }else{
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(), R.color.White), android.graphics.PorterDuff.Mode.SRC_IN)
+            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(),
+                R.color.White
+            ), android.graphics.PorterDuff.Mode.SRC_IN)
         }
 
     }

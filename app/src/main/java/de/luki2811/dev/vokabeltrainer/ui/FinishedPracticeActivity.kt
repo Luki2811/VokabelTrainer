@@ -1,14 +1,13 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import de.luki2811.dev.vokabeltrainer.R
 import android.widget.TextView
-import de.luki2811.dev.vokabeltrainer.MainActivity
 import android.widget.ProgressBar
-import de.luki2811.dev.vokabeltrainer.Streak
 import android.content.Intent
 import android.view.View
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Streak
 
 class FinishedPracticeActivity : AppCompatActivity() {
 

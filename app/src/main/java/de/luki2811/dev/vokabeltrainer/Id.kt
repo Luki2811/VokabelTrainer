@@ -37,12 +37,14 @@ class Id(var context: Context, var number: Int = 0) {
 
     fun deleteId() {
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_ID).loadFromFile(context))
-
+        var temp = -1
         for (i in 0 until index.getJSONArray("index").length()) {
             if (index.getJSONArray("index").getInt(i) == this.number){
-                index.getJSONArray("index").remove(i)
+                temp = i
             }
         }
+        if(temp != -1)
+            index.getJSONArray("index").remove(temp)
         number = 0
         AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(index.toString(), context)
     }

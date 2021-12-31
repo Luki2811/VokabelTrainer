@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer
+package de.luki2811.dev.vokabeltrainer.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +9,9 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.color.DynamicColors
+import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
@@ -22,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        DynamicColors.applyToActivitiesIfAvailable(application)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -48,7 +52,11 @@ class MainActivity : AppCompatActivity() {
 
         navView.setupWithNavController(navController)
 
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.learnFragment, R.id.streakFragment, R.id.settingsFragment))
+        val appBarConfiguration = AppBarConfiguration(setOf(
+            R.id.learnFragment,
+            R.id.streakFragment,
+            R.id.settingsFragment
+        ))
         setupActionBarWithNavController(navController, appBarConfiguration)
 
     }

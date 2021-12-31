@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/manageVocabularyGroupsFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ManageVocabularyGroupsFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.ManageVocabularyGroupsFragment"
         android:label="fragment_manage_vocabulary_groups"
         tools:layout="@layout/fragment_manage_vocabulary_groups" >
         <action
@@ -16,12 +16,11 @@
     </fragment>
     <fragment
         android:id="@+id/editVocabularyGroupFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.EditVocabularyGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.EditVocabularyGroupFragment"
         android:label="fragment_edit_vocabulary_group"
         tools:layout="@layout/fragment_edit_vocabulary_group" >
         <action
             android:id="@+id/action_editVocabularyGroupFragment_to_manageVocabularyGroupsFragment"
-            app:destination="@id/manageVocabularyGroupsFragment"
-            app:popUpTo="@id/learnFragment"/>
+            app:destination="@id/manageVocabularyGroupsFragment"/>
     </fragment>
 </navigation>
