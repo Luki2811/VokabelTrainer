@@ -2,7 +2,6 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import com.google.android.material.textfield.TextInputEditText
-import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -41,9 +40,16 @@ class VocabularyGroup{
         vocabulary = vocabularyTemp.toTypedArray()
     }
 
+    fun addVocabularyFromVocabularyGroup(vocabularyGroup: VocabularyGroup){
+        val vocabulary = ArrayList<VocabularyWord>()
+        vocabulary.addAll(this.vocabulary)
+        vocabulary.addAll(vocabularyGroup.vocabulary)
+        this.vocabulary = vocabulary.toTypedArray()
+    }
+
     fun saveInIndex(context: Context){
         if(File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).exists()){
-            val index = JSONObject(loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)))
+            val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             index.getJSONArray("index").put(index.getJSONArray("index").length(), toIndexJson)
             AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).writeInFile(index.toString(),context)
@@ -58,7 +64,6 @@ class VocabularyGroup{
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(context))
 
         var temp = -1
-        println(index.getJSONArray("index").toString())
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
                 temp = i
@@ -97,6 +102,17 @@ class VocabularyGroup{
         }
 
     companion object{
+
+        fun loadFromFileWithId(id: Id, context: Context): VocabularyGroup?{
+            var file = File(context.filesDir, "vocabularyGroups")
+            file.mkdirs()
+            file = File(file, id.number.toString() + ".json" )
+            return if(file.exists())
+                VocabularyGroup(JSONObject(AppFile.loadFromFile(file)), context)
+            else null
+        }
+
+
         fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
             val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)

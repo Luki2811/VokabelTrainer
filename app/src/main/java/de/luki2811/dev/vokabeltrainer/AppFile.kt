@@ -40,7 +40,6 @@ class AppFile(var name: String) : Application() {
 
         fun loadFromFile(file: File): String {
             var fis: FileInputStream? = null
-            println(file.toURI().toString())
             try {
                 fis = FileInputStream(file)
             } catch (e: FileNotFoundException) {
@@ -67,6 +66,7 @@ class AppFile(var name: String) : Application() {
         const val NAME_FILE_INDEX_VOCABULARYGROUPS = "indexVocabularyGroups.json"
         const val NAME_FILE_INDEX_ID = "indexId.json"
         const val NAME_FILE_SETTINGS = "settings.json"
+        const val NAME_FILE_INDEX_LANGUAGES = "indexLanguages.json"
 
         fun isAppFile(name: String): Boolean{
             if(
@@ -74,13 +74,10 @@ class AppFile(var name: String) : Application() {
                 name == NAME_FILE_INDEX_LESSONS ||
                 name == NAME_FILE_INDEX_VOCABULARYGROUPS ||
                 name == NAME_FILE_INDEX_ID ||
-                name == NAME_FILE_SETTINGS)
+                name == NAME_FILE_SETTINGS ||
+                name == NAME_FILE_INDEX_LANGUAGES)
                     return true
             return false
         }
-
-
-
     }
-
 }

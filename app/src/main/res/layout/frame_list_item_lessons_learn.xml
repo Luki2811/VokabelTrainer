@@ -4,39 +4,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="12dp"
+    android:layout_marginTop="6dp"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
+    android:layout_marginBottom="6dp"
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardLearn"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        style="@style/Widget.Material3.CardView.Elevated">
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <ImageButton
                 android:id="@+id/buttonCardEdit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/ic_outline_edit_24"
+                android:background="@drawable/rounded_blue_button"
                 app:layout_constraintEnd_toStartOf="@id/buttonCardDelete"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/buttonCardDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="12dp"
                 android:src="@drawable/outline_delete_24"
+                android:background="@drawable/rounded_red_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/delete" />
+                android:contentDescription="@string/delete"
+                app:tint="@color/white"/>
+
+            <ImageButton
+                android:id="@+id/buttonCardShre"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/ic_baseline_share_24"
+                android:background="@drawable/rounded_orange_button"
+                app:layout_constraintEnd_toStartOf="@id/buttonCardEdit"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/textCardLessonName"

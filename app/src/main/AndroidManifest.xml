@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="de.luki2811.dev.vokabeltrainer">
+    package="de.luki2811.dev.vokabeltrainer" >
 
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -18,19 +18,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VokabelTrainer">
-        <activity
-            android:name=".ui.ManageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.CreateNewActivity"
-            android:exported="false" />
-
+        android:theme="@style/Theme.VokabelTrainer" >
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
@@ -57,10 +50,16 @@
             android:exported="true"
             android:noHistory="true"
             android:theme="@style/Theme.VokabelTrainer" />
+        <activity android:name=".ui.practice.PracticeActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:windowSoftInputMode="adjustResize"
+            android:parentActivityName=".ui.MainActivity"
+            android:theme="@style/Theme.VokabelTrainer.NoActionBar"/>
         <activity
             android:name=".ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.VokabelTrainer">
+            android:theme="@style/Theme.VokabelTrainer.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

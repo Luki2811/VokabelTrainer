@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_learn"
+    app:startDestination="@id/practiceStartFragment">
+
+    <fragment
+        android:id="@+id/practiceTranslateTextFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeTranslateTextFragment"
+        android:label="fragment_practice_translate_text" >
+        <action
+            android:id="@+id/action_practiceTranslateTextFragment_to_practiceOutOfThreeFragment"
+            app:destination="@id/practiceOutOfThreeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceTranslateTextFragment_to_practiceMatchFiveWordsFragment"
+            app:destination="@id/practiceMatchFiveWordsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceTranslateTextFragment_to_practiceFinishFragment"
+            app:destination="@id/practiceFinishFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceTranslateTextFragment_self"
+            app:destination="@id/practiceTranslateTextFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out">
+        </action>
+        <argument
+            android:name="word_data_known_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="word_data_new_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="language_new"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="language_known"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="settings_read_both"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/practiceOutOfThreeFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeOutOfThreeFragment"
+        android:label="fragment_practice_out_of_three"
+        tools:layout="@layout/fragment_practice_out_of_three" >
+        <action
+            android:id="@+id/action_practiceOutOfThreeFragment_to_practiceTranslateTextFragment"
+            app:destination="@id/practiceTranslateTextFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceOutOfThreeFragment_to_practiceMatchFiveWordsFragment"
+            app:destination="@id/practiceMatchFiveWordsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceOutOfThreeFragment_to_practiceFinishFragment"
+            app:destination="@id/practiceFinishFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+        <action
+            android:id="@+id/action_practiceOutOfThreeFragment_self"
+            app:destination="@id/practiceOutOfThreeFragment" />
+        <argument
+            android:name="word_data_known_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="word_data_new_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="language_new"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="language_known"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="settings_read_both"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/practiceMatchFiveWordsFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeMatchFiveWordsFragment"
+        android:label="fragment_practice_match_five_words"
+        tools:layout="@layout/fragment_practice_match_five_words" >
+        <action
+            android:id="@+id/action_practiceMatchFiveWordsFragment_to_practiceTranslateTextFragment"
+            app:destination="@id/practiceTranslateTextFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceMatchFiveWordsFragment_to_practiceOutOfThreeFragment"
+            app:destination="@id/practiceOutOfThreeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"
+            />
+        <action
+            android:id="@+id/action_practiceMatchFiveWordsFragment_to_practiceFinishFragment"
+            app:destination="@id/practiceFinishFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+        <action
+            android:id="@+id/action_practiceMatchFiveWordsFragment_self"
+            app:destination="@id/practiceMatchFiveWordsFragment" />
+        <argument
+            android:name="word_data_known_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="word_data_new_word"
+            app:argType="string"
+            android:defaultValue='""' />
+        <argument
+            android:name="language_new"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="language_known"
+            app:argType="integer"
+            android:defaultValue="0" />
+        <argument
+            android:name="settings_read_both"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/practiceFinishFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeFinishFragment"
+        android:label="fragment_practice_finish"
+        tools:layout="@layout/fragment_practice_finish" >
+        <argument
+            android:name='correctInPercent'
+            app:argType="integer"
+            android:defaultValue="100" />
+    </fragment>
+    <fragment
+        android:id="@+id/practiceStartFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeStartFragment"
+        android:label="fragment_practice_start"
+        tools:layout="@layout/fragment_practice_start" >
+        <action
+            android:id="@+id/action_practiceStartFragment_to_practiceTranslateTextFragment"
+            app:destination="@id/practiceTranslateTextFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+        <action
+            android:id="@+id/action_practiceStartFragment_to_practiceOutOfThreeFragment"
+            app:destination="@id/practiceOutOfThreeFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+        <action
+            android:id="@+id/action_practiceStartFragment_to_practiceMatchFiveWordsFragment"
+            app:destination="@id/practiceMatchFiveWordsFragment"
+            app:enterAnim="@android:anim/fade_in"
+            app:exitAnim="@android:anim/fade_out"
+            app:popEnterAnim="@android:anim/fade_in"
+            app:popExitAnim="@android:anim/fade_out"/>
+    </fragment>
+</navigation>

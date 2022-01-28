@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui
+package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,14 +26,12 @@ class ManageVocabularyGroupsFragment : Fragment() {
         val indexAsJson = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
 
         binding.listOfVocabularyGroups.layoutManager = LinearLayoutManager(requireContext())
-        println(indexAsJson.toString())
 
         for(i in 0 until indexAsJson.getJSONArray("index").length()){
             var file = File(requireContext().filesDir, "vocabularyGroups")
             file.mkdirs()
             file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
             val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
-            println(jsonOfVocGroup.toString())
             arrayList.add(VocabularyGroup(jsonOfVocGroup, requireContext()))
         }
 

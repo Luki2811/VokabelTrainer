@@ -82,5 +82,39 @@
     <string name="add">Hinzufügen</string>
     <string name="to">zu</string>
     <string name="delete_lesson">Lektion löschen</string>
-    <string name="do_you_really_want_to_delete_lesson">Möchten sie wirklich die Lektion löschen ??</string>
+    <string name="do_you_really_want_to_delete_lesson">Möchten sie wirklich die Lektion \"%1$s\" löschen ??</string>
+    <string name="title_activity_practice">PracticeActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="manage_languages">Sprachen verwalten</string>
+    <string name="loading_data">Daten werden geladen</string>
+    <string name="manage">Verwalten</string>
+    <string name="lang_0">1.Sprache</string>
+    <string name="lang_1">2.Sprache</string>
+    <string name="lang_2">3.Sprache</string>
+    <string name="lang_3">4.Sprache</string>
+    <string name="lang_4">5.Sprache</string>
+    <string name="lang_5">6.Sprache</string>
+    <string name="lang_6">7.Sprache</string>
+    <string name="lang_7">8.Sprache</string>
+    <string name="lang_8">9.Sprache</string>
+    <string name="lang_9">10.Sprache</string>
+    <string name="saved">Gespeichert !</string>
+    <string name="set_default">Standart wiederherstellen</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="err_not_enough_words">Fehler: Zu wenige Wörter ! (min. 10)</string>
+    <string name="do_you_really_want_to_leave_practice">Möchten sie wirklich die Übung verlassen ??</string>
+    <string name="quite_lesson">Übung verlassen</string>
+    <string name="quite">Verlassen</string>
+    <string name="yes">Ja</string>
+    <string name="empty_array">[\"\",\"\"]</string>
+    <string name="settings_lesson_read_out_both">Nur neue Wörter vorlesen</string>
+    <string name="to_finish">Fertigstellen</string>
+
+
 </resources>

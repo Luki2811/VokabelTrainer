@@ -1,3 +1,6 @@
 <resources>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="margin_text_layout_lang">16dp</dimen>
+    <dimen name="word_selection_height">60dp</dimen>
 </resources>

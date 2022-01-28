@@ -48,17 +48,6 @@
                 app:layout_constraintVertical_chainStyle="spread"
                 tools:text="Version: 1.0.0" />
 
-            <Button
-                android:id="@+id/buttonSettingsManageVocabularyGroups"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/manage_vocabulary_groups"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
-
             <TextView
                 android:id="@+id/textViewSettingsAppStatus"
                 android:layout_width="wrap_content"
@@ -68,6 +57,18 @@
                 app:layout_constraintBottom_toBottomOf="@+id/imageViewSettingsAppIco"
                 app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
                 app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVersion" />
+
+            <Button
+                android:id="@+id/buttonSettingsManage"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/manage"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

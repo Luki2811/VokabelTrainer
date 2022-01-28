@@ -72,40 +72,77 @@
                 app:layout_constraintTop_toBottomOf="@+id/textViewNewLanguage"
                 app:selectionRequired="true"
                 app:singleSelection="true">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan0"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipGermanNewLan"
+                    android:id="@+id/chipNewLan1"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="@string/language_german" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEnglishNewLan"
+                    android:id="@+id/chipNewLan2"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/language_english" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipSwedishNewLan"
+                    android:id="@+id/chipNewLan3"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/language_swedish" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipFrenchNewLan"
+                    android:id="@+id/chipNewLan4"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/language_french" />
+                    android:text="" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan5"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan6"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan7"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan8"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipNewLan9"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
             </com.google.android.material.chip.ChipGroup>
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupNativeLan"
+                android:id="@+id/chipGroupKnownLan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -120,36 +157,93 @@
                 app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipGermanNativeLan"
+                    android:id="@+id/chipKnownLan0"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:text="@string/language_german" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipEnglishNativeLan"
+                    android:id="@+id/chipKnownLan1"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="@string/language_english" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipSwedishNativeLan"
+                    android:id="@+id/chipKnownLan2"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/language_swedish" />
+                    android:text="" />
 
                 <com.google.android.material.chip.Chip
-                    android:id="@+id/chipFrenchNativeLan"
+                    android:id="@+id/chipKnownLan3"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/language_french" />
+                    android:text="" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan4"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan5"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan6"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan7"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan8"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKnownLan9"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
 
             </com.google.android.material.chip.ChipGroup>
+
+            <TextView
+                android:id="@+id/textViewLessonSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/settings"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupKnownLan" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchLessonSettingsReadOutBoth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:text="@string/settings_lesson_read_out_both"
+                app:layout_constraintTop_toBottomOf="@+id/textViewLessonSettings"/>
 
             <TextView
                 android:id="@+id/textViewNativeLanguage"
@@ -170,7 +264,7 @@
                 android:text="@string/vocabulary_groups"
                 app:layout_constraintStart_toStartOf="parent"
 
-                app:layout_constraintTop_toBottomOf="@+id/chipGroupNativeLan" />
+                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsReadOutBoth" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/autoCompleteTextVocabularyGroupsLayout"
@@ -197,6 +291,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:paddingBottom="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintTop_toBottomOf="@+id/autoCompleteTextVocabularyGroupsLayout"/>
 
@@ -224,6 +319,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/next"
+        style="@style/Widget.Material3.Button.Icon"
+        app:icon="@drawable/ic_outline_save_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

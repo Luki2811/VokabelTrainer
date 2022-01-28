@@ -1,7 +1,10 @@
 package de.luki2811.dev.vokabeltrainer.adapter
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,17 +13,17 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.Lesson
+import de.luki2811.dev.vokabeltrainer.NavigationMainDirections
 import de.luki2811.dev.vokabeltrainer.R
-import org.w3c.dom.Text
+import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
 
 class ListLessonsLearnAdapter(
-    private val dataSet: ArrayList<Lesson>, private val navController: NavController, private val context: Context) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>() {
+    private val dataSet: ArrayList<Lesson>, private val navController: NavController, private val context: Context, private val activity: Activity) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -43,23 +46,24 @@ class ListLessonsLearnAdapter(
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
         viewHolder.textCardLessonName.text = dataSet[position].name
-        viewHolder.textCardLanguageKnown.text = dataSet[position].languageKnow.getName()
-        viewHolder.textCardLanguageNew.text = dataSet[position].languageNew.getName()
+        viewHolder.textCardLanguageKnown.text = dataSet[position].languageKnow.name
+        viewHolder.textCardLanguageNew.text = dataSet[position].languageNew.name
 
-        viewHolder.buttonCardPracticeLesson.setOnClickListener {
-            // navController.navigate(R.id.)
+        viewHolder.buttonCardEdit.setOnClickListener {
+            navController.navigate(NavigationMainDirections.actionGlobalManageLessonFragment(dataSet[position].getAsJson().toString()))
         }
 
         viewHolder.buttonCardDelete.setOnClickListener {
-
             MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.delete_lesson)
-                .setMessage(R.string.do_you_really_want_to_delete_lesson)
+                .setIcon(R.drawable.outline_delete_24)
+                .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSet[position].name))
                 .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
                     val lesson = dataSet[position]
                     var file = File(context.filesDir, "lessons")
@@ -77,6 +81,7 @@ class ListLessonsLearnAdapter(
                     Log.i("Info", "Successfully deleted ${lesson.id.number}.json (${lesson.name})")
 
                     dataSet.removeAt(position)
+                    notifyDataSetChanged()
                     notifyItemRemoved(position)
                 }
                 .setNegativeButton(R.string.cancel){ _: DialogInterface, _: Int ->
@@ -84,10 +89,9 @@ class ListLessonsLearnAdapter(
                 }
                 .show()
         }
-
-        // TODO: Üben hinzufügen
-        // TODO: Bearbeiten hinzufügen
-        // viewHolder.buttonEdit.setOnClickListener { navController.navigate(R.id.action_manageVocabularyGroupsFragment_to_editVocabularyGroupFragment, bundleOf("key_voc_group" to dataSet[position].getAsJson().toString())) }
+        viewHolder.buttonCardPracticeLesson.setOnClickListener {
+            activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSet[position].getAsJson().toString()))
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.NewAddVocabularyToGroupFragment">
+    tools:context=".ui.manage.EditVocabularyGroupFragment">
 
     <TextView
         android:id="@+id/textViewVocabularyWordNew"
@@ -106,6 +106,8 @@
         android:layout_marginBottom="20dp"
         android:contentDescription="@string/delete"
         android:text="@string/remove_vocabularyGroup"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        app:icon="@drawable/outline_delete_24"
         app:layout_constraintBottom_toTopOf="@+id/buttonSaveAndGoBackManage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
@@ -117,6 +119,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
         android:text="@string/save"
+        style="@style/Widget.Material3.Button.Icon"
+        app:icon="@drawable/ic_outline_save_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

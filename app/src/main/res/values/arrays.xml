@@ -6,4 +6,8 @@
         <item>25</item>
         <item>10</item>
     </array>
+    <array name="empty">
+        <item>""</item>
+        <item>""</item>
+    </array>
 </resources>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.practice.PracticeMatchFiveWordsFragment">
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupLearnNativeLan"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/chipGroupLearnNewLan"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip0LearnNativeLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc0" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip1LearnNativeLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc1" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip2LearnNativeLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc2" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip3LearnNativeLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc3" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip4LearnNativeLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc4" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupLearnNewLan"
+        android:layout_width="175dp"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="right"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/chipGroupLearnNativeLan"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip0LearnNewLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc0" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip1LearnNewLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc1" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip2LearnNewLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc2" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip3LearnNewLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc3" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chip4LearnNewLan"
+            style="@style/Widget.Material3.Chip.Filter"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/word_selection_height"
+            android:gravity="center"
+            android:text="voc4" />
+
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/translate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

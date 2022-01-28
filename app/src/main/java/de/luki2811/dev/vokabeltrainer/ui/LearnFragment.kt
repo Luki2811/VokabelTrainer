@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.Lesson
-import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.adapter.ListLessonsLearnAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentLearnBinding
 import org.json.JSONException
@@ -44,7 +42,7 @@ class LearnFragment : Fragment() {
             e.printStackTrace()
         }
 
-        binding.listOfLessonsCards.adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext())
+        binding.listOfLessonsCards.adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
 
         /** Ersetzt durch RecyclerView
 

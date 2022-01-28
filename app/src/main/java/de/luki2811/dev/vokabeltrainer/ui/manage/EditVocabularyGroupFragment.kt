@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui
+package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.content.DialogInterface
 import android.content.Intent
@@ -17,6 +17,7 @@ import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
+import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
 import java.io.File
 
@@ -59,6 +60,7 @@ class EditVocabularyGroupFragment : Fragment() {
         binding.buttonDeleteVocabularyWord.setOnClickListener { removeVocabularyWord() }
         binding.buttonDeleteVocabularyGroup.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
+                .setIcon(R.drawable.outline_delete_24)
                 .setTitle(getString(R.string.delete_vocabulary_group))
                 .setMessage(R.string.do_you_really_want_to_delete_vocabulary_group)
                 .setPositiveButton(getString(R.string.delete)){ _: DialogInterface, _: Int ->

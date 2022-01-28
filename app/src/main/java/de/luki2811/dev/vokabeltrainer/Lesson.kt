@@ -14,25 +14,28 @@ class Lesson {
     lateinit var languageKnow: Language
     lateinit var languageNew: Language
     lateinit var vocabularyGroupIds: Array<Int>
+    var settingReadOutBoth: Boolean = true
 
-    constructor(name: String, languageKnow: Language, languageNew: Language, vocabularyGroupIds: Array<Int>, context: Context) {
+    constructor(name: String, languageKnow: Language, languageNew: Language, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true) {
         this.name = name
         this.id = Id(context)
         this.languageKnow = languageKnow
         this.languageNew = languageNew
         this.vocabularyGroupIds = vocabularyGroupIds
+        this.settingReadOutBoth = settingReadOutBoth
     }
 
     constructor(json: JSONObject, context: Context) {
         try {
             name = json.getString("name")
             id = Id(context, json.getInt("id"))
-            languageKnow = Language(json.getInt("languageNative"))
-            languageNew = Language(json.getInt("languageNew"))
+            languageKnow = Language(json.getInt("languageNative"),context)
+            languageNew = Language(json.getInt("languageNew"),context)
             val groupIds = ArrayList<Int>()
             for(i in 0 until json.getJSONArray("vocabularyGroupIds").length())
                groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
             vocabularyGroupIds = groupIds.toTypedArray()
+            settingReadOutBoth = json.getJSONObject("settings").getBoolean("readOutBoth")
 
         } catch (e: JSONException) {
             e.printStackTrace()
@@ -75,6 +78,11 @@ class Lesson {
         for(i in vocabularyGroupIds.indices){
             jsonArr.put(i, vocabularyGroupIds[i])
         }
+        jsonObj.put("settings",
+            JSONObject()
+                .put("readOutBoth", settingReadOutBoth)
+
+        )
         return jsonObj.put("vocabularyGroupIds", jsonArr)
     }
 
