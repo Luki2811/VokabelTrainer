@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     private var typeOfLessonNow = 0
     private var numberOfExercises = 0
     private var numberOfExercisesTotal = 10 - 1
+    private var wrongWords: ArrayList<VocabularyWord> = arrayListOf()
     lateinit var lesson: Lesson
     private lateinit var vocabularyGroup: VocabularyGroup
     lateinit var dataPasser: OnDataPass
@@ -72,11 +74,16 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         binding.buttonCheckPractice.isEnabled = solution.isNotEmpty()
     }
 
-
-
-
     private fun startCorrection(){
         val correctionBottomSheet = CorrectionBottomSheet()
+
+        if(!isInputCorrect()) {
+            word.typeWrong = typeOfLessonNow
+            word.isWrong = true
+            word.askKnownWord = askKnownWord
+            wrongWords.add(word)
+            numberOfExercisesTotal += 1
+        }
 
         if(askKnownWord)
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isInputCorrect())
@@ -93,7 +100,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
     fun next(){
-        if(numberOfExercises < numberOfExercisesTotal)
+        if(numberOfExercises < numberOfExercisesTotal + 1)
             changeTypOfPractice(getNextLessonType())
         else
             changeTypOfPractice(0)
@@ -108,12 +115,27 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
 
-    private fun changeTypOfPractice(type: Int){
+    private fun changeTypOfPractice(_type: Int){
+        var type = _type
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
         // Toast.makeText(applicationContext,"$typeOfLessonNow->$type", Toast.LENGTH_SHORT).show()
+        if(!this::word.isInitialized)
+            word = vocabularyGroup.getRandomWord()
+        if(numberOfExercises < 9){
+            while(word.isAlreadyUsed){
+                word = vocabularyGroup.getRandomWord()
+            }
+            word.isAlreadyUsed = true
+            askKnownWord = (0..1).random() == 0
+        }else if(wrongWords.size != 0){
+            word = wrongWords[(0 until wrongWords.size).random()]
+            askKnownWord = word.askKnownWord
+            type = word.typeWrong
+            wrongWords.remove(word)
+        }else
+            type = 0
 
-        word = vocabularyGroup.getRandomWord()
-        askKnownWord = (0..1).random() == 0
+        Log.i("Info", "$numberOfExercises/$numberOfExercisesTotal")
 
         when("$typeOfLessonNow->$type"){
             // From Type -1
@@ -217,7 +239,6 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
     private fun getNextLessonType(): Int {
-
         // return (1..3).random()
         return 1
     }

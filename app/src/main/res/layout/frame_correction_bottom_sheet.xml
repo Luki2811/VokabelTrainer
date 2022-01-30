@@ -29,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            tools:text="Richtige Antwort: Hej"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>
