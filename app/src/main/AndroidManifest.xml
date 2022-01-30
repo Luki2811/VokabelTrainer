@@ -50,22 +50,30 @@
             android:exported="true"
             android:noHistory="true"
             android:theme="@style/Theme.VokabelTrainer" />
-        <activity android:name=".ui.practice.PracticeActivity"
+        <activity
+            android:name=".ui.practice.PracticeActivity"
+            android:configChanges="orientation"
             android:exported="true"
             android:noHistory="true"
-            android:windowSoftInputMode="adjustResize"
             android:parentActivityName=".ui.MainActivity"
-            android:theme="@style/Theme.VokabelTrainer.NoActionBar"/>
+            android:screenOrientation="userPortrait"
+            android:theme="@style/Theme.VokabelTrainer.NoActionBar"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.MainActivity"
+            android:configChanges="orientation"
             android:exported="true"
+            android:screenOrientation="userPortrait"
             android:theme="@style/Theme.VokabelTrainer.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

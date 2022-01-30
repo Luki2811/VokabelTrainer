@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.navArgs
@@ -31,7 +32,7 @@ class PracticeTranslateTextFragment : Fragment(), TextToSpeech.OnInitListener, O
         dataPasser = context as OnDataPass
     }
 
-    fun passData(data: String){
+    private fun passData(data: String){
         dataPasser.onDataPass(data)
     }
 
@@ -46,12 +47,11 @@ class PracticeTranslateTextFragment : Fragment(), TextToSpeech.OnInitListener, O
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
-        if((0..1).random() == 0){
+        if(!args.askKnownWord){
             wordToAsk = args.wordDataNewWord
             binding.textViewPracticeTranslateTextBottom.text = wordToAsk
             languageTypeOfWord = args.languageNew
             tts = TextToSpeech(requireContext(), this)
-            passData("Hellowww")
         }
         else {
             wordToAsk = args.wordDataKnownWord
@@ -63,11 +63,9 @@ class PracticeTranslateTextFragment : Fragment(), TextToSpeech.OnInitListener, O
 
         }
 
-        passData("Hejjjjjjjj")
-
-        val activity = requireActivity() as PracticeActivity
-
-
+        binding.practiceTextInput.addTextChangedListener {
+            passData(binding.practiceTextInput.text.toString())
+        }
         return binding.root
     }
 

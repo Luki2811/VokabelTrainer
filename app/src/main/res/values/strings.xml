@@ -115,6 +115,7 @@
     <string name="empty_array">[\"\",\"\"]</string>
     <string name="settings_lesson_read_out_both">Nur neue Wörter vorlesen</string>
     <string name="to_finish">Fertigstellen</string>
+    <string name="correct_answer">Richtige Antwort: %1$s</string>
 
 
 </resources>

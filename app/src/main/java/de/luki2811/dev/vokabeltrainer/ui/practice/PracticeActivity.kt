@@ -4,14 +4,10 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager.findFragment
-import androidx.fragment.app.findFragment
-import androidx.navigation.findNavController
+import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
@@ -31,6 +27,9 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     lateinit var lesson: Lesson
     private lateinit var vocabularyGroup: VocabularyGroup
     lateinit var dataPasser: OnDataPass
+    private lateinit var word: VocabularyWord
+    private var askKnownWord: Boolean = true
+    private lateinit var solution: String
 
 
 
@@ -54,14 +53,11 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
             return
         }
 
-        // TEMP
         typeOfLessonNow = -1
 
+        binding.buttonCheckPractice.isEnabled = false
         binding.buttonCheckPractice.setOnClickListener {
-            if(numberOfExercises < numberOfExercisesTotal)
-                changeTypOfPractice(getNextLessonType())
-            else
-                changeTypOfPractice(0)
+            startCorrection()
         }
 
         changeTypOfPractice(getNextLessonType())
@@ -72,7 +68,43 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
     override fun onDataPass(data: String) {
-        Log.e("LOG", "data: $data")
+        solution = data
+        binding.buttonCheckPractice.isEnabled = solution.isNotEmpty()
+    }
+
+
+
+
+    private fun startCorrection(){
+        val correctionBottomSheet = CorrectionBottomSheet()
+
+        if(askKnownWord)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isInputCorrect())
+        else
+            correctionBottomSheet.arguments = bundleOf("correctWord" to word.knownWord, "isCorrect" to isInputCorrect())
+
+        correctionBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
+
+        supportFragmentManager.setFragmentResultListener("finishFragment", this){ requestKey, bundle ->
+            if(bundle.getBoolean("isFinished"))
+                next()
+        }
+
+    }
+
+    fun next(){
+        if(numberOfExercises < numberOfExercisesTotal)
+            changeTypOfPractice(getNextLessonType())
+        else
+            changeTypOfPractice(0)
+    }
+
+    private fun isInputCorrect(): Boolean{
+        return if(askKnownWord)
+            solution.trim().equals(word.newWord, word.isIgnoreCase)
+        else
+            solution.trim().equals(word.knownWord, word.isIgnoreCase)
+
     }
 
 
@@ -80,17 +112,18 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
         // Toast.makeText(applicationContext,"$typeOfLessonNow->$type", Toast.LENGTH_SHORT).show()
 
-        val word = vocabularyGroup.getRandomWord()
+        word = vocabularyGroup.getRandomWord()
+        askKnownWord = (0..1).random() == 0
 
         when("$typeOfLessonNow->$type"){
             // From Type -1
 
             "-1->1" -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth, askKnownWord))
                 typeOfLessonNow = 1
             }
             "-1->2" -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth, askKnownWord))
                 typeOfLessonNow = 2
             }
             "-1->3" -> {
@@ -105,12 +138,12 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
                 refreshStates()
             }
             "1->1" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
                 refreshStates()
             }
 
             "1->2" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
                 typeOfLessonNow = 2
                 refreshStates()
             }
@@ -127,12 +160,12 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
             }
 
             "2->1" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
                 typeOfLessonNow = 1
                 refreshStates()
             }
             "2->2" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
+                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
                 refreshStates()
             }
 
@@ -178,6 +211,8 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         binding.progressBarPractice.max = numberOfExercisesTotal + 1
         binding.progressBarPractice.progress = numberOfExercises
 
+        binding.buttonCheckPractice.isEnabled = false
+        solution = ""
 
     }
 
