@@ -181,8 +181,7 @@
         tools:layout="@layout/fragment_practice_finish" >
         <argument
             android:name='correctInPercent'
-            app:argType="integer"
-            android:defaultValue="100" />
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/practiceStartFragment"

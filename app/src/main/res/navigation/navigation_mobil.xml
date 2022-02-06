@@ -73,6 +73,12 @@
             <action
                 android:id="@+id/action_createNewMainFragment_to_newVocabularyGroupFragment"
                 app:destination="@id/newVocabularyGroupFragment" />
+            <action
+                android:id="@+id/action_createNewMainFragment_to_importWithQrCodeFragment"
+                app:destination="@id/importWithQrCodeFragment" />
+            <action
+                android:id="@+id/action_createNewMainFragment_to_importWithURLFragment"
+                app:destination="@id/importWithURLFragment" />
         </fragment>
         <fragment
             android:id="@+id/importFragment"
@@ -104,6 +110,16 @@
             android:name="de.luki2811.dev.vokabeltrainer.ui.NewAddVocabularyToGroupFragment"
             android:label="fragment_new_add_vocabulary_to_group"
             tools:layout="@layout/fragment_new_add_vocabulary_to_group" />
+        <fragment
+            android:id="@+id/importWithQrCodeFragment"
+            android:name="de.luki2811.dev.vokabeltrainer.ui.ImportWithQrCodeFragment"
+            android:label="fragment_import_with_qr_code"
+            tools:layout="@layout/fragment_import_with_qr_code" />
+        <fragment
+            android:id="@+id/importWithURLFragment"
+            android:name="de.luki2811.dev.vokabeltrainer.ui.ImportWithURLFragment"
+            android:label="fragment_import_with_u_r_l"
+            tools:layout="@layout/fragment_import_with_u_r_l" />
     </navigation>
     <navigation android:id="@+id/navigationMain"
         app:startDestination="@id/learnFragment">

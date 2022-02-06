@@ -30,7 +30,8 @@
         android:src="@drawable/ic_baseline_close_24"
         app:tint="@color/white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/leave" />
 
     <ProgressBar
         android:id="@+id/progressBarPractice"
@@ -44,6 +45,16 @@
         app:layout_constraintStart_toEndOf="@+id/buttonExitPractice"
         app:layout_constraintTop_toTopOf="@+id/buttonExitPractice" />
 
+    <TextView
+        android:id="@+id/textViewPracticeInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/look_for_case"
+        app:layout_constraintTop_toBottomOf="@id/buttonExitPractice"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment_practice"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -55,7 +66,7 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonCheckPractice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonExitPractice"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfo"
         app:navGraph="@navigation/navigation_learn" />
 
 

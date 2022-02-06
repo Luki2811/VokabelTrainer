@@ -20,6 +20,10 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateNewMainBinding
+import java.io.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketAddress
 
 class CreateNewMainFragment : Fragment() {
 
@@ -30,7 +34,7 @@ class CreateNewMainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCreateNewMainBinding.inflate(inflater, container, false)
         binding.importLessonButton.setOnClickListener {
-            importLesson(it)
+            importLesson()
         }
         binding.createLessonButton.setOnClickListener {
             findNavController().navigate(R.id.action_createNewMainFragment_to_newLessonFragment)
@@ -39,15 +43,34 @@ class CreateNewMainFragment : Fragment() {
             findNavController().navigate(R.id.action_createNewMainFragment_to_newVocabularyGroupFragment)
         }
 
-        // TODO: Fragment hinzufügen, um es mit NFC zu empfangen -> https://developer.android.com/training/beam-files
-        binding.getWithNFC.isEnabled = false
-        binding.getWithNFC.setOnClickListener { Toast.makeText(requireContext(), "NFC deaktiviert", Toast.LENGTH_LONG).show() }
+        // Check, if Internet is available
+        Thread {
+            try {
+                val timeoutMs = 1500
+                val sock = Socket()
+                val sockaddr: SocketAddress = InetSocketAddress("8.8.8.8", 53)
+                sock.connect(sockaddr, timeoutMs)
+                sock.close()
+                requireActivity().runOnUiThread { binding.buttonLoadFromURL.isEnabled = true }
+            } catch (e: IOException) {
+                requireActivity().runOnUiThread { binding.buttonLoadFromURL.isEnabled = false }
+            }
+        }.start()
+
+        binding.buttonLoadFromURL.setOnClickListener {
+            findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToImportWithURLFragment())
+        }
+
+        binding.buttonLoadFromQrCode.setOnClickListener {
+           findNavController().navigate(R.id.action_createNewMainFragment_to_importWithQrCodeFragment)
+        }
 
         return binding.root
     }
 
     private var requestCode = 1
-    private fun importLesson(view: View) {
+
+    private fun importLesson() {
         if (checkPermission()) {
             val chooseFile = Intent(Intent.ACTION_GET_CONTENT)
             chooseFile.addCategory(Intent.CATEGORY_OPENABLE)

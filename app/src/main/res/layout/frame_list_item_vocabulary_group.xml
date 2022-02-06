@@ -43,6 +43,20 @@
         app:tint="@color/White"
         app:srcCompat="@drawable/ic_baseline_share_24" />
 
+    <ImageButton
+        android:id="@+id/buttonShowQrCodeVocabularyGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:padding="7dp"
+        android:contentDescription="@string/qr_code"
+        android:background="@drawable/rounded_green_button"
+        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:layout_constraintEnd_toStartOf="@+id/buttonShareVocabularyGroup"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/White"
+        app:srcCompat="@drawable/ic_baseline_qr_code_24" />
+
     <View
         android:id="@+id/hr1"
         android:layout_width="match_parent"

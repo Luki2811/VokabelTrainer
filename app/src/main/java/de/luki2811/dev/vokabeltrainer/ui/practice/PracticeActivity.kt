@@ -21,14 +21,14 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
 
     private lateinit var binding: ActivityPracticeBinding
     // Typ 0 = FinishFragment
-    private val correctInPercent = 100
+    private var correctInPercent: Int = 100
     private var typeOfLessonNow = 0
     private var numberOfExercises = 0
-    private var numberOfExercisesTotal = 10 - 1
+    private var numberOfExercisesTotal = 9
+    private var numberOfWrongWords: Double = 0.0
     private var wrongWords: ArrayList<VocabularyWord> = arrayListOf()
     lateinit var lesson: Lesson
     private lateinit var vocabularyGroup: VocabularyGroup
-    lateinit var dataPasser: OnDataPass
     private lateinit var word: VocabularyWord
     private var askKnownWord: Boolean = true
     private lateinit var solution: String
@@ -50,8 +50,16 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         }
 
         if(vocabularyGroup.vocabulary.size < 10) {
-            Toast.makeText(this, getText(R.string.err_not_enough_words), Toast.LENGTH_LONG).show()
-            startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            MaterialAlertDialogBuilder(this)
+                .setMessage(R.string.err_lesson_enough_words_long)
+                .setTitle(R.string.err)
+                .setIcon(R.drawable.ic_outline_error_24)
+                .setNegativeButton(R.string.ok){ _, _ ->
+                    startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                }
+                .setOnCancelListener { startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+                .show()
+
             return
         }
 
@@ -82,6 +90,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
             word.isWrong = true
             word.askKnownWord = askKnownWord
             wrongWords.add(word)
+            numberOfWrongWords += 1
             numberOfExercisesTotal += 1
         }
 
@@ -92,7 +101,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
 
         correctionBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
 
-        supportFragmentManager.setFragmentResultListener("finishFragment", this){ requestKey, bundle ->
+        supportFragmentManager.setFragmentResultListener("finishFragment", this){ _, bundle ->
             if(bundle.getBoolean("isFinished"))
                 next()
         }
@@ -121,21 +130,43 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         // Toast.makeText(applicationContext,"$typeOfLessonNow->$type", Toast.LENGTH_SHORT).show()
         if(!this::word.isInitialized)
             word = vocabularyGroup.getRandomWord()
-        if(numberOfExercises < 9){
-            while(word.isAlreadyUsed){
-                word = vocabularyGroup.getRandomWord()
+        when {
+            numberOfExercises < 9 -> {
+                while(word.isAlreadyUsed){
+                    word = vocabularyGroup.getRandomWord()
+                }
+                word.isAlreadyUsed = true
+                askKnownWord = (0..1).random() == 0
+                if(!word.isIgnoreCase) {
+                    binding.textViewPracticeInfo.setText(R.string.look_for_case)
+                    binding.textViewPracticeInfo.visibility = View.VISIBLE
+                }
+                else {
+                    binding.textViewPracticeInfo.text = ""
+                    binding.textViewPracticeInfo.visibility = View.GONE
+                }
             }
-            word.isAlreadyUsed = true
-            askKnownWord = (0..1).random() == 0
-        }else if(wrongWords.size != 0){
-            word = wrongWords[(0 until wrongWords.size).random()]
-            askKnownWord = word.askKnownWord
-            type = word.typeWrong
-            wrongWords.remove(word)
-        }else
-            type = 0
+            wrongWords.size != 0 -> {
+                word = wrongWords[(0 until wrongWords.size).random()]
+                askKnownWord = word.askKnownWord
+                type = word.typeWrong
+                wrongWords.remove(word)
+                binding.textViewPracticeInfo.setText(R.string.word_previous_mistake)
+                binding.textViewPracticeInfo.setTextColor(getColor(R.color.Red))
+                binding.textViewPracticeInfo.visibility = View.VISIBLE
+            }
+            else -> {
+                type = 0
+                binding.textViewPracticeInfo.visibility = View.GONE
+            }
+        }
 
         Log.i("Info", "$numberOfExercises/$numberOfExercisesTotal")
+
+        // Calculate
+        correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
+        Log.e("correctInPercent", correctInPercent.toString())
+
 
         when("$typeOfLessonNow->$type"){
             // From Type -1
@@ -230,12 +261,11 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     private fun refreshStates(){
         numberOfExercises += 1
 
-        binding.progressBarPractice.max = numberOfExercisesTotal + 1
+        binding.progressBarPractice.max = numberOfExercisesTotal.toInt() + 1
         binding.progressBarPractice.progress = numberOfExercises
 
         binding.buttonCheckPractice.isEnabled = false
         solution = ""
-
     }
 
     private fun getNextLessonType(): Int {

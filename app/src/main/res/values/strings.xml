@@ -22,7 +22,7 @@
     <string name="settings">Einstellungen</string>
     <string name="create_additional_vocabel">Vokabel hinzufügen</string>
     <string name="err_missing_input">Fehler: Es wurden nicht alle Felder ausgefüllt !</string>
-    <string name="err">Fehler !</string>
+    <string name="err">Fehler</string>
     <string name="from_at_least_ten_vocs">%1$d von min. 10 Vokabeln hinzugefügt</string>
     <string name="deleted_succesfull">Erfolgreich gelöscht</string>
     <string name="delete">Löschen</string>
@@ -116,6 +116,19 @@
     <string name="settings_lesson_read_out_both">Nur neue Wörter vorlesen</string>
     <string name="to_finish">Fertigstellen</string>
     <string name="correct_answer">Richtige Antwort: %1$s</string>
+    <string name="leave">Verlassen</string>
+    <string name="look_for_case">Achte auf Groß- und Kleinschreibung !!</string>
+    <string name="word_previous_mistake">Vorheriger Fehler</string>
+    <string name="ok">OK</string>
+    <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet/en weniger als 10 Vokabeln. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen \nFehlercode: 001</string>
+    <string name="import_from_internet">Importieren aus URL</string>
+    <string name="import_from_qr_code">Importieren aus QR-Code</string>
+    <string name="import_from_file">Importieren aus Datei</string>
+    <string name="file">Datei</string>
+    <string name="url">URL</string>
+    <string name="qr_code">QR-Code</string>
+    <string name="import_from">Importieren aus:</string>
+    <string name="url_of_file_to_import">URL zum Importieren</string>
 
 
 </resources>

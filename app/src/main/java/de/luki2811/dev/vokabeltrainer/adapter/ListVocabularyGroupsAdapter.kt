@@ -9,14 +9,17 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
+import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
 import java.io.File
 
 class ListVocabularyGroupsAdapter(
-    private val dataSet: Array<VocabularyGroup>, private val navController: NavController, private val context: Context) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>() {
+    private val dataSet: Array<VocabularyGroup>, private val navController: NavController, private val context: Context, private val supportFragmentManager: FragmentManager) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -25,6 +28,7 @@ class ListVocabularyGroupsAdapter(
         val textView: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
         val buttonShare: ImageButton = view.findViewById(R.id.buttonShareVocabularyGroup)
         val buttonEdit: ImageButton = view.findViewById(R.id.buttonEditVocabularyGroup)
+        val buttonShowQrCode: ImageButton = view.findViewById(R.id.buttonShowQrCodeVocabularyGroup)
 
     }
 
@@ -42,6 +46,14 @@ class ListVocabularyGroupsAdapter(
 
         viewHolder.textView.text = dataSet[position].name
         viewHolder.buttonShare.setOnClickListener { shareVocabularyGroup(position) }
+
+        viewHolder.buttonShowQrCode.setOnClickListener {
+            val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
+
+            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSet[position].getAsJson().toString())
+
+            showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
+        }
 
         viewHolder.buttonEdit.setOnClickListener { navController.navigate(R.id.action_manageVocabularyGroupsFragment_to_editVocabularyGroupFragment, bundleOf("key_voc_group" to dataSet[position].getAsJson().toString())) }
     }

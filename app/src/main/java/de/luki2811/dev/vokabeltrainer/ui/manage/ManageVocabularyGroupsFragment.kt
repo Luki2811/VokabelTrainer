@@ -35,7 +35,7 @@ class ManageVocabularyGroupsFragment : Fragment() {
             arrayList.add(VocabularyGroup(jsonOfVocGroup, requireContext()))
         }
 
-        val adapter = ListVocabularyGroupsAdapter(arrayList.toTypedArray(), findNavController(), requireContext())
+        val adapter = ListVocabularyGroupsAdapter(arrayList.toTypedArray(), findNavController(), requireContext(), requireActivity().supportFragmentManager)
         binding.listOfVocabularyGroups.adapter = adapter
 
         return binding.root
