@@ -7,8 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import de.luki2811.dev.vokabeltrainer.BuildConfig
+import de.luki2811.dev.vokabeltrainer.NavigationMainDirections
+import de.luki2811.dev.vokabeltrainer.NavigationManageDirections
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
+import de.luki2811.dev.vokabeltrainer.ui.manage.ManageStartFragment
 
 class SettingsFragment : Fragment() {
 
@@ -20,12 +23,14 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
-        binding.textViewSettingsVersion.text = getString(
-            R.string.app_version,
-            BuildConfig.VERSION_NAME,
-            BuildConfig.VERSION_CODE
-        )
-        binding.buttonSettingsManage.setOnClickListener { findNavController().navigate(R.id.action_settingsFragment_to_navigation_manage) }
+        binding.textViewSettingsVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+
+        binding.buttonSettingsManageLanguage.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionGlobalNavigationManage(ManageStartFragment.NAV_MANAGE_LANGUAGE))
+        }
+        binding.buttonSettingsManageVocabularyGroups.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionGlobalNavigationManage(ManageStartFragment.NAV_MANAGE_VOCABULARY_GROUP))
+        }
 
         return binding.root
     }

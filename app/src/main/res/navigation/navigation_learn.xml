@@ -8,7 +8,8 @@
     <fragment
         android:id="@+id/practiceTranslateTextFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeTranslateTextFragment"
-        android:label="fragment_practice_translate_text" >
+        android:label="fragment_practice_translate_text"
+        tools:layout="@layout/fragment_practice_translate_text">
         <action
             android:id="@+id/action_practiceTranslateTextFragment_to_practiceOutOfThreeFragment"
             app:destination="@id/practiceOutOfThreeFragment"

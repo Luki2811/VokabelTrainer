@@ -129,6 +129,13 @@
     <string name="qr_code">QR-Code</string>
     <string name="import_from">Importieren aus:</string>
     <string name="url_of_file_to_import">URL zum Importieren</string>
+    <string name="action_import">"Importieren"</string>
+    <string name="err_cant_parse_to_URL">Fehler: Keine gültige URL</string>
+    <string name="err_cant_find_URL">URL konnte nicht gefunden werden</string>
+    <string name="err_URL_has_no_content">Fehler: URL hat keinen Inhalt</string>
+    <string name="download_started">Download gestartet !</string>
+    <string name="settings_lesson_ask_only_new_words">Nur neue Wörter abfragen</string>
+    <string name="vocabulary_group_restart">Vokabelgruppe beginnt erneut</string>
 
 
 </resources>

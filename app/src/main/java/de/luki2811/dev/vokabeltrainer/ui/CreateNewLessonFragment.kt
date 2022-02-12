@@ -164,6 +164,7 @@ class CreateNewLessonFragment : Fragment() {
 
         // If selected is it false
         val settingReadOutBoth: Boolean = !binding.switchLessonSettingsReadOutBoth.isChecked
+        val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
 
 
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
@@ -182,7 +183,7 @@ class CreateNewLessonFragment : Fragment() {
             }
         }
 
-        val lesson = Lesson(name, langKnown, langNew, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth)
+        val lesson = Lesson(name, langKnown, langNew, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords)
 
         lesson.saveInIndex(requireContext())
 

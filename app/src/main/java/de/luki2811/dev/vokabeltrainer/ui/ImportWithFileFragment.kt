@@ -11,21 +11,21 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
-import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportBinding
+import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportWithFileBinding
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
-class ImportFragment : Fragment() {
+class ImportWithFileFragment : Fragment() {
 
-    private var _binding: FragmentImportBinding? = null
+    private var _binding: FragmentImportWithFileBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var vocabularyGroup: VocabularyGroup
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentImportBinding.inflate(inflater, container, false)
+        _binding = FragmentImportWithFileBinding.inflate(inflater, container, false)
 
         val context = requireContext()
 

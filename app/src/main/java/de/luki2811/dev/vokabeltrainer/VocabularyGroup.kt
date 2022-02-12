@@ -3,22 +3,20 @@ package de.luki2811.dev.vokabeltrainer
 import android.content.Context
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
 // Jede Vokabelgruppe bekommt eine id, mit der sie wiedererkannt wird, falls der Name geändert wird.
 // Vokabelgruppen sind wie Lektionen, nur das sie NUR Vokabeln speichern können
 
-// TODO: Methode erstellen, damit Vokabelgruppen geteilt werden können
-// TODO: NFC teilen hinzufügen https://developer.android.com/training/beam-files
-
-class VocabularyGroup{
+class VocabularyGroup {
 
     var name: String
-    var vocabulary: Array<VocabularyWord>
+    lateinit var vocabulary: Array<VocabularyWord>
     var id: Id
 
-    constructor(name: String, vocabulary: Array<VocabularyWord>, context: Context){
+    constructor(name: String, vocabulary: Array<VocabularyWord>, context: Context) {
         this.name = name
         this.id = Id(context)
         this.vocabulary = vocabulary
@@ -26,9 +24,9 @@ class VocabularyGroup{
 
     constructor(jsonObj: JSONObject, context: Context) {
         name = jsonObj.getString("name")
-        id = Id(context,jsonObj.getInt("id"))
+        id = Id(context, jsonObj.getInt("id"))
         val vocabularyTemp = ArrayList<VocabularyWord>()
-        for (i in 0 until jsonObj.getJSONArray("vocabulary").length()){
+        for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
             vocabularyTemp.add(
                 VocabularyWord(
                     jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
@@ -38,6 +36,28 @@ class VocabularyGroup{
             )
         }
         vocabulary = vocabularyTemp.toTypedArray()
+    }
+
+    constructor(jsonObj: JSONObject, name: String, context: Context){
+        this.name = name
+        id = Id(context)
+        try {
+            val vocabularyTemp = ArrayList<VocabularyWord>()
+            for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
+                vocabularyTemp.add(
+                    VocabularyWord(
+                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
+                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
+                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
+                    )
+                )
+                vocabulary = vocabularyTemp.toTypedArray()
+            }
+        }catch (e: JSONException){
+            vocabulary = arrayOf()
+        }
+
+
     }
 
     fun addVocabularyFromVocabularyGroup(vocabularyGroup: VocabularyGroup){

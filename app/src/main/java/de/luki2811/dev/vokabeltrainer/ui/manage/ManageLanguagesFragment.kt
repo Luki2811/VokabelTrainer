@@ -6,11 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.Language
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentManageLanguagesBinding
+import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 
 class ManageLanguagesFragment : Fragment() {
 
@@ -21,6 +23,10 @@ class ManageLanguagesFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentManageLanguagesBinding.inflate(inflater, container, false)
+
+        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+            findNavController().navigate(ManageLanguagesFragmentDirections.actionManageLanguagesFragmentToNavigationManage(ManageStartFragment.NAV_LEAVE))
+        }
 
         for(i in 0..9){
             languages.add(Language(i, requireContext()))

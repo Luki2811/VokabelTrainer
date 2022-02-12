@@ -9,9 +9,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.color.DynamicColors
-import de.luki2811.dev.vokabeltrainer.AppFile
-import de.luki2811.dev.vokabeltrainer.Language
-import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
@@ -30,6 +28,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupViews()
+
+        // TEMP to delete a wrong ID without a file
+        // val vocg = VocabularyGroup("", arrayOf(), applicationContext )
+        // vocg.id = Id(applicationContext,657172 )
+        // vocg.deleteFromIndex(applicationContext)
+
 
         // Erstellen der IndexDatein mit leerem Index
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).exists())

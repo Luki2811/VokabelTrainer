@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +22,15 @@ class ManageVocabularyGroupsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentManageVocabularyGroupsBinding.inflate(inflater, container, false)
+
+        binding.buttonManageCreateNewVocabularyGroup.setOnClickListener {
+            findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationCreate())
+        }
+
+        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+            findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationMain(ManageStartFragment.NAV_LEAVE))
+        }
+
         val arrayList = ArrayList<VocabularyGroup>()
 
         val indexAsJson = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))

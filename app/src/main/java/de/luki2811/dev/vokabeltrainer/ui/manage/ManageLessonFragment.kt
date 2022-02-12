@@ -42,8 +42,6 @@ class ManageLessonFragment: Fragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.default_list_item, arrayList.toTypedArray())
         binding.autoCompleteTextVocabularyGroups.setAdapter(adapter)
 
-
-
         for(indexArray in 0 until index.getJSONArray("index").length())
             if(lesson.vocabularyGroupIds.contains(index.getJSONArray("index").getJSONObject(indexArray).getInt("id"))) {
                 arrayListOfVocabularyGroupNames.add(index.getJSONArray("index").getJSONObject(indexArray).getString("name"))
@@ -116,6 +114,7 @@ class ManageLessonFragment: Fragment() {
 
         binding.textLessonName.setText(lesson.name)
         binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
+        binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askOnlyNewWords
 
         return binding.root
     }
@@ -188,6 +187,7 @@ class ManageLessonFragment: Fragment() {
 
         // If selected is it false
         val settingReadOutBoth: Boolean = !binding.switchLessonSettingsReadOutBoth.isChecked
+        val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
 
 
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
@@ -211,8 +211,8 @@ class ManageLessonFragment: Fragment() {
         lesson.languageNew = langNew
         lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
         lesson.settingReadOutBoth = settingReadOutBoth
+        lesson.askOnlyNewWords = settingAskOnlyNewWords
 
-        lesson.getAsJson()
 
         // Speichern in Datei
         // Name der Datei gleich der ID(.json)

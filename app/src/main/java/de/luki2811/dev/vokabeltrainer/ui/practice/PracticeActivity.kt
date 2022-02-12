@@ -15,6 +15,8 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
+import java.io.File
+import kotlin.collections.ArrayList
 
 
 class PracticeActivity : AppCompatActivity(), OnDataPass {
@@ -32,7 +34,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     private lateinit var word: VocabularyWord
     private var askKnownWord: Boolean = true
     private lateinit var solution: String
-
+    private var idOfLesson: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,10 +42,9 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         binding = ActivityPracticeBinding.inflate(layoutInflater)
 
         lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
-
+        idOfLesson = lesson.id.number
 
         vocabularyGroup = VocabularyGroup("vocabularyForPractice", arrayOf(), applicationContext)
-        vocabularyGroup.id.deleteId()
 
         for(i in lesson.vocabularyGroupIds){
             VocabularyGroup.loadFromFileWithId(Id(applicationContext,i), applicationContext)?.let { vocabularyGroup.addVocabularyFromVocabularyGroup(it) }
@@ -83,8 +84,6 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
     private fun startCorrection(){
-        val correctionBottomSheet = CorrectionBottomSheet()
-
         if(!isInputCorrect()) {
             word.typeWrong = typeOfLessonNow
             word.isWrong = true
@@ -92,8 +91,11 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
             wrongWords.add(word)
             numberOfWrongWords += 1
             numberOfExercisesTotal += 1
+        }else{
+            lesson.alreadyUsedWords.add(word.newWord)
         }
 
+        val correctionBottomSheet = CorrectionBottomSheet()
         if(askKnownWord)
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isInputCorrect())
         else
@@ -116,11 +118,40 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     }
 
     private fun isInputCorrect(): Boolean{
-        return if(askKnownWord)
-            solution.trim().equals(word.newWord, word.isIgnoreCase)
-        else
-            solution.trim().equals(word.knownWord, word.isIgnoreCase)
 
+        // TODO: Change, that it shows the mistakes
+
+        if(askKnownWord)
+            return solution.trim().equals(word.newWord, word.isIgnoreCase)
+        else{
+            val knownWords = word.getKnownWordList()
+            for(i in knownWords) {
+                if(i.trim().equals(solution.trim(), word.isIgnoreCase)) {
+                    return true
+                }
+            }
+            return false
+        }
+    }
+
+    private fun newRandomWord() {
+        val randomWord = vocabularyGroup.getRandomWord()
+
+        Log.e("sizeVocabularyGroup", vocabularyGroup.vocabulary.size.toString())
+        Log.e("sizeAlreadyUsedWords", lesson.alreadyUsedWords.size.toString())
+
+        if(vocabularyGroup.vocabulary.size <= lesson.alreadyUsedWords.size) {
+            lesson.alreadyUsedWords = arrayListOf()
+            Toast.makeText(applicationContext, getString(R.string.vocabulary_group_restart), Toast.LENGTH_SHORT).show()
+        }
+
+        for(i in lesson.alreadyUsedWords){
+            if(i == randomWord.newWord) {
+                newRandomWord()
+                return
+            }
+        }
+        word = randomWord
     }
 
 
@@ -129,14 +160,19 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
         // Toast.makeText(applicationContext,"$typeOfLessonNow->$type", Toast.LENGTH_SHORT).show()
         if(!this::word.isInitialized)
-            word = vocabularyGroup.getRandomWord()
+            newRandomWord()
         when {
             numberOfExercises < 9 -> {
                 while(word.isAlreadyUsed){
-                    word = vocabularyGroup.getRandomWord()
+                    newRandomWord()
                 }
                 word.isAlreadyUsed = true
-                askKnownWord = (0..1).random() == 0
+
+                askKnownWord = if(lesson.askOnlyNewWords)
+                    true
+                else
+                    (0..1).random() == 0
+
                 if(!word.isIgnoreCase) {
                     binding.textViewPracticeInfo.setText(R.string.look_for_case)
                     binding.textViewPracticeInfo.visibility = View.VISIBLE
@@ -254,6 +290,15 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
 
         if(typeOfLessonNow == 0){
             binding.buttonCheckPractice.visibility = View.GONE
+
+            Log.e("idOfLesson", idOfLesson.toString())
+
+            // Speichern in Datei
+            // Name der Datei gleich der ID(.json)
+            var file = File(applicationContext.filesDir, "lessons")
+            file.mkdirs()
+            file = File(file, "$idOfLesson.json")
+            AppFile.writeInFile(lesson.getAsJson().toString(), file)
         }
 
     }
@@ -261,7 +306,7 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
     private fun refreshStates(){
         numberOfExercises += 1
 
-        binding.progressBarPractice.max = numberOfExercisesTotal.toInt() + 1
+        binding.progressBarPractice.max = numberOfExercisesTotal + 1
         binding.progressBarPractice.progress = numberOfExercises
 
         binding.buttonCheckPractice.isEnabled = false

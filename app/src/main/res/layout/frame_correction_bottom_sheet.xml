@@ -30,7 +30,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             tools:text="Richtige Antwort: Hej"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"/>
 
     </LinearLayout>
 
