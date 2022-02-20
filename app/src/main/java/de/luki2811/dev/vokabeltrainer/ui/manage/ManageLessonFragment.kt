@@ -15,7 +15,6 @@ import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
 import org.json.JSONObject
-import java.io.File
 
 class ManageLessonFragment: Fragment() {
     private var _binding: FragmentNewLessonBinding? = null
@@ -49,14 +48,14 @@ class ManageLessonFragment: Fragment() {
 
 
         for(i in arrayListOfVocabularyGroupNames){
-            addChiptoGroup(i)
+            addChipToGroup(i)
             arrayListGroup.add(i)
         }
 
         binding.buttonAddVocabularyGroupToLesson.setOnClickListener {
             for (i in arrayList){
                 if(binding.autoCompleteTextVocabularyGroups.text.toString() == i && !arrayListGroup.contains(binding.autoCompleteTextVocabularyGroups.text.toString())){
-                    addChiptoGroup(i)
+                    addChipToGroup(i)
                     arrayListGroup.add(i)
                     binding.autoCompleteTextVocabularyGroups.text = null
                 }
@@ -115,6 +114,11 @@ class ManageLessonFragment: Fragment() {
         binding.textLessonName.setText(lesson.name)
         binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
         binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askOnlyNewWords
+
+
+        binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
+        binding.chipTypeLesson2.isChecked = lesson.typesOfLesson.contains(2)
+        binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
 
         return binding.root
     }
@@ -187,7 +191,21 @@ class ManageLessonFragment: Fragment() {
 
         // If selected is it false
         val settingReadOutBoth: Boolean = !binding.switchLessonSettingsReadOutBoth.isChecked
+
         val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
+
+        val typesOfLesson: ArrayList<Int> = arrayListOf()
+        if(binding.chipTypeLesson1.isChecked)
+            typesOfLesson.add(1)
+        if(binding.chipTypeLesson2.isChecked)
+            typesOfLesson.add(2)
+        if(binding.chipTypeLesson3.isChecked)
+            typesOfLesson.add(3)
+
+        if(typesOfLesson.isEmpty()){
+            Toast.makeText(requireContext(), R.string.err_need_one_type_of_lesson, Toast.LENGTH_LONG).show()
+            return
+        }
 
 
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
@@ -212,19 +230,13 @@ class ManageLessonFragment: Fragment() {
         lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
         lesson.settingReadOutBoth = settingReadOutBoth
         lesson.askOnlyNewWords = settingAskOnlyNewWords
+        lesson.typesOfLesson = typesOfLesson
 
-
-        // Speichern in Datei
-        // Name der Datei gleich der ID(.json)
-        var file = File(requireContext().filesDir, "lessons")
-        file.mkdirs()
-        file = File(file, lesson.id.number.toString() + ".json" )
-        AppFile.writeInFile(lesson.getAsJson().toString(), file)
-
+        lesson.saveInFile()
         findNavController().navigate(ManageLessonFragmentDirections.actionManageLessonFragmentToNavigationMain())
     }
 
-    private fun addChiptoGroup(groupName: String){
+    private fun addChipToGroup(groupName: String){
         val chip = Chip(requireContext())
         chip.text = groupName
         chip.chipIcon = ContextCompat.getDrawable(requireContext(),

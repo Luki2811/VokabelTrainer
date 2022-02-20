@@ -70,7 +70,7 @@ class ListLessonsLearnAdapter(
                     file.mkdirs()
                     file = File(file, lesson.id.number.toString() + ".json" )
 
-                    lesson.deleteFromIndex(context)
+                    lesson.deleteFromIndex()
 
                     if(!file.delete()){
                         Log.e("Exception", "Couldn't delete ${lesson.id.number}.json (${lesson.name})")

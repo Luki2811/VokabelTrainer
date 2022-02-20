@@ -14,6 +14,8 @@ class Streak(var context: Context) {
     var lastTimeReachedGoal: LocalDate = LocalDate.now()
     var lastTimeChecked: LocalDate = LocalDate.now()
     var isReachedToday = false
+        private set
+
     fun addXP(value: Int) {
         val streakDatei = AppFile(AppFile.NAME_FILE_STREAK)
         try {
@@ -28,12 +30,12 @@ class Streak(var context: Context) {
 
     init {
         val streakFile = File(context.filesDir, AppFile.NAME_FILE_STREAK)
-        val streakDatei = AppFile(AppFile.NAME_FILE_STREAK)
+        val settings = Settings(context)
         if (streakFile.exists()) {
             try {
-                val streakData = JSONObject(streakDatei.loadFromFile(context))
+                val streakData = JSONObject(AppFile.loadFromFile(streakFile))
                 length = streakData.getInt("lengthInDays")
-                xpGoal = streakData.getInt("goalInXP")
+                xpGoal = settings.dailyObjectiveStreak.removeSuffix("XP").toInt()
                 xpReached = streakData.getInt("reachedInXPToday")
                 lastTimeChecked = LocalDate.parse(streakData.getString("lastTimeChecked"))
                 lastTimeReachedGoal = LocalDate.parse(streakData.getString("lastDayReachedGoal"))
@@ -68,7 +70,7 @@ class Streak(var context: Context) {
                 streakData.put("reachedInXPToday", xpReached)
                 streakData.put("lastTimeChecked", lastTimeChecked)
                 streakData.put("lastDayReachedGoal", lastTimeReachedGoal)
-                streakDatei.writeInFile(streakData.toString(), context)
+                AppFile.writeInFile(streakData.toString(), streakFile)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
@@ -88,7 +90,7 @@ class Streak(var context: Context) {
                 isReachedToday = streakData.getBoolean("reachedToday")
                 lastTimeChecked = LocalDate.parse(streakData.getString("lastTimeChecked"))
                 lastTimeReachedGoal = LocalDate.parse(streakData.getString("lastDayReachedGoal"))
-                streakDatei.writeInFile(streakData.toString(), context)
+                AppFile.writeInFile(streakData.toString(), streakFile)
             } catch (e: JSONException) {
                 e.printStackTrace()
             }

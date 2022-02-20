@@ -84,13 +84,8 @@ class ImportWithFileFragment : Fragment() {
         }
 
         // Save in Index
-        vocabularyGroup.saveInIndex(context)
-
-        // Save lesson as .json
-        var file = File(requireContext().filesDir, "vocabularyGroups")
-        file.mkdirs()
-        file = File(file, vocabularyGroup.id.number.toString() + ".json" )
-        AppFile.writeInFile(vocabularyGroup.getAsJson().toString(), file)
+        vocabularyGroup.saveInIndex()
+        vocabularyGroup.saveInFile()
 
         startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }

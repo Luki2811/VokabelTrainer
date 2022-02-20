@@ -124,12 +124,8 @@ class ImportWithQrCodeFragment : Fragment() {
         }
 
         // Save in Index
-        vocabularyGroup.saveInIndex(requireContext())
-        // Save lesson as .json
-        var file = File(requireContext().filesDir, "vocabularyGroups")
-        file.mkdirs()
-        file = File(file, vocabularyGroup.id.number.toString() + ".json" )
-        AppFile.writeInFile(vocabularyGroup.getAsJson().toString(), file)
+        vocabularyGroup.saveInIndex()
+        vocabularyGroup.saveInFile()
 
         findNavController().navigate(ImportWithQrCodeFragmentDirections.actionImportWithQrCodeFragmentToCreateNewMainFragment())
     }

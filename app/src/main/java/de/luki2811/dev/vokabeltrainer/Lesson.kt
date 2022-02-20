@@ -15,10 +15,12 @@ class Lesson {
     lateinit var languageNew: Language
     lateinit var vocabularyGroupIds: Array<Int>
     lateinit var alreadyUsedWords: ArrayList<String>
+    var typesOfLesson: ArrayList<Int> = arrayListOf()
     var settingReadOutBoth: Boolean = true
     var askOnlyNewWords: Boolean = false
+    private val context: Context
 
-    constructor(name: String, languageKnow: Language, languageNew: Language, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, alreadyUsedWords: ArrayList<String> = arrayListOf()) {
+    constructor(name: String, languageKnow: Language, languageNew: Language, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf()) {
         this.name = name
         this.id = Id(context)
         this.languageKnow = languageKnow
@@ -27,9 +29,12 @@ class Lesson {
         this.settingReadOutBoth = settingReadOutBoth
         this.alreadyUsedWords = alreadyUsedWords
         this.askOnlyNewWords = askOnlyNewWords
+        this.context = context
+        this.typesOfLesson = typesOfLesson
     }
 
     constructor(json: JSONObject, context: Context) {
+        this.context = context
         try {
             name = json.getString("name")
             id = Id(context, json.getInt("id"))
@@ -46,6 +51,19 @@ class Lesson {
                 e.printStackTrace()
                 false
             }
+            try {
+                if(json.getJSONObject("settings").getBoolean("useType1"))
+                    typesOfLesson.add(1)
+                if(json.getJSONObject("settings").getBoolean("useType2"))
+                    typesOfLesson.add(2)
+                if(json.getJSONObject("settings").getBoolean("useType3"))
+                    typesOfLesson.add(3)
+            }catch (e: JSONException){
+                e.printStackTrace()
+                typesOfLesson = arrayListOf(1,2,3)
+
+            }
+
             alreadyUsedWords = try {
                 val usedWords = ArrayList<String>()
                 for(i in 0 until json.getJSONArray("alreadyUsedWords").length())
@@ -60,7 +78,10 @@ class Lesson {
         }
     }
 
-    fun saveInIndex(context: Context){
+    /**
+     * Saves a lesson with name and ID in the index
+     */
+    fun saveInIndex(){
         if(File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS).exists()){
             val index = JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
@@ -73,7 +94,10 @@ class Lesson {
         }
     }
 
-    fun deleteFromIndex(context: Context){
+    /**
+     * Delete the lesson's ID and name from the index
+     */
+    fun deleteFromIndex(){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(context))
         var temp = -1
         println(index.getJSONArray("index").toString())
@@ -86,6 +110,9 @@ class Lesson {
         AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(index.toString(),context)
     }
 
+    /**
+     * Get a lesson as JSONObject
+     */
     fun getAsJson(): JSONObject{
         val jsonObj = JSONObject()
             .put("name", name)
@@ -108,11 +135,28 @@ class Lesson {
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
                 .put("askOnlyNewWords", askOnlyNewWords)
+                .put("useType1", typesOfLesson.contains(1))
+                .put("useType2", typesOfLesson.contains(2))
+                .put("useType3", typesOfLesson.contains(3))
         )
         return jsonObj
     }
 
+    /**
+     * Saves the lesson in a file with ID
+     */
+    fun saveInFile() {
+        var file = File(context.filesDir, "lessons")
+        file.mkdirs()
+        file = File(file, id.number.toString() + ".json" )
+        AppFile.writeInFile(getAsJson().toString(), file)
+    }
+
     companion object{
+
+        /**
+         * Checks, if a lesson has a valid name
+         */
         fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
             val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)

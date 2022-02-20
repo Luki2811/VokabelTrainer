@@ -167,12 +167,28 @@ class CreateNewLessonFragment : Fragment() {
         val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
 
 
+
+
+
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
 
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
 
         if(arrayListGroup.isEmpty()){
             Toast.makeText(requireContext(), "Vokabelgruppe fehlt", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val typesOfLesson: ArrayList<Int> = arrayListOf()
+        if(binding.chipTypeLesson1.isChecked)
+            typesOfLesson.add(1)
+        if(binding.chipTypeLesson2.isChecked)
+            typesOfLesson.add(2)
+        if(binding.chipTypeLesson3.isChecked)
+            typesOfLesson.add(3)
+
+        if(typesOfLesson.isEmpty()){
+            Toast.makeText(requireContext(), R.string.err_need_one_type_of_lesson, Toast.LENGTH_LONG).show()
             return
         }
 
@@ -183,16 +199,10 @@ class CreateNewLessonFragment : Fragment() {
             }
         }
 
-        val lesson = Lesson(name, langKnown, langNew, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords)
+        val lesson = Lesson(name, langKnown, langNew, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson)
 
-        lesson.saveInIndex(requireContext())
-
-        // Speichern in Datei
-        // Name der Datei gleich der ID(.json)
-        var file = File(requireContext().filesDir, "lessons")
-        file.mkdirs()
-        file = File(file, lesson.id.number.toString() + ".json" )
-        AppFile.writeInFile(lesson.getAsJson().toString(), file)
+        lesson.saveInIndex()
+        lesson.saveInFile()
 
         startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
 

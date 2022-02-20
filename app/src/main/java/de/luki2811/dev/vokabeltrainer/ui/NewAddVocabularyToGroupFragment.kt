@@ -97,18 +97,11 @@ class NewAddVocabularyToGroupFragment : Fragment() {
 
     }
 
-
-
     private fun finishCreateVocabularyGroup(){
         val vocabularyGroup = VocabularyGroup(arguments?.getString("key_name")!!, vocabulary.toTypedArray() ,requireContext())
         // Register in Index
-        vocabularyGroup.saveInIndex(requireContext())
-        // Speichern in Datei
-        // Name der Vokabelgruppe gleich der ID(.json)
-        var file = File(requireContext().filesDir, "vocabularyGroups")
-        file.mkdirs()
-        file = File(file, vocabularyGroup.id.number.toString() + ".json" )
-        writeInFile(vocabularyGroup.getAsJson().toString(), file)
+        vocabularyGroup.saveInIndex()
+        vocabularyGroup.saveInFile()
 
         startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
     }

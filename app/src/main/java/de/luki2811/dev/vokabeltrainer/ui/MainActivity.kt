@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity() {
 
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES).exists())
             AppFile(AppFile.NAME_FILE_INDEX_LANGUAGES).writeInFile(Language.getDefaultLanguageIndex().toString(), applicationContext)
+
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
+            AppFile(AppFile.NAME_FILE_SETTINGS).writeInFile("", applicationContext)
     }
 
     private fun setupViews() {

@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
@@ -113,7 +112,7 @@ class EditVocabularyGroupFragment : Fragment() {
             Log.w("Error", "Failed to delete vocabularyGroup with id ${vocabularyGroup.id}")
             return
         }
-        vocabularyGroup.deleteFromIndex(requireContext())
+        vocabularyGroup.deleteFromIndex()
         vocabularyGroup.id.deleteId()
         Log.i("Info", "Successfully deleted vocabularyGroup with id ${vocabularyGroup.id}")
         findNavController().navigate(R.id.action_editVocabularyGroupFragment_to_manageVocabularyGroupsFragment)
@@ -129,12 +128,8 @@ class EditVocabularyGroupFragment : Fragment() {
     private fun finishEdit(){
         refreshVocabularyWord()
         vocabularyGroup.vocabulary = vocabulary.toTypedArray()
-        // Speichern in Datei
-        // Name der Vokabelgruppe gleich der ID(.json)
-        var file = File(requireContext().filesDir, "vocabularyGroups")
-        file.mkdirs()
-        file = File(file, vocabularyGroup.id.number.toString() + ".json" )
-        AppFile.writeInFile(vocabularyGroup.getAsJson().toString(), file)
+
+        vocabularyGroup.saveInFile()
 
         startActivity(Intent(requireContext(), MainActivity::class.java))
     }

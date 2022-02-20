@@ -17,11 +17,7 @@ class NewVocabularyGroupFragment : Fragment() {
     private var _binding: FragmentNewVocabularyGroupBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewVocabularyGroupBinding.inflate(inflater, container, false)
 
         binding.buttonCreateVocabularyGroupNext.setOnClickListener {

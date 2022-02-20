@@ -37,7 +37,7 @@ class PracticeTranslateTextFragment : Fragment(), TextToSpeech.OnInitListener, O
     }
 
     override fun onDataPass(data: String) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

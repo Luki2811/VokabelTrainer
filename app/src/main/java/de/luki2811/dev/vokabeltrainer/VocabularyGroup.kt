@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.util.Log
 import com.google.android.material.textfield.TextInputEditText
 import org.json.JSONArray
 import org.json.JSONException
@@ -15,15 +16,18 @@ class VocabularyGroup {
     var name: String
     lateinit var vocabulary: Array<VocabularyWord>
     var id: Id
+    private var context: Context
 
     constructor(name: String, vocabulary: Array<VocabularyWord>, context: Context) {
         this.name = name
         this.id = Id(context)
         this.vocabulary = vocabulary
+        this.context = context
     }
 
     constructor(jsonObj: JSONObject, context: Context) {
         name = jsonObj.getString("name")
+        this.context = context
         id = Id(context, jsonObj.getInt("id"))
         val vocabularyTemp = ArrayList<VocabularyWord>()
         for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
@@ -40,6 +44,7 @@ class VocabularyGroup {
 
     constructor(jsonObj: JSONObject, name: String, context: Context){
         this.name = name
+        this.context = context
         id = Id(context)
         try {
             val vocabularyTemp = ArrayList<VocabularyWord>()
@@ -67,7 +72,7 @@ class VocabularyGroup {
         this.vocabulary = vocabulary.toTypedArray()
     }
 
-    fun saveInIndex(context: Context){
+    fun saveInIndex(){
         if(File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).exists()){
             val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
@@ -80,7 +85,7 @@ class VocabularyGroup {
         }
     }
 
-    fun deleteFromIndex(context: Context){
+    fun deleteFromIndex(){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(context))
 
         var temp = -1
@@ -119,7 +124,21 @@ class VocabularyGroup {
     fun getRandomWord(): VocabularyWord {
             val random = (Math.random() * vocabulary.size + 1).toInt()
             return vocabulary[random-1]
+    }
+
+    /**
+     * Creates a file with the ID of VocabularyGroup
+     */
+    fun saveInFile() {
+        if(id.number == 0){
+            Log.e("Error", "Couldn't save vocabulary group \"${this.name}\", because ID is 0")
+            return
         }
+        var file = File(context.filesDir, "vocabularyGroups")
+        file.mkdirs()
+        file = File(file, id.number.toString() + ".json" )
+        AppFile.writeInFile(getAsJson().toString(), file)
+    }
 
     companion object{
 

@@ -12,7 +12,7 @@
     <string name="native_language">Bekannte Sprache</string>
     <string name="new_language">Neue Sprache</string>
     <string name="next">Weiter</string>
-    <string name="bsp_name_lection">Bspw. Essen, Unit 2,…</string>
+    <string name="examples_name_of_lesson">Essen, Unit 3, Module 5,…</string>
     <string name="err_missing_name">Fehler: Name fehlt</string>
     <string name="err_name_already_taken">Fehler: Name bereits vergeben</string>
     <string name="err_name_not_available">Fehler: Name nicht verfügbar</string>
@@ -54,7 +54,7 @@
     <string name="import_">importieren</string>
     <string name="err_name_too_long_max">Fehler: Name zu lang ! (max. %1$d Zeichen)</string>
     <string name="streak">Streak</string>
-    <string name="daily_xp_objective">Tägliches Tagesziel</string>
+    <string name="settings_main_daily_xp_objective">Tägliches Tagesziel</string>
     <string name="learn">Lernen</string>
     <string name="plus">+</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -136,6 +136,14 @@
     <string name="download_started">Download gestartet !</string>
     <string name="settings_lesson_ask_only_new_words">Nur neue Wörter abfragen</string>
     <string name="vocabulary_group_restart">Vokabelgruppe beginnt erneut</string>
+    <string name="type_of_lesson_1">Direktes freies Übersetzen</string>
+    <string name="type_of_lesson_2">Aus 3 Vokabeln auswählen</string>
+    <string name="type_of_lesson_3">5 Vokabeln zuordnen</string>
+    <string name="settings_types_of_lesson">Typen von Übungen</string>
+    <string name="err_need_one_type_of_lesson">Fehler: Es wird mindestens 1 Typ von Übungen benötigt</string>
+    <string name="settings_main_read_out_forbidden_central">Vokabeln vorlesen zentral deaktivieren</string>
+    <string name="warning">Warnung</string>
+    <string name="warning_lose_of_progress">Wenn sie ihr Streak-Tagesziel ändern, wird der heutige Tag evtl. entfernt</string>
 
 
 </resources>
