@@ -27,9 +27,9 @@ class ManageVocabularyGroupsFragment : Fragment() {
             findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationCreate())
         }
 
-        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
-            findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationMain(ManageStartFragment.NAV_LEAVE))
-        }
+        // val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+        //     findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationMain())
+        // }
 
         val arrayList = ArrayList<VocabularyGroup>()
 
@@ -42,10 +42,10 @@ class ManageVocabularyGroupsFragment : Fragment() {
             file.mkdirs()
             file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
             val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
-            arrayList.add(VocabularyGroup(jsonOfVocGroup, requireContext()))
+            arrayList.add(VocabularyGroup(jsonOfVocGroup, context =  requireContext()))
         }
 
-        val adapter = ListVocabularyGroupsAdapter(arrayList.toTypedArray(), findNavController(), requireContext(), requireActivity().supportFragmentManager)
+        val adapter = ListVocabularyGroupsAdapter(arrayList.toTypedArray(), requireContext(),findNavController(), requireActivity().supportFragmentManager)
         binding.listOfVocabularyGroups.adapter = adapter
 
         return binding.root

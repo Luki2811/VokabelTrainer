@@ -6,6 +6,7 @@ import com.google.android.material.color.DynamicColors
 class VokabelTrainerApplication : Application(){
     override fun onCreate() {
         super.onCreate()
-        DynamicColors.applyToActivitiesIfAvailable(this)
+        if(Settings(applicationContext).useDynamicColors)
+            DynamicColors.applyToActivitiesIfAvailable(this)
     }
 }

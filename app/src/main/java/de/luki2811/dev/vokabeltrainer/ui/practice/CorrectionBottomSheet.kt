@@ -29,7 +29,6 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
             binding.layoutBottomSheet.setBackgroundColor(requireActivity().getColor(R.color.DarkRed))
         }
 
-
         return binding.root
     }
 

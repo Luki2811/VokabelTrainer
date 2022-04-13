@@ -19,12 +19,18 @@ class Settings(var context: Context) {
         e.printStackTrace()
         true
     }
-
+    var useDynamicColors: Boolean = try {
+        jsonObject.getBoolean("useDynamicColors")
+    }catch (e: JSONException){
+        e.printStackTrace()
+        true
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()
             .put("dailyObjectiveStreak",dailyObjectiveStreak)
             .put("readOutVocabularyGeneral", readOutVocabularyGeneral)
+            .put("useDynamicColors", useDynamicColors)
 
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
     }

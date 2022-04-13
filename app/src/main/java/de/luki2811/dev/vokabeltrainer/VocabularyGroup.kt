@@ -8,51 +8,57 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
-// Jede Vokabelgruppe bekommt eine id, mit der sie wiedererkannt wird, falls der Name geändert wird.
-// Vokabelgruppen sind wie Lektionen, nur das sie NUR Vokabeln speichern können
-
 class VocabularyGroup {
 
     var name: String
-    lateinit var vocabulary: Array<VocabularyWord>
     var id: Id
+    var languageNew: Language
+    var languageKnown: Language
+    lateinit var vocabulary: Array<VocabularyWord>
+
     private var context: Context
 
-    constructor(name: String, vocabulary: Array<VocabularyWord>, context: Context) {
+    constructor(name: String, languageNew: Language, languageKnown: Language, vocabulary: Array<VocabularyWord>, context: Context) {
         this.name = name
         this.id = Id(context)
+        this.languageNew = languageNew
+        this.languageKnown = languageKnown
         this.vocabulary = vocabulary
         this.context = context
     }
 
-    constructor(jsonObj: JSONObject, context: Context) {
-        name = jsonObj.getString("name")
-        this.context = context
-        id = Id(context, jsonObj.getInt("id"))
-        val vocabularyTemp = ArrayList<VocabularyWord>()
-        for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
-            vocabularyTemp.add(
-                VocabularyWord(
-                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
-                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
-                    jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
-                )
-            )
+    constructor(jsonObj: JSONObject, name: String = "", context: Context){
+        if(name == "") {
+            this.name = jsonObj.getString("name")
+            this.id = Id(context, jsonObj.getInt("id"))
         }
-        vocabulary = vocabularyTemp.toTypedArray()
-    }
+        else {
+            this.name = name
+            this.id = Id(context)
+        }
 
-    constructor(jsonObj: JSONObject, name: String, context: Context){
-        this.name = name
+        try {
+            this.languageKnown = Language(jsonObj.getInt("languageKnown"), context)
+            this.languageNew = Language(jsonObj.getInt("languageNew"), context)
+
+        }catch (e: JSONException){
+            this.languageKnown = Language(0, context)
+            this.languageNew = Language(0, context)
+        }
+
         this.context = context
-        id = Id(context)
+
+
+
         try {
             val vocabularyTemp = ArrayList<VocabularyWord>()
             for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
                 vocabularyTemp.add(
                     VocabularyWord(
                         jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
+                        this.languageKnown,
                         jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
+                        this.languageNew,
                         jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
                     )
                 )
@@ -61,8 +67,6 @@ class VocabularyGroup {
         }catch (e: JSONException){
             vocabulary = arrayOf()
         }
-
-
     }
 
     fun addVocabularyFromVocabularyGroup(vocabularyGroup: VocabularyGroup){
@@ -70,6 +74,15 @@ class VocabularyGroup {
         vocabulary.addAll(this.vocabulary)
         vocabulary.addAll(vocabularyGroup.vocabulary)
         this.vocabulary = vocabulary.toTypedArray()
+    }
+
+    fun refreshNameInIndex(){
+        val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)))
+        for(i in 0 until index.getJSONArray("index").length()){
+            if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
+                index.getJSONArray("index").getJSONObject(i).put("name", name)
+        }
+        AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).writeInFile(index.toString(),context)
     }
 
     fun saveInIndex(){
@@ -101,7 +114,11 @@ class VocabularyGroup {
 
 
     fun getAsJson(): JSONObject{
-        val jsonObj = JSONObject().put("name", name).put("id", id.number)
+        val jsonObj = JSONObject()
+            .put("name", name)
+            .put("id", id.number)
+            .put("languageKnown", languageKnown.type)
+            .put("languageNew", languageNew.type)
         val jsonArray = JSONArray()
         for (i in vocabulary.indices) {
             val voc = JSONObject()
@@ -122,8 +139,8 @@ class VocabularyGroup {
     }
 
     fun getRandomWord(): VocabularyWord {
-            val random = (Math.random() * vocabulary.size + 1).toInt()
-            return vocabulary[random-1]
+        val random = (Math.random() * vocabulary.size + 1).toInt()
+        return vocabulary[random-1]
     }
 
     /**
@@ -147,39 +164,25 @@ class VocabularyGroup {
             file.mkdirs()
             file = File(file, id.number.toString() + ".json" )
             return if(file.exists())
-                VocabularyGroup(JSONObject(AppFile.loadFromFile(file)), context)
+                VocabularyGroup(JSONObject(AppFile.loadFromFile(file)), context = context)
             else null
         }
 
 
-        fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
+        fun isNameValid(context: Context, textInputEditText: TextInputEditText, ignoreName: String = ""): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
-            val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
+            val indexAppFile = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
 
             if (textInputEditText.text.toString().length > 50)
                 return 3
 
-             if(textInputEditText.text.toString().trim().isEmpty())
+            if(textInputEditText.text.toString().trim().isEmpty())
                 return 4
-            /**
-            if (textInputEditText.text.toString().trim().contains("/") ||
-                textInputEditText.text.toString().trim().contains("<") ||
-                textInputEditText.text.toString().trim().contains(">") ||
-                textInputEditText.text.toString().trim().contains("\\") ||
-                textInputEditText.text.toString().trim().contains("|") ||
-                textInputEditText.text.toString().trim().contains("*") ||
-                textInputEditText.text.toString().trim().contains(":") ||
-                textInputEditText.text.toString().trim().contains("\"") ||
-                textInputEditText.text.toString().trim().contains("?")
-            ) return 1
 
-            if(AppFile.isAppFile(textInputEditText.text.toString().trim()))
-                return 2
-             **/
             if (indexFile.exists()) {
-                val indexVocabularyGroups = JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
+                val indexVocabularyGroups = JSONObject(indexAppFile.loadFromFile(context)).getJSONArray("index")
                 for (i in 0 until indexVocabularyGroups.length()) {
-                    if (indexVocabularyGroups.getJSONObject(i).getString("name") == textInputEditText.text.toString().trim()) {
+                    if ((indexVocabularyGroups.getJSONObject(i).getString("name") == textInputEditText.text.toString().trim()) && (textInputEditText.text.toString().trim() != ignoreName)) {
                         return 2
                     }
                 }

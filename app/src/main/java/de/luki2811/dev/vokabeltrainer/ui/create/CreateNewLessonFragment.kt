@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui
+package de.luki2811.dev.vokabeltrainer.ui.create
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,17 +8,15 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.Language
 import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
+import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
-import java.io.File
 
 class CreateNewLessonFragment : Fragment() {
 

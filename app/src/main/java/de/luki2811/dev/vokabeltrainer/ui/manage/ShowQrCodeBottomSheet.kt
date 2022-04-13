@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.os.Bundle
@@ -27,7 +28,8 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
     }
 
     private fun getQrCodeBitmap(content: String): Bitmap {
-        val size = 1024 //pixels
+
+        val size = Resources.getSystem().displayMetrics.widthPixels //pixels
         val hints = hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 } // Make the QR code buffer border narrower
         val bits = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, size, size)
         return Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {

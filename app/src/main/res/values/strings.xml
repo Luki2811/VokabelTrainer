@@ -144,6 +144,18 @@
     <string name="settings_main_read_out_forbidden_central">Vokabeln vorlesen zentral deaktivieren</string>
     <string name="warning">Warnung</string>
     <string name="warning_lose_of_progress">Wenn sie ihr Streak-Tagesziel ändern, wird der heutige Tag evtl. entfernt</string>
+    <string name="open_source_licences">Open-Source Lizenzen</string>
+    <string name="name_of_imported_vocabulary_group">Name der importierten Vokabelgruppe</string>
+    <string name="tts_settings">Einstellungen zum Vorlesen</string>
+    <string name="err_no_internet_connection">Fehler: Keine Internetverbindung</string>
+    <string name="download_successfully">Download erfolgreich</string>
+    <string name="settings_enable_dynamic_colors">Dynamic Colors verwenden</string>
+    <string name="info">Information</string>
+    <string name="info_need_to_restart_app_to_see_change">Die App muss neugestartet werden, damit die Änderung angewendet werden kann</string>
+    <string name="translate_in_lang">Übersetze ins %1$s</string>
+    <string name="speak_again">erneut sprechen</string>
+    <string name="find_fitting_words">Finde die passende Wortpaare</string>
+    <string name="err_lang_not_avaible">Fehler: Sprache nicht verfügbar</string>
 
 
 </resources>

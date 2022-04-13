@@ -14,12 +14,15 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
+import de.luki2811.dev.vokabeltrainer.ui.manage.EditVocabularyGroupFragment
+import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
 import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
 import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
 import java.io.File
 
 class ListVocabularyGroupsAdapter(
-    private val dataSet: Array<VocabularyGroup>, private val navController: NavController, private val context: Context, private val supportFragmentManager: FragmentManager) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>() {
+    private val dataSet: Array<VocabularyGroup>, private val context: Context, private val navController: NavController,private val supportFragmentManager: FragmentManager) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -55,7 +58,9 @@ class ListVocabularyGroupsAdapter(
             showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
         }
 
-        viewHolder.buttonEdit.setOnClickListener { navController.navigate(R.id.action_manageVocabularyGroupsFragment_to_editVocabularyGroupFragment, bundleOf("key_voc_group" to dataSet[position].getAsJson().toString())) }
+        viewHolder.buttonEdit.setOnClickListener {
+            navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSet[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)

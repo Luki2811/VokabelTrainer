@@ -2,6 +2,9 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import com.google.android.material.textfield.TextInputEditText
+import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_CHOOSE_OF_THREE_WORDS
+import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_MATCH_FIVE_WORDS
+import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_TRANSLATE_TEXT
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -53,11 +56,11 @@ class Lesson {
             }
             try {
                 if(json.getJSONObject("settings").getBoolean("useType1"))
-                    typesOfLesson.add(1)
+                    typesOfLesson.add(TYPE_TRANSLATE_TEXT)
                 if(json.getJSONObject("settings").getBoolean("useType2"))
-                    typesOfLesson.add(2)
+                    typesOfLesson.add(TYPE_CHOOSE_OF_THREE_WORDS)
                 if(json.getJSONObject("settings").getBoolean("useType3"))
-                    typesOfLesson.add(3)
+                    typesOfLesson.add(TYPE_MATCH_FIVE_WORDS)
             }catch (e: JSONException){
                 e.printStackTrace()
                 typesOfLesson = arrayListOf(1,2,3)
@@ -100,7 +103,6 @@ class Lesson {
     fun deleteFromIndex(){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(context))
         var temp = -1
-        println(index.getJSONArray("index").toString())
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
                 temp = i
@@ -135,9 +137,9 @@ class Lesson {
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
                 .put("askOnlyNewWords", askOnlyNewWords)
-                .put("useType1", typesOfLesson.contains(1))
-                .put("useType2", typesOfLesson.contains(2))
-                .put("useType3", typesOfLesson.contains(3))
+                .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
+                .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
+                .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
         )
         return jsonObj
     }

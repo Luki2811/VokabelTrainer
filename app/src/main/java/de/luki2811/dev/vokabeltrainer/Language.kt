@@ -2,118 +2,114 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import android.util.Log
+import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.util.*
 
-class Language(var type: Int, var context: Context) {
-    var name: String = getNameFromType()
+class Language {
+    var name: String
+    var type: Int
+    var isSpeakable: Boolean = false
+    val index: JSONObject
+    private val indexFile: File
+
+
+    /**
+     * To load a language
+     */
+
+    constructor(type: Int, context: Context) {
+        this.type = type
+        this.indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
+        this.index = getLanguagesIndex(context)
+        this.name = getNameFromType()
+    }
+
+    /**
+     * To add a new language
+     */
+
+    constructor(name: String, context: Context) {
+        this.name = name
+        this.indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
+
+        this.index = getLanguagesIndex(context)
+
+
+        val listOfTypes = arrayListOf<Int>()
+
+        for(i in 0..index.getJSONArray("languages").length()) {
+            listOfTypes.add(index.getJSONArray("languages").getJSONObject(i).getInt("type"))
+        }
+
+        this.type = listOfTypes.maxOrNull() ?: -1
+
+        index.put("languages", JSONArray(index.getJSONArray("languages").put(
+                JSONObject()
+                    .put("type", this.type)
+                    .put("name", this.name)
+        )))
+        AppFile.writeInFile(index.toString(), indexFile)
+
+    }
 
     fun refreshInIndex() {
-        if (isTypeValid()){
-            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
-            val index = JSONObject(AppFile.loadFromFile(indexFile))
-            index.put("lang$type", name)
-            AppFile.writeInFile(index.toString(), indexFile)
-        }else{
-            Log.w("Warning","Language type \"$type\" is not valid !!")
-        }
+
+        val index = JSONObject(AppFile.loadFromFile(indexFile))
+        val indexArray = index.getJSONArray("languages")
+        for(i in 0 until indexArray.length())
+            if(type == indexArray.getJSONObject(i).getInt("type"))
+                indexArray.getJSONObject(i).put("name", name)
+        index.put("languages", indexArray)
+        AppFile.writeInFile(index.toString(), indexFile)
+
     }
 
      private fun getNameFromType(): String{
-         return if (isTypeValid()){
-             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
-             val index = JSONObject(AppFile.loadFromFile(indexFile))
-             index.getString("lang$type")
 
-         }else{
-             Log.w("Warning","Language type \"$type\" is not valid !!")
-             "null"
+         val indexArray = index.getJSONArray("languages")
+         var end = "null"
+
+         for(i in 0 until indexArray.length()) {
+             if (type == indexArray.getJSONObject(i).getInt("type"))
+                 end = indexArray.getJSONObject(i).getString("name")
          }
+         return end
     }
 
-    private fun isTypeValid() = type > 0 || type <= 10
-
     fun getShortName(): String? {
-        if(name.equals("deutsch", ignoreCase = true)){
-            return "de"
-        }
-        if(name.equals("englisch", ignoreCase = true)){
-            return "en"
-        }
-        if(name.equals("französisch", ignoreCase = true)){
-            return "fr"
-        }
-        if(name.equals("spanisch", ignoreCase = true)){
-            return "es"
-        }
-        if(name.equals("russisch", ignoreCase = true)){
-            return "ru"
-        }
-        if(name.equals("schwedisch", ignoreCase = true)){
-            return "sv"
-        }
-        if(name.equals("norwegisch", ignoreCase = true)){
-            return "no"
-        }
-        if(name.equals("chinesisch", ignoreCase = true)){
-            return "zh"
-        }
-        if(name.equals("japanisch", ignoreCase = true)){
-            return "ja"
-        }
-        if(name.equals("niederländisch", ignoreCase = true)){
-            return "nl"
-        }
-        if(name.equals("dänisch", ignoreCase = true)){
-            return "da"
-        }
-        if(name.equals("arabisch", ignoreCase = true)){
-            return "ar"
-        }
-        if(name.equals("bulgarisch", ignoreCase = true)){
-            return "bg"
-        }
-        if(name.equals("kroatisch", ignoreCase = true)){
-            return "cz"
-        }
-        if(name.equals("finnisch", ignoreCase = true)){
-            return "fi"
-        }
-        if(name.equals("koreanisch", ignoreCase = true)){
-            return "ko"
-        }
-        if(name.equals("polnisch", ignoreCase = true)){
-            return "po"
-        }
-        if(name.equals("portugisisch", ignoreCase = true)){
-            return "pt"
-        }
-        if(name.equals("romänisch", ignoreCase = true)){
-            return "ro"
-        }
-        if(name.equals("slovakisch", ignoreCase = true)){
-            return "sk"
-        }
-        if(name.equals("slowenisch", ignoreCase = true)){
-            return "sl"
-        }
-        if(name.equals("thailendisch", ignoreCase = true)){
-            return "th"
-        }
-        if(name.equals("türkisch", ignoreCase = true)){
-            return "tr"
-        }
-        if(name.equals("ukrainisch", ignoreCase = true)){
-            return "uk"
-        }
-        if(name.equals("afrikanisch", ignoreCase = true)){
-            return "af"
-        }
-        if(name.equals("tschechisch", ignoreCase = true)){
-            return "cs"
-        }
+        return when(name.trim().lowercase(Locale.getDefault())) {
+            "deutsch" -> "de"
+            "englisch" -> "en"
+            "französisch" -> "fr"
+            "spanisch" -> "es"
+            "russisch" -> "ru"
+            "schwedisch" -> "sv"
+            "norwegisch" -> "no"
+            "chinesisch" -> "zh"
+            "japanisch" -> "ja"
+            "niederländisch" -> "nl"
+            "dänisch" -> "da"
+            "arabisch" -> "ar"
+            "bulgarisch" -> "bg"
+            "kroatisch" -> "cz"
+            "finnisch" -> "fi"
+            "koreanisch" -> "ko"
+            "polnisch" -> "po"
+            "portugisisch" -> "pt"
+            "romänisch" -> "ro"
+            "slovakisch" -> "sk"
+            "slowenisch" -> "sl"
+            "thailändisch" -> "th"
+            "türkisch" -> "tr"
+            "ukrainisch" -> "uk"
+            "afrikanisch" -> "af"
+            "tschechisch" -> "cs"
 
-        return null
+            else -> null
+        }
     }
 
 
@@ -130,18 +126,31 @@ class Language(var type: Int, var context: Context) {
         const val DEFAULT_8 = "Japanisch"
         const val DEFAULT_9 = "Lateinisch"
 
-        fun getDefaultLanguageIndex(): JSONObject{
-            return JSONObject()
-                .put("lang0", DEFAULT_0)
-                .put("lang1", DEFAULT_1)
-                .put("lang2", DEFAULT_2)
-                .put("lang3", DEFAULT_3)
-                .put("lang4", DEFAULT_4)
-                .put("lang5", DEFAULT_5)
-                .put("lang6", DEFAULT_6)
-                .put("lang7", DEFAULT_7)
-                .put("lang8", DEFAULT_8)
-                .put("lang9", DEFAULT_9)
+        fun getLanguagesIndex(context: Context): JSONObject {
+            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
+
+            return try {
+                JSONObject(AppFile.loadFromFile(indexFile))
+            } catch (e: JSONException) {
+                Log.e("Exception", "Couldn't load index from file")
+                e.printStackTrace()
+                JSONObject()
+            }
         }
+
+        fun getDefaultLanguageIndex(): JSONObject = JSONObject()
+            .put("languages", JSONArray()
+                .put(JSONObject().put("type", 0).put("name", DEFAULT_0))
+                .put(JSONObject().put("type", 1).put("name", DEFAULT_1))
+                .put(JSONObject().put("type", 2).put("name", DEFAULT_2))
+                .put(JSONObject().put("type", 3).put("name", DEFAULT_3))
+                .put(JSONObject().put("type", 4).put("name", DEFAULT_4))
+                .put(JSONObject().put("type", 5).put("name", DEFAULT_5))
+                .put(JSONObject().put("type", 6).put("name", DEFAULT_6))
+                .put(JSONObject().put("type", 7).put("name", DEFAULT_7))
+                .put(JSONObject().put("type", 8).put("name", DEFAULT_8))
+                .put(JSONObject().put("type", 9).put("name", DEFAULT_9))
+            )
+
     }
 }

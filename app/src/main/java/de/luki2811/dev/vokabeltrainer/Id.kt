@@ -16,7 +16,6 @@ class Id(var context: Context, var number: Int = 0) {
                     JSONObject(AppFile(AppFile.NAME_FILE_INDEX_ID).loadFromFile(context))
                 else JSONObject().put("index", JSONArray())
             index.getJSONArray("index").put(number)
-            println(index.toString())
             AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(index.toString(), context)
         }
     }

@@ -7,24 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            style="@style/Widget.Material3.AppBarLayout"
-            app:titleCentered="true"
-            app:liftOnScroll="true"
-            app:title="@string/app_name" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
@@ -33,9 +15,22 @@
         android:layout_marginBottom="96dp"
         android:clickable="true"
         android:contentDescription="@string/plus"
+        style="@style/Widget.Material3.FloatingActionButton.Primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/ic_outline_add_24" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonQrCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/ic_baseline_qr_code_24"
+        style="@style/Widget.Material3.FloatingActionButton.Secondary"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="@+id/floatingActionButton"
+        android:contentDescription="QR-Code" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
@@ -58,7 +53,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
+        app:layout_constraintTop_toTopOf="parent"
         app:navGraph="@navigation/navigation_mobil" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

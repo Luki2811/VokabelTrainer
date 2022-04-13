@@ -8,24 +8,37 @@
     tools:context=".ui.practice.PracticeTranslateTextFragment">
 
     <TextView
-        android:id="@+id/textViewPracticeTranslateTextTop"
+        android:id="@+id/textViewPracticeInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/translate"
+        android:layout_marginTop="12dp"
+        android:text="@string/look_for_case"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/textViewPracticeTranslateTextTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+
+        android:text="@string/translate_in_lang"
+        app:layout_constraintStart_toStartOf="@+id/textViewPracticeTranslateTextBottom"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfo" />
 
     <TextView
         android:id="@+id/textViewPracticeTranslateTextBottom"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/buttonSpeakTranslateText"
         app:layout_constraintTop_toBottomOf="@+id/textViewPracticeTranslateTextTop"
         tools:text="Word/Text to Translate" />
 
@@ -34,21 +47,47 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCheckPractice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewPracticeTranslateTextBottom">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/practiceTextInput"
-            android:gravity="top"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:gravity="top" />
 
 
-</com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/buttonCheckPractice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonSpeakTranslateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/rounded_blue_button"
+        android:padding="8dp"
+        android:src="@drawable/ic_outline_volume_up_24"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewPracticeTranslateTextBottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textViewPracticeTranslateTextTop"
+        app:tint="@color/white"
+        android:contentDescription="@string/speak_again" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

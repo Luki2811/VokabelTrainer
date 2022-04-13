@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,14 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
-import de.luki2811.dev.vokabeltrainer.ui.manage.ManageStartFragment
-import org.json.JSONObject
-import java.io.File
 
 class SettingsFragment : Fragment() {
 
@@ -33,15 +30,19 @@ class SettingsFragment : Fragment() {
         binding.menuStreakDailyObjectiveXPAutoComplete.setText(settings.dailyObjectiveStreak, false)
         binding.switchSettingsReadOutVocabularyCentralForbidden.isChecked = !settings.readOutVocabularyGeneral
 
+        binding.switchSettingsEnableDynamicColors.isChecked = settings.useDynamicColors
+
         binding.textViewSettingsVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
 
         binding.buttonSettingsManageLanguage.setOnClickListener {
-            findNavController().navigate(SettingsFragmentDirections.actionGlobalNavigationManage(ManageStartFragment.NAV_MANAGE_LANGUAGE))
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToManageLanguagesFragment())
         }
         binding.buttonSettingsManageVocabularyGroups.setOnClickListener {
-            findNavController().navigate(SettingsFragmentDirections.actionGlobalNavigationManage(ManageStartFragment.NAV_MANAGE_VOCABULARY_GROUP))
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToManageVocabularyGroupsFragment())
         }
-
+        binding.buttonSettingsSources.setOnClickListener {
+            findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSourcesFragment())
+        }
 
 
         // Setup Views
@@ -68,9 +69,29 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
-        binding.switchSettingsReadOutVocabularyCentralForbidden.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.switchSettingsReadOutVocabularyCentralForbidden.setOnCheckedChangeListener { _, isChecked ->
             settings.readOutVocabularyGeneral = !isChecked
             saveSettings()
+        }
+
+        binding.switchSettingsEnableDynamicColors.setOnCheckedChangeListener {_, isChecked ->
+            settings.useDynamicColors = isChecked
+            saveSettings()
+
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle(getString(R.string.info))
+                .setIcon(R.drawable.ic_outline_info_24)
+                .setMessage(R.string.info_need_to_restart_app_to_see_change)
+                .setPositiveButton(R.string.ok){_, _ ->
+
+                }
+                .show()
+        }
+
+
+
+        binding.buttonSettingsGoTextToSpeakSettings.setOnClickListener {
+            startActivity(Intent("com.android.settings.TTS_SETTINGS"))
         }
 
         return binding.root

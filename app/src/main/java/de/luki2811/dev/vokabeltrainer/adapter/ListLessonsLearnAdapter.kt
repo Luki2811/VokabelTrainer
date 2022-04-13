@@ -9,21 +9,30 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.Lesson
-import de.luki2811.dev.vokabeltrainer.NavigationMainDirections
+import de.luki2811.dev.vokabeltrainer.MobileNavigationDirections
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ListLessonsLearnAdapter(
-    private val dataSet: ArrayList<Lesson>, private val navController: NavController, private val context: Context, private val activity: Activity) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>() {
+    private val dataSet: ArrayList<Lesson>,
+    private val navController: NavController,
+    private val context: Context,
+    private val activity: Activity) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>(), Filterable {
+
+    var dataSetFilter = ArrayList<Lesson>()
+
+    init {
+        dataSetFilter = dataSet
+    }
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -51,21 +60,21 @@ class ListLessonsLearnAdapter(
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
-        viewHolder.textCardLessonName.text = dataSet[position].name
-        viewHolder.textCardLanguageKnown.text = dataSet[position].languageKnow.name
-        viewHolder.textCardLanguageNew.text = dataSet[position].languageNew.name
+        viewHolder.textCardLessonName.text = dataSetFilter[position].name
+        viewHolder.textCardLanguageKnown.text = dataSetFilter[position].languageKnow.name
+        viewHolder.textCardLanguageNew.text = dataSetFilter[position].languageNew.name
 
         viewHolder.buttonCardEdit.setOnClickListener {
-            navController.navigate(NavigationMainDirections.actionGlobalManageLessonFragment(dataSet[position].getAsJson().toString()))
+            navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))
         }
 
         viewHolder.buttonCardDelete.setOnClickListener {
             MaterialAlertDialogBuilder(context)
                 .setTitle(R.string.delete_lesson)
                 .setIcon(R.drawable.outline_delete_24)
-                .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSet[position].name))
+                .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[position].name))
                 .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
-                    val lesson = dataSet[position]
+                    val lesson = dataSetFilter[position]
                     var file = File(context.filesDir, "lessons")
                     file.mkdirs()
                     file = File(file, lesson.id.number.toString() + ".json" )
@@ -80,7 +89,7 @@ class ListLessonsLearnAdapter(
 
                     Log.i("Info", "Successfully deleted ${lesson.id.number}.json (${lesson.name})")
 
-                    dataSet.removeAt(position)
+                    dataSetFilter.removeAt(position)
                     notifyDataSetChanged()
                     notifyItemRemoved(position)
                 }
@@ -90,10 +99,39 @@ class ListLessonsLearnAdapter(
                 .show()
         }
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
-            activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSet[position].getAsJson().toString()))
+            activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSetFilter[position].getAsJson().toString()))
+        }
+    }
+
+    override fun getFilter(): Filter{
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                dataSetFilter = if (charSearch.isEmpty()) {
+                    dataSet
+                } else {
+                    val resultList = ArrayList<Lesson>()
+                    for (row in dataSet) {
+                        if (row.name.lowercase(Locale.getDefault()).contains(charSearch.lowercase(Locale.getDefault()))) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = dataSetFilter
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                dataSetFilter = results?.values as ArrayList<Lesson>
+                notifyDataSetChanged()
+
+            }
         }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    override fun getItemCount() = dataSetFilter.size
 }

@@ -5,36 +5,32 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
-import java.io.File
-import kotlin.collections.ArrayList
 
 
-class PracticeActivity : AppCompatActivity(), OnDataPass {
+class PracticeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPracticeBinding
     // Typ 0 = FinishFragment
     private var correctInPercent: Int = 100
     private var typeOfLessonNow = 0
     private var numberOfExercises = 0
-    private var numberOfExercisesTotal = 9
+    private var numberOfExercisesTotal = 10
     private var numberOfWrongWords: Double = 0.0
     private var wrongWords: ArrayList<VocabularyWord> = arrayListOf()
-    lateinit var lesson: Lesson
-    private lateinit var vocabularyGroup: VocabularyGroup
-    private lateinit var word: VocabularyWord
-    private var askKnownWord: Boolean = true
-    private lateinit var solution: String
-    private var idOfLesson: Int = 0
+    private lateinit var lesson: Lesson
+    private var vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
+    private var numberOfVocabularyWords = 0
+
+    private var words: ArrayList<VocabularyWord> = arrayListOf()
+    private lateinit var wordResult: VocabularyWord
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,15 +38,15 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
         binding = ActivityPracticeBinding.inflate(layoutInflater)
 
         lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
-        idOfLesson = lesson.id.number
-
-        vocabularyGroup = VocabularyGroup("vocabularyForPractice", arrayOf(), applicationContext)
 
         for(i in lesson.vocabularyGroupIds){
-            VocabularyGroup.loadFromFileWithId(Id(applicationContext,i), applicationContext)?.let { vocabularyGroup.addVocabularyFromVocabularyGroup(it) }
+            VocabularyGroup.loadFromFileWithId(Id(applicationContext,i), applicationContext)?.let {
+                vocabularyGroups.add(it)
+                numberOfVocabularyWords += it.vocabulary.size
+            }
         }
 
-        if(vocabularyGroup.vocabulary.size < 10) {
+        if(numberOfVocabularyWords < 10) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(R.string.err_lesson_enough_words_long)
                 .setTitle(R.string.err)
@@ -66,256 +62,160 @@ class PracticeActivity : AppCompatActivity(), OnDataPass {
 
         typeOfLessonNow = -1
 
-        binding.buttonCheckPractice.isEnabled = false
-        binding.buttonCheckPractice.setOnClickListener {
-            startCorrection()
-        }
-
         changeTypOfPractice(getNextLessonType())
 
         binding.buttonExitPractice.setOnClickListener { quitPractice(this, this) }
 
+
+        supportFragmentManager.setFragmentResultListener("finished", this) { _, bundle ->
+            if(!bundle.getString("wordResult").isNullOrEmpty()){
+                wordResult = VocabularyWord(JSONObject(bundle.getString("wordResult")!!), applicationContext)
+
+                if(wordResult.isWrong){
+                    wrongWords.add(wordResult)
+                    numberOfWrongWords += 1
+                    numberOfExercisesTotal += 1
+                }
+            }
+
+            numberOfExercises += 1
+
+            binding.progressBarPractice.max = numberOfExercisesTotal
+            binding.progressBarPractice.progress = numberOfExercises
+
+
+            if(numberOfExercises < numberOfExercisesTotal + 1)
+                changeTypOfPractice(getNextLessonType())
+            else
+                changeTypOfPractice(0)
+
+        }
+
         setContentView(binding.root)
     }
 
-    override fun onDataPass(data: String) {
-        solution = data
-        binding.buttonCheckPractice.isEnabled = solution.isNotEmpty()
-    }
+    private fun newRandomWord(checkIfAlreadyUse: Boolean = true): VocabularyWord {
+        var randomWord = vocabularyGroups[(0 until vocabularyGroups.size).random()].getRandomWord()
 
-    private fun startCorrection(){
-        if(!isInputCorrect()) {
-            word.typeWrong = typeOfLessonNow
-            word.isWrong = true
-            word.askKnownWord = askKnownWord
-            wrongWords.add(word)
-            numberOfWrongWords += 1
-            numberOfExercisesTotal += 1
-        }else{
-            lesson.alreadyUsedWords.add(word.newWord)
-        }
+        if(checkIfAlreadyUse){
+            if(numberOfVocabularyWords <= lesson.alreadyUsedWords.size) {
+                lesson.alreadyUsedWords = arrayListOf()
+                Toast.makeText(applicationContext, getString(R.string.vocabulary_group_restart), Toast.LENGTH_SHORT).show()
+            }
 
-        val correctionBottomSheet = CorrectionBottomSheet()
-        if(askKnownWord)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isInputCorrect())
-        else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.knownWord, "isCorrect" to isInputCorrect())
-
-        correctionBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
-
-        supportFragmentManager.setFragmentResultListener("finishFragment", this){ _, bundle ->
-            if(bundle.getBoolean("isFinished"))
-                next()
-        }
-
-    }
-
-    fun next(){
-        if(numberOfExercises < numberOfExercisesTotal + 1)
-            changeTypOfPractice(getNextLessonType())
-        else
-            changeTypOfPractice(0)
-    }
-
-    private fun isInputCorrect(): Boolean{
-
-        // TODO: Change, that it shows the mistakes
-
-        if(askKnownWord)
-            return solution.trim().equals(word.newWord, word.isIgnoreCase)
-        else{
-            val knownWords = word.getKnownWordList()
-            for(i in knownWords) {
-                if(i.trim().equals(solution.trim(), word.isIgnoreCase)) {
-                    return true
+            for(i in lesson.alreadyUsedWords){
+                while(i == randomWord.newWord) {
+                    randomWord = vocabularyGroups[(0 until vocabularyGroups.size).random()].getRandomWord()
                 }
             }
-            return false
-        }
-    }
-
-    private fun newRandomWord() {
-        val randomWord = vocabularyGroup.getRandomWord()
-
-        Log.e("sizeVocabularyGroup", vocabularyGroup.vocabulary.size.toString())
-        Log.e("sizeAlreadyUsedWords", lesson.alreadyUsedWords.size.toString())
-
-        if(vocabularyGroup.vocabulary.size <= lesson.alreadyUsedWords.size) {
-            lesson.alreadyUsedWords = arrayListOf()
-            Toast.makeText(applicationContext, getString(R.string.vocabulary_group_restart), Toast.LENGTH_SHORT).show()
         }
 
-        for(i in lesson.alreadyUsedWords){
-            if(i == randomWord.newWord) {
-                newRandomWord()
-                return
-            }
-        }
-        word = randomWord
+        return randomWord
     }
 
 
     private fun changeTypOfPractice(_type: Int){
         var type = _type
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
-        // Toast.makeText(applicationContext,"$typeOfLessonNow->$type", Toast.LENGTH_SHORT).show()
-        if(!this::word.isInitialized)
-            newRandomWord()
-        when {
-            numberOfExercises < 9 -> {
-                while(word.isAlreadyUsed){
-                    newRandomWord()
-                }
-                word.isAlreadyUsed = true
 
-                askKnownWord = if(lesson.askOnlyNewWords)
-                    true
-                else
-                    (0..1).random() == 0
+        words.clear()
 
-                if(!word.isIgnoreCase) {
-                    binding.textViewPracticeInfo.setText(R.string.look_for_case)
-                    binding.textViewPracticeInfo.visibility = View.VISIBLE
-                }
-                else {
-                    binding.textViewPracticeInfo.text = ""
-                    binding.textViewPracticeInfo.visibility = View.GONE
+        when{
+            numberOfExercises < 10 ->{
+                if(type == Exercise.TYPE_TRANSLATE_TEXT || type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
+                    words.add(0, newRandomWord(true))
+
+                    words[0].isAlreadyUsed = true
+                    lesson.alreadyUsedWords.add(words[0].newWord)
+
+                    words[0].askKnownWord = if (lesson.askOnlyNewWords) false else (0..1).random() == 0
+
+                    if(type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
+                        for (i in 1..2){
+                            var newWord: VocabularyWord
+                            do {
+                                newWord = newRandomWord(false)
+                            } while (newWord in words)
+                            words.add(i, newWord)
+
+                            words[i].askKnownWord = words[0].askKnownWord
+                        }
+                    }
+                }else{
+                    for(i in 0..4){
+                        var newWord: VocabularyWord
+                        do {
+                            newWord = newRandomWord(false)
+                        } while (newWord in words)
+                        words.add(i, newWord)
+
+                        words[i].askKnownWord = words[0].askKnownWord
+                    }
                 }
             }
             wrongWords.size != 0 -> {
-                word = wrongWords[(0 until wrongWords.size).random()]
-                askKnownWord = word.askKnownWord
-                type = word.typeWrong
-                wrongWords.remove(word)
-                binding.textViewPracticeInfo.setText(R.string.word_previous_mistake)
-                binding.textViewPracticeInfo.setTextColor(getColor(R.color.Red))
-                binding.textViewPracticeInfo.visibility = View.VISIBLE
+                words.add(0, wrongWords[(0 until wrongWords.size).random()])
+                words[0].isWrong = false
+                type = words[0].typeWrong
+                wrongWords.remove(words[0])
+
+                if(type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
+                    for (i in 1 until 2){
+                        var newWord: VocabularyWord
+                        do {
+                            newWord = newRandomWord(false)
+                        } while (newWord in words)
+                        words.add(i, newWord)
+
+                        words[i].askKnownWord = words[0].askKnownWord
+                    }
+                }
+
+                Toast.makeText(applicationContext, "Fehlerwort", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 type = 0
-                binding.textViewPracticeInfo.visibility = View.GONE
+                lesson.saveInFile()
             }
         }
 
-        Log.i("Info", "$numberOfExercises/$numberOfExercisesTotal")
+        val wordsInArray = ArrayList<String>()
+        for (i in words){
+            wordsInArray.add(i.getJson().toString())
+        }
 
-        // Calculate
-        correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
-        Log.e("correctInPercent", correctInPercent.toString())
+        Log.e("Info0", wordsInArray.toString())
 
-
-        when("$typeOfLessonNow->$type"){
-            // From Type -1
-
-            "-1->1" -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth, askKnownWord))
-                typeOfLessonNow = 1
+        when(type){
+            0 -> {
+                // Calculate
+                correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent))
             }
-            "-1->2" -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth, askKnownWord))
-                typeOfLessonNow = 2
+            Exercise.TYPE_TRANSLATE_TEXT -> {
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(lesson.settingReadOutBoth, words[0].getJson().toString()))
             }
-            "-1->3" -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                typeOfLessonNow = 3
+            Exercise.TYPE_CHOOSE_OF_THREE_WORDS -> {
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(wordAsJson = wordsInArray.toTypedArray(), settingsReadBoth = lesson.settingReadOutBoth))
             }
-
-            // From Type 1
-            "1->0" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeFinishFragment(correctInPercent))
-                typeOfLessonNow = 0
-                refreshStates()
-            }
-            "1->1" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
-                refreshStates()
-            }
-
-            "1->2" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
-                typeOfLessonNow = 2
-                refreshStates()
-            }
-            "1->3" -> {
-                navHostFragment.navController.navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeMatchFiveWordsFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                typeOfLessonNow = 3
-                refreshStates()
-            }
-            // From Type 2
-            "2->0" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeFinishFragment(correctInPercent))
-                typeOfLessonNow = 0
-                refreshStates()
-            }
-
-            "2->1" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
-                typeOfLessonNow = 1
-                refreshStates()
-            }
-            "2->2" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth ,askKnownWord))
-                refreshStates()
-            }
-
-            "2->3" -> {
-                navHostFragment.navController.navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeMatchFiveWordsFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                typeOfLessonNow = 3
-                refreshStates()
-            }
-            // From Type 3
-            "3->0" -> {
-                navHostFragment.navController.navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeFinishFragment(correctInPercent))
-                typeOfLessonNow = 0
-                refreshStates()
-            }
-            "3->1" -> {
-                navHostFragment.navController.navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeTranslateTextFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                typeOfLessonNow = 1
-                refreshStates()
-            }
-            "3->2" -> {
-                navHostFragment.navController.navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeOutOfThreeFragment(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                typeOfLessonNow = 2
-                refreshStates()
-            }
-            "3->3" -> {
-                navHostFragment.navController.navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentSelf(word.knownWord, word.newWord, lesson.languageNew.type, lesson.languageKnow.type ,lesson.settingReadOutBoth))
-                refreshStates()
+            Exercise.TYPE_MATCH_FIVE_WORDS -> {
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(wordAsJson = wordsInArray.toTypedArray(), settingsReadBoth = lesson.settingReadOutBoth))
             }
             else -> {
-                refreshStates()
+                Toast.makeText(applicationContext, "Type ($type) isn't valid", Toast.LENGTH_LONG).show()
+                Log.e("Warning", "Type ($type) isn't valid -> return to MainActivity")
+                startActivity(Intent(applicationContext, MainActivity::class.java))
             }
         }
-
-        if(typeOfLessonNow == 0){
-            binding.buttonCheckPractice.visibility = View.GONE
-
-            Log.e("idOfLesson", idOfLesson.toString())
-
-            // Speichern in Datei
-            // Name der Datei gleich der ID(.json)
-            var file = File(applicationContext.filesDir, "lessons")
-            file.mkdirs()
-            file = File(file, "$idOfLesson.json")
-            AppFile.writeInFile(lesson.getAsJson().toString(), file)
-        }
-
-    }
-
-    private fun refreshStates(){
-        numberOfExercises += 1
-
-        binding.progressBarPractice.max = numberOfExercisesTotal + 1
-        binding.progressBarPractice.progress = numberOfExercises
-
-        binding.buttonCheckPractice.isEnabled = false
-        solution = ""
     }
 
     private fun getNextLessonType(): Int {
-        // return (1..3).random()
-        return 1
+        var type = 0
+
+        while(!lesson.typesOfLesson.contains(type)){
+            type = (1..3).random()
+        }
+        return type
     }
 
     companion object {

@@ -3,12 +3,10 @@ package de.luki2811.dev.vokabeltrainer.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.color.DynamicColors
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
@@ -49,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             AppFile(AppFile.NAME_FILE_INDEX_LANGUAGES).writeInFile(Language.getDefaultLanguageIndex().toString(), applicationContext)
 
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
-            AppFile(AppFile.NAME_FILE_SETTINGS).writeInFile("", applicationContext)
+            AppFile(AppFile.NAME_FILE_SETTINGS).writeInFile("{}", applicationContext)
     }
 
     private fun setupViews() {
@@ -60,7 +58,8 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
-        binding.floatingActionButton.setOnClickListener { navController.navigate(R.id.action_global_navigation_create) }
+        binding.floatingActionButton.setOnClickListener { navController.navigate(R.id.action_global_createNewMainFragment) }
+        binding.floatingActionButtonQrCode.setOnClickListener { navController.navigate(R.id.action_global_importWithQrCodeFragment) }
 
         navView.setupWithNavController(navController)
 
@@ -70,10 +69,12 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if( destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
                 navView.visibility = View.GONE
+                binding.floatingActionButtonQrCode.visibility = View.GONE
                 binding.floatingActionButton.visibility = View.GONE
             } else {
                 navView.visibility = View.VISIBLE
                 binding.floatingActionButton.visibility = View.VISIBLE
+                binding.floatingActionButtonQrCode.visibility = View.VISIBLE
             }
         }
 

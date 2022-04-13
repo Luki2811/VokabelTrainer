@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui
+package de.luki2811.dev.vokabeltrainer.ui.create
 
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -16,14 +16,11 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
-import de.luki2811.dev.vokabeltrainer.AppFile
-import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportWithQrCodeBinding
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.File
 
 
 class ImportWithQrCodeFragment : Fragment() {
@@ -65,7 +62,7 @@ class ImportWithQrCodeFragment : Fragment() {
                 requireActivity().runOnUiThread {
 
                     vocabularyGroup = try {
-                        VocabularyGroup(JSONObject(result), requireContext())
+                        VocabularyGroup(JSONObject(result), context = requireContext())
                     }catch (e: JSONException) {
                         e.printStackTrace()
                         Toast.makeText(
@@ -79,10 +76,11 @@ class ImportWithQrCodeFragment : Fragment() {
                         Toast.makeText(requireContext(), R.string.err_could_not_import_vocabulary_group, Toast.LENGTH_LONG).show()
                         return@runOnUiThread
                     }
+
                     binding.buttonFinishImportWithQrCode.isEnabled = true
-                    binding.editTextImportQrCodeNameVocabularyGroup.setText(vocabularyGroup.name)
-                    binding.editTextImportQrCodeNameVocabularyGroup.hint = vocabularyGroup.name
-                    binding.buttonFinishImportWithQrCode.setOnClickListener { finishImport() }
+
+                    binding.textViewNameOfImportedVocabularyGroup.text = vocabularyGroup.name
+                    binding.buttonFinishImportWithQrCode.setOnClickListener { findNavController().navigate(ImportWithQrCodeFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), NewVocabularyGroupFragment.MODE_IMPORT)) }
                 }
 
             }
@@ -96,38 +94,6 @@ class ImportWithQrCodeFragment : Fragment() {
                 codeScanner.startPreview()
             }
         }
-    }
-
-    private fun finishImport(){
-        // Check if Name is correct
-        when (VocabularyGroup.isNameValid(requireContext(), binding.editTextImportQrCodeNameVocabularyGroup)) {
-            0 -> {
-                binding.editTextImportQrCodeNameVocabularyGroup.error = null
-                vocabularyGroup.name = binding.editTextImportQrCodeNameVocabularyGroup.text.toString()
-            }
-            1 -> {
-                binding.editTextImportQrCodeNameVocabularyGroup.error = getString(R.string.err_name_contains_wrong_letter)
-                return
-            }
-            2 -> {
-                binding.editTextImportQrCodeNameVocabularyGroup.error = getString(R.string.err_name_already_taken)
-                return
-            }
-            3 -> {
-                binding.editTextImportQrCodeNameVocabularyGroup.error = getString(R.string.err_name_too_long_max, 50)
-                return
-            }
-            4 -> {
-                binding.editTextImportQrCodeNameVocabularyGroup.error = getString(R.string.err_missing_name)
-                return
-            }
-        }
-
-        // Save in Index
-        vocabularyGroup.saveInIndex()
-        vocabularyGroup.saveInFile()
-
-        findNavController().navigate(ImportWithQrCodeFragmentDirections.actionImportWithQrCodeFragmentToCreateNewMainFragment())
     }
 
     override fun onResume() {

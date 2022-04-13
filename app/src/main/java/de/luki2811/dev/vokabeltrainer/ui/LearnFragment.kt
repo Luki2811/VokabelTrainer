@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +20,7 @@ class LearnFragment : Fragment() {
 
     private var _binding: FragmentLearnBinding? = null
     private val binding get() = _binding!!
+    private lateinit var adapter: ListLessonsLearnAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -35,14 +37,25 @@ class LearnFragment : Fragment() {
                 file.mkdirs()
                 file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
                 val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
-                println(jsonOfVocGroup.toString())
                 arrayList.add(Lesson(jsonOfVocGroup, requireContext()))
             }
         }catch (e: JSONException){
             e.printStackTrace()
         }
+        adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
 
-        binding.listOfLessonsCards.adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
+        binding.listOfLessonsCards.adapter = adapter
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.getFilter().filter(newText)
+                return false
+            }
+        })
 
         /** Ersetzt durch RecyclerView
 

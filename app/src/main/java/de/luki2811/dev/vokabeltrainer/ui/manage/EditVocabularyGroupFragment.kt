@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -7,14 +8,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.R
-import de.luki2811.dev.vokabeltrainer.VocabularyGroup
-import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
@@ -26,25 +27,40 @@ class EditVocabularyGroupFragment : Fragment() {
     private val binding get() = _binding!!
     lateinit var vocabularyGroup: VocabularyGroup
     lateinit var vocabulary: ArrayList<VocabularyWord>
+    private lateinit var languageNew: Language
+    private lateinit var languageKnown: Language
+
     var pos: Int = 0
+    private val args:EditVocabularyGroupFragmentArgs by navArgs()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditVocabularyGroupBinding.inflate(inflater, container, false)
-        vocabularyGroup =
-            VocabularyGroup(JSONObject(arguments?.getString("key_voc_group")!!), requireContext())
 
-        vocabulary = ArrayList(vocabularyGroup.vocabulary.asList())
+        if(args.keyMode == MODE_EDIT || args.keyMode == MODE_IMPORT){
+            vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroupWithName!!), context = requireContext())
+
+            languageKnown = vocabularyGroup.languageKnown
+            languageNew = vocabularyGroup.languageNew
+
+            if(args.keyMode == MODE_IMPORT){
+                vocabularyGroup.id = Id(requireContext())
+            }
+            vocabulary = ArrayList(vocabularyGroup.vocabulary.asList())
+        } else {
+            vocabulary = ArrayList()
+
+            languageKnown = Language(args.vocGroupLangTypeKnown, requireContext())
+            languageNew = Language(args.vocGroupLangTypeNew, requireContext())
+
+            vocabulary.add(VocabularyWord("", languageKnown , "", languageNew, true))
+            vocabularyGroup = VocabularyGroup(args.keyVocGroupName, languageKnown, languageNew, vocabulary.toTypedArray(), requireContext())
+        }
 
         binding.buttonBackVocabularyWord.setOnClickListener {
             if(refreshVocabularyWord()){
                 pos -= 1
                 refresh()
             }
-
         }
 
         binding.buttonNextVocabularyWord.setOnClickListener {
@@ -54,22 +70,46 @@ class EditVocabularyGroupFragment : Fragment() {
             }
         }
 
-        binding.buttonAddNewVocabularyWordManage.setOnClickListener { addVocabularyWord() }
-        binding.buttonSaveAndGoBackManage.setOnClickListener { finishEdit() }
+        binding.buttonAddNewVocabularyWordRightManage.setOnClickListener { addVocabularyWord(0) }
+        binding.buttonAddNewVocabularyWordLeftManage.setOnClickListener { addVocabularyWord(1) }
+        binding.buttonSaveAndGoBackManage.setOnClickListener { finish() }
+
         binding.buttonDeleteVocabularyWord.setOnClickListener { removeVocabularyWord() }
-        binding.buttonDeleteVocabularyGroup.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext())
-                .setIcon(R.drawable.outline_delete_24)
-                .setTitle(getString(R.string.delete_vocabulary_group))
-                .setMessage(R.string.do_you_really_want_to_delete_vocabulary_group)
-                .setPositiveButton(getString(R.string.delete)){ _: DialogInterface, _: Int ->
-                    deleteVocabularyGroup()
-                }
-                .setNegativeButton(getString(R.string.cancel)){ _: DialogInterface, _: Int ->
-                    Toast.makeText(requireContext(), getString(R.string.cancelled), Toast.LENGTH_SHORT).show()
-                }
-                .show()
+
+        if(args.keyMode == MODE_EDIT)
+            binding.buttonDeleteVocabularyGroup.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.outline_delete_24)
+                    .setTitle(getString(R.string.delete_vocabulary_group))
+                    .setMessage(R.string.do_you_really_want_to_delete_vocabulary_group)
+                    .setPositiveButton(getString(R.string.delete)){ _: DialogInterface, _: Int ->
+                        deleteVocabularyGroup()
+                    }
+                    .setNegativeButton(getString(R.string.cancel)){ _: DialogInterface, _: Int ->
+                        Toast.makeText(requireContext(), getString(R.string.cancelled), Toast.LENGTH_SHORT).show()
+                    }
+                    .show()
+            }
+        else
+            binding.buttonDeleteVocabularyGroup.visibility = View.GONE
+
+        binding.editTextVocabularyWordKnownManage.isFocusableInTouchMode = true
+        binding.textEditVocabularyWordNewManage.isFocusableInTouchMode = true
+
+        // TODO: Nach dem letzten Textfeld soll mit "Enter" Vokabel hinzufügt werden
+
+        /** binding.editTextVocabularyWordKnownManage.setOnKeyListener(View.OnKeyListener { view, keyCode, event ->
+
+        // If the event is a key-down event on the "enter" button
+
+        if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+        // Perform action on key press
+        view.clearFocus()
+        addVocabularyWord(0)
+        return@OnKeyListener true
         }
+        false
+        }) **/
 
         refresh()
 
@@ -91,15 +131,25 @@ class EditVocabularyGroupFragment : Fragment() {
         return true
     }
 
-    private fun addVocabularyWord() {
+    private fun addVocabularyWord(direction: Int) {
         if(refreshVocabularyWord()){
-            pos = vocabulary.size
-            binding.textEditVocabularyWordNewManage.text = null
-            binding.editTextVocabularyWordKnownManage.text = null
-            vocabulary.add(VocabularyWord("", "", binding.switchVocabularyWordIgnoreCaseManage.isChecked))
-            refresh()
-        }
+                when(direction){
+                    0 -> {
+                        pos += 1
+                    }
+                    1 -> {
+                        // DO NOTHING
+                    }
+                }
+                binding.textEditVocabularyWordNewManage.text = null
+                binding.editTextVocabularyWordKnownManage.text = null
+                vocabulary.add(pos,VocabularyWord("", languageKnown, "", languageNew, binding.switchVocabularyWordIgnoreCaseManage.isChecked))
+                binding.textEditVocabularyWordNewManage.requestFocus()
 
+                val imm: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.showSoftInput(binding.textEditVocabularyWordNewManage, InputMethodManager.SHOW_IMPLICIT)
+                refresh()
+            }
     }
 
     private fun deleteVocabularyGroup() {
@@ -125,13 +175,19 @@ class EditVocabularyGroupFragment : Fragment() {
         refresh()
     }
 
-    private fun finishEdit(){
-        refreshVocabularyWord()
-        vocabularyGroup.vocabulary = vocabulary.toTypedArray()
+    private fun finish(){
+        if(refreshVocabularyWord()) {
+            vocabularyGroup.vocabulary = vocabulary.toTypedArray()
 
-        vocabularyGroup.saveInFile()
+            if(args.keyMode == MODE_EDIT)
+                vocabularyGroup.refreshNameInIndex()
 
-        startActivity(Intent(requireContext(), MainActivity::class.java))
+            if(args.keyMode == MODE_IMPORT || args.keyMode == MODE_CREATE)
+                vocabularyGroup.saveInIndex()
+
+            vocabularyGroup.saveInFile()
+            findNavController().navigate(EditVocabularyGroupFragmentDirections.actionEditVocabularyGroupFragmentToLearnFragment())
+        }
     }
 
     private fun refresh() {
@@ -160,15 +216,30 @@ class EditVocabularyGroupFragment : Fragment() {
         }
 
         binding.buttonDeleteVocabularyWord.isEnabled = vocabulary.size > 2
+        binding.buttonSaveAndGoBackManage.isEnabled = vocabulary.size > 1
+
         if(vocabulary.size <= 2){
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(),
-                R.color.Gray
-            ), android.graphics.PorterDuff.Mode.SRC_IN)
+            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(
+                requireContext(),
+                R.color.Gray),
+                android.graphics.PorterDuff.Mode.SRC_IN)
         }else{
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(requireContext(),
-                R.color.White
-            ), android.graphics.PorterDuff.Mode.SRC_IN)
+            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(
+                requireContext(),
+                R.color.White),
+                android.graphics.PorterDuff.Mode.SRC_IN)
         }
 
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object{
+        const val MODE_CREATE = 0
+        const val MODE_EDIT = 1
+        const val MODE_IMPORT = 2
     }
 }

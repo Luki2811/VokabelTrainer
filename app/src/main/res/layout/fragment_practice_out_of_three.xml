@@ -7,21 +7,47 @@
     tools:context=".ui.practice.PracticeOutOfThreeFragment">
 
     <TextView
-        android:id="@+id/temp3"
+        android:id="@+id/textViewPracticeInfo2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/translate"
+        android:layout_marginTop="12dp"
+        android:text="@string/look_for_case"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/textViewPracticeChooseThreeTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+
+        android:text="@string/translate_in_lang"
+        app:layout_constraintStart_toStartOf="@+id/textViewPracticeChooseThreeBottom"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfo2" />
+
+    <TextView
+        android:id="@+id/textViewPracticeChooseThreeBottom"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/buttonSpeakChooseThree"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeChooseThreeTop"
+        tools:text="Word/Text to Translate" />
 
     <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chipGroupPracticeOptions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCheckPractice2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -29,36 +55,58 @@
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
-            style="@style/Widget.Material3.Chip.Filter"
+            android:id="@+id/chipPracticeOption1"
+            android:clickable="true"
+            android:checkable="true"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="text1"
+            tools:text="text1"
             android:textAlignment="center" />
 
         <com.google.android.material.chip.Chip
-            style="@style/Widget.Material3.Chip.Filter"
+            android:id="@+id/chipPracticeOption2"
+            android:clickable="true"
+            android:checkable="true"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="text2"
+            tools:text="text2"
             android:textAlignment="center" />
 
         <com.google.android.material.chip.Chip
-            style="@style/Widget.Material3.Chip.Filter"
+            android:id="@+id/chipPracticeOption3"
+            android:clickable="true"
+            android:checkable="true"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="text3"
+            tools:text="text3"
             android:textAlignment="center" />
 
     </com.google.android.material.chip.ChipGroup>
 
-    <TextView
-        android:id="@+id/temp4"
+
+    <Button
+        android:id="@+id/buttonCheckPractice2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/check"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/buttonSpeakChooseThree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="TextView"
+        android:background="@drawable/rounded_blue_button"
+        android:padding="8dp"
+        android:src="@drawable/ic_outline_volume_up_24"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewPracticeChooseThreeBottom"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/temp3" />
+        app:layout_constraintTop_toTopOf="@+id/textViewPracticeChooseThreeTop"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

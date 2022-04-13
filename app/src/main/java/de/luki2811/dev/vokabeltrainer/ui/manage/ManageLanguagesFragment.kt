@@ -1,32 +1,34 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.addCallback
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.Language
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentManageLanguagesBinding
-import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
+import java.util.*
 
-class ManageLanguagesFragment : Fragment() {
+class ManageLanguagesFragment : Fragment(), TextToSpeech.OnInitListener {
 
     var _binding: FragmentManageLanguagesBinding? = null
     val binding get() = _binding!!
+    private lateinit var tts: TextToSpeech
     private var languages: ArrayList<Language> = arrayListOf()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentManageLanguagesBinding.inflate(inflater, container, false)
 
-        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
-            findNavController().navigate(ManageLanguagesFragmentDirections.actionManageLanguagesFragmentToNavigationManage(ManageStartFragment.NAV_LEAVE))
-        }
+        // val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+        //     findNavController().navigate(ManageLanguagesFragmentDirections.actionManageLanguagesFragmentToNavigationManage())
+        // }
 
         for(i in 0..9){
             languages.add(Language(i, requireContext()))
@@ -43,15 +45,16 @@ class ManageLanguagesFragment : Fragment() {
         binding.editTextLan8.setText(languages[8].name)
         binding.editTextLan9.setText(languages[9].name)
 
+        tts = TextToSpeech(context,this)
+
         binding.buttonSaveLanguages.setOnClickListener {
             refreshNameList()
             if(isAllCorrect()){
                 Toast.makeText(requireContext(), R.string.saved, Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_global_navigationMain)
+                findNavController().navigate(R.id.action_manageLanguagesFragment_pop)
                 for(lang in languages){
                     lang.refreshInIndex()
                 }
-
             }else{
                 Toast.makeText(requireContext(), R.string.err_missing_input, Toast.LENGTH_SHORT).show()
             }
@@ -104,6 +107,77 @@ class ManageLanguagesFragment : Fragment() {
         languages[7].name = binding.editTextLan7.text.toString()
         languages[8].name = binding.editTextLan8.text.toString()
         languages[9].name = binding.editTextLan9.text.toString()
+        tts = TextToSpeech(context,this)
+    }
+
+    override fun onInit(status: Int) {
+
+        if (status == TextToSpeech.SUCCESS)
+            for (i in languages) {
+                if(i.getShortName() == null)
+                    i.isSpeakable = false
+                else{
+                    val result =
+                        tts.isLanguageAvailable(Locale(i.getShortName()!!))
+                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                        i.isSpeakable = false
+                        Log.w("TTS", "The Language specified is not supported!")
+                    } else {
+                        i.isSpeakable = true
+                    }
+                }
+            }
+
+        if(languages[0].isSpeakable)
+            binding.editTextLan0Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan0Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[1].isSpeakable)
+            binding.editTextLan1Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan1Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[2].isSpeakable)
+            binding.editTextLan2Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan2Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[3].isSpeakable)
+            binding.editTextLan3Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan3Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[4].isSpeakable)
+            binding.editTextLan4Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan4Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[5].isSpeakable)
+            binding.editTextLan5Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan5Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[6].isSpeakable)
+            binding.editTextLan6Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan6Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[7].isSpeakable)
+            binding.editTextLan7Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan7Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[8].isSpeakable)
+            binding.editTextLan8Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan8Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
+
+        if(languages[9].isSpeakable)
+            binding.editTextLan9Layout.setStartIconDrawable(R.drawable.ic_outline_volume_up_24)
+        else
+            binding.editTextLan9Layout.setStartIconDrawable(R.drawable.ic_outline_volume_off_24)
 
     }
+
 }
