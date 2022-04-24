@@ -40,6 +40,4 @@ class ListSourcesAdapter(private val dataSet: ArrayList<Source>) : RecyclerView.
 
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
-
-
 }

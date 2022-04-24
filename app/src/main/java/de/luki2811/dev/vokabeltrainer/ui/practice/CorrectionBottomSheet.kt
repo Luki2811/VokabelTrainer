@@ -25,7 +25,10 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
         }
         else {
             binding.textViewCorrection.text = getString(R.string.wrong)
-            binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("correctWord"))
+            if (!arguments?.getString("correctWord").isNullOrEmpty())
+                binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("correctWord"))
+            else
+                binding.textViewCorrectAnswer.visibility = View.GONE
             binding.layoutBottomSheet.setBackgroundColor(requireActivity().getColor(R.color.DarkRed))
         }
 

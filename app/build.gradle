@@ -10,15 +10,32 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 android {
     compileSdk 31
 
-    defaultConfig {
-        applicationId "de.luki2811.dev.vokabeltrainer"
-        minSdk 27
-        targetSdk 31
-        versionCode 1
-        versionName "0.0.1"
+    def versionPropsFile = file('version.properties')
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    if (versionPropsFile.canRead()) {
+        Properties versionProps = new Properties()
+
+        versionProps.load(new FileInputStream(versionPropsFile))
+
+        def code = versionProps['VERSION_CODE'].toInteger() + 1
+
+        versionProps['VERSION_CODE']=code.toString()
+        versionProps.store(versionPropsFile.newWriter(), null)
+
+        defaultConfig {
+            applicationId "de.luki2811.dev.vokabeltrainer"
+            minSdk 27
+            targetSdk 31
+            versionCode = code
+            versionName "0.0.1"
+
+            testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        }
     }
+    else {
+        throw new Exception("Could not read version.properties!")
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -38,8 +55,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.4.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.4.2'
     implementation 'androidx.fragment:fragment-ktx:1.4.1'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'

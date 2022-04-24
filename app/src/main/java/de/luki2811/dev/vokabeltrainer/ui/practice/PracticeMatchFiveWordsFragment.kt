@@ -1,11 +1,9 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -50,17 +48,22 @@ class PracticeMatchFiveWordsFragment : Fragment() {
         setWords()
 
         binding.chipGroupLearnNativeLan.setOnCheckedChangeListener{ chipGroup,_ ->
-            correction()
             speakOutWord(chipGroup.checkedChipId)
+            correction()
+
         }
         binding.chipGroupLearnNewLan.setOnCheckedChangeListener{ chipGroup,_ ->
-            correction()
             speakOutWord(chipGroup.checkedChipId)
+            correction()
+
         }
 
         childFragmentManager.setFragmentResultListener("finishFragment", this){_, bundle ->
-            findNavController().navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeStartFragment())
-            requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to ""))
+            if(words.isEmpty()){
+                findNavController().navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeStartFragment())
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to ""))
+
+            }
         }
 
         return binding.root
@@ -86,12 +89,10 @@ class PracticeMatchFiveWordsFragment : Fragment() {
                 }
             }
             // If wrong ->
-            Toast.makeText(requireContext(), "Incorrect", Toast.LENGTH_SHORT).show()
+            // Toast.makeText(requireContext(), getString(R.string.wrong), Toast.LENGTH_SHORT).show()
             resetSelection()
-
-
-            // correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to false)
-            // correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to false)
+            correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
 
         }
     }
@@ -101,17 +102,17 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             binding.chip0LearnNativeLan.id -> AppTextToSpeak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.languageKnown, requireContext())
             binding.chip0LearnNewLan.id -> AppTextToSpeak(binding.chip0LearnNewLan.text.toString(), vocKnown0.languageNew, requireContext())
 
-            binding.chip1LearnNativeLan.id -> binding.chip1LearnNativeLan
-            binding.chip1LearnNewLan.id -> binding.chip1LearnNewLan
+            binding.chip1LearnNativeLan.id -> AppTextToSpeak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.languageKnown, requireContext())
+            binding.chip1LearnNewLan.id -> AppTextToSpeak(binding.chip1LearnNewLan.text.toString(), vocKnown1.languageNew, requireContext())
 
-            binding.chip2LearnNativeLan.id -> binding.chip2LearnNativeLan
-            binding.chip2LearnNewLan.id -> binding.chip2LearnNewLan
+            binding.chip2LearnNativeLan.id -> AppTextToSpeak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.languageKnown, requireContext())
+            binding.chip2LearnNewLan.id -> AppTextToSpeak(binding.chip2LearnNewLan.text.toString(), vocKnown2.languageNew, requireContext())
 
-            binding.chip3LearnNativeLan.id -> binding.chip3LearnNativeLan
-            binding.chip3LearnNewLan.id -> binding.chip3LearnNewLan
+            binding.chip3LearnNativeLan.id -> AppTextToSpeak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.languageKnown, requireContext())
+            binding.chip3LearnNewLan.id -> AppTextToSpeak(binding.chip3LearnNewLan.text.toString(), vocKnown3.languageNew, requireContext())
 
-            binding.chip4LearnNativeLan.id -> binding.chip4LearnNativeLan
-            binding.chip4LearnNewLan.id -> binding.chip4LearnNewLan
+            binding.chip4LearnNativeLan.id -> AppTextToSpeak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.languageKnown, requireContext())
+            binding.chip4LearnNewLan.id -> AppTextToSpeak(binding.chip4LearnNewLan.text.toString(), vocKnown4.languageNew, requireContext())
         }
     }
 

@@ -23,7 +23,7 @@ class Settings(var context: Context) {
         jsonObject.getBoolean("useDynamicColors")
     }catch (e: JSONException){
         e.printStackTrace()
-        true
+        false
     }
 
     fun saveSettingsInFile(){
