@@ -58,7 +58,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
         }
 
-        childFragmentManager.setFragmentResultListener("finishFragment", this){_, bundle ->
+        childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             if(words.isEmpty()){
                 findNavController().navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeStartFragment())
                 requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to ""))
@@ -88,12 +88,13 @@ class PracticeMatchFiveWordsFragment : Fragment() {
                     return
                 }
             }
+
             // If wrong ->
+            // TODO: No mistakes noted down right know
             // Toast.makeText(requireContext(), getString(R.string.wrong), Toast.LENGTH_SHORT).show()
             resetSelection()
             correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to false)
             correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
-
         }
     }
 

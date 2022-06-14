@@ -108,7 +108,7 @@
         android:contentDescription="@string/delete"
         android:text="@string/remove_vocabularyGroup"
         app:icon="@drawable/outline_delete_24"
-        app:layout_constraintBottom_toTopOf="@+id/buttonSaveAndGoBackManage"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -195,6 +195,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
         app:tint="@color/white" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/Gray"
+        app:layout_constraintBottom_toTopOf="@+id/buttonSaveAndGoBackManage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

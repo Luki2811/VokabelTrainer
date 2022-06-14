@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
-import de.luki2811.dev.vokabeltrainer.ui.manage.EditVocabularyGroupFragment
 import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
 import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
 import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet

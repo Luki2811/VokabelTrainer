@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import org.json.JSONException
 import org.json.JSONObject
 
 class VocabularyWord()  {
@@ -13,7 +14,7 @@ class VocabularyWord()  {
 
     var isWrong = false
     var typeWrong = 1
-    var askKnownWord = false
+    var isKnownWordAskedAsAnswer = false
     var isAlreadyUsed = false
 
 
@@ -31,10 +32,16 @@ class VocabularyWord()  {
         newWord = json.getString("newWord")
         languageNew = Language(json.getInt("languageNewType"), context)
         isIgnoreCase = json.getBoolean("isIgnoreCase")
-        isWrong = json.getBoolean("isWrong")
-        typeWrong = json.getInt("typeWrong")
-        askKnownWord = json.getBoolean("askKnownWord")
-        isAlreadyUsed = json.getBoolean("isAlreadyUsed")
+        isKnownWordAskedAsAnswer = json.getBoolean("askKnownWord")
+
+        try {
+            isWrong = json.getBoolean("isWrong")
+            typeWrong = json.getInt("typeWrong")
+            isAlreadyUsed = json.getBoolean("isAlreadyUsed")
+        }catch (e: JSONException){
+            e.printStackTrace()
+        }
+
     }
 
     fun getKnownWordList(): List<String>{
@@ -55,7 +62,7 @@ class VocabularyWord()  {
             .put("isIgnoreCase", isIgnoreCase)
             .put("isWrong", isWrong)
             .put("typeWrong", typeWrong)
-            .put("askKnownWord", askKnownWord)
+            .put("askKnownWord", isKnownWordAskedAsAnswer)
             .put("isAlreadyUsed", isAlreadyUsed)
     }
 

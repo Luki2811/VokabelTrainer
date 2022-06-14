@@ -2,7 +2,6 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.graphics.drawable.Icon
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +14,7 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeOutOfThreeBinding
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity.Companion.quitPractice
 import org.json.JSONObject
+import java.time.LocalDate
 
 class PracticeOutOfThreeFragment: Fragment() {
 
@@ -24,9 +24,11 @@ class PracticeOutOfThreeFragment: Fragment() {
     private lateinit var word: VocabularyWord
     private var words: ArrayList<VocabularyWord> = arrayListOf()
     private var isCorrect = false
+    private var mistake: Mistake? = null
     private lateinit var wordOption1: VocabularyWord
     private lateinit var wordOption2: VocabularyWord
     private lateinit var wordOption3: VocabularyWord
+    private var wordSelected: String = ""
 
 
 
@@ -49,11 +51,11 @@ class PracticeOutOfThreeFragment: Fragment() {
             binding.buttonSpeakChooseThree.setImageIcon(Icon.createWithResource(requireContext(),R.drawable.ic_outline_volume_off_24))
 
         setWords()
-        binding.chipPracticeOption1.text = if(wordOption1.askKnownWord) wordOption1.knownWord else wordOption1.newWord
-        binding.chipPracticeOption2.text = if(wordOption2.askKnownWord) wordOption2.knownWord else wordOption2.newWord
-        binding.chipPracticeOption3.text = if(wordOption3.askKnownWord) wordOption3.knownWord else wordOption3.newWord
+        binding.chipPracticeOption1.text = if(wordOption1.isKnownWordAskedAsAnswer) wordOption1.knownWord else wordOption1.newWord
+        binding.chipPracticeOption2.text = if(wordOption2.isKnownWordAskedAsAnswer) wordOption2.knownWord else wordOption2.newWord
+        binding.chipPracticeOption3.text = if(wordOption3.isKnownWordAskedAsAnswer) wordOption3.knownWord else wordOption3.newWord
 
-        if(word.askKnownWord){
+        if(word.isKnownWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.newWord
             binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageKnown.name)
             speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
@@ -78,13 +80,19 @@ class PracticeOutOfThreeFragment: Fragment() {
         binding.chipGroupPracticeOptions.setOnCheckedChangeListener{ _,_ ->
             binding.buttonCheckPractice2.isEnabled = binding.chipGroupPracticeOptions.checkedChipIds.isNotEmpty()
 
+            when(binding.chipGroupPracticeOptions.checkedChipId){
+                binding.chipPracticeOption1.id -> wordSelected = binding.chipPracticeOption1.text.toString()
+                binding.chipPracticeOption2.id -> wordSelected = binding.chipPracticeOption2.text.toString()
+                binding.chipPracticeOption3.id -> wordSelected = binding.chipPracticeOption3.text.toString()
+            }
+
             if(args.settingsReadBoth){
                 when(binding.chipGroupPracticeOptions.checkedChipId){
-                    binding.chipPracticeOption1.id -> AppTextToSpeak(binding.chipPracticeOption1.text.toString(), if (wordOption1.askKnownWord) wordOption1.languageKnown else wordOption1.languageNew, requireContext() )
-                    binding.chipPracticeOption2.id -> AppTextToSpeak(binding.chipPracticeOption2.text.toString(), if (wordOption2.askKnownWord) wordOption2.languageKnown else wordOption2.languageNew, requireContext() )
-                    binding.chipPracticeOption3.id -> AppTextToSpeak(binding.chipPracticeOption3.text.toString(), if (wordOption3.askKnownWord) wordOption3.languageKnown else wordOption3.languageNew, requireContext() )
+                    binding.chipPracticeOption1.id -> AppTextToSpeak(binding.chipPracticeOption1.text.toString(), if (wordOption1.isKnownWordAskedAsAnswer) wordOption1.languageKnown else wordOption1.languageNew, requireContext() )
+                    binding.chipPracticeOption2.id -> AppTextToSpeak(binding.chipPracticeOption2.text.toString(), if (wordOption2.isKnownWordAskedAsAnswer) wordOption2.languageKnown else wordOption2.languageNew, requireContext() )
+                    binding.chipPracticeOption3.id -> AppTextToSpeak(binding.chipPracticeOption3.text.toString(), if (wordOption3.isKnownWordAskedAsAnswer) wordOption3.languageKnown else wordOption3.languageNew, requireContext() )
                 }
-            }else if(!word.askKnownWord){
+            }else if(!word.isKnownWordAskedAsAnswer){
                 when(binding.chipGroupPracticeOptions.checkedChipId){
                     binding.chipPracticeOption1.id -> AppTextToSpeak(binding.chipPracticeOption1.text.toString(), wordOption1.languageNew, requireContext() )
                     binding.chipPracticeOption2.id -> AppTextToSpeak(binding.chipPracticeOption2.text.toString(), wordOption1.languageNew, requireContext() )
@@ -101,9 +109,15 @@ class PracticeOutOfThreeFragment: Fragment() {
             startCorrection()
         }
 
-        childFragmentManager.setFragmentResultListener("finishFragment", this){_, bundle ->
+        childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             findNavController().navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeStartFragment())
-            requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString()))
+            if(isCorrect)
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString()))
+            else{
+                mistake = Mistake(word, wordSelected, Exercise.TYPE_CHOOSE_OF_THREE_WORDS, LocalDate.now())
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString(), "wordMistake" to mistake!!.getAsJson().toString()))
+            }
+
         }
 
 
@@ -131,7 +145,7 @@ class PracticeOutOfThreeFragment: Fragment() {
     }
 
     private fun speakWord(text: String){
-        val lang = if (word.askKnownWord) word.languageNew else word.languageKnown
+        val lang = if (word.isKnownWordAskedAsAnswer) word.languageNew else word.languageKnown
 
         val tts = AppTextToSpeak(text,lang,requireContext())
     }
@@ -148,7 +162,7 @@ class PracticeOutOfThreeFragment: Fragment() {
         val correctionBottomSheet = CorrectionBottomSheet()
 
 
-        if(word.askKnownWord)
+        if(word.isKnownWordAskedAsAnswer)
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.knownWord, "isCorrect" to isCorrect)
         else
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isCorrect)
@@ -165,7 +179,7 @@ class PracticeOutOfThreeFragment: Fragment() {
             else -> ""
         }
 
-        return if(word.askKnownWord){
+        return if(word.isKnownWordAskedAsAnswer){
             word.knownWord == solution
         }else{
             solution.trim().equals(word.newWord, word.isIgnoreCase)

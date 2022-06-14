@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.addCallback
+import androidx.core.os.bundleOf
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Streak
@@ -30,15 +33,23 @@ class PracticeFinishFragment : Fragment() {
             requireActivity().startActivity(Intent(context, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
-        // val counterRest = intent.getIntExtra("counterRest", 1)
-        // val correctInPerCent = MainActivity.round(10.toDouble() / counterRest * 100, 0).toInt()
+        // Check if there are mistakes to show or value is correct
+        if(args.numberOfMistakes < 0){
+            Log.w("Warning","Failed to load number of mistakes or value is incorrect")
+            binding.buttonFinishPracticeSeeMistakes.isEnabled = false
+        }else
+            binding.buttonFinishPracticeSeeMistakes.isEnabled = args.numberOfMistakes != 0
+
+        binding.buttonFinishPracticeSeeMistakes.setOnClickListener {
+            requireActivity().supportFragmentManager.setFragmentResult("sendToMistakes", bundleOf("" to ""))
+        }
 
         binding.progressBarFinishedLesson.progress = args.correctInPercent
         binding.textViewFinishPracticeReachedInPercent.text = getString(R.string.correct_in_percent, args.correctInPercent)
 
         binding.buttonFinishPractice.setOnClickListener { startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
 
-        val streak = Streak(requireContext())
+        // val streak = Streak(requireContext())
         // Basic XP (1XP for 1Word)
         // streak.addXP(10)
 

@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
         if(!indexVocGroupsFile.exists())
             AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexVocGroupsFile)
 
+        val wrongWordsFile = File(applicationContext.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
+        if(!wrongWordsFile.exists())
+            AppFile.writeInFile("[]", wrongWordsFile)
 
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_ID).exists())
             AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)

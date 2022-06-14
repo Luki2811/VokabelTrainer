@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +10,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import de.luki2811.dev.vokabeltrainer.AppTextToSpeak
-import de.luki2811.dev.vokabeltrainer.Exercise
-import de.luki2811.dev.vokabeltrainer.R
-import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeTranslateTextBinding
 import org.json.JSONObject
+import java.time.LocalDate
 
 class PracticeTranslateTextFragment : Fragment(){
 
@@ -25,6 +22,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
     private lateinit var word: VocabularyWord
     private var isCorrect = false
+    private var mistake: Mistake? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -38,7 +36,7 @@ class PracticeTranslateTextFragment : Fragment(){
 
         binding.buttonSpeakTranslateText.setOnClickListener { speakWord() }
 
-        if(word.askKnownWord){
+        if(word.isKnownWordAskedAsAnswer){
             binding.textViewPracticeTranslateTextBottom.text = word.newWord
             binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageKnown.name)
             speakWord()
@@ -69,16 +67,21 @@ class PracticeTranslateTextFragment : Fragment(){
             startCorrection()
         }
 
-        childFragmentManager.setFragmentResultListener("finishFragment", this){_, bundle ->
-            findNavController().navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeStartFragment( )) // TODO: Get Word Data
-            requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString()))
+        childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
+            findNavController().navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeStartFragment())
+            if(isCorrect)
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString()))
+            else{
+                mistake = Mistake(word, binding.practiceTextInput.text.toString(), Exercise.TYPE_TRANSLATE_TEXT, LocalDate.now())
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString(), "wordMistake" to mistake!!.getAsJson().toString()))
+            }
         }
 
         return binding.root
     }
 
     private fun speakWord(){
-        val lang = if (word.askKnownWord) word.languageNew else word.languageKnown
+        val lang = if (word.isKnownWordAskedAsAnswer) word.languageNew else word.languageKnown
 
         val tts = AppTextToSpeak(binding.textViewPracticeTranslateTextBottom.text.toString(),lang,requireContext())
     }
@@ -95,7 +98,7 @@ class PracticeTranslateTextFragment : Fragment(){
         val correctionBottomSheet = CorrectionBottomSheet()
 
 
-        if(word.askKnownWord)
+        if(word.isKnownWordAskedAsAnswer)
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.knownWord, "isCorrect" to isCorrect)
         else
             correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isCorrect)
@@ -110,7 +113,7 @@ class PracticeTranslateTextFragment : Fragment(){
 
         // TODO: Change, that it shows the mistakes
 
-        return if(word.askKnownWord){
+        return if(word.isKnownWordAskedAsAnswer){
             val knownWords = word.getKnownWordList()
             for(i in knownWords) {
                 if(i.trim().equals(solution.trim(), word.isIgnoreCase)) {

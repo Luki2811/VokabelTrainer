@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
@@ -24,7 +25,11 @@ class PracticeActivity : AppCompatActivity() {
     private var numberOfExercises = 0
     private var numberOfExercisesTotal = 10
     private var numberOfWrongWords: Double = 0.0
+    // Replace with Mistakes
     private var wrongWords: ArrayList<VocabularyWord> = arrayListOf()
+
+    private var mistakes:ArrayList<Mistake> = arrayListOf()
+
     private lateinit var lesson: Lesson
     private var vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
     private var numberOfVocabularyWords = 0
@@ -36,6 +41,22 @@ class PracticeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPracticeBinding.inflate(layoutInflater)
+
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
+
+        supportFragmentManager.setFragmentResultListener("sendToMistakes", this) { _, _ ->
+            Log.e("Test/FragmentResultListener stm", "Start")
+            val mistakesAsArrayListString = arrayListOf<String>()
+            for(i in mistakes){
+                mistakesAsArrayListString.add(i.getAsJson().toString())
+            }
+
+            binding.progressBarPractice.visibility = View.GONE
+            binding.buttonExitPractice.visibility = View.GONE
+
+            navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), numberOfExercisesTotal))
+            Log.e("Test/FragmentResultListener stm", "Finished")
+        }
 
         lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
 
@@ -70,6 +91,13 @@ class PracticeActivity : AppCompatActivity() {
         supportFragmentManager.setFragmentResultListener("finished", this) { _, bundle ->
             if(!bundle.getString("wordResult").isNullOrEmpty()){
                 wordResult = VocabularyWord(JSONObject(bundle.getString("wordResult")!!), applicationContext)
+
+                if(!bundle.getString("wordMistake").isNullOrEmpty()){
+                    val mistake = Mistake(JSONObject(bundle.getString("wordMistake")!!), applicationContext)
+                    mistake.position = numberOfExercises + 1
+                    mistakes.add(mistake)
+                    Log.e("Test/Mistake", "${mistake.getAsJson()}")
+                }
 
                 if(wordResult.isWrong){
                     wrongWords.add(wordResult)
@@ -113,7 +141,6 @@ class PracticeActivity : AppCompatActivity() {
         return randomWord
     }
 
-
     private fun changeTypOfPractice(_type: Int){
         var type = _type
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
@@ -128,7 +155,7 @@ class PracticeActivity : AppCompatActivity() {
                     words[0].isAlreadyUsed = true
                     lesson.alreadyUsedWords.add(words[0].newWord)
 
-                    words[0].askKnownWord = if (lesson.askOnlyNewWords) false else (0..1).random() == 0
+                    words[0].isKnownWordAskedAsAnswer = if (lesson.askOnlyNewWords) false else (0..1).random() == 0
 
                     if(type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
                         for (i in 1..2){
@@ -138,7 +165,7 @@ class PracticeActivity : AppCompatActivity() {
                             } while (newWord in words)
                             words.add(i, newWord)
 
-                            words[i].askKnownWord = words[0].askKnownWord
+                            words[i].isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
                         }
                     }
                 }else{
@@ -149,7 +176,7 @@ class PracticeActivity : AppCompatActivity() {
                         } while (newWord in words)
                         words.add(i, newWord)
 
-                        words[i].askKnownWord = words[0].askKnownWord
+                        words[i].isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
                     }
                 }
             }
@@ -160,14 +187,15 @@ class PracticeActivity : AppCompatActivity() {
                 wrongWords.remove(words[0])
 
                 if(type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
-                    for (i in 1 until 2){
+                    for (i in 1 until 3){
                         var newWord: VocabularyWord
                         do {
                             newWord = newRandomWord(false)
                         } while (newWord in words)
+                        Log.e("Test/TypeAddWord","Add a word")
                         words.add(i, newWord)
 
-                        words[i].askKnownWord = words[0].askKnownWord
+                        words[i].isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
                     }
                 }
 
@@ -188,9 +216,11 @@ class PracticeActivity : AppCompatActivity() {
 
         when(type){
             0 -> {
+                binding.progressBarPractice.visibility = View.GONE
+                binding.buttonExitPractice.visibility = View.GONE
                 // Calculate
                 correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(lesson.settingReadOutBoth, words[0].getJson().toString()))
@@ -203,7 +233,7 @@ class PracticeActivity : AppCompatActivity() {
             }
             else -> {
                 Toast.makeText(applicationContext, "Type ($type) isn't valid", Toast.LENGTH_LONG).show()
-                Log.e("Warning", "Type ($type) isn't valid -> return to MainActivity")
+                Log.e("Exception", "Type ($type) isn't valid -> return to MainActivity")
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }
         }

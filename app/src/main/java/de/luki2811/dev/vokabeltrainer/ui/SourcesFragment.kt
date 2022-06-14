@@ -25,8 +25,8 @@ class SourcesFragment : Fragment() {
             Source("JSON-Java (JSON.org)", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/stleary/JSON-java/master/LICENSE")),
             Source("Code-Scanner - 2.1.0", Source.TYPE_MIT, URL("https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/LICENSE")),
             Source("Android Open Source Project (AOSP)", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
-            Source("Kotlin - 1.6.10", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
-            Source("Material Components for Android - 1.5.0", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE"))
+            Source("Kotlin - 1.6.21", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
+            Source("Material Components for Android - 1.6.0", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE"))
 
 
             /** Source("AndroidX Navigation Fragment ktx - 2.4.1", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
