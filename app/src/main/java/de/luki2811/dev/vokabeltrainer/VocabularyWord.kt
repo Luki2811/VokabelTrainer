@@ -4,7 +4,7 @@ import android.content.Context
 import org.json.JSONException
 import org.json.JSONObject
 
-class VocabularyWord()  {
+class VocabularyWord() {
 
     lateinit var knownWord: String
     lateinit var languageKnown: Language

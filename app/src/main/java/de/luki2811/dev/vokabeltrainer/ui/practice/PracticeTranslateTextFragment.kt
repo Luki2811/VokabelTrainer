@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,11 @@ class PracticeTranslateTextFragment : Fragment(){
                 speakWord()
             }
         }
+
+        if(Settings(requireContext()).readOutVocabularyGeneral)
+            binding.buttonSpeakTranslateText.setOnClickListener { speakWord() }
+        else
+            binding.buttonSpeakTranslateText.setImageIcon(Icon.createWithResource(requireContext(),R.drawable.ic_outline_volume_off_24))
 
         if(word.isIgnoreCase) {
             binding.textViewPracticeInfo.text = ""

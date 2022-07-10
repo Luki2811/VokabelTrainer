@@ -42,7 +42,6 @@ class NewVocabularyGroupFragment : Fragment() {
             binding.chipGroupVocabularyGroupsLanguageKnown.addView(newChip(language.name) as View)
         }
 
-
         if((!args.keyVocGroup.isNullOrEmpty()) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
             vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext())
             binding.textVocabularyGroupName.setText(vocabularyGroup!!.name)

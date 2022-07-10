@@ -117,7 +117,7 @@
     <string name="to_finish">Fertigstellen</string>
     <string name="correct_answer">Richtige Antwort: %1$s</string>
     <string name="leave">Verlassen</string>
-    <string name="look_for_case">Achte auf Groß- und Kleinschreibung !!</string>
+    <string name="look_for_case">Achte auf Groß- und Kleinschreibung !</string>
     <string name="word_previous_mistake">Vorheriger Fehler</string>
     <string name="ok">OK</string>
     <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet/en weniger als 10 Vokabeln. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen \nFehlercode: 001</string>
@@ -158,6 +158,7 @@
     <string name="err_lang_not_avaible">Fehler: Sprache nicht verfügbar</string>
     <string name="type_of_lesson">Übungstyp: %1$s</string>
     <string name="mistake">Fehler</string>
+    <string name="overview">Überblick</string>
 
 
 </resources>

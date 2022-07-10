@@ -53,6 +53,7 @@ class PracticeActivity : AppCompatActivity() {
 
             binding.progressBarPractice.visibility = View.GONE
             binding.buttonExitPractice.visibility = View.GONE
+            binding.textViewPracticeInfoMistake.visibility = View.GONE
 
             navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), numberOfExercisesTotal))
             Log.e("Test/FragmentResultListener stm", "Finished")
@@ -149,6 +150,7 @@ class PracticeActivity : AppCompatActivity() {
 
         when{
             numberOfExercises < 10 ->{
+                binding.textViewPracticeInfoMistake.visibility = View.GONE
                 if(type == Exercise.TYPE_TRANSLATE_TEXT || type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
                     words.add(0, newRandomWord(true))
 
@@ -199,7 +201,8 @@ class PracticeActivity : AppCompatActivity() {
                     }
                 }
 
-                Toast.makeText(applicationContext, "Fehlerwort", Toast.LENGTH_SHORT).show()
+                binding.textViewPracticeInfoMistake.visibility = View.VISIBLE
+                // Toast.makeText(applicationContext, "Fehlerwort", Toast.LENGTH_SHORT).show()
             }
             else -> {
                 type = 0
@@ -218,6 +221,7 @@ class PracticeActivity : AppCompatActivity() {
             0 -> {
                 binding.progressBarPractice.visibility = View.GONE
                 binding.buttonExitPractice.visibility = View.GONE
+                binding.textViewPracticeInfoMistake.visibility = View.GONE
                 // Calculate
                 correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size))

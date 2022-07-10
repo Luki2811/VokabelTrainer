@@ -21,6 +21,19 @@
         app:srcCompat="@drawable/ic_outline_add_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonPractice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="TODO"
+        android:src="@drawable/ic_baseline_practice_24"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:visibility="gone"
         android:id="@+id/floatingActionButtonQrCode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -49,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:defaultNavHost="true"
-        app:layout_constraintBottom_toBottomOf="@+id/bottom_navigation"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

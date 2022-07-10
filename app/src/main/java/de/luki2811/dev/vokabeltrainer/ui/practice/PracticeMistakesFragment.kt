@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.Mistake
@@ -27,6 +28,10 @@ class PracticeMistakesFragment : Fragment() {
 
         binding.recyclerViewPracticeMistake.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPracticeMistake.adapter = ListMistakesAdapter(mistakes, args.totalNumberExcercies, requireContext())
+
+        binding.practiceTopAppBarMistake.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
 
 
         return binding.root

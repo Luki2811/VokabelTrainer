@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.AppFile
-import de.luki2811.dev.vokabeltrainer.Language
 import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
@@ -22,7 +21,7 @@ class CreateNewLessonFragment : Fragment() {
 
     private var _binding: FragmentNewLessonBinding? = null
     private val binding get() = _binding!!
-    private lateinit var arrayList: ArrayList<String>
+    private lateinit var arrayList: List<String>
     private var arrayListGroup = ArrayList<String>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -32,52 +31,29 @@ class CreateNewLessonFragment : Fragment() {
         binding.buttonNext.setText(R.string.to_finish)
 
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
-        arrayList = ArrayList()
+        val arrayListUnsorted = ArrayList<String>()
         for(i in 0 until index.getJSONArray("index").length()) {
-           arrayList.add(index.getJSONArray("index").getJSONObject(i).getString("name"))
+           arrayListUnsorted.add(index.getJSONArray("index").getJSONObject(i).getString("name"))
         }
-        val adapter = ArrayAdapter(requireContext(), R.layout.default_list_item, arrayList.toTypedArray())
+        arrayList = arrayListUnsorted.sorted()
+        val adapter = ArrayAdapter(requireContext(), R.layout.default_list_item, arrayList.toTypedArray().sortedArray())
         binding.autoCompleteTextVocabularyGroups.setAdapter(adapter)
 
 
         binding.buttonAddVocabularyGroupToLesson.setOnClickListener {
             for (i in arrayList){
                 if(binding.autoCompleteTextVocabularyGroups.text.toString() == i && !arrayListGroup.contains(binding.autoCompleteTextVocabularyGroups.text.toString())){
-                    addChiptoGroup(i)
+                    addChipToGroup(i)
                     arrayListGroup.add(i)
                     binding.autoCompleteTextVocabularyGroups.text = null
                 }
             }
         }
 
-        binding.chipKnownLan0.text = Language(0, requireContext()).name
-        binding.chipKnownLan1.text = Language(1, requireContext()).name
-        binding.chipKnownLan2.text = Language(2, requireContext()).name
-        binding.chipKnownLan3.text = Language(3, requireContext()).name
-        binding.chipKnownLan4.text = Language(4, requireContext()).name
-        binding.chipKnownLan5.text = Language(5, requireContext()).name
-        binding.chipKnownLan6.text = Language(6, requireContext()).name
-        binding.chipKnownLan7.text = Language(7, requireContext()).name
-        binding.chipKnownLan8.text = Language(8, requireContext()).name
-        binding.chipKnownLan9.text = Language(9, requireContext()).name
-
-        binding.chipNewLan0.text = Language(0, requireContext()).name
-        binding.chipNewLan1.text = Language(1, requireContext()).name
-        binding.chipNewLan2.text = Language(2, requireContext()).name
-        binding.chipNewLan3.text = Language(3, requireContext()).name
-        binding.chipNewLan4.text = Language(4, requireContext()).name
-        binding.chipNewLan5.text = Language(5, requireContext()).name
-        binding.chipNewLan6.text = Language(6, requireContext()).name
-        binding.chipNewLan7.text = Language(7, requireContext()).name
-        binding.chipNewLan8.text = Language(8, requireContext()).name
-        binding.chipNewLan9.text = Language(9, requireContext()).name
-
-
-
         return binding.root
     }
 
-    private fun addChiptoGroup(groupName: String){
+    private fun addChipToGroup(groupName: String){
         val chip = Chip(requireContext())
         chip.text = groupName
         chip.chipIcon = ContextCompat.getDrawable(requireContext(),
@@ -123,49 +99,11 @@ class CreateNewLessonFragment : Fragment() {
            }
        }
 
-        val langKnown = when(binding.chipGroupKnownLan.checkedChipId){
-            binding.chipKnownLan0.id -> Language(0, requireContext())
-            binding.chipKnownLan1.id -> Language(1, requireContext())
-            binding.chipKnownLan2.id -> Language(2, requireContext())
-            binding.chipKnownLan3.id -> Language(3, requireContext())
-            binding.chipKnownLan4.id -> Language(4, requireContext())
-            binding.chipKnownLan5.id -> Language(5, requireContext())
-            binding.chipKnownLan6.id -> Language(6, requireContext())
-            binding.chipKnownLan7.id -> Language(7, requireContext())
-            binding.chipKnownLan8.id -> Language(8, requireContext())
-            binding.chipKnownLan9.id -> Language(9, requireContext())
-
-            else -> {
-                Toast.makeText(requireContext(), getString(R.string.err), Toast.LENGTH_SHORT).show()
-                return
-            }
-        }
-
-        val langNew: Language = when(binding.chipGroupNewLan.checkedChipId){
-            binding.chipNewLan0.id -> Language(0, requireContext())
-            binding.chipNewLan1.id -> Language(1, requireContext())
-            binding.chipNewLan2.id -> Language(2, requireContext())
-            binding.chipNewLan3.id -> Language(3, requireContext())
-            binding.chipNewLan4.id -> Language(4, requireContext())
-            binding.chipNewLan5.id -> Language(5, requireContext())
-            binding.chipNewLan6.id -> Language(6, requireContext())
-            binding.chipNewLan7.id -> Language(7, requireContext())
-            binding.chipNewLan8.id -> Language(8, requireContext())
-            binding.chipNewLan9.id -> Language(9, requireContext())
-            else -> {
-                Toast.makeText(requireContext(), getString(R.string.err), Toast.LENGTH_SHORT).show()
-                return
-            }
-        }
-
         // Settings
 
         // If selected is it false
         val settingReadOutBoth: Boolean = !binding.switchLessonSettingsReadOutBoth.isChecked
         val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
-
-
-
 
 
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
@@ -197,7 +135,7 @@ class CreateNewLessonFragment : Fragment() {
             }
         }
 
-        val lesson = Lesson(name, langKnown, langNew, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson)
+        val lesson = Lesson(name, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson)
 
         lesson.saveInIndex()
         lesson.saveInFile()

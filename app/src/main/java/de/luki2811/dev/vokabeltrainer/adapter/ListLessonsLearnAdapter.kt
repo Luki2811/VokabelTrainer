@@ -38,8 +38,6 @@ class ListLessonsLearnAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textCardLanguageKnown: TextView = view.findViewById(R.id.textCardLanguageKnown)
-        val textCardLanguageNew: TextView = view.findViewById(R.id.textCardLanguageNew)
         val textCardLessonName: TextView = view.findViewById(R.id.textCardLessonName)
         val buttonCardDelete: ImageButton = view.findViewById(R.id.buttonCardDelete)
         val buttonCardEdit: ImageButton = view.findViewById(R.id.buttonCardEdit)
@@ -61,8 +59,6 @@ class ListLessonsLearnAdapter(
         // contents of the view with that element
 
         viewHolder.textCardLessonName.text = dataSetFilter[position].name
-        viewHolder.textCardLanguageKnown.text = dataSetFilter[position].languageKnow.name
-        viewHolder.textCardLanguageNew.text = dataSetFilter[position].languageNew.name
 
         viewHolder.buttonCardEdit.setOnClickListener {
             navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))

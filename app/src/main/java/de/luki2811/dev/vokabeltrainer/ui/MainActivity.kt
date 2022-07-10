@@ -3,15 +3,18 @@ package de.luki2811.dev.vokabeltrainer.ui
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.Language
+import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 
 class MainActivity : AppCompatActivity() {
@@ -64,7 +67,8 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
 
         binding.floatingActionButton.setOnClickListener { navController.navigate(R.id.action_global_createNewMainFragment) }
-        binding.floatingActionButtonQrCode.setOnClickListener { navController.navigate(R.id.action_global_importWithQrCodeFragment) }
+        // binding.floatingActionButtonQrCode.setOnClickListener { navController.navigate(R.id.action_global_importWithQrCodeFragment) }
+        binding.floatingActionButtonPractice.setOnClickListener { startMistakeLesson() }
 
         navView.setupWithNavController(navController)
 
@@ -74,15 +78,25 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if( destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
                 navView.visibility = View.GONE
-                binding.floatingActionButtonQrCode.visibility = View.GONE
+                // binding.floatingActionButtonQrCode.visibility = View.GONE
                 binding.floatingActionButton.visibility = View.GONE
             } else {
                 navView.visibility = View.VISIBLE
                 binding.floatingActionButton.visibility = View.VISIBLE
-                binding.floatingActionButtonQrCode.visibility = View.VISIBLE
+                // binding.floatingActionButtonQrCode.visibility = View.VISIBLE
+            }
+
+            if( destination.id == R.id.learnFragment){
+                binding.floatingActionButtonPractice.visibility = View.VISIBLE
+            }else{
+                binding.floatingActionButtonPractice.visibility = View.GONE
             }
         }
+    }
 
+    private fun startMistakeLesson(){
+        // val mistakeLesson = MistakeLesson()
+        // startActivity(Intent(applicationContext, PracticeActivity::class.java).putExtra("data_lesson", mistakeLesson.getAsJson().toString()))
     }
 
 
@@ -94,8 +108,8 @@ class MainActivity : AppCompatActivity() {
          * @param decimalPoints ist die Anzahl der Nachkommastellen, auf die gerundet werden soll.
          */
         fun round(value: Double, decimalPoints: Int): Double {
-            val d = Math.pow(10.0, decimalPoints.toDouble())
-            return Math.round(value * d) / d
+            val d = 10.0.pow(decimalPoints.toDouble())
+            return (value * d).roundToInt() / d
         }
     }
 }

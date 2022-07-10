@@ -37,6 +37,8 @@ class AppTextToSpeak(var textToSpeak: String, var language: Language, val contex
 
             val result = tts.setLanguage(Locale(language.getShortName()!!))
 
+            Log.i("TTS", "Language: ${tts.voice.locale.language}|${tts.voice.locale.country}")
+
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS","The Language specified is not supported! ($result)")
                 Toast.makeText(context, context.getText(R.string.err_lang_not_avaible), Toast.LENGTH_SHORT).show()

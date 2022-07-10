@@ -99,8 +99,6 @@ class PracticeOutOfThreeFragment: Fragment() {
                     binding.chipPracticeOption3.id -> AppTextToSpeak(binding.chipPracticeOption3.text.toString(), wordOption1.languageNew, requireContext() )
                 }
             }
-
-
         }
 
         binding.buttonCheckPractice2.isEnabled = false

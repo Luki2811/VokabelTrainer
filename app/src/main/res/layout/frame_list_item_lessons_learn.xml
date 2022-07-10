@@ -75,48 +75,17 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="4dp"
-                android:layout_marginTop="8dp"
                 android:text="@string/practice"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textCardLanguageKnown"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/textCardLanguageKnown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/imageViewCardArrow"
                 app:layout_constraintTop_toBottomOf="@+id/textCardLessonName"
-                tools:text="Deutsch" />
-
-            <TextView
-                android:id="@+id/textCardLanguageNew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                tools:text="Schwedisch"
-                app:layout_constraintBaseline_toBaselineOf="@+id/textCardLanguageKnown"
-                app:layout_constraintStart_toEndOf="@+id/imageViewCardArrow" />
-
-            <ImageView
-                android:id="@+id/imageViewCardArrow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/to"
-                app:layout_constraintBottom_toBottomOf="@+id/textCardLanguageKnown"
-                app:layout_constraintEnd_toEndOf="@+id/buttonCardPracticeLesson"
-
-                app:layout_constraintStart_toStartOf="@+id/buttonCardPracticeLesson"
-                app:layout_constraintTop_toTopOf="@+id/textCardLanguageKnown"
-                app:srcCompat="@drawable/ic_baseline_arrow_forward_24" />
+                app:layout_constraintVertical_bias="1.0" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

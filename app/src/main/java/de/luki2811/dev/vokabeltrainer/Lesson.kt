@@ -23,11 +23,9 @@ class Lesson {
     var askOnlyNewWords: Boolean = false
     private val context: Context
 
-    constructor(name: String, languageKnow: Language, languageNew: Language, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf()) {
+    constructor(name: String, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf()) {
         this.name = name
         this.id = Id(context)
-        this.languageKnow = languageKnow
-        this.languageNew = languageNew
         this.vocabularyGroupIds = vocabularyGroupIds
         this.settingReadOutBoth = settingReadOutBoth
         this.alreadyUsedWords = alreadyUsedWords
@@ -41,8 +39,6 @@ class Lesson {
         try {
             name = json.getString("name")
             id = Id(context, json.getInt("id"))
-            languageKnow = Language(json.getInt("languageNative"),context)
-            languageNew = Language(json.getInt("languageNew"),context)
             val groupIds = ArrayList<Int>()
             for(i in 0 until json.getJSONArray("vocabularyGroupIds").length())
                groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
@@ -119,8 +115,6 @@ class Lesson {
         val jsonObj = JSONObject()
             .put("name", name)
             .put("id", id.number)
-            .put("languageNative", languageKnow.type)
-            .put("languageNew", languageNew.type)
         val jsonArr = JSONArray()
         for(i in vocabularyGroupIds.indices){
             jsonArr.put(i, vocabularyGroupIds[i])
