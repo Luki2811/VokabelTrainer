@@ -52,7 +52,7 @@ class PracticeActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
 
         supportFragmentManager.setFragmentResultListener("sendToMistakes", this) { _, _ ->
-            Log.e("Test/FragmentResultListener stm", "Start")
+            // Log.e("Test/FragmentResultListener stm", "Start")
             val mistakesAsArrayListString = arrayListOf<String>()
             for(i in mistakes){
                 mistakesAsArrayListString.add(i.getAsJson().toString())
@@ -63,7 +63,7 @@ class PracticeActivity : AppCompatActivity() {
             binding.textViewPracticeInfoMistake.visibility = View.GONE
 
             navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), numberOfExercisesTotal))
-            Log.e("Test/FragmentResultListener stm", "Finished")
+            // Log.e("Test/FragmentResultListener stm", "Finished")
         }
 
         lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
@@ -272,6 +272,8 @@ class PracticeActivity : AppCompatActivity() {
         handler = Handler(Looper.getMainLooper())
         statusChecker.run()
     }
+
+
 
     private fun stopTimer() {
         handler.removeCallbacks(statusChecker)

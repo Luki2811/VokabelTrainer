@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -45,10 +46,22 @@ class ManageVocabularyGroupsFragment : Fragment() {
             arrayList.add(VocabularyGroup(jsonOfVocGroup, context =  requireContext()))
         }
 
-        val adapter = ListVocabularyGroupsAdapter(arrayList.toTypedArray(), requireContext(),findNavController(), requireActivity().supportFragmentManager)
+        val adapter = ListVocabularyGroupsAdapter(arrayList, requireContext(),findNavController(), requireActivity().supportFragmentManager)
         binding.listOfVocabularyGroups.adapter = adapter
+
+        binding.searchViewManageVocabularyGroups.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return false
+            }
+        })
 
         return binding.root
 
     }
 }
+

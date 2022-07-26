@@ -1,6 +1,8 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.content.Context.AUDIO_SERVICE
+import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
@@ -33,6 +35,7 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Language, va
     }
 
     override fun onInit(status: Int) {
+        // val audioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
         if (status == TextToSpeech.SUCCESS && language.getShortName() != null) {
 
             val result = tts.setLanguage(Locale(language.getShortName()!!))
@@ -45,13 +48,18 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Language, va
                 return
             }
             else if(settings.readOutVocabularyGeneral){
-                    replaceKnownShorts()
-                    tts.speak(
-                        textToSpeak ,
-                        TextToSpeech.QUEUE_FLUSH,
-                        null,
-                        ""
-                    )
+                /**
+               audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)) {
+                    Toast.makeText(context, "Speakerphone off", Toast.LENGTH_SHORT)
+                } **/
+                replaceKnownShorts()
+                tts.speak(
+                    textToSpeak ,
+                    TextToSpeech.QUEUE_FLUSH,
+                    null,
+                    ""
+                )
             }
         } else {
             Log.e("TTS", "Initialization Failed!")

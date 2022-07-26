@@ -5,6 +5,8 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.FileProvider
@@ -13,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
@@ -21,9 +24,21 @@ import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
 import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
 import org.json.JSONObject
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ListVocabularyGroupsAdapter(
-    private val dataSet: Array<VocabularyGroup>, private val context: Context, private val navController: NavController,private val supportFragmentManager: FragmentManager) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>() {
+    private val dataSet: ArrayList<VocabularyGroup>,
+    private val context: Context,
+    private val navController: NavController,
+    private val supportFragmentManager: FragmentManager) : RecyclerView.Adapter<ListVocabularyGroupsAdapter.ViewHolder>(), Filterable {
+
+    var dataSetFilter = ArrayList<VocabularyGroup>()
+
+    init {
+        dataSetFilter = dataSet
+    }
+
     /**
      * Provide a reference to the type of views that you are using
      * (custom ViewHolder).
@@ -45,30 +60,30 @@ class ListVocabularyGroupsAdapter(
 
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        // Get element from your dataset at this position and replace the
+        // Get element from your dataSetFilter at this position and replace the
         // contents of the view with that element
 
-        viewHolder.textView.text = dataSet[position].name
+        viewHolder.textView.text = dataSetFilter[position].name
         viewHolder.buttonShare.setOnClickListener { share(position) }
 
         viewHolder.buttonShowQrCode.setOnClickListener {
             val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
 
-            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSet[position].getAsJson().toString(), "name" to dataSet[position].name)
+            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
 
             showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
         }
 
         viewHolder.buttonEdit.setOnClickListener {
-            navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSet[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
+            navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
         }
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
-    override fun getItemCount() = dataSet.size
+    // Return the size of your dataSetFilter (invoked by the layout manager)
+    override fun getItemCount() = dataSetFilter.size
 
     private fun share(position: Int){
-        val vocabularyGroupJson = JSONObject(AppFile.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSet[position].id.number}.json")))
+        val vocabularyGroupJson = JSONObject(AppFile.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSetFilter[position].id.number}.json")))
         vocabularyGroupJson.put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
 
         File.createTempFile("vocabularyGroupToExport.json", null, context.cacheDir)
@@ -80,6 +95,36 @@ class ListVocabularyGroupsAdapter(
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
         context.startActivity(Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ..."))
+    }
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val charSearch = constraint.toString()
+                dataSetFilter = if (charSearch.isEmpty()) {
+                    dataSet
+                } else {
+                    val resultList = ArrayList<VocabularyGroup>()
+                    for (row in dataSet) {
+                        if (row.name.lowercase(Locale.getDefault()).contains(charSearch.lowercase(
+                                Locale.getDefault()))) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                }
+                val filterResults = FilterResults()
+                filterResults.values = dataSetFilter
+                return filterResults
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                dataSetFilter = results?.values as ArrayList<VocabularyGroup>
+                notifyDataSetChanged()
+
+            }
+        }
     }
 
 }
