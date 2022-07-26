@@ -3,20 +3,17 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.os.bundleOf
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import de.luki2811.dev.vokabeltrainer.R
-import de.luki2811.dev.vokabeltrainer.Streak
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeFinishBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
+import java.util.concurrent.TimeUnit
 
 class PracticeFinishFragment : Fragment() {
 
@@ -32,6 +29,8 @@ class PracticeFinishFragment : Fragment() {
         val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             requireActivity().startActivity(Intent(context, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
+
+        binding.textViewFinishedPracticeTime.text = getFormattedTime()
 
         // Check if there are mistakes to show or value is correct
         if(args.numberOfMistakes < 0){
@@ -61,5 +60,14 @@ class PracticeFinishFragment : Fragment() {
         // else binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, 0)
 
         return binding.root
+    }
+
+    private fun getFormattedTime(): String{
+        var seconds = args.timeInSeconds.toLong()
+        val minutes = TimeUnit.SECONDS.toMinutes(seconds)
+        seconds -= TimeUnit.MINUTES.toSeconds(minutes)
+
+        return "${if (minutes < 10) "0" else ""}$minutes:" +
+                "${if (seconds < 10) "0" else ""}$seconds"
     }
 }

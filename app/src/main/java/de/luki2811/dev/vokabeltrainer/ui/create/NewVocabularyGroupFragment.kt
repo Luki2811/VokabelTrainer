@@ -96,7 +96,7 @@ class NewVocabularyGroupFragment : Fragment() {
             return
         }
 
-        when (VocabularyGroup.isNameValid(requireContext(), binding.textVocabularyGroupName, if (vocabularyGroup != null && args.keyMode == MODE_EDIT) vocabularyGroup!!.name else "")) {
+        when (VocabularyGroup.isNameValid(requireContext(), binding.textVocabularyGroupName.text.toString(), if (vocabularyGroup != null && args.keyMode == MODE_EDIT) vocabularyGroup!!.name else "")) {
             0 -> {
                 binding.textVocabularyGroupName.error = null
                 if(vocabularyGroup != null) {

@@ -8,7 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,12 +16,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportWithFileBinding
-import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -105,7 +104,7 @@ class ImportWithFileFragment : Fragment() {
                 } else {
                     Toast.makeText(requireContext(), "Allow permission for storage access!", Toast.LENGTH_SHORT).show()
                 }
-            } else if (grantResults.size > 0) {
+            } else if (grantResults.isNotEmpty()) {
                 val READ_EXTERNAL_STORAGE = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val WRITE_EXTERNAL_STORAGE = grantResults[1] == PackageManager.PERMISSION_GRANTED
                 if (READ_EXTERNAL_STORAGE && WRITE_EXTERNAL_STORAGE) {
@@ -127,23 +126,88 @@ class ImportWithFileFragment : Fragment() {
             if (data == null) {
                 return
             }
-            val uri = data.data
-            val file = File(RealPathUtil.getRealPath(requireContext(), uri!!)!!)
+            val file = File(RealPathUtil.getRealPath(requireContext(), data.data!!)!!)
 
-            // Create new Lesson
+            // Create new Vocabulary Group
             try {
-                val groupAsJSON = JSONObject(loadFromFile(file))
-                if(groupAsJSON.getJSONArray("vocabulary").length() >= 2){
-                    vocabularyGroup = VocabularyGroup(groupAsJSON, context = requireContext())
-                    findNavController().navigate(ImportWithFileFragmentDirections.actionImportFragmentToNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), NewVocabularyGroupFragment.MODE_IMPORT))
+                val dataAsJson = JSONObject(loadFromFile(file))
+                when(dataAsJson.getInt("type")){
+                    AppFile.TYPE_FILE_UNKNOWN -> {
+                        Toast.makeText(requireContext(), getText(R.string.err_unknown_type), Toast.LENGTH_LONG).show()
+                        cancelImportLesson()
+                    }
+
+                    // Import vocabulary group
+
+                    AppFile.TYPE_FILE_VOCABULARY_GROUP -> {
+                        try {
+                            if(dataAsJson.getJSONArray("vocabulary").length() >= 2){
+                                vocabularyGroup = VocabularyGroup(dataAsJson, context = requireContext())
+                                findNavController().navigate(ImportWithFileFragmentDirections.actionImportFragmentToNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), NewVocabularyGroupFragment.MODE_IMPORT))
+                            }
+                        } catch (e: JSONException){
+                            Toast.makeText(requireContext(), getText(R.string.err_could_not_import_vocabulary_group), Toast.LENGTH_LONG).show()
+                            e.printStackTrace()
+                            cancelImportLesson()
+                        }
+                    }
+
+                    // Import lesson
+
+                    AppFile.TYPE_FILE_LESSON -> {
+                        try {
+                            val newIdsVocabularyGroups = arrayListOf<Int>()
+                            val vocabularyGroups = dataAsJson.getJSONArray("vocabularyGroups")
+                            for (i in 0 until vocabularyGroups.length()){
+                                val vocGroupFromLesson = VocabularyGroup(vocabularyGroups.getJSONObject(i), context = requireContext(), generateNewId = true)
+
+                                Log.e("Import TEMP", "VocGroup ID: ${vocGroupFromLesson.id.number} (${vocGroupFromLesson.name}) \ni/length ${i+1}/${vocabularyGroups.length()}")
+
+                                var tempInt = 0
+                                while(VocabularyGroup.isNameValid(requireContext(), vocGroupFromLesson.name) != 0){
+                                    tempInt += 1
+                                    var nameOfVocGroup = vocGroupFromLesson.name
+                                    nameOfVocGroup = if(tempInt > 1)
+                                        nameOfVocGroup.replace("(${tempInt - 1})","(${tempInt})")
+                                    else
+                                        "${vocGroupFromLesson.name} (1)"
+
+                                    vocGroupFromLesson.name = nameOfVocGroup
+                                }
+                                Log.i("Import ID", vocGroupFromLesson.id.number.toString())
+                                newIdsVocabularyGroups.add(vocGroupFromLesson.id.number)
+                                vocGroupFromLesson.saveInFile()
+                                vocGroupFromLesson.saveInIndex()
+                            }
+
+                            val nameOfLesson = dataAsJson.getString("name")
+                            val askOnlyNewWords = dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
+                            val readOutBoth = dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")
+
+                            val useTypes = arrayListOf<Int>()
+                            if(dataAsJson.getJSONObject("settings").getBoolean("useType1")) useTypes.add(Exercise.TYPE_TRANSLATE_TEXT)
+                            if(dataAsJson.getJSONObject("settings").getBoolean("useType2")) useTypes.add(Exercise.TYPE_CHOOSE_OF_THREE_WORDS)
+                            if(dataAsJson.getJSONObject("settings").getBoolean("useType3")) useTypes.add(Exercise.TYPE_MATCH_FIVE_WORDS)
+
+                            val lesson = Lesson(nameOfLesson, newIdsVocabularyGroups.toTypedArray() , requireContext(), readOutBoth, askOnlyNewWords, useTypes)
+                            lesson.saveInFile()
+                            lesson.saveInIndex()
+
+                            Toast.makeText(requireContext(), R.string.import_lesson_successful, Toast.LENGTH_LONG).show()
+
+                            findNavController().navigate(R.id.action_importFragment_pop)
+
+                        } catch (e: JSONException){
+                            Toast.makeText(requireContext(), getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
+                            e.printStackTrace()
+                            cancelImportLesson()
+                        }
+                    }
                 }
             } catch (e: JSONException) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), getText(R.string.err_could_not_import_vocabulary_group), Toast.LENGTH_LONG).show()
                 cancelImportLesson()
             }
-
-
         } else {
             cancelImportLesson()
         }

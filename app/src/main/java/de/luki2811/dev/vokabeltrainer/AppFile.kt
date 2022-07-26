@@ -69,6 +69,10 @@ class AppFile(var name: String) : Application() {
         const val NAME_FILE_INDEX_LANGUAGES = "indexLanguages.json"
         const val NAME_FILE_LIST_WRONG_WORDS = "listWrongWords.json"
 
+        const val TYPE_FILE_UNKNOWN = 0
+        const val TYPE_FILE_LESSON = 1
+        const val TYPE_FILE_VOCABULARY_GROUP = 2
+
         fun isAppFile(name: String): Boolean{
             if(
                 name == NAME_FILE_STREAK ||

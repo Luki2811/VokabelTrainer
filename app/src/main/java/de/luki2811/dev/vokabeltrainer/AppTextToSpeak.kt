@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import java.util.*
 
-class AppTextToSpeak(var textToSpeak: String, var language: Language, val context: Context) : TextToSpeech.OnInitListener {
+class AppTextToSpeak(private var textToSpeak: String, var language: Language, val context: Context) : TextToSpeech.OnInitListener {
 
     val settings = Settings(context)
     private var tts = TextToSpeech(context,this)

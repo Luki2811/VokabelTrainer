@@ -12,12 +12,14 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
 import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
 import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
 import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
+import org.json.JSONObject
 import java.io.File
 
 class ListVocabularyGroupsAdapter(
@@ -47,12 +49,12 @@ class ListVocabularyGroupsAdapter(
         // contents of the view with that element
 
         viewHolder.textView.text = dataSet[position].name
-        viewHolder.buttonShare.setOnClickListener { shareVocabularyGroup(position) }
+        viewHolder.buttonShare.setOnClickListener { share(position) }
 
         viewHolder.buttonShowQrCode.setOnClickListener {
             val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
 
-            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSet[position].getAsJson().toString())
+            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSet[position].getAsJson().toString(), "name" to dataSet[position].name)
 
             showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
         }
@@ -65,17 +67,19 @@ class ListVocabularyGroupsAdapter(
     // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
 
-    private fun shareVocabularyGroup(position: Int){
+    private fun share(position: Int){
+        val vocabularyGroupJson = JSONObject(AppFile.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSet[position].id.number}.json")))
+        vocabularyGroupJson.put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
+
+        File.createTempFile("vocabularyGroupToExport.json", null, context.cacheDir)
+        val cacheFile = File(context.cacheDir,"vocabularyGroupToExport.json")
+        AppFile.writeInFile(vocabularyGroupJson.toString(), cacheFile)
+
         val sharingIntent = Intent(Intent.ACTION_SEND)
-        val file = File(context.filesDir, "vocabularyGroups")
-        file.mkdirs()
-        val fileUri = FileProvider.getUriForFile(context,
-            context.packageName + ".provider",
-            File(file , dataSet[position].id.number.toString() + ".json")
-        )
+        val fileUri = FileProvider.getUriForFile(context, context.packageName + ".provider", cacheFile)
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        context.startActivity(Intent.createChooser(sharingIntent, "Lektion teilen mit"))
+        context.startActivity(Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ..."))
     }
 
 }

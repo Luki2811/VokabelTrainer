@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -13,6 +15,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
+import kotlinx.coroutines.Runnable
 import org.json.JSONObject
 
 
@@ -37,6 +40,10 @@ class PracticeActivity : AppCompatActivity() {
     private var words: ArrayList<VocabularyWord> = arrayListOf()
     private lateinit var wordResult: VocabularyWord
 
+    // Variable with the time needed to finish lesson
+    private var timeInSeconds = 0
+    // Handler for the stopwatch
+    private lateinit var handler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,12 +68,16 @@ class PracticeActivity : AppCompatActivity() {
 
         lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
 
+
+        // TODO: Remove this function => replace with another function in class VocabularyGroup
         for(i in lesson.vocabularyGroupIds){
             VocabularyGroup.loadFromFileWithId(Id(applicationContext,i), applicationContext)?.let {
-                vocabularyGroups.add(it)
                 numberOfVocabularyWords += it.vocabulary.size
             }
         }
+
+        // Load vocabulary groups
+        vocabularyGroups = lesson.loadVocabularyGroups()
 
         if(numberOfVocabularyWords < 10) {
             MaterialAlertDialogBuilder(this)
@@ -119,6 +130,9 @@ class PracticeActivity : AppCompatActivity() {
                 changeTypOfPractice(0)
 
         }
+
+        // start the timer
+        startTimer()
 
         setContentView(binding.root)
     }
@@ -224,7 +238,8 @@ class PracticeActivity : AppCompatActivity() {
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
                 // Calculate
                 correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size))
+                stopTimer()
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size, timeInSeconds = this.timeInSeconds))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(lesson.settingReadOutBoth, words[0].getJson().toString()))
@@ -250,6 +265,37 @@ class PracticeActivity : AppCompatActivity() {
             type = (1..3).random()
         }
         return type
+    }
+
+    // Stopwatch functions
+    private fun startTimer(){
+        handler = Handler(Looper.getMainLooper())
+        statusChecker.run()
+    }
+
+    private fun stopTimer() {
+        handler.removeCallbacks(statusChecker)
+    }
+
+    private fun resetTimer(){
+        timeInSeconds = 0
+    }
+
+    private var statusChecker: Runnable = object: Runnable{
+        override fun run() {
+            try {
+                timeInSeconds += 1
+                Log.i("Runnable","statusChecker: $timeInSeconds")
+            } finally {
+                handler.postDelayed(this, 1000L)
+            }
+        }
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopTimer()
     }
 
     companion object {

@@ -10,16 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.Lesson
-import de.luki2811.dev.vokabeltrainer.MobileNavigationDirections
-import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ListLessonsLearnAdapter(
     private val dataSet: ArrayList<Lesson>,
@@ -42,7 +40,7 @@ class ListLessonsLearnAdapter(
         val buttonCardDelete: ImageButton = view.findViewById(R.id.buttonCardDelete)
         val buttonCardEdit: ImageButton = view.findViewById(R.id.buttonCardEdit)
         val buttonCardPracticeLesson: Button = view.findViewById(R.id.buttonCardPracticeLesson)
-
+        val buttonCardShare: ImageButton = view.findViewById(R.id.buttonCardShare)
     }
 
     // Create new views (invoked by the layout manager)
@@ -97,6 +95,24 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
             activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSetFilter[position].getAsJson().toString()))
         }
+
+        viewHolder.buttonCardShare.setOnClickListener {
+            AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
+            share(position)
+            //Toast.makeText(context,"Exported", Snackbar.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun share(position: Int){
+        File.createTempFile("lessonToExport.json", null, context.cacheDir)
+        val cacheFile = File(context.cacheDir,"lessonToExport.json")
+        AppFile.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
+
+        val sharingIntent = Intent(Intent.ACTION_SEND)
+        val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)
+        sharingIntent.type = "application/json"
+        sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
+        context.startActivity(Intent.createChooser(sharingIntent, "Lektion teilen mit ..."))
     }
 
     override fun getFilter(): Filter{

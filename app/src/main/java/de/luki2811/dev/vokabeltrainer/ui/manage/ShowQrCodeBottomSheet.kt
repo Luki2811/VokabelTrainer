@@ -23,6 +23,7 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
         val content = arguments?.getString("vocabularyGroup")!!
 
         binding.imageViewQrCode.setImageBitmap(getQrCodeBitmap(content))
+        binding.textViewQrCodeFrame.text = arguments?.getString("name","")
 
         return binding.root
     }

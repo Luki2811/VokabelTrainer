@@ -81,6 +81,10 @@
             android:name="numberOfMistakes"
             app:argType="integer"
             android:defaultValue="-1" />
+        <argument
+            android:name="timeInSeconds"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <fragment
         android:id="@+id/practiceStartFragment"

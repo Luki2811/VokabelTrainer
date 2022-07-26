@@ -27,10 +27,10 @@ class VocabularyGroup {
         this.context = context
     }
 
-    constructor(jsonObj: JSONObject, name: String = "", context: Context){
+    constructor(jsonObj: JSONObject, name: String = "", context: Context, generateNewId: Boolean = false){
         if(name == "") {
             this.name = jsonObj.getString("name")
-            this.id = Id(context, jsonObj.getInt("id"))
+            this.id = if(generateNewId) Id(context) else Id(context, jsonObj.getInt("id"))
         }
         else {
             this.name = name
@@ -100,14 +100,16 @@ class VocabularyGroup {
 
     fun deleteFromIndex(){
         val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(context))
+        val fieldToDelete = arrayListOf<Int>()
 
-        var temp = -1
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
-                temp = i
+                fieldToDelete.add(i)
         }
-        if(temp != -1)
-            index.getJSONArray("index").remove(temp)
+
+        for(i in fieldToDelete){
+            index.getJSONArray("index").remove(i)
+        }
 
         AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).writeInFile(index.toString(),context)
     }
@@ -169,20 +171,20 @@ class VocabularyGroup {
         }
 
 
-        fun isNameValid(context: Context, textInputEditText: TextInputEditText, ignoreName: String = ""): Int {
+        fun isNameValid(context: Context, nameToCheck: String, ignoreName: String = ""): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
             val indexAppFile = AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
 
-            if (textInputEditText.text.toString().length > 50)
+            if (nameToCheck.length > 50)
                 return 3
 
-            if(textInputEditText.text.toString().trim().isEmpty())
+            if(nameToCheck.trim().isEmpty())
                 return 4
 
             if (indexFile.exists()) {
                 val indexVocabularyGroups = JSONObject(indexAppFile.loadFromFile(context)).getJSONArray("index")
                 for (i in 0 until indexVocabularyGroups.length()) {
-                    if ((indexVocabularyGroups.getJSONObject(i).getString("name") == textInputEditText.text.toString().trim()) && (textInputEditText.text.toString().trim() != ignoreName)) {
+                    if ((indexVocabularyGroups.getJSONObject(i).getString("name") == nameToCheck.trim()) && (nameToCheck.trim() != ignoreName)) {
                         return 2
                     }
                 }

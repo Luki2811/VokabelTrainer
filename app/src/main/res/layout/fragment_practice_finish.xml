@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="365dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.35"
+        app:layout_constraintGuide_percent="0.34981906"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
@@ -54,7 +54,7 @@
         android:layout_marginTop="24dp"
         android:text="@string/next"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBarFinishedLesson" />
 
@@ -76,6 +76,22 @@
         android:text="@string/mistake"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5
+"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewFinishedPracticeTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:text="04:22"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/buttonFinishPracticeSeeMistakes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewFinishedXP"
+        app:layout_constraintVertical_bias="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

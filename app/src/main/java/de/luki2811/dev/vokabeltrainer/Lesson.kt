@@ -14,8 +14,6 @@ class Lesson {
 
     lateinit var name: String
     lateinit var id: Id
-    lateinit var languageKnow: Language
-    lateinit var languageNew: Language
     lateinit var vocabularyGroupIds: Array<Int>
     lateinit var alreadyUsedWords: ArrayList<String>
     var typesOfLesson: ArrayList<Int> = arrayListOf()
@@ -136,6 +134,47 @@ class Lesson {
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
         )
         return jsonObj
+    }
+
+    /**
+     * Methode to SHARE a lesson
+     * This also loads and share the vocabulary groups as JSON
+     * Without Id, alreadyUsedWords and vocabularyGroupIds
+     */
+
+    fun export(): JSONObject{
+        val vocabularyInOneJson = JSONArray()
+        val vocabularyGroups = loadVocabularyGroups()
+        for (i in vocabularyGroups){
+            vocabularyInOneJson.put(i.getAsJson())
+        }
+
+        return JSONObject()
+            .put("name",this.name)
+            .put("type", AppFile.TYPE_FILE_LESSON)
+            .put("settings",
+            JSONObject()
+                .put("readOutBoth", settingReadOutBoth)
+                .put("askOnlyNewWords", askOnlyNewWords)
+                .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
+                .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
+                .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
+            )
+            .put("vocabularyGroups", vocabularyInOneJson)
+    }
+
+    /**
+     * Load vocabulary groups
+     */
+
+    fun loadVocabularyGroups(): ArrayList<VocabularyGroup>{
+        val vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
+        for(i in this.vocabularyGroupIds){
+            VocabularyGroup.loadFromFileWithId(Id(context,i), context)?.let {
+                vocabularyGroups.add(it)
+            }
+        }
+        return vocabularyGroups
     }
 
     /**

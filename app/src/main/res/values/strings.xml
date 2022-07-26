@@ -159,6 +159,7 @@
     <string name="type_of_lesson">Übungstyp: %1$s</string>
     <string name="mistake">Fehler</string>
     <string name="overview">Überblick</string>
+    <string name="err_unknown_type">Fehler: Unbekannter Typ</string>
 
 
 </resources>
