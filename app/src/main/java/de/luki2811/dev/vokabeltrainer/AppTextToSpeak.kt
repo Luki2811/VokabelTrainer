@@ -1,8 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
-import android.content.Context.AUDIO_SERVICE
-import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast

@@ -60,6 +60,9 @@ class MainActivity : AppCompatActivity() {
 
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
             AppFile(AppFile.NAME_FILE_SETTINGS).writeInFile("{}", applicationContext)
+
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists())
+            AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
     }
 
     private fun setupViews() {

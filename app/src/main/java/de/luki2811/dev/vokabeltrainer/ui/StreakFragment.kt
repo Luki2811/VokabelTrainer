@@ -22,15 +22,15 @@ class StreakFragment : Fragment() {
         val streak = Streak(requireContext())
 
         binding.progressBarFinishedLesson.max = streak.xpGoal
-        binding.progressBarFinishedLesson.progress = streak.xpReached
-        binding.textViewMainProgressStreak.text = getString(R.string.streak_have_of_goal, streak.xpReached, streak.xpGoal)
-        if (streak.xpReached < streak.xpGoal) binding.textViewMainStreakBottom.text = getString(
+        binding.progressBarFinishedLesson.progress = streak.xpToday
+        binding.textViewMainProgressStreak.text = getString(R.string.streak_have_of_goal, streak.xpToday, streak.xpGoal)
+        if (streak.xpToday < streak.xpGoal) binding.textViewMainStreakBottom.text = getString(
             R.string.streak_left_to_do_for_next_day,
-            streak.xpGoal - streak.xpReached,
-            streak.length + 1
+            streak.xpGoal - streak.xpToday,
+            streak.lengthInDay + 1
         ) else binding.textViewMainStreakBottom.setText(R.string.streak_reached_goal)
 
-        binding.textViewStreakInDays.text = getString(R.string.streak_in_days, streak.length)
+        binding.textViewStreakInDays.text = getString(R.string.streak_in_days, streak.lengthInDay)
 
         return binding.root
     }

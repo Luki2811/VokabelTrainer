@@ -11,6 +11,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Streak
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeFinishBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import java.util.concurrent.TimeUnit
@@ -48,9 +49,10 @@ class PracticeFinishFragment : Fragment() {
 
         binding.buttonFinishPractice.setOnClickListener { startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
 
-        // val streak = Streak(requireContext())
+        val streak = Streak(requireContext())
         // Basic XP (1XP for 1Word)
-        // streak.addXP(10)
+        streak.xpToday += 10
+        streak.refresh()
 
         // MAX 5 extra XP (decrease 1 XP for each mistake)
         //if (5 - (counterRest - 10) >= 0) {
