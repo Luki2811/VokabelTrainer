@@ -31,10 +31,8 @@ class Streak(val context: Context) {
         }catch (e: JSONException){
             e.printStackTrace()
         }
-
         refresh()
     }
-
 
     fun refresh(){
         xpGoal = JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))).getString("dailyObjectiveStreak").removeSuffix("XP").toInt()
@@ -75,95 +73,4 @@ class Streak(val context: Context) {
         streakData.put(JSONObject().put("date", dateToday).put("xp", xpToday).put("goal", xpGoal))
         AppFile.writeInFile(streakData.toString(), File(context.filesDir, AppFile.NAME_FILE_STREAK))
     }
-
-    /** var length = 0
-    var xpReached = 0
-        private set
-    var xpGoal = 0
-    var lastTimeReachedGoal: LocalDate = LocalDate.now()
-    var lastTimeChecked: LocalDate = LocalDate.now()
-    var isReachedToday = false
-        private set
-
-    fun addXP(value: Int) {
-        val streakFile = File(context.filesDir, AppFile.NAME_FILE_STREAK)
-        try {
-            val streakData = JSONObject(AppFile.loadFromFile(streakFile))
-            streakData.put("reachedInXPToday", value + xpReached)
-            xpReached += value
-            AppFile.writeInFile(streakData.toString(),streakFile)
-
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-    }
-
-    init {
-        val streakFile = File(context.filesDir, AppFile.NAME_FILE_STREAK)
-        val settings = Settings(context)
-        if (streakFile.exists()) {
-            try {
-                val streakData = JSONObject(AppFile.loadFromFile(streakFile))
-                length = streakData.getInt("lengthInDays")
-                xpGoal = settings.dailyObjectiveStreak.removeSuffix("XP").toInt()
-                xpReached = streakData.getInt("reachedInXPToday")
-                lastTimeChecked = LocalDate.parse(streakData.getString("lastTimeChecked"))
-                lastTimeReachedGoal = LocalDate.parse(streakData.getString("lastDayReachedGoal"))
-                isReachedToday = streakData.getBoolean("reachedToday")
-
-                // Check if streak is valid
-                val today = LocalDate.now()
-                if (lastTimeReachedGoal.isEqual(today.minusDays(1)) && !lastTimeChecked.isEqual(
-                        today
-                    )
-                ) {
-                    xpReached = 0
-                    isReachedToday = false
-                    lastTimeChecked = today
-                } else if (!lastTimeChecked.isEqual(today)) {
-                    length = 0
-                    isReachedToday = false
-                    xpReached = 0
-                    lastTimeChecked = today
-                }
-
-                // Check if need to increase streak
-                if (!isReachedToday) {
-                    if (xpReached >= xpGoal) {
-                        length += 1
-                        lastTimeReachedGoal = today
-                        isReachedToday = true
-                    }
-                }
-                streakData.put("lengthInDays", length)
-                streakData.put("reachedToday", isReachedToday)
-                streakData.put("reachedInXPToday", xpReached)
-                streakData.put("lastTimeChecked", lastTimeChecked)
-                streakData.put("lastDayReachedGoal", lastTimeReachedGoal)
-                AppFile.writeInFile(streakData.toString(), streakFile)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-        } else {
-            try {
-                val streakData = JSONObject()
-                streakData.put("lengthInDays", 0)
-                streakData.put("goalInXP", 50)
-                streakData.put("reachedInXPToday", 0)
-                val localDate = LocalDate.now()
-                streakData.put("lastDayReachedGoal", LocalDate.of(2005, 11, 28))
-                streakData.put("reachedToday", false)
-                streakData.put("lastTimeChecked", localDate.toString())
-                length = streakData.getInt("lengthInDays")
-                xpGoal = streakData.getInt("goalInXP")
-                xpReached = streakData.getInt("reachedInXPToday")
-                isReachedToday = streakData.getBoolean("reachedToday")
-                lastTimeChecked = LocalDate.parse(streakData.getString("lastTimeChecked"))
-                lastTimeReachedGoal = LocalDate.parse(streakData.getString("lastDayReachedGoal"))
-                AppFile.writeInFile(streakData.toString(), streakFile)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-        }
-    } **/
 }

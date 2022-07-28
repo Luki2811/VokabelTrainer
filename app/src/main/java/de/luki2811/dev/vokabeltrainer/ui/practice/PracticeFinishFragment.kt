@@ -52,14 +52,15 @@ class PracticeFinishFragment : Fragment() {
         val streak = Streak(requireContext())
         // Basic XP (1XP for 1Word)
         streak.xpToday += 10
-        streak.refresh()
+        // Extra XP
+        val extraXp = 5 - args.numberOfMistakes
+        if(extraXp >= 0){
+            streak.xpToday += extraXp
+            binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, extraXp)
+        }else
+            binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, 0)
 
-        // MAX 5 extra XP (decrease 1 XP for each mistake)
-        //if (5 - (counterRest - 10) >= 0) {
-        //    // streak.addXP(5 - (counterRest - 10))
-        //    binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, 5 - (counterRest - 10))
-        //}
-        // else binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, 0)
+        streak.refresh()
 
         return binding.root
     }
