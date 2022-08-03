@@ -180,7 +180,17 @@ class ImportWithFileFragment : Fragment() {
                                 vocGroupFromLesson.saveInIndex()
                             }
 
-                            val nameOfLesson = dataAsJson.getString("name")
+                            var nameOfLesson = dataAsJson.getString("name")
+                            var tempInt = 0
+                            while(Lesson.isNameValid(requireContext(), nameOfLesson) != 0){
+                                tempInt += 1
+
+                                nameOfLesson = if(tempInt > 1)
+                                    nameOfLesson.replace("(${tempInt - 1})","(${tempInt})")
+                                else
+                                    "${dataAsJson.getString("name")} (1)"
+
+                            }
                             val askOnlyNewWords = dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
                             val readOutBoth = dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")
 

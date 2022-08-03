@@ -104,7 +104,8 @@
                     android:id="@+id/menuStreakDailyObjectiveXPAutoComplete"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,6 +145,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchSettingsReadOutVocabularyCentralForbidden" />
 
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/switchSettingsNotificationStreak"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/settings_reminder_streak"
+                app:layout_constraintEnd_toStartOf="@+id/buttonSettingsStreakTime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsEnableDynamicColors" />
+
             <Button
                 android:id="@+id/buttonSettingsSources"
                 android:layout_width="wrap_content"
@@ -162,8 +175,21 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/tts_settings"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchSettingsEnableDynamicColors" />
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsNotificationStreak" />
 
+            <ImageButton
+                android:id="@+id/buttonSettingsStreakTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_black_button"
+                android:contentDescription="@string/pickTime"
+                android:padding="7dp"
+                app:layout_constraintBottom_toBottomOf="@+id/switchSettingsNotificationStreak"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/switchSettingsNotificationStreak"
+                app:srcCompat="@drawable/ic_baseline_clock_24"
+                app:tint="@color/White" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

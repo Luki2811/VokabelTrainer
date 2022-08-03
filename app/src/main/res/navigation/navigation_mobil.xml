@@ -149,11 +149,11 @@
     </fragment>
     <fragment
         android:id="@+id/importWithURLFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.ImportWithURLFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.create.ImportWithUrlFragment"
         android:label="fragment_import_with_u_r_l"
         tools:layout="@layout/fragment_import_with_u_r_l" >
         <action
-            android:id="@+id/action_importWithURLFragment_to_newVocabularyGroupFragment2"
+            android:id="@+id/action_importWithUrlFragment_to_newVocabularyGroupFragment"
             app:destination="@id/newVocabularyGroupFragment" />
         <action
             android:id="@+id/action_importWithURLFragment_pop"

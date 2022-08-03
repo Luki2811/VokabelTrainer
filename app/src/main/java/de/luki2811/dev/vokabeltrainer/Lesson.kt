@@ -19,9 +19,10 @@ class Lesson {
     var typesOfLesson: ArrayList<Int> = arrayListOf()
     var settingReadOutBoth: Boolean = true
     var askOnlyNewWords: Boolean = false
+    var isFavorite: Boolean = false
     private val context: Context
 
-    constructor(name: String, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf()) {
+    constructor(name: String, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf(), isFavorite: Boolean = false) {
         this.name = name
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
@@ -30,6 +31,7 @@ class Lesson {
         this.askOnlyNewWords = askOnlyNewWords
         this.context = context
         this.typesOfLesson = typesOfLesson
+        this.isFavorite = isFavorite
     }
 
     constructor(json: JSONObject, context: Context) {
@@ -59,6 +61,13 @@ class Lesson {
                 e.printStackTrace()
                 typesOfLesson = arrayListOf(1,2,3)
 
+            }
+
+            isFavorite = try {
+                json.getJSONObject("settings").getBoolean("favorite")
+            }catch (e: JSONException){
+                e.printStackTrace()
+                false
             }
 
             alreadyUsedWords = try {
@@ -132,6 +141,7 @@ class Lesson {
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
+                .put("favorite", isFavorite)
         )
         return jsonObj
     }
@@ -192,14 +202,14 @@ class Lesson {
         /**
          * Checks, if a lesson has a valid name
          */
-        fun isNameValid(context: Context, textInputEditText: TextInputEditText): Int {
+        fun isNameValid(context: Context, name: String): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
             val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
 
-            if (textInputEditText.text.toString().length > 50)
+            if (name.length > 50)
                 return 3
 
-            if(textInputEditText.text.toString().trim().isEmpty())
+            if(name.trim().isEmpty())
                 return 4
 
             /** if(isAppFile(textInputEditText.text.toString().trim()))
@@ -223,7 +233,7 @@ class Lesson {
                 val indexLessons =
                     JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
                 for (i in 0 until indexLessons.length()) {
-                    if (indexLessons.getJSONObject(i).getString("name") == textInputEditText.text.toString().trim())
+                    if (indexLessons.getJSONObject(i).getString("name") == name.trim())
                         return 2
 
                 }

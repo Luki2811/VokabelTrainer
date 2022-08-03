@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="@style/Widget.Material3.CardView.Elevated">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -25,9 +26,9 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/rounded_blue_button"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/ic_outline_edit_24"
-                android:background="@drawable/rounded_blue_button"
                 app:layout_constraintEnd_toStartOf="@id/buttonCardDelete"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
@@ -38,12 +39,12 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="12dp"
-                android:src="@drawable/outline_delete_24"
                 android:background="@drawable/rounded_red_button"
+                android:contentDescription="@string/delete"
+                android:src="@drawable/outline_delete_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                android:contentDescription="@string/delete"
-                app:tint="@color/white"/>
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/buttonCardShare"
@@ -51,9 +52,9 @@
                 android:layout_height="40dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
+                android:background="@drawable/rounded_orange_button"
                 android:contentDescription="@string/delete"
                 android:src="@drawable/ic_baseline_share_24"
-                android:background="@drawable/rounded_orange_button"
                 app:layout_constraintEnd_toStartOf="@id/buttonCardEdit"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/white" />
@@ -62,9 +63,9 @@
                 android:id="@+id/textCardLessonName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginEnd="16dp"
                 android:textSize="19sp"
                 app:layout_constraintTop_toBottomOf="@+id/buttonCardDelete"
                 tools:layout_editor_absoluteX="16dp"
@@ -75,8 +76,8 @@
                 style="@style/Widget.Material3.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="4dp"
                 android:text="@string/practice"
@@ -87,8 +88,21 @@
                 app:layout_constraintTop_toBottomOf="@+id/textCardLessonName"
                 app:layout_constraintVertical_bias="1.0" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageButton
+                android:id="@+id/buttonCardFavorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#00FFFFFF"
+                android:tint="#FFEB3B"
+                app:layout_constraintBottom_toTopOf="@+id/textCardLessonName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/ic_baseline_star_24" />
 
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </com.google.android.material.card.MaterialCardView>

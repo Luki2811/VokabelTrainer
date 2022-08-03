@@ -72,7 +72,7 @@ class CreateNewLessonFragment : Fragment() {
     }
     private fun createNewLesson(){
 
-       val name: String = when(Lesson.isNameValid(requireContext(), binding.textLessonName)){
+       val name: String = when(Lesson.isNameValid(requireContext(), binding.textLessonName.text.toString())){
             0 -> {
                 binding.textLessonName.error = null
                 binding.textLessonName.text.toString()

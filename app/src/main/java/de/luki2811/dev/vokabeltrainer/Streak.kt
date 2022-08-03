@@ -48,9 +48,8 @@ class Streak(val context: Context) {
         var deleteOld = true
         val dateYesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
         for(i in 0 until streakData.length()){
-            val data = streakData.getJSONObject(i)
-            if(data.getString("date").equals(dateYesterday)){
-                deleteOld = data.getInt("xp") < data.getInt("goal")
+            if(streakData.getJSONObject(i).getString("date").equals(dateYesterday)){
+                deleteOld = streakData.getJSONObject(i).getInt("xp") < streakData.getJSONObject(i).getInt("goal")
             }
         }
         if(deleteOld) {

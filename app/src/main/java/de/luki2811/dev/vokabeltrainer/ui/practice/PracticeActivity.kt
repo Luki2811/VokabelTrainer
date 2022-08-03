@@ -79,6 +79,9 @@ class PracticeActivity : AppCompatActivity() {
         // Load vocabulary groups
         vocabularyGroups = lesson.loadVocabularyGroups()
 
+        // start the timer
+        startTimer()
+
         if(numberOfVocabularyWords < 10) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(R.string.err_lesson_enough_words_long)
@@ -94,7 +97,6 @@ class PracticeActivity : AppCompatActivity() {
         }
 
         typeOfLessonNow = -1
-
         changeTypOfPractice(getNextLessonType())
 
         binding.buttonExitPractice.setOnClickListener { quitPractice(this, this) }
@@ -131,8 +133,7 @@ class PracticeActivity : AppCompatActivity() {
 
         }
 
-        // start the timer
-        startTimer()
+
 
         setContentView(binding.root)
     }

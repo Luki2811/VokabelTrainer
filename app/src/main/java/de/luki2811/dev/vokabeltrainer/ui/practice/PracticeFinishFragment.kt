@@ -22,12 +22,14 @@ class PracticeFinishFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val args: PracticeFinishFragmentArgs by navArgs()
+    private var extraXp = 0
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeFinishBinding.inflate(layoutInflater, container, false)
 
-        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+        val callback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+            setXpToStreak()
             requireActivity().startActivity(Intent(context, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
         }
 
@@ -44,25 +46,37 @@ class PracticeFinishFragment : Fragment() {
             requireActivity().supportFragmentManager.setFragmentResult("sendToMistakes", bundleOf("" to ""))
         }
 
-        binding.progressBarFinishedLesson.progress = args.correctInPercent
-        binding.textViewFinishPracticeReachedInPercent.text = getString(R.string.correct_in_percent, args.correctInPercent)
 
-        binding.buttonFinishPractice.setOnClickListener { startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+        binding.textViewFinishedPracticeCorrectInPercent.text = "${args.correctInPercent}%"  //getString(R.string.correct_in_percent, args.correctInPercent)
 
-        val streak = Streak(requireContext())
-        // Basic XP (1XP for 1Word)
-        streak.xpToday += 10
-        // Extra XP
-        val extraXp = 5 - args.numberOfMistakes
+        binding.buttonFinishPractice.setOnClickListener {
+            startActivity(Intent(requireContext(), MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            setXpToStreak()
+        }
+
+        // Calculate extra xp
+        extraXp = 5 - args.numberOfMistakes
         if(extraXp >= 0){
-            streak.xpToday += extraXp
-            binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, extraXp)
+            binding.textViewFinishedPracticeXp.text = "+${10+extraXp}XP" //getString(R.string.xp_reached, 10, extraXp)
         }else
-            binding.textViewFinishedXP.text = getString(R.string.xp_reached, 10, 0)
+            binding.textViewFinishedPracticeXp.text = "+10XP" //getString(R.string.xp_reached, 10, 0)
 
-        streak.refresh()
+        // Show Streak Progress
+        val streakForProgressBar = Streak(requireContext())
+        binding.progressBarFinishedLesson.max = streakForProgressBar.xpGoal
+        binding.progressBarFinishedLesson.progress = streakForProgressBar.xpToday + 10 + extraXp
+
+        binding.textViewFinishedPracticeStreakXp.text = getString(R.string.streak_have_of_goal, (streakForProgressBar.xpToday + 10 + extraXp), streakForProgressBar.xpGoal )
 
         return binding.root
+    }
+
+    private fun setXpToStreak() {
+        // Basic XP (1XP for 1Word)
+        val streak = Streak(requireContext())
+        streak.xpToday += 10
+        if(extraXp >= 0) streak.xpToday += extraXp
+        streak.refresh()
     }
 
     private fun getFormattedTime(): String{

@@ -2,6 +2,8 @@ package de.luki2811.dev.vokabeltrainer.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,6 +38,7 @@ class ListVocabularyGroupsAdapter(
     var dataSetFilter = ArrayList<VocabularyGroup>()
 
     init {
+        dataSet.sortWith(compareBy { it.name })
         dataSetFilter = dataSet
     }
 
@@ -94,7 +97,19 @@ class ListVocabularyGroupsAdapter(
         val fileUri = FileProvider.getUriForFile(context, context.packageName + ".provider", cacheFile)
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        context.startActivity(Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ..."))
+        val chooser = Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ...")
+        val resInfoList: List<ResolveInfo> = context.packageManager
+            .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+
+        for (resolveInfo in resInfoList) {
+            val packageName = resolveInfo.activityInfo.packageName
+            context.grantUriPermission(
+                packageName,
+                fileUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
+        context.startActivity(chooser)
     }
 
     override fun getFilter(): Filter {
@@ -120,7 +135,11 @@ class ListVocabularyGroupsAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                dataSetFilter = results?.values as ArrayList<VocabularyGroup>
+                val result = results?.values as ArrayList<VocabularyGroup>
+
+                result.sortWith(compareBy { it.name })
+
+                dataSetFilter = result
                 notifyDataSetChanged()
 
             }

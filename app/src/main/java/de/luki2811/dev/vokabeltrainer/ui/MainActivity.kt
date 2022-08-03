@@ -11,8 +11,8 @@ import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import kotlin.math.pow
-import kotlin.math.roundToInt
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : AppCompatActivity() {
@@ -20,15 +20,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        createFiles()
+
         setupViews()
 
-        // TEMP to delete a wrong ID without a file
+        // Load Streak for correct information
+        Streak(applicationContext)
+
+        /** TEMP to delete a wrong ID without a file
         // vocabulary group
         // val vocg = VocabularyGroup("", Language(0, applicationContext), Language(0, applicationContext), arrayOf(), applicationContext)
         // vocg.id = Id(applicationContext, 498725)
@@ -37,9 +40,10 @@ class MainActivity : AppCompatActivity() {
         // lesson
         // val lessong = Lesson("", arrayOf(), applicationContext)
         // lessong.id = Id(applicationContext, 217531)
-        // lessong.deleteFromIndex()
+        // lessong.deleteFromIndex() **/
+    }
 
-
+    private fun createFiles(){
         // Erstellen der IndexDatein mit leerem Index
         val indexVocGroupsFile = File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
         if(!indexVocGroupsFile.exists())
@@ -59,10 +63,13 @@ class MainActivity : AppCompatActivity() {
             AppFile(AppFile.NAME_FILE_INDEX_LANGUAGES).writeInFile(Language.getDefaultLanguageIndex().toString(), applicationContext)
 
         if(!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
-            AppFile(AppFile.NAME_FILE_SETTINGS).writeInFile("{}", applicationContext)
+            Settings(applicationContext).saveSettingsInFile()
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists())
+        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()){
             AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
+            val streakData = JSONArray().put(JSONObject().put("date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))).put("xp", 0).put("goal", 50))
+            AppFile.writeInFile(streakData.toString(), File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
+        }
     }
 
     private fun setupViews() {
@@ -104,19 +111,5 @@ class MainActivity : AppCompatActivity() {
     private fun startMistakeLesson(){
         // val mistakeLesson = MistakeLesson()
         // startActivity(Intent(applicationContext, PracticeActivity::class.java).putExtra("data_lesson", mistakeLesson.getAsJson().toString()))
-    }
-
-
-    companion object {
-        /**
-         * Rundet den übergebenen Wert auf die Anzahl der übergebenen Nachkommastellen
-         *
-         * @param value ist der zu rundende Wert.
-         * @param decimalPoints ist die Anzahl der Nachkommastellen, auf die gerundet werden soll.
-         */
-        fun round(value: Double, decimalPoints: Int): Double {
-            val d = 10.0.pow(decimalPoints.toDouble())
-            return (value * d).roundToInt() / d
-        }
     }
 }

@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,15 +21,18 @@ import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
 import java.util.*
 
+
 class ListLessonsLearnAdapter(
     private val dataSet: ArrayList<Lesson>,
     private val navController: NavController,
     private val context: Context,
-    private val activity: Activity) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>(), Filterable {
+    private val activity: Activity
+    ) : RecyclerView.Adapter<ListLessonsLearnAdapter.ViewHolder>(), Filterable {
 
     var dataSetFilter = ArrayList<Lesson>()
 
     init {
+        dataSet.sortWith(compareByDescending<Lesson> { it.isFavorite }.thenBy { it.name })
         dataSetFilter = dataSet
     }
 
@@ -41,6 +46,7 @@ class ListLessonsLearnAdapter(
         val buttonCardEdit: ImageButton = view.findViewById(R.id.buttonCardEdit)
         val buttonCardPracticeLesson: Button = view.findViewById(R.id.buttonCardPracticeLesson)
         val buttonCardShare: ImageButton = view.findViewById(R.id.buttonCardShare)
+        val buttonCardFavorite: ImageButton = view.findViewById(R.id.buttonCardFavorite)
     }
 
     // Create new views (invoked by the layout manager)
@@ -57,6 +63,30 @@ class ListLessonsLearnAdapter(
         // contents of the view with that element
 
         viewHolder.textCardLessonName.text = dataSetFilter[position].name
+
+        if(dataSetFilter[position].isFavorite) {
+            viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_baseline_star_24)
+            viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Yellow))
+        } else {
+            viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_outline_star_24)
+            viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Gray))
+        }
+
+        viewHolder.buttonCardFavorite.setOnClickListener {
+            if(dataSetFilter[position].isFavorite){
+                dataSetFilter[position].isFavorite = false
+                viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_outline_star_24)
+                viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Gray))
+            }else{
+                dataSetFilter[position].isFavorite = true
+                viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_baseline_star_24)
+                viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Yellow))
+
+            }
+            dataSetFilter[position].saveInFile()
+            dataSetFilter.sortWith(compareByDescending<Lesson> { it.isFavorite }.thenBy { it.name })
+            notifyDataSetChanged()
+        }
 
         viewHolder.buttonCardEdit.setOnClickListener {
             navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))
@@ -108,11 +138,24 @@ class ListLessonsLearnAdapter(
         val cacheFile = File(context.cacheDir,"lessonToExport.json")
         AppFile.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
 
+
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        context.startActivity(Intent.createChooser(sharingIntent, "Lektion teilen mit ..."))
+        val chooser = Intent.createChooser(sharingIntent, "Lektion teilen mit ...")
+        val resInfoList: List<ResolveInfo> = context.packageManager
+            .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+
+        for (resolveInfo in resInfoList) {
+            val packageName = resolveInfo.activityInfo.packageName
+            context.grantUriPermission(
+                packageName,
+                fileUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        }
+        context.startActivity(chooser)
     }
 
     override fun getFilter(): Filter{
@@ -137,7 +180,11 @@ class ListLessonsLearnAdapter(
 
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-                dataSetFilter = results?.values as ArrayList<Lesson>
+                val result = results?.values as ArrayList<Lesson>
+
+                result.sortWith(compareByDescending<Lesson> { it.isFavorite }.thenBy { it.name })
+
+                dataSetFilter = result
                 notifyDataSetChanged()
 
             }
