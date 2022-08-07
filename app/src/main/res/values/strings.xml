@@ -45,6 +45,7 @@
     <string name="save_and_next">Speichern und weiter</string>
     <string name="streak_have_of_goal"> %1$d / %2$d XP</string>
     <string name="streak_in_days">Streak: %1$d Tage</string>
+    <string name="streak_in_day">Streak: %1$d Tag</string>
     <string name="streak_left_to_do_for_next_day">Dir fehlen noch %1$d XP zu deinem %2$d Tage Streak</string>
     <string name="streak_reached_goal">Du hast dein Tagesziel erreicht !</string>
     <string name="xp_reached">Du hast %1$d XP + %2$d XP Bonus erhalten !</string>
@@ -120,7 +121,7 @@
     <string name="look_for_case">Achte auf Groß- und Kleinschreibung !</string>
     <string name="word_previous_mistake">Vorheriger Fehler</string>
     <string name="ok">OK</string>
-    <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet/en weniger als 10 Vokabeln. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen \nFehlercode: 001</string>
+    <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet(en) weniger Vokabeln als Anzahl von Aufgaben. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen \nFehlercode: 001</string>
     <string name="import_from_internet">Importieren aus URL</string>
     <string name="import_from_qr_code">Importieren aus QR-Code</string>
     <string name="import_from_file">Importieren aus Datei</string>
@@ -170,6 +171,5 @@
     <string name="err_no_permission_reminder">Fehler: Keine Berechtigung um eine Erinnerung zur ausgewählten bestimmten Uhrzeit zu erstellen. \nFehlercode: 002</string>
     <string name="mistakes_overview">Fehlerübersicht</string>
     <string name="finish">Fertig</string>
-
-
+    <string name="practice_mistakes">Fehler üben</string>
 </resources>

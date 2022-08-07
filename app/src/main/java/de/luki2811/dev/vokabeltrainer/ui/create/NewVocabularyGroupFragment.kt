@@ -1,23 +1,19 @@
 package de.luki2811.dev.vokabeltrainer.ui.create
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.core.view.get
-import androidx.core.view.size
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.chip.Chip
-import de.luki2811.dev.vokabeltrainer.Language
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewVocabularyGroupBinding
 import org.json.JSONObject
+import java.util.*
 
 class NewVocabularyGroupFragment : Fragment() {
 
@@ -25,35 +21,28 @@ class NewVocabularyGroupFragment : Fragment() {
     private val binding get() = _binding!!
     private val args:NewVocabularyGroupFragmentArgs by navArgs()
     private var vocabularyGroup: VocabularyGroup? = null
-    private var arrayListGroup = ArrayList<Language>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewVocabularyGroupBinding.inflate(inflater, container, false)
 
-        val languageIndex = Language.getLanguagesIndex(requireContext())
-        for(i in 0 until languageIndex.getJSONArray("languages").length()){
+        val listLocales = arrayListOf<Locale>()
+        Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
 
-            val language = Language(
-                languageIndex.getJSONArray("languages").getJSONObject(i).getInt("type"),
-                requireContext()
-            )
-            arrayListGroup.add(language)
-            binding.chipGroupVocabularyGroupsLanguageNew.addView(newChip(language.name) as View)
-            binding.chipGroupVocabularyGroupsLanguageKnown.addView(newChip(language.name) as View)
-        }
+        val listNames = arrayListOf<String>()
+        listLocales.forEach { listNames.add(it.displayLanguage) }
+        if(Locale.ROOT.equals(Locale.GERMAN))
+        listNames.forEach { name -> name.replaceFirstChar{ it.uppercaseChar() } }
+
+        val adapterKnown = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
+        val adapterNew = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
+        binding.textInputLanguageKnown.setAdapter(adapterKnown)
+        binding.textInputLanguageNew.setAdapter(adapterNew)
 
         if((!args.keyVocGroup.isNullOrEmpty()) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
             vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext())
             binding.textVocabularyGroupName.setText(vocabularyGroup!!.name)
-
-            for(i in 0 until binding.chipGroupVocabularyGroupsLanguageNew.size){
-                if(arrayListGroup[i].name == vocabularyGroup!!.languageNew.name)
-                    (binding.chipGroupVocabularyGroupsLanguageNew[i] as Chip).isChecked = true
-
-                if(arrayListGroup[i].name == vocabularyGroup!!.languageKnown.name)
-                    (binding.chipGroupVocabularyGroupsLanguageKnown[i] as Chip).isChecked = true
-
-            }
+            binding.textInputLanguageKnown.setText(vocabularyGroup!!.languageKnown.displayLanguage)
+            binding.textInputLanguageNew.setText(vocabularyGroup!!.languageNew.displayLanguage)
         }
 
         binding.buttonCreateVocabularyGroupNext.setOnClickListener { goNext() }
@@ -61,38 +50,15 @@ class NewVocabularyGroupFragment : Fragment() {
         return binding.root
     }
 
-    private fun newChip(name: String): Chip {
-        val chip = Chip(requireContext())
-        chip.text = name
-        chip.chipIcon = ContextCompat.getDrawable(requireContext(),
-            R.drawable.ic_launcher_background
-        )
-        chip.isChipIconVisible = false
-        chip.isCloseIconVisible = false
-        // necessary to get single selection working
-        chip.isClickable = true
-        chip.isCheckable = true
-        // chip.setChipDrawable(ChipDrawable.createFromAttributes(requireContext(), null, 0, R.style.Widget_Material3_Chip_Filter))
-        return chip
-    }
-
     private fun goNext() {
+        val listLocales = arrayListOf<Locale>()
+        Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
 
-        var languageNew = Language(-1, requireContext())
-        var languageKnown = Language(-1, requireContext())
+        val languageNew = listLocales.find { it.displayLanguage == binding.textInputLanguageNew.text.toString()}
+        val languageKnown = listLocales.find { it.displayLanguage == binding.textInputLanguageKnown.text.toString()}
 
-        for(i in 0 until binding.chipGroupVocabularyGroupsLanguageNew.size){
-
-            if((binding.chipGroupVocabularyGroupsLanguageKnown[i] as Chip).isChecked)
-                languageKnown = arrayListGroup[i]
-
-            if((binding.chipGroupVocabularyGroupsLanguageNew[i] as Chip).isChecked)
-                languageNew = arrayListGroup[i]
-
-        }
-
-        if(languageKnown.type == -1 || languageNew.type == -1) {
-            Toast.makeText(requireContext(), "Fehler: Keine Sprache ausgewählt !!", Toast.LENGTH_LONG).show()
+        if(languageKnown == null || languageNew == null) {
+            Toast.makeText(requireContext(), "Fehler: Sprache nicht gefunden !!", Toast.LENGTH_LONG).show()
             return
         }
 
@@ -106,7 +72,7 @@ class NewVocabularyGroupFragment : Fragment() {
                     findNavController().navigate(NewVocabularyGroupFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(vocabularyGroup!!.getAsJson().toString(), "", args.keyMode))
                 }
                 else{
-                    findNavController().navigate(NewVocabularyGroupFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(null, binding.textVocabularyGroupName.text.toString(), args.keyMode, languageKnown.type, languageNew.type ))
+                    findNavController().navigate(NewVocabularyGroupFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(null, binding.textVocabularyGroupName.text.toString(), args.keyMode, languageKnown.language, languageNew.language ))
                 }
             }
             1 -> {

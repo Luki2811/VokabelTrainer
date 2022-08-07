@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Source
-import java.util.jar.Attributes
 
 class ListSourcesAdapter(private val dataSet: ArrayList<Source>) : RecyclerView.Adapter<ListSourcesAdapter.ViewHolder>() {
     /**
@@ -28,11 +28,12 @@ class ListSourcesAdapter(private val dataSet: ArrayList<Source>) : RecyclerView.
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 
-        viewHolder.textViewName.text = dataSet[position].name
+        viewHolder.textViewName.text = if(dataSet[position].version.isNullOrEmpty()) dataSet[position].name else dataSet[position].name + " - " + dataSet[position].version
         viewHolder.textViewType.text = dataSet[position].type
         viewHolder.textViewLink.text = dataSet[position].link.toString()
 

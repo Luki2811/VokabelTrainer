@@ -193,13 +193,18 @@ class ImportWithFileFragment : Fragment() {
                             }
                             val askOnlyNewWords = dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
                             val readOutBoth = dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")
+                            val numberOfExercises = try {
+                                dataAsJson.getJSONObject("settings").getInt("numberOfExercises")
+                            } catch (e: JSONException){
+                                10
+                            }
 
                             val useTypes = arrayListOf<Int>()
                             if(dataAsJson.getJSONObject("settings").getBoolean("useType1")) useTypes.add(Exercise.TYPE_TRANSLATE_TEXT)
                             if(dataAsJson.getJSONObject("settings").getBoolean("useType2")) useTypes.add(Exercise.TYPE_CHOOSE_OF_THREE_WORDS)
                             if(dataAsJson.getJSONObject("settings").getBoolean("useType3")) useTypes.add(Exercise.TYPE_MATCH_FIVE_WORDS)
 
-                            val lesson = Lesson(nameOfLesson, newIdsVocabularyGroups.toTypedArray() , requireContext(), readOutBoth, askOnlyNewWords, useTypes)
+                            val lesson = Lesson(nameOfLesson, newIdsVocabularyGroups.toTypedArray() , requireContext(), readOutBoth, askOnlyNewWords, useTypes, numberOfExercises = numberOfExercises)
                             lesson.saveInFile()
                             lesson.saveInIndex()
 

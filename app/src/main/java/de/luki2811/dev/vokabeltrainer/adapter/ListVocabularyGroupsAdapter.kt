@@ -17,7 +17,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.AppFile
-import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
@@ -27,7 +26,6 @@ import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
 import org.json.JSONObject
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ListVocabularyGroupsAdapter(
     private val dataSet: ArrayList<VocabularyGroup>,

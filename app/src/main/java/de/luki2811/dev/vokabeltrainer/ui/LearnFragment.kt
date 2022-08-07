@@ -28,7 +28,7 @@ class LearnFragment : Fragment() {
 
         binding.listOfLessonsCards.layoutManager = LinearLayoutManager(requireContext())
 
-        val indexAsJson = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(requireContext()))
+        val indexAsJson = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
         val arrayList = ArrayList<Lesson>()
 
         try {
@@ -52,7 +52,7 @@ class LearnFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.getFilter().filter(newText)
+                adapter.filter.filter(newText)
                 return false
             }
         })

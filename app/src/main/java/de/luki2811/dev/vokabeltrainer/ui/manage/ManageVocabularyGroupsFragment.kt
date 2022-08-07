@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
-import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,8 +32,8 @@ class ManageVocabularyGroupsFragment : Fragment() {
         // }
 
         val arrayList = ArrayList<VocabularyGroup>()
-
-        val indexAsJson = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
+        val indexVocabularyGroupFile = File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        val indexAsJson = JSONObject(AppFile.loadFromFile(indexVocabularyGroupFile))
 
         binding.listOfVocabularyGroups.layoutManager = LinearLayoutManager(requireContext())
 

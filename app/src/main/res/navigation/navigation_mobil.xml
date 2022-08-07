@@ -52,22 +52,12 @@
             android:defaultValue="0" />
         <argument
             android:name="voc_group_lang_type_known"
-            app:argType="integer"
+            app:argType="string"
             android:defaultValue="-1" />
         <argument
             android:name="voc_group_lang_type_new"
-            app:argType="integer"
+            app:argType="string"
             android:defaultValue="-1" />
-    </fragment>
-    <fragment
-        android:id="@+id/manageLanguagesFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.ManageLanguagesFragment"
-        android:label="fragment_manage_languages"
-        tools:layout="@layout/fragment_manage_languages" >
-        <action
-            android:id="@+id/action_manageLanguagesFragment_pop"
-            app:popUpTo="@id/manageLanguagesFragment"
-            app:popUpToInclusive="true" />
     </fragment>
     <action
         android:id="@+id/action_global_navigationMain"
@@ -175,9 +165,6 @@
             android:id="@+id/action_settingsFragment_to_sourcesFragment"
             app:destination="@id/sourcesFragment" />
         <action
-            android:id="@+id/action_settingsFragment_to_manageLanguagesFragment"
-            app:destination="@id/manageLanguagesFragment" />
-        <action
             android:id="@+id/action_settingsFragment_to_manageVocabularyGroupsFragment"
             app:destination="@id/manageVocabularyGroupsFragment" />
     </fragment>
@@ -190,7 +177,7 @@
         android:id="@+id/learnFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.LearnFragment"
         android:label="fragment_learn"
-        tools:layout="@layout/fragment_learn" />
+        tools:layout="@layout/fragment_learn"/>
     <action
         android:id="@+id/action_global_manageLessonFragment"
         app:destination="@id/manageLessonFragment" />
@@ -198,7 +185,7 @@
         android:id="@+id/sourcesFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.SourcesFragment"
         android:label="fragment_sources"
-        tools:layout="@layout/fragment_sources" />
+        tools:layout="@layout/fragment_sources"/>
     <fragment
         android:id="@+id/manageLessonFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment"
@@ -215,6 +202,19 @@
             app:popUpTo="@id/learnFragment"
             app:popUpToInclusive="true" />
     </fragment>
-    <action android:id="@+id/action_global_createNewMainFragment" app:destination="@id/createNewMainFragment" /><action android:id="@+id/action_global_importWithQrCodeFragment" app:destination="@id/importWithQrCodeFragment"/>
+    <action
+        android:id="@+id/action_global_createNewMainFragment"
+        app:destination="@id/createNewMainFragment" />
+    <action
+        android:id="@+id/action_global_importWithQrCodeFragment"
+        app:destination="@id/importWithQrCodeFragment"/>
+    <fragment
+        android:id="@+id/createPracticeFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.CreatePracticeFragment"
+        android:label="fragment_create_practice"
+        tools:layout="@layout/fragment_create_practice" />
+    <action
+        android:id="@+id/action_global_createPracticeFragment"
+        app:destination="@id/createPracticeFragment" />
 
 </navigation>

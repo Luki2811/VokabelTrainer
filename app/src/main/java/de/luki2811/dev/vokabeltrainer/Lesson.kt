@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
-import com.google.android.material.textfield.TextInputEditText
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_CHOOSE_OF_THREE_WORDS
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_MATCH_FIVE_WORDS
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_TRANSLATE_TEXT
@@ -11,7 +10,6 @@ import org.json.JSONObject
 import java.io.File
 
 class Lesson {
-
     lateinit var name: String
     lateinit var id: Id
     lateinit var vocabularyGroupIds: Array<Int>
@@ -20,9 +18,18 @@ class Lesson {
     var settingReadOutBoth: Boolean = true
     var askOnlyNewWords: Boolean = false
     var isFavorite: Boolean = false
+    var numberOfExercises = 10
     private val context: Context
 
-    constructor(name: String, vocabularyGroupIds: Array<Int>, context: Context, settingReadOutBoth: Boolean = true, askOnlyNewWords:Boolean = false, typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3), alreadyUsedWords: ArrayList<String> = arrayListOf(), isFavorite: Boolean = false) {
+    constructor(name: String,
+                vocabularyGroupIds: Array<Int>,
+                context: Context,
+                settingReadOutBoth: Boolean = true,
+                askOnlyNewWords:Boolean = false,
+                typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3),
+                alreadyUsedWords: ArrayList<String> = arrayListOf(),
+                isFavorite: Boolean = false,
+                numberOfExercises: Int = 10) {
         this.name = name
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
@@ -32,6 +39,7 @@ class Lesson {
         this.context = context
         this.typesOfLesson = typesOfLesson
         this.isFavorite = isFavorite
+        this.numberOfExercises = numberOfExercises
     }
 
     constructor(json: JSONObject, context: Context) {
@@ -70,6 +78,13 @@ class Lesson {
                 false
             }
 
+            numberOfExercises = try {
+                json.getJSONObject("settings").getInt("numberOfExercises")
+            }catch (e: JSONException){
+                e.printStackTrace()
+                10
+            }
+
             alreadyUsedWords = try {
                 val usedWords = ArrayList<String>()
                 for(i in 0 until json.getJSONArray("alreadyUsedWords").length())
@@ -79,6 +94,7 @@ class Lesson {
                 e.printStackTrace()
                 arrayListOf()
             }
+
         } catch (e: JSONException) {
             e.printStackTrace()
         }
@@ -88,23 +104,26 @@ class Lesson {
      * Saves a lesson with name and ID in the index
      */
     fun saveInIndex(){
-        if(File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS).exists()){
+        val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+        if(indexFile.exists()){
             val index = JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             index.getJSONArray("index").put(index.getJSONArray("index").length(), toIndexJson)
-            AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(index.toString(),context)
+            AppFile.writeInFile(index.toString(),indexFile)
         }else{
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             val index = JSONObject().put("index", JSONArray().put(0, toIndexJson))
-            AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(index.toString(),context)
+            AppFile.writeInFile(index.toString(),indexFile)
         }
     }
 
     /**
      * Delete the lesson's ID and name from the index
      */
+
     fun deleteFromIndex(){
-        val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_LESSONS).loadFromFile(context))
+        val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+        val index = JSONObject(AppFile.loadFromFile(indexFile))
         var temp = -1
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
@@ -112,12 +131,13 @@ class Lesson {
         }
         if(temp != -1)
             index.getJSONArray("index").remove(temp)
-        AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(index.toString(),context)
+        AppFile.writeInFile(index.toString(),indexFile)
     }
 
     /**
      * Get a lesson as JSONObject
      */
+
     fun getAsJson(): JSONObject{
         val jsonObj = JSONObject()
             .put("name", name)
@@ -142,6 +162,7 @@ class Lesson {
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
                 .put("favorite", isFavorite)
+                .put("numberOfExercises", numberOfExercises)
         )
         return jsonObj
     }
@@ -149,7 +170,7 @@ class Lesson {
     /**
      * Methode to SHARE a lesson
      * This also loads and share the vocabulary groups as JSON
-     * Without Id, alreadyUsedWords and vocabularyGroupIds
+     * Without Id, alreadyUsedWords, isFavorite and vocabularyGroupIds
      */
 
     fun export(): JSONObject{
@@ -169,6 +190,7 @@ class Lesson {
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
+                .put("numberOfExercises", numberOfExercises)
             )
             .put("vocabularyGroups", vocabularyInOneJson)
     }
@@ -190,6 +212,7 @@ class Lesson {
     /**
      * Saves the lesson in a file with ID
      */
+
     fun saveInFile() {
         var file = File(context.filesDir, "lessons")
         file.mkdirs()
@@ -198,13 +221,11 @@ class Lesson {
     }
 
     companion object{
-
         /**
          * Checks, if a lesson has a valid name
          */
         fun isNameValid(context: Context, name: String): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
-            val indexDatei = AppFile(AppFile.NAME_FILE_INDEX_LESSONS)
 
             if (name.length > 50)
                 return 3
@@ -231,11 +252,10 @@ class Lesson {
             if (indexFile.exists()) {
 
                 val indexLessons =
-                    JSONObject(indexDatei.loadFromFile(context)).getJSONArray("index")
+                    JSONObject(AppFile.loadFromFile(indexFile)).getJSONArray("index")
                 for (i in 0 until indexLessons.length()) {
                     if (indexLessons.getJSONObject(i).getString("name") == name.trim())
                         return 2
-
                 }
             }
             return 0

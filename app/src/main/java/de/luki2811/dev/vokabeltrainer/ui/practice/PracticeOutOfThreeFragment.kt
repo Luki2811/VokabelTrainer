@@ -15,6 +15,8 @@ import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeOutOfThreeBind
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity.Companion.quitPractice
 import org.json.JSONObject
 import java.time.LocalDate
+import java.util.*
+import kotlin.collections.ArrayList
 
 class PracticeOutOfThreeFragment: Fragment() {
 
@@ -35,12 +37,12 @@ class PracticeOutOfThreeFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeOutOfThreeBinding.inflate(inflater, container, false)
 
-        val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             quitPractice(requireActivity(),requireContext())
         }
 
         for(string in args.wordAsJson){
-            words.add(VocabularyWord(JSONObject(string),requireContext()))
+            words.add(VocabularyWord(JSONObject(string)))
         }
         word = words[0]
 
@@ -57,12 +59,12 @@ class PracticeOutOfThreeFragment: Fragment() {
 
         if(word.isKnownWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.newWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageKnown.name)
+            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Locale.GERMAN))
             speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
             binding.textViewPracticeChooseThreeBottom.text = word.knownWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageNew.name)
+            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Locale.GERMAN))
             if(args.settingsReadBoth){
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
             }
@@ -77,7 +79,7 @@ class PracticeOutOfThreeFragment: Fragment() {
             binding.textViewPracticeInfo2.visibility = View.VISIBLE
         }
 
-        binding.chipGroupPracticeOptions.setOnCheckedChangeListener{ _,_ ->
+        binding.chipGroupPracticeOptions.setOnCheckedStateChangeListener{ _,_ ->
             binding.buttonCheckPractice2.isEnabled = binding.chipGroupPracticeOptions.checkedChipIds.isNotEmpty()
 
             when(binding.chipGroupPracticeOptions.checkedChipId){
@@ -143,19 +145,16 @@ class PracticeOutOfThreeFragment: Fragment() {
     }
 
     private fun speakWord(text: String){
-        val lang = if (word.isKnownWordAskedAsAnswer) word.languageNew else word.languageKnown
-
-        val tts = AppTextToSpeak(text,lang,requireContext())
+        Thread {
+            Thread.sleep(200L)
+            val lang = if (word.isKnownWordAskedAsAnswer) word.languageNew else word.languageKnown
+            AppTextToSpeak(text, lang, requireContext())
+        }.start()
     }
 
     private fun startCorrection(){
 
         isCorrect = isInputCorrect()
-
-        if(!isCorrect) {
-            word.typeWrong = Exercise.TYPE_CHOOSE_OF_THREE_WORDS
-            word.isWrong = true
-        }
 
         val correctionBottomSheet = CorrectionBottomSheet()
 

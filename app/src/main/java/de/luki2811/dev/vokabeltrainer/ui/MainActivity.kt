@@ -43,32 +43,46 @@ class MainActivity : AppCompatActivity() {
         // lessong.deleteFromIndex() **/
     }
 
-    private fun createFiles(){
+    private fun createFiles() {
         // Erstellen der IndexDatein mit leerem Index
-        val indexVocGroupsFile = File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS)
-        if(!indexVocGroupsFile.exists())
-            AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexVocGroupsFile)
+        val indexVocGroupsFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        if (!indexVocGroupsFile.exists())
+            AppFile.writeInFile(
+                JSONObject().put("index", JSONArray()).toString(),
+                indexVocGroupsFile
+            )
 
-        val wrongWordsFile = File(applicationContext.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
-        if(!wrongWordsFile.exists())
+        val wrongWordsFile = File(this.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
+        if (!wrongWordsFile.exists())
             AppFile.writeInFile("[]", wrongWordsFile)
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_ID).exists())
-            AppFile(AppFile.NAME_FILE_INDEX_ID).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)
+        val indexIdFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_ID)
+        if (!indexIdFile.exists())
+            AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexIdFile)
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_LESSONS).exists())
-            AppFile(AppFile.NAME_FILE_INDEX_LESSONS).writeInFile(JSONObject().put("index", JSONArray()).toString(), applicationContext)
+        val indexLessonFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+        if (!indexLessonFile.exists())
+            AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES).exists())
-            AppFile(AppFile.NAME_FILE_INDEX_LANGUAGES).writeInFile(Language.getDefaultLanguageIndex().toString(), applicationContext)
+        val indexLanguageFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
+        if (!indexLanguageFile.exists())
+            // AppFile.writeInFile(Language.getDefaultLanguageIndex().toString(), indexLanguageFile)
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
+        if (!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
             Settings(applicationContext).saveSettingsInFile()
 
-        if(!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()){
+        if (!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()) {
             AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
-            val streakData = JSONArray().put(JSONObject().put("date", LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))).put("xp", 0).put("goal", 50))
-            AppFile.writeInFile(streakData.toString(), File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
+            val streakData = JSONArray().put(
+                JSONObject().put(
+                    "date",
+                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+                ).put("xp", 0).put("goal", 50)
+            )
+            AppFile.writeInFile(
+                streakData.toString(),
+                File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK)
+            )
         }
     }
 
@@ -77,12 +91,13 @@ class MainActivity : AppCompatActivity() {
 
         val navView: BottomNavigationView = binding.bottomNavigation
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
         binding.floatingActionButton.setOnClickListener { navController.navigate(R.id.action_global_createNewMainFragment) }
         // binding.floatingActionButtonQrCode.setOnClickListener { navController.navigate(R.id.action_global_importWithQrCodeFragment) }
-        binding.floatingActionButtonPractice.setOnClickListener { startMistakeLesson() }
+        binding.floatingActionButtonPractice.setOnClickListener { navController.navigate(R.id.action_global_createPracticeFragment) }
 
         navView.setupWithNavController(navController)
 
@@ -90,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         // setupActionBarWithNavController(navController, appBarConfiguration)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if( destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
+            if (destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
                 navView.visibility = View.GONE
                 // binding.floatingActionButtonQrCode.visibility = View.GONE
                 binding.floatingActionButton.visibility = View.GONE
@@ -100,16 +115,11 @@ class MainActivity : AppCompatActivity() {
                 // binding.floatingActionButtonQrCode.visibility = View.VISIBLE
             }
 
-            if( destination.id == R.id.learnFragment){
+            if (destination.id == R.id.learnFragment) {
                 binding.floatingActionButtonPractice.visibility = View.VISIBLE
-            }else{
+            } else {
                 binding.floatingActionButtonPractice.visibility = View.GONE
             }
         }
-    }
-
-    private fun startMistakeLesson(){
-        // val mistakeLesson = MistakeLesson()
-        // startActivity(Intent(applicationContext, PracticeActivity::class.java).putExtra("data_lesson", mistakeLesson.getAsJson().toString()))
     }
 }

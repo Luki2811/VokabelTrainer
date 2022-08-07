@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.Source
 import de.luki2811.dev.vokabeltrainer.adapter.ListSourcesAdapter
@@ -20,13 +21,15 @@ class SourcesFragment : Fragment() {
         _binding = FragmentSourcesBinding.inflate(inflater, container, false)
 
         binding.recyclerViewSources.layoutManager = LinearLayoutManager(requireContext())
+        binding.topAppBarSources.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
 
         val arraySources: ArrayList<Source> = arrayListOf(
-            Source("JSON-Java (JSON.org)", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/stleary/JSON-java/master/LICENSE")),
-            Source("Code-Scanner - 2.1.0", Source.TYPE_MIT, URL("https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/LICENSE")),
-            Source("Android Open Source Project (AOSP)", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
-            Source("Kotlin - 1.6.21", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
-            Source("Material Components for Android - 1.6.0", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE"))
+            Source("Code-Scanner", "2.1.0", Source.TYPE_MIT, URL("https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/LICENSE")),
+            Source("Android Open Source Project (AOSP)", null, Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
+            Source("Kotlin", KotlinVersion.CURRENT.toString() ,Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
+            Source("Material Components for Android", "1.7.0-alpha03", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE"))
 
 
             /** Source("AndroidX Navigation Fragment ktx - 2.4.1", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
@@ -39,6 +42,7 @@ class SourcesFragment : Fragment() {
             Source("AndroidX Core ktx - 1.7.0", Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)), **/
         )
 
+        arraySources.sortWith(compareBy { it.name })
         binding.recyclerViewSources.adapter = ListSourcesAdapter(arraySources)
 
         return binding.root

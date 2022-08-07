@@ -30,7 +30,10 @@ class StreakFragment : Fragment() {
             streak.lengthInDay + 1
         ) else binding.textViewMainStreakBottom.setText(R.string.streak_reached_goal)
 
-        binding.textViewStreakInDays.text = getString(R.string.streak_in_days, streak.lengthInDay)
+        binding.textViewStreakInDays.text = if(streak.lengthInDay == 1)
+            getString(R.string.streak_in_day, 1)
+        else
+            getString(R.string.streak_in_days, streak.lengthInDay)
 
         return binding.root
     }

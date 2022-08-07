@@ -22,17 +22,16 @@ class ListMistakesAdapter(
         val textViewCorrectWord: TextView = view.findViewById(R.id.textViewItemCorrectAskedWord)
         val textViewAskedWord: TextView = view.findViewById(R.id.textViewItemAskedWord)
     }
-    val totalNumberExcercies = 0
 
     // Create new views (invoked by the layout manager)
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ListMistakesAdapter.ViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.frame_list_item_mistake, viewGroup, false)
         return ViewHolder(view)
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    override fun onBindViewHolder(viewHolder: ListMistakesAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
 

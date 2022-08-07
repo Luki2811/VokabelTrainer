@@ -10,6 +10,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
@@ -18,131 +21,185 @@ import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import kotlinx.coroutines.Runnable
 import org.json.JSONObject
 
-
 class PracticeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPracticeBinding
-    // Typ 0 = FinishFragment
-    private var correctInPercent: Int = 100
-    private var typeOfLessonNow = 0
-    private var numberOfExercises = 0
-    private var numberOfExercisesTotal = 10
-    private var numberOfWrongWords: Double = 0.0
-    // Replace with Mistakes
-    private var wrongWords: ArrayList<VocabularyWord> = arrayListOf()
 
-    private var mistakes:ArrayList<Mistake> = arrayListOf()
+    private var mode = -1
 
+    private var position = 0
+    private var mistakes: ArrayList<Mistake> = arrayListOf()
+    private var words: ArrayList<VocabularyWord> = arrayListOf()
     private lateinit var lesson: Lesson
     private var vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
-    private var numberOfVocabularyWords = 0
+    private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
 
-    private var words: ArrayList<VocabularyWord> = arrayListOf()
-    private lateinit var wordResult: VocabularyWord
+    private var mistakesToPractice: ArrayList<Mistake> = arrayListOf()
+    private var alreadyUsedMistakes = arrayListOf<Mistake>()
 
-    // Variable with the time needed to finish lesson
     private var timeInSeconds = 0
-    // Handler for the stopwatch
     private lateinit var handler: Handler
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPracticeBinding.inflate(layoutInflater)
-
+        // Setup Views
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
+        binding.buttonExitPractice.setOnClickListener { quitPractice(this, this) }
+
+        startTimer()
+
+        // Setup Lesson
+        if(!intent.getStringExtra("data_lesson").isNullOrEmpty()){
+            mode = MODE_NORMALE
+            lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
+            vocabularyGroups = lesson.loadVocabularyGroups()
+            vocabularyGroups.forEach { allVocabularyWords.addAll(it.vocabulary) }
+
+            if(allVocabularyWords.size < lesson.numberOfExercises) {
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.err_lesson_enough_words_long)
+                    .setTitle(R.string.err)
+                    .setIcon(R.drawable.ic_outline_error_24)
+                    .setNegativeButton(R.string.ok){ _, _ ->
+                        startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    }
+                    .setOnCancelListener { startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+                    .show()
+                return
+            }
+            changeTypOfPractice()
+        }
+        // To practice mistakes
+        else{
+            mode = MODE_PRACTICE_MISTAKES
+            val allMistakes = Mistake.loadAllFromFile(this)
+            try {
+                for (i in 0..9){
+                    mistakesToPractice.add(allMistakes.filter { !mistakesToPractice.contains(it) }.random())
+                }
+            }catch (e: NoSuchElementException){
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.err)
+                    .setTitle(R.string.err)
+                    .setIcon(R.drawable.ic_outline_error_24)
+                    .setNegativeButton(R.string.ok){ _, _ ->
+                        startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    }
+                    .setOnCancelListener {
+                        startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    }
+                    .show()
+                e.printStackTrace()
+                return
+            }
+
+            setNewMistake()
+        }
+
+        supportFragmentManager.setFragmentResultListener("finished", this) { _, bundle ->
+
+            if(!bundle.getString("wordMistake").isNullOrEmpty()){
+                val mistake = Mistake(JSONObject(bundle.getString("wordMistake")!!))
+                mistake.position = position
+                mistakes.add(mistake)
+            }
+
+            binding.progressBarPractice.progress = position
+
+            if(mode == MODE_NORMALE) {
+                binding.progressBarPractice.max = lesson.numberOfExercises + mistakes.size
+                changeTypOfPractice()
+            } else if(mode == MODE_PRACTICE_MISTAKES){
+                binding.progressBarPractice.max = 10 + mistakes.size
+                alreadyUsedMistakes.last().removeFromFile(this)
+                setNewMistake()
+            }
+        }
 
         supportFragmentManager.setFragmentResultListener("sendToMistakes", this) { _, _ ->
-            // Log.e("Test/FragmentResultListener stm", "Start")
             val mistakesAsArrayListString = arrayListOf<String>()
-            for(i in mistakes){
-                mistakesAsArrayListString.add(i.getAsJson().toString())
-            }
+            mistakes.forEach { mistakesAsArrayListString.add(it.getAsJson().toString()) }
 
             binding.progressBarPractice.visibility = View.GONE
             binding.buttonExitPractice.visibility = View.GONE
             binding.textViewPracticeInfoMistake.visibility = View.GONE
 
-            navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), numberOfExercisesTotal))
-            // Log.e("Test/FragmentResultListener stm", "Finished")
-        }
-
-        lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
-
-
-        // TODO: Remove this function => replace with another function in class VocabularyGroup
-        for(i in lesson.vocabularyGroupIds){
-            VocabularyGroup.loadFromFileWithId(Id(applicationContext,i), applicationContext)?.let {
-                numberOfVocabularyWords += it.vocabulary.size
-            }
-        }
-
-        // Load vocabulary groups
-        vocabularyGroups = lesson.loadVocabularyGroups()
-
-        // start the timer
-        startTimer()
-
-        if(numberOfVocabularyWords < 10) {
-            MaterialAlertDialogBuilder(this)
-                .setMessage(R.string.err_lesson_enough_words_long)
-                .setTitle(R.string.err)
-                .setIcon(R.drawable.ic_outline_error_24)
-                .setNegativeButton(R.string.ok){ _, _ ->
-                    startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                }
-                .setOnCancelListener { startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
-                .show()
-
-            return
-        }
-
-        typeOfLessonNow = -1
-        changeTypOfPractice(getNextLessonType())
-
-        binding.buttonExitPractice.setOnClickListener { quitPractice(this, this) }
-
-
-        supportFragmentManager.setFragmentResultListener("finished", this) { _, bundle ->
-            if(!bundle.getString("wordResult").isNullOrEmpty()){
-                wordResult = VocabularyWord(JSONObject(bundle.getString("wordResult")!!), applicationContext)
-
-                if(!bundle.getString("wordMistake").isNullOrEmpty()){
-                    val mistake = Mistake(JSONObject(bundle.getString("wordMistake")!!), applicationContext)
-                    mistake.position = numberOfExercises + 1
-                    mistakes.add(mistake)
-                    Log.e("Test/Mistake", "${mistake.getAsJson()}")
-                }
-
-                if(wordResult.isWrong){
-                    wrongWords.add(wordResult)
-                    numberOfWrongWords += 1
-                    numberOfExercisesTotal += 1
-                }
-            }
-
-            numberOfExercises += 1
-
-            binding.progressBarPractice.max = numberOfExercisesTotal
-            binding.progressBarPractice.progress = numberOfExercises
-
-
-            if(numberOfExercises < numberOfExercisesTotal + 1)
-                changeTypOfPractice(getNextLessonType())
+            if(mode == MODE_NORMALE)
+                navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), lesson.numberOfExercises + mistakes.size))
             else
-                changeTypOfPractice(0)
+                navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), 10 + mistakes.size))
 
         }
-
-
 
         setContentView(binding.root)
+        hideSystemUI()
+
+        /** ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.layoutPracticeActivity)) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            if(imeVisible) showSystemUI() else hideSystemUI()
+            insets
+        } **/
+    }
+
+    private fun setNewMistake(){
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
+        var type = 0
+
+        words.clear()
+        position += 1
+
+        when{
+            position <= 10 -> {
+                val tempMistake = mistakesToPractice.filter { !alreadyUsedMistakes.contains(it) }.random()
+                words.add(0, tempMistake.word)
+                alreadyUsedMistakes.add(tempMistake)
+                type = Exercise.TYPE_TRANSLATE_TEXT
+            }
+            mistakes.any { !it.isRepeated } -> {
+                val mistake = mistakes.filter { !it.isRepeated }.random()
+                words.add(mistake.word)
+                type = Exercise.TYPE_TRANSLATE_TEXT
+                mistakes[mistakes.indexOf(mistake)].isRepeated = true
+                binding.textViewPracticeInfoMistake.visibility = View.VISIBLE
+            }
+        }
+
+        when(type){
+            0 -> {
+                binding.progressBarPractice.visibility = View.GONE
+                binding.buttonExitPractice.visibility = View.GONE
+                binding.textViewPracticeInfoMistake.visibility = View.GONE
+                // Calculate
+                val correctInPercent = 100-(mistakes.size/(mistakes.size + 10)*100)
+                stopTimer()
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size, timeInSeconds = this.timeInSeconds))
+            }
+            Exercise.TYPE_TRANSLATE_TEXT -> {
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(false, words[0].getJson().toString()))
+            }
+        }
+    }
+
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowInsetsControllerCompat(window, findViewById(R.id.layoutPracticeActivity)).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+    }
+
+    private fun showSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        WindowInsetsControllerCompat(window, findViewById(R.id.layoutPracticeActivity)).show(WindowInsetsCompat.Type.systemBars())
     }
 
     private fun newRandomWord(checkIfAlreadyUse: Boolean = true): VocabularyWord {
         var randomWord = vocabularyGroups[(0 until vocabularyGroups.size).random()].getRandomWord()
 
         if(checkIfAlreadyUse){
-            if(numberOfVocabularyWords <= lesson.alreadyUsedWords.size) {
+            if(allVocabularyWords.size <= lesson.alreadyUsedWords.size) {
                 lesson.alreadyUsedWords = arrayListOf()
                 Toast.makeText(applicationContext, getString(R.string.vocabulary_group_restart), Toast.LENGTH_SHORT).show()
             }
@@ -157,14 +214,15 @@ class PracticeActivity : AppCompatActivity() {
         return randomWord
     }
 
-    private fun changeTypOfPractice(_type: Int){
-        var type = _type
+    private fun changeTypOfPractice() {
+        var type = getNextLessonType()
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
 
         words.clear()
+        position += 1
 
         when{
-            numberOfExercises < 10 ->{
+            position <= lesson.numberOfExercises ->{
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
                 if(type == Exercise.TYPE_TRANSLATE_TEXT || type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
                     words.add(0, newRandomWord(true))
@@ -197,11 +255,13 @@ class PracticeActivity : AppCompatActivity() {
                     }
                 }
             }
-            wrongWords.size != 0 -> {
-                words.add(0, wrongWords[(0 until wrongWords.size).random()])
-                words[0].isWrong = false
-                type = words[0].typeWrong
-                wrongWords.remove(words[0])
+
+            mistakes.any { !it.isRepeated } -> {
+                val mistake = mistakes.filter { !it.isRepeated }.random()
+                words.add(mistake.word)
+                type = mistake.typeOfPractice
+                mistake.addToFile(this)
+                mistakes[mistakes.indexOf(mistake)].isRepeated = true
 
                 if(type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
                     for (i in 1 until 3){
@@ -215,10 +275,9 @@ class PracticeActivity : AppCompatActivity() {
                         words[i].isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
                     }
                 }
-
                 binding.textViewPracticeInfoMistake.visibility = View.VISIBLE
-                // Toast.makeText(applicationContext, "Fehlerwort", Toast.LENGTH_SHORT).show()
             }
+
             else -> {
                 type = 0
                 lesson.saveInFile()
@@ -230,15 +289,13 @@ class PracticeActivity : AppCompatActivity() {
             wordsInArray.add(i.getJson().toString())
         }
 
-        Log.e("Info0", wordsInArray.toString())
-
         when(type){
             0 -> {
                 binding.progressBarPractice.visibility = View.GONE
                 binding.buttonExitPractice.visibility = View.GONE
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
                 // Calculate
-                correctInPercent = 100-(numberOfWrongWords/(numberOfExercises+1)*100).toInt()
+                val correctInPercent = 100-(mistakes.size/(mistakes.size + lesson.numberOfExercises)*100)
                 stopTimer()
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size, timeInSeconds = this.timeInSeconds))
             }
@@ -274,21 +331,17 @@ class PracticeActivity : AppCompatActivity() {
         statusChecker.run()
     }
 
-
-
     private fun stopTimer() {
         handler.removeCallbacks(statusChecker)
     }
 
-    private fun resetTimer(){
-        timeInSeconds = 0
-    }
+    // private fun resetTimer(){ timeInSeconds = 0 }
 
     private var statusChecker: Runnable = object: Runnable{
         override fun run() {
             try {
                 timeInSeconds += 1
-                Log.i("Runnable","statusChecker: $timeInSeconds")
+               // Log.i("Runnable","statusChecker: $timeInSeconds")
             } finally {
                 handler.postDelayed(this, 1000L)
             }
@@ -298,10 +351,15 @@ class PracticeActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        showSystemUI()
         stopTimer()
     }
 
     companion object {
+
+        const val MODE_NORMALE = 0
+        const val MODE_PRACTICE_MISTAKES = 1
+
         fun quitPractice(activity: Activity, context: Context){
             MaterialAlertDialogBuilder(context)
                 .setTitle(context.getString(R.string.quite_lesson))

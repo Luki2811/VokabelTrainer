@@ -68,25 +68,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
 
-            <Button
-                android:id="@+id/buttonSettingsManageLanguage"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/manage_languages"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsManageVocabularyGroups" />
-
             <TextView
                 android:id="@+id/textViewSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/settings"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/buttonSettingsManageLanguage" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsManageVocabularyGroups" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menuStreakDailyObjectiveXPLayout"
@@ -119,7 +109,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/menuStreakDailyObjectiveXPLayout" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchSettingsReadOutVocabularyCentralForbidden"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -132,7 +122,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/menuStreakDailyObjectiveXPLayout" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchSettingsEnableDynamicColors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -145,7 +135,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchSettingsReadOutVocabularyCentralForbidden" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchSettingsNotificationStreak"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

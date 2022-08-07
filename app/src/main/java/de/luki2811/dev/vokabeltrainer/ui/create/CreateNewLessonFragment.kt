@@ -16,6 +16,7 @@ import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
+import java.io.File
 
 class CreateNewLessonFragment : Fragment() {
 
@@ -30,7 +31,7 @@ class CreateNewLessonFragment : Fragment() {
         binding.buttonNext.setOnClickListener { createNewLesson() }
         binding.buttonNext.setText(R.string.to_finish)
 
-        val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
+        val index = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
         val arrayListUnsorted = ArrayList<String>()
         for(i in 0 until index.getJSONArray("index").length()) {
            arrayListUnsorted.add(index.getJSONArray("index").getJSONObject(i).getString("name"))
@@ -108,7 +109,7 @@ class CreateNewLessonFragment : Fragment() {
 
         val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
 
-        val index = JSONObject(AppFile(AppFile.NAME_FILE_INDEX_VOCABULARYGROUPS).loadFromFile(requireContext()))
+        val index = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
 
         if(arrayListGroup.isEmpty()){
             Toast.makeText(requireContext(), "Vokabelgruppe fehlt", Toast.LENGTH_SHORT).show()

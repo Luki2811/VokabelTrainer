@@ -2,7 +2,6 @@ package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.content.Context
 import android.content.DialogInterface
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,9 +16,10 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
-import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import org.json.JSONObject
 import java.io.File
+import java.util.*
+import kotlin.collections.ArrayList
 
 class EditVocabularyGroupFragment : Fragment() {
 
@@ -27,10 +27,10 @@ class EditVocabularyGroupFragment : Fragment() {
     private val binding get() = _binding!!
     lateinit var vocabularyGroup: VocabularyGroup
     lateinit var vocabulary: ArrayList<VocabularyWord>
-    private lateinit var languageNew: Language
-    private lateinit var languageKnown: Language
+    private lateinit var languageNew: Locale
+    private lateinit var languageKnown: Locale
 
-    var pos: Int = 0
+    private var pos: Int = 0
     private val args:EditVocabularyGroupFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -49,8 +49,8 @@ class EditVocabularyGroupFragment : Fragment() {
         } else {
             vocabulary = ArrayList()
 
-            languageKnown = Language(args.vocGroupLangTypeKnown, requireContext())
-            languageNew = Language(args.vocGroupLangTypeNew, requireContext())
+            languageKnown = Locale(args.vocGroupLangTypeKnown)
+            languageNew = Locale(args.vocGroupLangTypeNew)
 
             vocabulary.add(VocabularyWord("", languageKnown , "", languageNew, true))
             vocabularyGroup = VocabularyGroup(args.keyVocGroupName, languageKnown, languageNew, vocabulary.toTypedArray(), requireContext())

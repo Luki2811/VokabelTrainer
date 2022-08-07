@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import java.util.*
 
-class AppTextToSpeak(private var textToSpeak: String, var language: Language, val context: Context) : TextToSpeech.OnInitListener {
+class AppTextToSpeak(private var textToSpeak: String, var language: Locale, val context: Context) : TextToSpeech.OnInitListener {
 
     val settings = Settings(context)
     private var tts = TextToSpeech(context,this)
@@ -24,7 +24,7 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Language, va
         textToSpeak = textToSpeak.replace("sg", "singular", ignoreCase = true)
         textToSpeak = textToSpeak.replace("sg.", "singular", ignoreCase = true)
 
-        if(language.name.equals("französisch", ignoreCase = true)){
+        if(language == Locale.FRENCH){
             textToSpeak = textToSpeak.replace("qc","quelque chose", ignoreCase = true)
             textToSpeak = textToSpeak.replace("qn", "quelqu'un", ignoreCase = true)
             textToSpeak = textToSpeak.replace("f.","féminin", ignoreCase = true)
@@ -32,11 +32,16 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Language, va
         }
     }
 
+    fun shutdown(){
+        tts.stop()
+        tts.shutdown()
+    }
+
     override fun onInit(status: Int) {
         // val audioManager = context.getSystemService(AUDIO_SERVICE) as AudioManager
-        if (status == TextToSpeech.SUCCESS && language.getShortName() != null) {
+        if (status == TextToSpeech.SUCCESS) {
 
-            val result = tts.setLanguage(Locale(language.getShortName()!!))
+            val result = tts.setLanguage(language)
 
             Log.i("TTS", "Language: ${tts.voice.locale.language}|${tts.voice.locale.country}")
 
@@ -46,6 +51,11 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Language, va
                 return
             }
             else if(settings.readOutVocabularyGeneral){
+                /**
+               audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
+                if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)) {
+                    Toast.makeText(context, "Speakerphone off", Toast.LENGTH_SHORT)
+                } **/
                 /**
                audioManager.mode = AudioManager.MODE_IN_COMMUNICATION
                 if (audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == audioManager.getStreamMinVolume(AudioManager.STREAM_MUSIC)) {
