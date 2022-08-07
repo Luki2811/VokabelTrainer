@@ -20,6 +20,7 @@ import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import kotlinx.coroutines.Runnable
 import org.json.JSONObject
+import kotlin.math.roundToInt
 
 class PracticeActivity : AppCompatActivity() {
 
@@ -172,9 +173,10 @@ class PracticeActivity : AppCompatActivity() {
                 binding.buttonExitPractice.visibility = View.GONE
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
                 // Calculate
-                val correctInPercent = 100-(mistakes.size/(mistakes.size + 10)*100)
+                val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + 10)*100)
                 stopTimer()
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size, timeInSeconds = this.timeInSeconds))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(
+                    correctInPercent.roundToInt(), mistakes.size, timeInSeconds = this.timeInSeconds))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(false, words[0].getJson().toString()))
@@ -295,9 +297,9 @@ class PracticeActivity : AppCompatActivity() {
                 binding.buttonExitPractice.visibility = View.GONE
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
                 // Calculate
-                val correctInPercent = 100-(mistakes.size/(mistakes.size + lesson.numberOfExercises)*100)
+                val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + lesson.numberOfExercises)*100)
                 stopTimer()
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent, mistakes.size, timeInSeconds = this.timeInSeconds))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent.roundToInt(), mistakes.size, timeInSeconds = this.timeInSeconds))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(lesson.settingReadOutBoth, words[0].getJson().toString()))

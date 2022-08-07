@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
+import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -52,6 +54,9 @@ class MainActivity : AppCompatActivity() {
                 indexVocGroupsFile
             )
 
+        if (!File(this.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
+            Settings(this).saveSettingsInFile()
+
         val wrongWordsFile = File(this.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
         if (!wrongWordsFile.exists())
             AppFile.writeInFile("[]", wrongWordsFile)
@@ -67,9 +72,6 @@ class MainActivity : AppCompatActivity() {
         val indexLanguageFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_LANGUAGES)
         if (!indexLanguageFile.exists())
             // AppFile.writeInFile(Language.getDefaultLanguageIndex().toString(), indexLanguageFile)
-
-        if (!File(applicationContext.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
-            Settings(applicationContext).saveSettingsInFile()
 
         if (!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()) {
             AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
@@ -95,9 +97,16 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
-        binding.floatingActionButton.setOnClickListener { navController.navigate(R.id.action_global_createNewMainFragment) }
-        // binding.floatingActionButtonQrCode.setOnClickListener { navController.navigate(R.id.action_global_importWithQrCodeFragment) }
-        binding.floatingActionButtonPractice.setOnClickListener { navController.navigate(R.id.action_global_createPracticeFragment) }
+        binding.floatingActionButton.setOnClickListener {
+            navController.navigate(R.id.action_global_createNewMainFragment)
+        }
+        // binding.floatingActionButtonQrCode.setOnClickListener {
+        // navController.navigate(R.id.action_global_importWithQrCodeFragment)
+        // }
+        binding.floatingActionButtonPractice.setOnClickListener {
+            startActivity(Intent(this, PracticeActivity::class.java))
+            // navController.navigate(R.id.action_global_createPracticeFragment)
+        }
 
         navView.setupWithNavController(navController)
 

@@ -1,6 +1,8 @@
 package de.luki2811.dev.vokabeltrainer.ui.create
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +11,13 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewVocabularyGroupBinding
+import de.luki2811.dev.vokabeltrainer.ui.manage.EditVocabularyGroupFragment
 import org.json.JSONObject
+import java.io.File
 import java.util.*
 
 class NewVocabularyGroupFragment : Fragment() {
@@ -47,7 +52,44 @@ class NewVocabularyGroupFragment : Fragment() {
 
         binding.buttonCreateVocabularyGroupNext.setOnClickListener { goNext() }
 
+        if(args.keyMode == EditVocabularyGroupFragment.MODE_EDIT)
+            binding.buttonDeleteVocabularyGroup2.setOnClickListener {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.outline_delete_24)
+                    .setTitle(getString(R.string.delete_vocabulary_group))
+                    .setMessage(R.string.do_you_really_want_to_delete_vocabulary_group)
+                    .setPositiveButton(getString(R.string.delete)){ _: DialogInterface, _: Int ->
+                        deleteVocabularyGroup()
+                    }
+                    .setNegativeButton(getString(R.string.cancel)){ _: DialogInterface, _: Int ->
+                        Toast.makeText(requireContext(), getString(R.string.cancelled), Toast.LENGTH_SHORT).show()
+                    }
+                    .show()
+            }
+        else
+            binding.buttonDeleteVocabularyGroup2.visibility = View.GONE
+
         return binding.root
+    }
+
+    private fun deleteVocabularyGroup() {
+        if (vocabularyGroup == null) {
+            Toast.makeText(requireContext(), getText(R.string.err_could_not_delete_vocabulary_group), Toast.LENGTH_LONG).show()
+            return
+        }
+
+        var file = File(requireContext().filesDir, "vocabularyGroups")
+        file.mkdirs()
+        file = File(file, vocabularyGroup!!.id.number.toString() + ".json" )
+        if(!file.delete()){
+            Toast.makeText(requireContext(), getString(R.string.err_could_not_delete_vocabulary_group), Toast.LENGTH_LONG).show()
+            Log.w("Error", "Failed to delete vocabularyGroup with id ${vocabularyGroup!!.id}")
+            return
+        }
+        vocabularyGroup!!.deleteFromIndex()
+        vocabularyGroup!!.id.deleteId()
+        Log.i("Info", "Successfully deleted vocabularyGroup with id ${vocabularyGroup!!.id}")
+        findNavController().popBackStack()
     }
 
     private fun goNext() {

@@ -7,6 +7,7 @@
     tools:context=".ui.create.NewVocabularyGroupFragment">
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -15,16 +16,6 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/textViewNameVocabularyGroup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/vocabulary_group_name"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textVocabularyGroupNameLayout"
@@ -39,12 +30,13 @@
                 app:errorEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewNameVocabularyGroup">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textVocabularyGroupName"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:hint="@string/vocabulary_group_name" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -53,29 +45,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginTop="12dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupLanguageNative">
+                app:layout_constraintTop_toBottomOf="@+id/textInputLanguageNewLayout">
 
                 <AutoCompleteTextView
                     android:id="@+id/textInputLanguageKnown"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/native_language"
                     android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
-            <TextView
-                android:id="@+id/textViewCreateVocabularyGroupLanguageNew"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:text="@string/new_language"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textVocabularyGroupNameLayout" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textInputLanguageNewLayout"
@@ -83,32 +66,20 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupLanguageNew">
+                app:layout_constraintTop_toBottomOf="@+id/textVocabularyGroupNameLayout">
+
                 <AutoCompleteTextView
                     android:id="@+id/textInputLanguageNew"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="@string/new_language"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
-
-
-
-
-            <TextView
-                android:id="@+id/textViewCreateVocabularyGroupLanguageNative"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:text="@string/native_language"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLanguageNewLayout" />
-
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -120,7 +91,7 @@
         android:layout_height="2dp"
         android:layout_marginBottom="16dp"
         android:background="@color/Gray"
-        app:layout_constraintBottom_toTopOf="@id/buttonCreateVocabularyGroupNext"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteVocabularyGroup2"
         tools:layout_editor_absoluteX="0dp" />
 
     <Button
@@ -134,6 +105,20 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonDeleteVocabularyGroup2"
+        style="@style/Widget.Material3.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/delete"
+        android:text="@string/remove_vocabularyGroup"
+        app:icon="@drawable/outline_delete_24"
+        app:layout_constraintBottom_toTopOf="@+id/buttonCreateVocabularyGroupNext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
         app:layout_constraintStart_toStartOf="parent" />
 
 

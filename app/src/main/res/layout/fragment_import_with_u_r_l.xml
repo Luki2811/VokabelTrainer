@@ -6,37 +6,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.create.ImportWithUrlFragment">
 
-    <TextView
-        android:id="@+id/textViewImportURL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/url_of_file_to_import"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textEditUrlToImportLayout"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:hint="@string/url_of_file_to_import"
+
+        app:endIconMode="custom"
         app:errorEnabled="true"
         app:helperTextEnabled="true"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        app:layout_constraintTop_toBottomOf="@id/textViewImportURL"
-        app:endIconMode="custom"
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:prefixText="https://">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/textEditUrlToImport"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:inputType="textUri"
-            />
+            android:inputType="textUri" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,24 +37,24 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/action_import"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEditUrlToImportLayout" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/textViewImportUrlTemp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
         android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonImportFromURL" />
+        app:layout_constraintTop_toBottomOf="@+id/textEditUrlToImportLayout" />
 
     <ProgressBar
         android:id="@+id/progressBarImportDownload"

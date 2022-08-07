@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.util.Log
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_CHOOSE_OF_THREE_WORDS
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_MATCH_FIVE_WORDS
 import de.luki2811.dev.vokabeltrainer.Exercise.Companion.TYPE_TRANSLATE_TEXT
@@ -81,7 +82,7 @@ class Lesson {
             numberOfExercises = try {
                 json.getJSONObject("settings").getInt("numberOfExercises")
             }catch (e: JSONException){
-                e.printStackTrace()
+                Log.w("Lesson","No value numberOfExercises in $name (${id.number}) => set default" )
                 10
             }
 

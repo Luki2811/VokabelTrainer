@@ -54,7 +54,7 @@ class SettingsFragment : Fragment() {
 
 
         // Setup Views
-        val items = listOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP")
+        val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
         (binding.menuStreakDailyObjectiveXPLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
@@ -208,7 +208,7 @@ class SettingsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val items = listOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP")
+        val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
         (binding.menuStreakDailyObjectiveXPLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
     }
