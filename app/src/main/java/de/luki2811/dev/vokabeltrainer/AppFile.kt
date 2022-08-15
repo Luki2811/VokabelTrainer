@@ -37,7 +37,6 @@ class AppFile(var name: String) {
         const val NAME_FILE_INDEX_VOCABULARY_GROUPS = "indexVocabularyGroups.json"
         const val NAME_FILE_INDEX_ID = "indexId.json"
         const val NAME_FILE_SETTINGS = "settings.json"
-        const val NAME_FILE_INDEX_LANGUAGES = "indexLanguages.json"
         const val NAME_FILE_LIST_WRONG_WORDS = "listWrongWords.json"
 
         const val TYPE_FILE_UNKNOWN = 0
@@ -51,7 +50,6 @@ class AppFile(var name: String) {
                 name == NAME_FILE_INDEX_VOCABULARY_GROUPS ||
                 name == NAME_FILE_INDEX_ID ||
                 name == NAME_FILE_SETTINGS ||
-                name == NAME_FILE_INDEX_LANGUAGES ||
                 name == NAME_FILE_LIST_WRONG_WORDS
             )
                     return true

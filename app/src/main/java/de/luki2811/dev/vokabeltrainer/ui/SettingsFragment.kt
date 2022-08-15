@@ -6,13 +6,19 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -25,8 +31,6 @@ import java.util.*
 
 class SettingsFragment : Fragment() {
 
-    // TODO: Add settings
-
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
@@ -37,12 +41,19 @@ class SettingsFragment : Fragment() {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
         settings = Settings(requireContext())
+
         binding.menuStreakDailyObjectiveXPAutoComplete.setText(settings.dailyObjectiveStreak, false)
         binding.switchSettingsReadOutVocabularyCentralForbidden.isChecked = !settings.readOutVocabularyGeneral
 
-        binding.switchSettingsEnableDynamicColors.isChecked = settings.useDynamicColors
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            binding.switchSettingsEnableDynamicColors.isChecked = settings.useDynamicColors
+        }else{
+            binding.switchSettingsEnableDynamicColors.isEnabled = false
+            // binding.switchSettingsEnableDynamicColors.visibility = View.GONE
+        }
 
-        binding.textViewSettingsVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE)
+
+        binding.textViewSettingsVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME /** BuildConfig.VERSION_CODE **/)
 
         binding.buttonSettingsManageVocabularyGroups.setOnClickListener {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToManageVocabularyGroupsFragment())
@@ -64,7 +75,6 @@ class SettingsFragment : Fragment() {
                 .setIcon(R.drawable.ic_outline_warning_24)
                 .setMessage(R.string.warning_lose_of_progress)
                 .setPositiveButton(R.string.ok){_, _ ->
-                    // TODO: Refresh Streak
                     settings.dailyObjectiveStreak = binding.menuStreakDailyObjectiveXPAutoComplete.text.toString()
                     saveSettings()
                 }
@@ -91,7 +101,7 @@ class SettingsFragment : Fragment() {
                 .setIcon(R.drawable.ic_outline_info_24)
                 .setMessage(R.string.info_need_to_restart_app_to_see_change)
                 .setPositiveButton(R.string.ok){_, _ ->
-
+                    requireActivity().recreate()
                 }
                 .show()
         }
@@ -99,15 +109,17 @@ class SettingsFragment : Fragment() {
         binding.switchSettingsNotificationStreak.isChecked = settings.reminderForStreak
 
         binding.switchSettingsNotificationStreak.setOnCheckedChangeListener { _, isChecked ->
-
             settings.reminderForStreak = isChecked
             saveSettings()
-            setupNotifications()
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                requestPermission()
+            }else{
+                setupNotifications()
+            }
+
         }
 
-        binding.buttonSettingsStreakTime.setOnClickListener {
-            pickTimeStreak()
-        }
+        binding.buttonSettingsStreakTime.setOnClickListener { pickTimeStreak() }
 
         binding.buttonSettingsGoTextToSpeakSettings.setOnClickListener {
             startActivity(Intent("com.android.settings.TTS_SETTINGS"))
@@ -172,9 +184,7 @@ class SettingsFragment : Fragment() {
                 .setMessage(R.string.err_no_permission_reminder)
                 .setTitle(R.string.err)
                 .setIcon(R.drawable.ic_outline_error_24)
-                .setNegativeButton(R.string.ok){ _, _ ->
-
-                }
+                .setNegativeButton(R.string.ok){ _, _ -> }
                 .setOnCancelListener {  }
                 .show()
             settings.reminderForStreak = false
@@ -189,16 +199,32 @@ class SettingsFragment : Fragment() {
             .setHour(settings.timeReminderStreak.hour)
             .setMinute(settings.timeReminderStreak.minute)
             .setTimeFormat(if (is24HourFormat(requireContext())) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
-            .setTitleText(getString(R.string.when_do_you_want_to_be_rememberd))
+            .setTitleText(getString(R.string.when_do_you_want_to_be_remembered))
             .build()
 
         picker.addOnPositiveButtonClickListener {
             settings.timeReminderStreak = LocalTime.of(picker.hour, picker.minute)
             saveSettings()
-            setupNotifications()
+
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+                requestPermission()
+            }else{
+                setupNotifications()
+            }
         }
 
         picker.show(parentFragmentManager, "timePickerStreak")
+    }
+
+    @RequiresApi(33)
+    private fun requestPermission(){
+        if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted ->
+                if(isGranted) setupNotifications() else{
+                    Log.e("Permission","This permission is necessary to send notification")
+                }
+            }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 
     private fun saveSettings(){

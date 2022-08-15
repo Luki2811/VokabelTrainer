@@ -87,10 +87,6 @@ class PracticeMatchFiveWordsFragment : Fragment() {
                     return
                 }
             }
-
-            // If wrong ->
-            // TODO: No mistakes noted down right know
-            // Toast.makeText(requireContext(), getString(R.string.wrong), Toast.LENGTH_SHORT).show()
             resetSelection()
             correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to false)
             correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)

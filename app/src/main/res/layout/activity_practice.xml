@@ -60,5 +60,17 @@
         app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfoMistake"
         app:navGraph="@navigation/navigation_learn" />
 
+    <TextView
+        android:id="@+id/textViewPracticeCorrectInRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/progressBarPractice"
+        app:layout_constraintEnd_toEndOf="@+id/progressBarPractice"
+        app:layout_constraintStart_toStartOf="@+id/progressBarPractice"
+        tools:text="2 in Folge"
+        tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

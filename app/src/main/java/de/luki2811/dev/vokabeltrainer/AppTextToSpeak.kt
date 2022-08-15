@@ -47,7 +47,7 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Locale, val 
 
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS","The Language specified is not supported! ($result)")
-                Toast.makeText(context, context.getText(R.string.err_lang_not_avaible), Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getText(R.string.err_lang_not_available), Toast.LENGTH_SHORT).show()
                 return
             }
             else if(settings.readOutVocabularyGeneral){

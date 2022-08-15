@@ -229,7 +229,6 @@ class EditVocabularyGroupFragment : Fragment() {
                 R.color.White),
                 android.graphics.PorterDuff.Mode.SRC_IN)
         }
-
     }
 
     override fun onDestroyView() {

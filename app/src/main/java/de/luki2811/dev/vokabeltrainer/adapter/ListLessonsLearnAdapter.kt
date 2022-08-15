@@ -138,7 +138,6 @@ class ListLessonsLearnAdapter(
         val cacheFile = File(context.cacheDir,"lessonToExport.json")
         AppFile.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
 
-
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)
         sharingIntent.type = "application/json"

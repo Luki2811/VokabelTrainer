@@ -10,14 +10,14 @@
         android:id="@+id/scanner_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="16dp"
         app:autoFocusButtonColor="@color/white"
         app:autoFocusButtonVisible="true"
         app:flashButtonColor="@color/white"
         app:flashButtonVisible="true"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/textViewNameOfImportedVocabularyGroup"
-        android:layout_marginBottom="16dp"
 
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:maskColor="#66040404" />
 

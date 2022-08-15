@@ -72,6 +72,8 @@ class ManageLessonFragment: Fragment() {
         binding.chipTypeLesson2.isChecked = lesson.typesOfLesson.contains(2)
         binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
 
+        binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
+
         return binding.root
     }
 
@@ -111,6 +113,8 @@ class ManageLessonFragment: Fragment() {
 
         val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
 
+        val numberOfExercises = binding.sliderCreateLessonNumberExercises.value.toInt()
+
         val typesOfLesson: ArrayList<Int> = arrayListOf()
         if(binding.chipTypeLesson1.isChecked)
             typesOfLesson.add(1)
@@ -146,6 +150,7 @@ class ManageLessonFragment: Fragment() {
         lesson.settingReadOutBoth = settingReadOutBoth
         lesson.askOnlyNewWords = settingAskOnlyNewWords
         lesson.typesOfLesson = typesOfLesson
+        lesson.numberOfExercises = numberOfExercises
 
         lesson.saveInFile()
         findNavController().navigate(ManageLessonFragmentDirections.actionManageLessonFragmentToNavigationMain())

@@ -34,6 +34,7 @@ class PracticeActivity : AppCompatActivity() {
     private lateinit var lesson: Lesson
     private var vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
     private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
+    private var correctInARow: Int = 0
 
     private var mistakesToPractice: ArrayList<Mistake> = arrayListOf()
     private var alreadyUsedMistakes = arrayListOf<Mistake>()
@@ -100,10 +101,13 @@ class PracticeActivity : AppCompatActivity() {
 
         supportFragmentManager.setFragmentResultListener("finished", this) { _, bundle ->
 
+            correctInARow += 1
+
             if(!bundle.getString("wordMistake").isNullOrEmpty()){
                 val mistake = Mistake(JSONObject(bundle.getString("wordMistake")!!))
                 mistake.position = position
                 mistakes.add(mistake)
+                correctInARow = 0
             }
 
             binding.progressBarPractice.progress = position
@@ -151,6 +155,18 @@ class PracticeActivity : AppCompatActivity() {
         words.clear()
         position += 1
 
+        if(correctInARow >= 2){
+            binding.textViewPracticeCorrectInRow.apply {
+                visibility = View.VISIBLE
+                text = getString(R.string.correct_in_row, correctInARow)
+            }
+        }else{
+            binding.textViewPracticeCorrectInRow.apply {
+                visibility = View.GONE
+                text = ""
+            }
+        }
+
         when{
             position <= 10 -> {
                 val tempMistake = mistakesToPractice.filter { !alreadyUsedMistakes.contains(it) }.random()
@@ -172,6 +188,7 @@ class PracticeActivity : AppCompatActivity() {
                 binding.progressBarPractice.visibility = View.GONE
                 binding.buttonExitPractice.visibility = View.GONE
                 binding.textViewPracticeInfoMistake.visibility = View.GONE
+                binding.textViewPracticeCorrectInRow.visibility = View.GONE
                 // Calculate
                 val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + 10)*100)
                 stopTimer()
@@ -222,6 +239,18 @@ class PracticeActivity : AppCompatActivity() {
 
         words.clear()
         position += 1
+
+        if(correctInARow >= 2){
+            binding.textViewPracticeCorrectInRow.apply {
+                visibility = View.VISIBLE
+                text = getString(R.string.correct_in_row, correctInARow)
+            }
+        }else{
+            binding.textViewPracticeCorrectInRow.apply {
+                visibility = View.GONE
+                text = ""
+            }
+        }
 
         when{
             position <= lesson.numberOfExercises ->{
@@ -299,7 +328,7 @@ class PracticeActivity : AppCompatActivity() {
                 // Calculate
                 val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + lesson.numberOfExercises)*100)
                 stopTimer()
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent.roundToInt(), mistakes.size, timeInSeconds = this.timeInSeconds))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent.roundToInt(), mistakes.size, timeInSeconds = this.timeInSeconds, lesson.numberOfExercises))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(lesson.settingReadOutBoth, words[0].getJson().toString()))

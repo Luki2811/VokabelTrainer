@@ -1,21 +1,19 @@
 package de.luki2811.dev.vokabeltrainer.ui.create
 
+import android.Manifest.permission.CAMERA
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.budiyev.android.codescanner.AutoFocusMode
-import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.DecodeCallback
-import com.budiyev.android.codescanner.ErrorCallback
-import com.budiyev.android.codescanner.ScanMode
+import com.budiyev.android.codescanner.*
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportWithQrCodeBinding
@@ -38,6 +36,8 @@ class ImportWithQrCodeFragment : Fragment() {
         _binding = FragmentImportWithQrCodeBinding.inflate(layoutInflater, container, false)
 
         binding.buttonFinishImportWithQrCode.isEnabled = false
+        // Just to set not default
+        requireActivity().window.statusBarColor = 66040404
 
         setupPermissions()
         codeScanner()
@@ -60,7 +60,6 @@ class ImportWithQrCodeFragment : Fragment() {
             decodeCallback = DecodeCallback {
                 result = it.text
                 requireActivity().runOnUiThread {
-
                     vocabularyGroup = try {
                         VocabularyGroup(JSONObject(result), context = requireContext())
                     }catch (e: JSONException) {
@@ -106,28 +105,22 @@ class ImportWithQrCodeFragment : Fragment() {
         codeScanner.releaseResources()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        requireActivity().window.statusBarColor = Color.TRANSPARENT
+    }
+
     private fun setupPermissions(){
-        val permission: Int = ContextCompat.checkSelfPermission(requireContext(),android.Manifest.permission.CAMERA)
+        val permission: Int = ContextCompat.checkSelfPermission(requireContext(), CAMERA)
 
-        if(permission != PackageManager.PERMISSION_GRANTED)
-            makeRequest()
-    }
-
-    private fun makeRequest() {
-        ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.CAMERA), CAMERA_REQUEST_CODE)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode){
-            CAMERA_REQUEST_CODE -> {
-                if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED){
+        if(permission != PackageManager.PERMISSION_GRANTED){
+            val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted ->
+                if(isGranted){
+                    // Toast.makeText(requireContext(), "", Toast.LENGTH_SHORT).show()
+                }else {
                     Toast.makeText(requireContext(), "Kamera wird zum QR-Code Scannen benötigt !", Toast.LENGTH_LONG).show()
-                } else{
-                    // Successfully
                 }
-            }
+            }.launch(CAMERA)
         }
     }
 }

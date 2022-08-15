@@ -22,6 +22,7 @@ class Settings(var context: Context) {
         e.printStackTrace()
         true
     }
+    // TODO: Replace with appTheme = THEME_DYNAMIC_COLORS
     var useDynamicColors: Boolean = try {
         jsonObject.getBoolean("useDynamicColors")
     }catch (e: JSONException){
@@ -32,7 +33,7 @@ class Settings(var context: Context) {
         jsonObject.getBoolean("reminderForStreak")
     }catch (e: JSONException){
         e.printStackTrace()
-        true
+        false
     }
     var timeReminderStreak: LocalTime = try {
         val timeAsString = jsonObject.getString("reminderStreakTime")
@@ -42,6 +43,11 @@ class Settings(var context: Context) {
         )
     }catch (e: JSONException){
         LocalTime.of(12,0)
+    }
+    var appTheme: Int = try {
+        jsonObject.getInt("appTheme")
+    }catch (e: JSONException){
+        THEME_BLUE_DARK
     }
 
     fun saveSettingsInFile(){
@@ -54,5 +60,11 @@ class Settings(var context: Context) {
 
         Log.i("Settings", new.toString())
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
+    }
+
+    companion object{
+        const val THEME_DYNAMIC_COLORS = 0
+        const val THEME_BLUE_DARK = 10
+        const val THEME_BLUE_LIGHT = 11
     }
 }
