@@ -140,6 +140,9 @@
     <string name="ok">Ok</string>
     <string name="number_of_exercises">Anzahl Aufgaben</string>
     <string name="create_lesson_or_vocabulary_group">....</string>
-    <string name="correct_in_row">%1%d hintereinander richtig</string>
+    <string name="correct_in_row">%1$d hintereinander richtig</string>
     <string name="number_of_mistakes">Anzahl von Fehlern: %1$d</string>
+    <string name="language">Sprache</string>
+    <string name="start">Start</string>
+    <string name="last_time_wrong">Letztes Mal falsch: %1$s</string>
 </resources>

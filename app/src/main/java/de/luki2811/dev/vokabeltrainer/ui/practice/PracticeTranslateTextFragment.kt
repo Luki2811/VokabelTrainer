@@ -15,7 +15,6 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeTranslateTextBinding
 import org.json.JSONObject
 import java.time.LocalDate
-import java.util.*
 
 class PracticeTranslateTextFragment : Fragment(){
 
@@ -39,12 +38,12 @@ class PracticeTranslateTextFragment : Fragment(){
 
         if(word.isKnownWordAskedAsAnswer){
             binding.textViewPracticeTranslateTextBottom.text = word.newWord
-            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Locale.GERMAN))
+            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Settings(requireContext()).appLanguage))
             speakWord()
         }
         else {
             binding.textViewPracticeTranslateTextBottom.text = word.knownWord
-            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Locale.GERMAN))
+            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Settings(requireContext()).appLanguage))
             if(args.settingsReadBoth){
                 speakWord()
             }

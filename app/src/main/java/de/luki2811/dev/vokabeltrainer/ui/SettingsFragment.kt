@@ -15,10 +15,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -33,6 +35,17 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+
+    private val launcher = registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted ->
+        if(isGranted)
+            setupNotifications()
+        else{
+            binding.switchSettingsNotificationStreak.isChecked = false
+            settings.reminderForStreak = false
+            setupNotifications()
+            Log.e("Permission","This permission is necessary to send notification")
+        }
+    }
 
     // Settings
     private lateinit var settings: Settings
@@ -49,9 +62,7 @@ class SettingsFragment : Fragment() {
             binding.switchSettingsEnableDynamicColors.isChecked = settings.useDynamicColors
         }else{
             binding.switchSettingsEnableDynamicColors.isEnabled = false
-            // binding.switchSettingsEnableDynamicColors.visibility = View.GONE
         }
-
 
         binding.textViewSettingsVersion.text = getString(R.string.app_version, BuildConfig.VERSION_NAME /** BuildConfig.VERSION_CODE **/)
 
@@ -59,7 +70,6 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToManageVocabularyGroupsFragment())
         }
         binding.buttonSettingsSources.setOnClickListener {
-            // Source.sendToOssLicensesMenu(requireActivity(), requireContext())
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSourcesFragment())
         }
 
@@ -67,7 +77,7 @@ class SettingsFragment : Fragment() {
         // Setup Views
         val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
-        (binding.menuStreakDailyObjectiveXPLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        binding.menuStreakDailyObjectiveXPAutoComplete.setAdapter(adapter)
 
         binding.menuStreakDailyObjectiveXPAutoComplete.setOnItemClickListener { _, _, _, _ ->
             MaterialAlertDialogBuilder(requireContext())
@@ -101,22 +111,56 @@ class SettingsFragment : Fragment() {
                 .setIcon(R.drawable.ic_outline_info_24)
                 .setMessage(R.string.info_need_to_restart_app_to_see_change)
                 .setPositiveButton(R.string.ok){_, _ ->
-                    requireActivity().recreate()
+                    // requireActivity().recreate()
                 }
                 .show()
         }
 
-        binding.switchSettingsNotificationStreak.isChecked = settings.reminderForStreak
+        /** if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            binding.menuSettingsAppLanguageLayout.isEnabled = false
+            binding.menuSettingsAppLanguage.isEnabled = false
+        } **/
+
+        binding.menuSettingsAppLanguage.setText(settings.appLanguage.getDisplayLanguage(settings.appLanguage), false)
+
+        val adapterLanguages = ArrayAdapter(
+            requireContext(),
+            R.layout.list_item_default,
+            arrayOf(
+                Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH),
+                Locale.GERMANY.getDisplayLanguage(Locale.GERMANY)
+            )
+        )
+
+        binding.menuSettingsAppLanguage.setAdapter(adapterLanguages)
+
+        binding.menuSettingsAppLanguage.setOnItemClickListener { _, _, _, _ ->
+                settings.appLanguage = when(binding.menuSettingsAppLanguage.text.toString()){
+                    Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH) -> Locale.ENGLISH
+                    Locale.GERMAN.getDisplayLanguage(Locale.GERMAN) -> Locale.GERMAN
+                    else -> Locale.ENGLISH
+                }
+                saveSettings()
+                AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
+            }
+
+        binding.switchSettingsNotificationStreak.isChecked = if(
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+                settings.reminderForStreak = false
+                setupNotifications()
+                false
+            }else settings.reminderForStreak
+
 
         binding.switchSettingsNotificationStreak.setOnCheckedChangeListener { _, isChecked ->
             settings.reminderForStreak = isChecked
             saveSettings()
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && isChecked){
                 requestPermission()
             }else{
                 setupNotifications()
             }
-
         }
 
         binding.buttonSettingsStreakTime.setOnClickListener { pickTimeStreak() }
@@ -219,24 +263,31 @@ class SettingsFragment : Fragment() {
     @RequiresApi(33)
     private fun requestPermission(){
         if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            registerForActivityResult(ActivityResultContracts.RequestPermission()){ isGranted ->
-                if(isGranted) setupNotifications() else{
-                    Log.e("Permission","This permission is necessary to send notification")
-                }
-            }.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 
     private fun saveSettings(){
         settings.saveSettingsInFile()
-
     }
 
     override fun onResume() {
         super.onResume()
+        // settings = Settings(requireContext())
         val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
-        (binding.menuStreakDailyObjectiveXPLayout.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+        binding.menuStreakDailyObjectiveXPAutoComplete.setAdapter(adapter)
+        val adapterLanguages = ArrayAdapter(
+            requireContext(),
+            R.layout.list_item_default, arrayOf(
+                Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH),
+                Locale.GERMAN.getDisplayLanguage(Locale.GERMAN)
+            )
+        )
+        binding.menuSettingsAppLanguage.apply {
+            setAdapter(adapterLanguages)
+            setText(settings.appLanguage.getDisplayLanguage(settings.appLanguage), false)
+        }
     }
 
 

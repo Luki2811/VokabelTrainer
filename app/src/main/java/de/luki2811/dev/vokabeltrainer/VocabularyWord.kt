@@ -11,7 +11,6 @@ class VocabularyWord() {
     lateinit var languageNew: Locale
     var isIgnoreCase: Boolean = false
     var isKnownWordAskedAsAnswer = false
-    var isAlreadyUsed = false
 
     constructor(knownWord: String,languageKnown: Locale, newWord: String, languageNew: Locale, isIgnoreCase: Boolean): this()  {
         this.knownWord = knownWord
@@ -28,13 +27,6 @@ class VocabularyWord() {
         languageNew = Locale(json.getString("languageNewType"))
         isIgnoreCase = json.getBoolean("isIgnoreCase")
         isKnownWordAskedAsAnswer = json.getBoolean("askKnownWord")
-
-        try {
-            isAlreadyUsed = json.getBoolean("isAlreadyUsed")
-        }catch (e: JSONException){
-
-        }
-
     }
 
     fun getKnownWordList(): List<String>{
@@ -53,7 +45,6 @@ class VocabularyWord() {
             .put("languageNewType", languageNew.language)
             .put("isIgnoreCase", isIgnoreCase)
             .put("askKnownWord", isKnownWordAskedAsAnswer)
-            .put("isAlreadyUsed", isAlreadyUsed)
     }
 
 }

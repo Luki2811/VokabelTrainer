@@ -146,4 +146,7 @@
     <string name="number_of_exercises">Number of exercises</string>
     <string name="correct_in_row">%1$d in a row correct</string>
     <string name="number_of_mistakes">Number of mistakes: %1$d</string>
+    <string name="language">Language</string>
+    <string name="start">Start</string>
+    <string name="last_time_wrong">Last time wrong: %1$s</string>
 </resources>

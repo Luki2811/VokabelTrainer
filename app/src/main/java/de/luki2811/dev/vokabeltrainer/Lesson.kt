@@ -14,7 +14,7 @@ class Lesson {
     lateinit var name: String
     lateinit var id: Id
     lateinit var vocabularyGroupIds: Array<Int>
-    lateinit var alreadyUsedWords: ArrayList<String>
+    var alreadyUsedWords = arrayListOf<VocabularyWord>()
     var typesOfLesson: ArrayList<Int> = arrayListOf()
     var settingReadOutBoth: Boolean = true
     var askOnlyNewWords: Boolean = false
@@ -28,19 +28,19 @@ class Lesson {
                 settingReadOutBoth: Boolean = true,
                 askOnlyNewWords:Boolean = false,
                 typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3),
-                alreadyUsedWords: ArrayList<String> = arrayListOf(),
                 isFavorite: Boolean = false,
-                numberOfExercises: Int = 10) {
+                numberOfExercises: Int = 10,
+                alreadyUsedWords: ArrayList<VocabularyWord> = arrayListOf()) {
         this.name = name
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
         this.settingReadOutBoth = settingReadOutBoth
-        this.alreadyUsedWords = alreadyUsedWords
         this.askOnlyNewWords = askOnlyNewWords
         this.context = context
         this.typesOfLesson = typesOfLesson
         this.isFavorite = isFavorite
         this.numberOfExercises = numberOfExercises
+        this.alreadyUsedWords = alreadyUsedWords
     }
 
     constructor(json: JSONObject, context: Context) {
@@ -87,12 +87,13 @@ class Lesson {
             }
 
             alreadyUsedWords = try {
-                val usedWords = ArrayList<String>()
-                for(i in 0 until json.getJSONArray("alreadyUsedWords").length())
-                    usedWords.add(json.getJSONArray("alreadyUsedWords").getString(i))
-                usedWords
+                val list = arrayListOf<VocabularyWord>()
+                val array = json.getJSONArray("alreadyUsedWords")
+                for(i in 0 until array.length()){
+                    list.add(VocabularyWord(array.getJSONObject(i)))
+                }
+                list
             }catch (e: JSONException){
-                e.printStackTrace()
                 arrayListOf()
             }
 
@@ -148,13 +149,11 @@ class Lesson {
             jsonArr.put(i, vocabularyGroupIds[i])
         }
         jsonObj.put("vocabularyGroupIds", jsonArr)
-
-        val jsonArrTemp2 = JSONArray()
-        for(i in alreadyUsedWords.indices){
-            jsonArrTemp2.put(i, alreadyUsedWords[i])
+        val listAsString = arrayListOf<String>()
+        alreadyUsedWords.forEach {
+            listAsString.add(it.getJson().toString())
         }
-        jsonObj.put("alreadyUsedWords", jsonArrTemp2)
-
+        jsonObj.put("alreadyUsedWords", JSONArray(listAsString))
         jsonObj.put("settings",
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)

@@ -6,78 +6,190 @@
     android:layout_height="match_parent"
     tools:context=".ui.manage.EditVocabularyGroupFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textEditVocabularyWordNewLayout"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/textEditVocabularyWordNewManage"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/new_word_language"
-            android:inputType="textPersonName" />
+            android:layout_height="0dp">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textEditVocabularyWordNewLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/editTextVocabularyWordKnownLayoutManage"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/textEditVocabularyWordNewManage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/new_word_language"
+                    android:inputType="textPersonName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editTextVocabularyWordKnownLayoutManage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textEditVocabularyWordNewLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editTextVocabularyWordKnownManage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="@string/known_word_language"
+                    android:inputType="textPersonName" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/textViewSettingsVocabularyWordManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/settings"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyWordKnownLayoutManage" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchVocabularyWordIgnoreCaseManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:text="@string/ignore_case"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVocabularyWordManage" />
+
+            <TextView
+                android:id="@+id/textViewNumberOfVocManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/number_voc_of_rest"
+                app:layout_constraintEnd_toStartOf="@+id/buttonNextVocabularyWord"
+                app:layout_constraintStart_toEndOf="@+id/buttonBackVocabularyWord"
+                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderEditVocabularyGroupPosition"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonDeleteVocabularyWord" />
+
+            <ImageButton
+                android:id="@+id/buttonNextVocabularyWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_blue_button"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_arrow_forward_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
+                app:tint="@color/white" />
+
+            <ImageButton
+                android:id="@+id/buttonDeleteVocabularyWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_red_button"
+                android:padding="8dp"
+                android:src="@drawable/outline_delete_24"
+                app:layout_constraintEnd_toStartOf="@+id/buttonAddNewVocabularyWordRightManage"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@+id/buttonAddNewVocabularyWordLeftManage"
+                app:layout_constraintTop_toBottomOf="@+id/textViewNumberOfVocManage"
+                app:tint="@color/White" />
+
+            <ImageButton
+                android:id="@+id/buttonAddNewVocabularyWordRightManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_green_button"
+                android:padding="8dp"
+                android:src="@drawable/ic_outline_add_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/buttonDeleteVocabularyWord"
+                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
+                app:tint="@color/White" />
+
+            <ImageButton
+                android:id="@+id/buttonAddNewVocabularyWordLeftManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/rounded_green_button"
+                android:padding="8dp"
+                android:src="@drawable/ic_outline_add_24"
+                app:layout_constraintEnd_toStartOf="@+id/buttonDeleteVocabularyWord"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
+                app:tint="@color/White" />
+
+            <ImageButton
+                android:id="@+id/buttonBackVocabularyWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/rounded_blue_button"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_arrow_back_24"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
+                app:tint="@color/white" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+    <View
+        android:id="@+id/view2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_height="2dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/Gray"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteVocabularyGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textEditVocabularyWordNewLayout">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editTextVocabularyWordKnownManage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/known_word_language"
-            android:inputType="textPersonName" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <TextView
-        android:id="@+id/textViewSettingsVocabularyWordManage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/settings"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyWordKnownLayoutManage" />
-
-    <com.google.android.material.materialswitch.MaterialSwitch
-        android:id="@+id/switchVocabularyWordIgnoreCaseManage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="4dp"
-        android:text="@string/ignore_case"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVocabularyWordManage" />
-
-    <TextView
-        android:id="@+id/textViewNumberOfVocManage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/number_voc_of_rest"
-        app:layout_constraintEnd_toStartOf="@+id/buttonNextVocabularyWord"
-        app:layout_constraintStart_toEndOf="@+id/buttonBackVocabularyWord"
-        app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonDeleteVocabularyGroup"
@@ -104,88 +216,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/buttonNextVocabularyWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_blue_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_baseline_arrow_forward_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
-        app:tint="@color/white" />
-
-    <ImageButton
-        android:id="@+id/buttonDeleteVocabularyWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_red_button"
-        android:padding="8dp"
-        android:src="@drawable/outline_delete_24"
-        app:layout_constraintEnd_toStartOf="@+id/buttonAddNewVocabularyWordRightManage"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toEndOf="@+id/buttonAddNewVocabularyWordLeftManage"
-        app:layout_constraintTop_toBottomOf="@+id/textViewNumberOfVocManage"
-        app:tint="@color/White" />
-
-    <ImageButton
-        android:id="@+id/buttonAddNewVocabularyWordRightManage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_green_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_outline_add_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/buttonDeleteVocabularyWord"
-        app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
-        app:tint="@color/White" />
-
-    <ImageButton
-        android:id="@+id/buttonAddNewVocabularyWordLeftManage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="@drawable/rounded_green_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_outline_add_24"
-        app:layout_constraintEnd_toStartOf="@+id/buttonDeleteVocabularyWord"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
-        app:tint="@color/White" />
-
-    <ImageButton
-        android:id="@+id/buttonBackVocabularyWord"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_blue_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_baseline_arrow_back_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
-        app:tint="@color/white" />
-
-    <View
-        android:id="@+id/view2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_marginBottom="16dp"
-        android:background="@color/Gray"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteVocabularyGroup"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent" />
 
 

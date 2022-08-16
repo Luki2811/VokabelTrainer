@@ -10,7 +10,9 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.LocaleListCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -33,11 +35,22 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        createFiles()
-
-        setupViews()
-
         val settings = Settings(this)
+        val systemLang = Locale(AppCompatDelegate.getApplicationLocales().toLanguageTags().replaceAfter('-',"").replace("-","").trim())
+
+        if(systemLang != settings.appLanguage){
+            settings.appLanguage = when(systemLang){
+                Locale.GERMAN -> Locale.GERMAN
+                Locale.ENGLISH -> Locale.ENGLISH
+                else -> Locale.ENGLISH
+            }
+            settings.saveSettingsInFile()
+        }
+
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
+
+        createFiles()
+        setupViews()
 
         if(
             settings.reminderForStreak &&
@@ -56,18 +69,20 @@ class MainActivity : AppCompatActivity() {
 
         /** TEMP to delete a wrong ID without a file
         // vocabulary group
-        // val vocg = VocabularyGroup("", Language(0, applicationContext), Language(0, applicationContext), arrayOf(), applicationContext)
-        // vocg.id = Id(applicationContext, 498725)
-        // vocg.deleteFromIndex()
+        // val tempVocGroup = VocabularyGroup("", Language(0, applicationContext), Language(0, applicationContext), arrayOf(), applicationContext)
+        // tempVocGroup.id = Id(applicationContext, 498725)
+        // tempVocGroup.deleteFromIndex()
 
         // lesson
-        // val lessong = Lesson("", arrayOf(), applicationContext)
-        // lessong.id = Id(applicationContext, 217531)
-        // lessong.deleteFromIndex() **/
+        // val tempLesson = Lesson("", arrayOf(), applicationContext)
+        // tempLesson.id = Id(applicationContext, 217531)
+        // tempLesson.deleteFromIndex() **/
     }
 
+    /**
+     * Create files which did not exist before
+     */
     private fun createFiles() {
-        // Erstellen der IndexDatein mit leerem Index
         val indexVocGroupsFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if (!indexVocGroupsFile.exists())
             AppFile.writeInFile(
@@ -105,6 +120,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Setup views
+     */
     private fun setupViews() {
         val navView: BottomNavigationView = binding.bottomNavigation
 
@@ -124,9 +142,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         navView.setupWithNavController(navController)
-
-        // val appBarConfiguration = AppBarConfiguration(setOf(R.id.learnFragment, R.id.streakFragment, R.id.settingsFragment))
-        // setupActionBarWithNavController(navController, appBarConfiguration)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
@@ -183,8 +198,6 @@ class MainActivity : AppCompatActivity() {
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP
                 )
-                // Toast.makeText(this,"Streak Notifications were updated", Toast.LENGTH_SHORT).show()
-                //endregion
 
     }
 }

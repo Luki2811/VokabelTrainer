@@ -8,10 +8,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
+import java.time.format.DateTimeFormatter
 
 class ListMistakesAdapter(
     private val dataSet: ArrayList<Mistake>,
-    private val numberExercisesTotal: Int,
+    private val numberExercisesTotal: Int = -1,
     private val context: Context
     ) : RecyclerView.Adapter<ListMistakesAdapter.ViewHolder>() {
 
@@ -23,19 +25,17 @@ class ListMistakesAdapter(
         val textViewAskedWord: TextView = view.findViewById(R.id.textViewItemAskedWord)
     }
 
-    // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        // Create a new view, which defines the UI of the list item
         val view = LayoutInflater.from(viewGroup.context).inflate(R.layout.frame_list_item_mistake, viewGroup, false)
         return ViewHolder(view)
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        // Get element from your dataset at this position and replace the
-        // contents of the view with that element
+        viewHolder.textViewPosition.text = if(numberExercisesTotal > 0)
+            context.getString(R.string.number_voc_of_rest, dataSet[position].position, numberExercisesTotal)
+        else
+            context.getString(R.string.last_time_wrong, dataSet[position].lastTimeWrong.format(DateTimeFormatter.ofPattern("EEEE, dd. MMMM yyyy")))
 
-        viewHolder.textViewPosition.text = context.getString(R.string.number_voc_of_rest, dataSet[position].position, numberExercisesTotal)
         val typeAsString = when(dataSet[position].typeOfPractice){
             1 -> context.getString(R.string.type_of_lesson_1)
             2 -> context.getString(R.string.type_of_lesson_2)
@@ -48,7 +48,6 @@ class ListMistakesAdapter(
         viewHolder.textViewCorrectWord.text = if(dataSet[position].word.isKnownWordAskedAsAnswer) dataSet[position].word.knownWord else dataSet[position].word.newWord
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
     override fun getItemCount() = dataSet.size
 
 }

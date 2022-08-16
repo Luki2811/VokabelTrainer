@@ -59,12 +59,12 @@ class PracticeOutOfThreeFragment: Fragment() {
 
         if(word.isKnownWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.newWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Locale.GERMAN))
+            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Settings(requireContext()).appLanguage))
             speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
             binding.textViewPracticeChooseThreeBottom.text = word.knownWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Locale.GERMAN))
+            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Settings(requireContext()).appLanguage))
             if(args.settingsReadBoth){
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
             }

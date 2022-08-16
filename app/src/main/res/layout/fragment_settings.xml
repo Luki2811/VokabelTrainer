@@ -81,11 +81,14 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menuStreakDailyObjectiveXPLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:hint="@string/settings_main_daily_xp_objective"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewSettings">
 
                 <AutoCompleteTextView
@@ -93,6 +96,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="none"
+
                     tools:ignore="LabelFor" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -103,6 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="@string/settings_main_daily_xp_objective"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/menuStreakDailyObjectiveXPLayout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/menuStreakDailyObjectiveXPLayout" />
@@ -163,7 +168,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/tts_settings"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchSettingsNotificationStreak" />
+                app:layout_constraintTop_toBottomOf="@+id/menuSettingsAppLanguageLayout" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSettingsStreakTime"
@@ -175,6 +180,31 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/switchSettingsNotificationStreak"
                 app:icon="@drawable/ic_baseline_clock_24" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/menuSettingsAppLanguageLayout"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:hint="@string/language"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsNotificationStreak">
+
+                <AutoCompleteTextView
+                    android:id="@+id/menuSettingsAppLanguage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

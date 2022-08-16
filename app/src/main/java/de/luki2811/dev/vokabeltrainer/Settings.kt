@@ -7,6 +7,7 @@ import org.json.JSONObject
 import java.io.File
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 class Settings(var context: Context) {
     val jsonObject = if (File(context.filesDir, AppFile.NAME_FILE_SETTINGS).exists()) JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))) else JSONObject()
@@ -44,10 +45,20 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         LocalTime.of(12,0)
     }
-    var appTheme: Int = try {
-        jsonObject.getInt("appTheme")
+    var appLanguage: Locale = try {
+        Locale(jsonObject.getString("appLanguage"))
     }catch (e: JSONException){
-        THEME_BLUE_DARK
+        Locale.ENGLISH
+    }
+    var numberOfExercisesToPracticeMistakes: Int = try {
+        jsonObject.getInt("numberOfExercisesToPracticeMistakes")
+    }catch (e:JSONException){
+        5
+    }
+    var readOnlyNewWordsPracticeMistake: Boolean = try {
+        jsonObject.getBoolean("readOnlyNewWordsPracticeMistake")
+    }catch (e: JSONException){
+        false
     }
 
     fun saveSettingsInFile(){
@@ -57,14 +68,10 @@ class Settings(var context: Context) {
             .put("useDynamicColors", useDynamicColors)
             .put("reminderForStreak", reminderForStreak)
             .put("reminderStreakTime", timeReminderStreak.format(DateTimeFormatter.ofPattern("kk:mm")))
-
+            .put("appLanguage", appLanguage.language)
+            .put("numberOfExercisesToPracticeMistakes", numberOfExercisesToPracticeMistakes)
+            .put("readOnlyNewWordsPracticeMistake", readOnlyNewWordsPracticeMistake)
         Log.i("Settings", new.toString())
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
-    }
-
-    companion object{
-        const val THEME_DYNAMIC_COLORS = 0
-        const val THEME_BLUE_DARK = 10
-        const val THEME_BLUE_LIGHT = 11
     }
 }

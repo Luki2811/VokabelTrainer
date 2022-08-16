@@ -20,6 +20,7 @@ import org.json.JSONObject
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.roundToInt
 
 class EditVocabularyGroupFragment : Fragment() {
 
@@ -73,6 +74,21 @@ class EditVocabularyGroupFragment : Fragment() {
         binding.buttonAddNewVocabularyWordRightManage.setOnClickListener { addVocabularyWord(0) }
         binding.buttonAddNewVocabularyWordLeftManage.setOnClickListener { addVocabularyWord(1) }
         binding.buttonSaveAndGoBackManage.setOnClickListener { finish() }
+
+        binding.sliderEditVocabularyGroupPosition.apply {
+            valueFrom = 1F
+            stepSize = 1F
+            value = pos+1F
+            valueTo = vocabulary.size.toFloat()
+            addOnChangeListener { slider, value, _ ->
+                if(refreshVocabularyWord()) {
+                    pos = value.roundToInt()-1
+                    refresh()
+                }else{
+                    slider.value = pos.toFloat()+1
+                }
+            }
+        }
 
         binding.buttonDeleteVocabularyWord.setOnClickListener { removeVocabularyWord() }
 
@@ -213,6 +229,11 @@ class EditVocabularyGroupFragment : Fragment() {
                 binding.buttonNextVocabularyWord.isEnabled = true
 
             }
+        }
+
+        binding.sliderEditVocabularyGroupPosition.apply {
+            value = pos+1F
+            valueTo = vocabulary.size.toFloat()
         }
 
         binding.buttonDeleteVocabularyWord.isEnabled = vocabulary.size > 2

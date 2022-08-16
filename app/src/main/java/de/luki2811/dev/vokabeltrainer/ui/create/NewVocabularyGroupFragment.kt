@@ -8,11 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewVocabularyGroupBinding
 import de.luki2811.dev.vokabeltrainer.ui.manage.EditVocabularyGroupFragment
@@ -34,9 +36,10 @@ class NewVocabularyGroupFragment : Fragment() {
         Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
 
         val listNames = arrayListOf<String>()
-        listLocales.forEach { listNames.add(it.displayLanguage) }
-        if(Locale.ROOT.equals(Locale.GERMAN))
-        listNames.forEach { name -> name.replaceFirstChar{ it.uppercaseChar() } }
+        val appSettings = Settings(requireContext())
+
+        listLocales.forEach { listNames.add(it.getDisplayLanguage(appSettings.appLanguage)) }
+        // listNames.forEach { name -> name.replaceFirstChar{ it.uppercaseChar() } }
 
         val adapterKnown = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
         val adapterNew = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
@@ -46,8 +49,8 @@ class NewVocabularyGroupFragment : Fragment() {
         if((!args.keyVocGroup.isNullOrEmpty()) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
             vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext())
             binding.textVocabularyGroupName.setText(vocabularyGroup!!.name)
-            binding.textInputLanguageKnown.setText(vocabularyGroup!!.languageKnown.displayLanguage)
-            binding.textInputLanguageNew.setText(vocabularyGroup!!.languageNew.displayLanguage)
+            binding.textInputLanguageKnown.setText(vocabularyGroup!!.languageKnown.getDisplayLanguage(appSettings.appLanguage))
+            binding.textInputLanguageNew.setText(vocabularyGroup!!.languageNew.getDisplayLanguage(appSettings.appLanguage))
         }
 
         binding.buttonCreateVocabularyGroupNext.setOnClickListener { goNext() }
@@ -96,8 +99,8 @@ class NewVocabularyGroupFragment : Fragment() {
         val listLocales = arrayListOf<Locale>()
         Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
 
-        val languageNew = listLocales.find { it.displayLanguage == binding.textInputLanguageNew.text.toString()}
-        val languageKnown = listLocales.find { it.displayLanguage == binding.textInputLanguageKnown.text.toString()}
+        val languageNew = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.textInputLanguageNew.text.toString()}
+        val languageKnown = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.textInputLanguageKnown.text.toString()}
 
         if(languageKnown == null || languageNew == null) {
             Toast.makeText(requireContext(), "Fehler: Sprache nicht gefunden !!", Toast.LENGTH_LONG).show()

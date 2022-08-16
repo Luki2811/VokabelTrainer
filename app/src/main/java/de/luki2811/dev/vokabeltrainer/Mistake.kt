@@ -16,6 +16,7 @@ class Mistake {
     var lastTimeWrong: LocalDate = LocalDate.now()
     var position: Int = -1
     var isRepeated = false
+    var alreadyUsed = false
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
