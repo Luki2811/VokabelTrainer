@@ -28,7 +28,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -47,12 +46,13 @@ class MainActivity : AppCompatActivity() {
                     val uri = intent.data
                     val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
                     navHostFragment.findNavController().navigate(MobileNavigationDirections.actionGlobalImportFragment(uri))
+                    intent.action = null
                 }
                 .setNegativeButton(R.string.cancel){_, _ ->
-
+                    intent.action = null
                 }
                 .setOnCancelListener {
-
+                    intent.action = null
                 }.show()
         }
 

@@ -1,11 +1,13 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.AppFile
@@ -13,7 +15,6 @@ import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.adapter.ListLessonsLearnAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentLearnBinding
-import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -32,6 +33,12 @@ class LearnFragment : Fragment() {
 
         val indexAsJson = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
         val arrayList = ArrayList<Lesson>()
+
+        setFragmentResultListener("refreshList"){ _, _ ->
+            Log.e("1","Executed")
+            /** adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
+            adapter.notifyDataSetChanged() **/
+        }
 
         try {
             for(i in 0 until indexAsJson.getJSONArray("index").length()){
@@ -57,6 +64,8 @@ class LearnFragment : Fragment() {
         adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
 
         binding.listOfLessonsCards.adapter = adapter
+
+
 
         binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {

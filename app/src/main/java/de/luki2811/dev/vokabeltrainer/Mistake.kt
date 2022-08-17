@@ -73,8 +73,6 @@ class Mistake {
         val jsonArray = JSONArray(AppFile.loadFromFile(file))
         for(i in 0 until jsonArray.length() - 1){
             val mistake = Mistake(jsonArray.getJSONObject(i))
-            Log.i("lastTimeWrong", "${mistake.lastTimeWrong == this.lastTimeWrong}")
-            Log.i("wrongAnswer", "${mistake.wrongAnswer == this.wrongAnswer}")
             if(mistake.lastTimeWrong == this.lastTimeWrong && mistake.wrongAnswer == this.wrongAnswer){
                 jsonArray.remove(i)
                 Log.i("Mistake","Removed a mistake from file")

@@ -7,6 +7,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -129,7 +130,6 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardShare.setOnClickListener {
             AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
             share(position)
-            //Toast.makeText(context,"Exported", Snackbar.LENGTH_SHORT).show()
         }
     }
 
@@ -142,9 +142,12 @@ class ListLessonsLearnAdapter(
         val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        val chooser = Intent.createChooser(sharingIntent, "Lektion teilen mit ...")
-        val resInfoList: List<ResolveInfo> = context.packageManager
-            .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+        val chooser = Intent.createChooser(sharingIntent, "Share with  ...")
+        val resInfoList: List<ResolveInfo> = if (Build.VERSION.SDK_INT >= 33) {
+            context.packageManager.queryIntentActivities(chooser, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()))
+        } else {
+            context.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+        }
 
         for (resolveInfo in resInfoList) {
             val packageName = resolveInfo.activityInfo.packageName
@@ -177,6 +180,7 @@ class ListLessonsLearnAdapter(
                 return filterResults
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 val result = results?.values as ArrayList<Lesson>

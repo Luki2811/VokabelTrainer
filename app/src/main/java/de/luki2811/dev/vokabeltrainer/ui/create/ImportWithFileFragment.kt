@@ -17,14 +17,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.AppFile.Companion.loadFromFile
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentImportWithFileBinding
 import org.json.JSONException
 import org.json.JSONObject
-import java.io.File
 
 class ImportWithFileFragment : Fragment() {
 
@@ -32,6 +34,7 @@ class ImportWithFileFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var resultLauncher: ActivityResultLauncher<Intent>
+    private val args: ImportWithFileFragmentArgs by navArgs()
     private var chooser: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
         type = "application/json"
@@ -42,8 +45,7 @@ class ImportWithFileFragment : Fragment() {
                 result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val intent = result.data
-                val file = File(RealPathUtil.getRealPath(requireContext(), intent?.data!!)!!)
-                import(file)
+                import(JSONObject(loadFromFile(intent?.data!!, requireActivity().contentResolver)))
             } else {
                 cancelImportLesson()
             }
@@ -62,9 +64,13 @@ class ImportWithFileFragment : Fragment() {
     }
 
     private fun startImport() {
-        if (checkPermission()) {
-            resultLauncher.launch(chooser)
-        } else requestPermission()
+        if(args.uriToImport == null){
+            if (checkPermission()) {
+                resultLauncher.launch(chooser)
+            } else requestPermission()
+        }else{
+            import(JSONObject(loadFromFile(args.uriToImport!!, requireActivity().contentResolver)))
+        }
     }
 
     private fun checkPermission(): Boolean {
@@ -80,7 +86,6 @@ class ImportWithFileFragment : Fragment() {
     private fun requestPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-                Log.i("isGranted", isGranted.toString())
                 if (isGranted) {
                     resultLauncher.launch(chooser)
                 }
@@ -94,9 +99,8 @@ class ImportWithFileFragment : Fragment() {
         }
     }
 
-    fun import(file: File){
+    fun import(dataAsJson: JSONObject){
         try {
-            val dataAsJson = JSONObject(loadFromFile(file))
             when(dataAsJson.getInt("type")){
                 AppFile.TYPE_FILE_UNKNOWN -> {
                     Toast.makeText(requireContext(), getText(R.string.err_unknown_type), Toast.LENGTH_LONG).show()
@@ -127,7 +131,7 @@ class ImportWithFileFragment : Fragment() {
                         for (i in 0 until vocabularyGroups.length()){
                             val vocGroupFromLesson = VocabularyGroup(vocabularyGroups.getJSONObject(i), context = requireContext(), generateNewId = true)
 
-                            Log.e("Import TEMP", "VocGroup ID: ${vocGroupFromLesson.id.number} (${vocGroupFromLesson.name}) \ni/length ${i+1}/${vocabularyGroups.length()}")
+                            // Log.e("Import TEMP", "VocGroup ID: ${vocGroupFromLesson.id.number} (${vocGroupFromLesson.name}) \ni/length ${i+1}/${vocabularyGroups.length()}")
 
                             var tempInt = 0
                             while(VocabularyGroup.isNameValid(requireContext(), vocGroupFromLesson.name) != 0){
@@ -177,6 +181,7 @@ class ImportWithFileFragment : Fragment() {
                         Toast.makeText(requireContext(), R.string.import_lesson_successful, Toast.LENGTH_LONG).show()
 
                         findNavController().navigate(R.id.action_importFragment_pop)
+                        setFragmentResult("refreshList", bundleOf())
 
                     } catch (e: JSONException){
                         Toast.makeText(requireContext(), getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()

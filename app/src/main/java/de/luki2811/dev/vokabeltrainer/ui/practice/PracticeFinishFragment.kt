@@ -47,7 +47,6 @@ class PracticeFinishFragment : Fragment() {
             requireActivity().supportFragmentManager.setFragmentResult("sendToMistakes", bundleOf("" to ""))
         }
 
-
         binding.textViewFinishedPracticeCorrectInPercent.text = getString(R.string.correct_in_percent, args.correctInPercent)
 
         binding.buttonFinishPractice.setOnClickListener {

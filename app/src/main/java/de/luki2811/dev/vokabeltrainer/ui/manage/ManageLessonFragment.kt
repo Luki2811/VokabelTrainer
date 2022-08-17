@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.Lesson
+import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
 import org.json.JSONObject
 import java.io.File
@@ -88,7 +89,6 @@ class ManageLessonFragment: Fragment() {
                 return
             }
             2 -> {
-                Log.i("EditLesson", "Keep name")
                 binding.textLessonName.error = null
                 binding.textLessonName.text.toString()
             }

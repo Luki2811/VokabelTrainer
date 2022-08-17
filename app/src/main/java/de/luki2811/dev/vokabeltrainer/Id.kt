@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
-import android.util.Log
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -12,8 +11,6 @@ class Id(var context: Context, var number: Int = 0) {
     init {
         if(number == 0){
             number = generateRandomNumber()
-
-            Log.e("Id",number.toString())
 
             // Regestrieren der ID ins Index
 

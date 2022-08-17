@@ -84,9 +84,6 @@ class PracticeActivity : AppCompatActivity() {
             }
         }
 
-        Log.e("allVocabularyWords", allVocabularyWords.size.toString())
-        Log.e("numberOfMistakes", numberOfExercises.toString())
-
         if(allVocabularyWords.size < numberOfExercises) {
             MaterialAlertDialogBuilder(this)
                 .setMessage(R.string.err_lesson_enough_words_long)
@@ -185,7 +182,6 @@ class PracticeActivity : AppCompatActivity() {
         reset()
         position += 1
         typeOfPractice = getNextLessonType()
-        Log.e("3", typeOfPractice.toString())
         when{
             position <= numberOfExercises -> setNextWord()
             mistakes.any { !it.isRepeated } -> setNextMistake()
@@ -270,7 +266,6 @@ class PracticeActivity : AppCompatActivity() {
         for (i in words){
             wordsInArray.add(i.getJson().toString())
         }
-        Log.e("4", typeOfPractice.toString())
         when(typeOfPractice){
             0 -> {
                 binding.progressBarPractice.visibility = View.GONE

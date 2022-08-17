@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
-import android.util.Log
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -71,7 +70,6 @@ class Settings(var context: Context) {
             .put("appLanguage", appLanguage.language)
             .put("numberOfExercisesToPracticeMistakes", numberOfExercisesToPracticeMistakes)
             .put("readOnlyNewWordsPracticeMistake", readOnlyNewWordsPracticeMistake)
-        Log.i("Settings", new.toString())
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
     }
 }

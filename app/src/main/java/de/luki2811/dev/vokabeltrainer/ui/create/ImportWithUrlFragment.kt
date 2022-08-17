@@ -108,7 +108,7 @@ class ImportWithUrlFragment : Fragment() {
                                     for (i in 0 until vocabularyGroups.length()){
                                         val vocGroupFromLesson = VocabularyGroup(vocabularyGroups.getJSONObject(i), context = requireContext(), generateNewId = true)
 
-                                        Log.e("Import TEMP", "VocGroup ID: ${vocGroupFromLesson.id.number} (${vocGroupFromLesson.name}) \ni/length ${i+1}/${vocabularyGroups.length()}")
+                                        // Log.e("Import TEMP", "VocGroup ID: ${vocGroupFromLesson.id.number} (${vocGroupFromLesson.name}) \ni/length ${i+1}/${vocabularyGroups.length()}")
 
                                         var tempInt = 0
                                         while(VocabularyGroup.isNameValid(requireContext(), vocGroupFromLesson.name) != 0){
