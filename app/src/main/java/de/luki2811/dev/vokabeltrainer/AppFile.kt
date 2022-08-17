@@ -1,5 +1,7 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.content.ContentResolver
+import android.net.Uri
 import android.util.Log
 import java.io.*
 import java.nio.charset.Charset
@@ -14,6 +16,15 @@ class AppFile(var name: String) {
             } catch (e: IOException) {
                 Log.e("Exception", "File write failed: $e")
             }
+        }
+
+        fun loadFromFile(uri: Uri, contentResolver: ContentResolver, charset: Charset = StandardCharsets.UTF_8): String{
+            val inputStream = contentResolver.openInputStream(uri)!!
+            val stringBuilder = StringBuilder()
+            BufferedReader(InputStreamReader(inputStream, charset)).forEachLine {
+                stringBuilder.append(it).append('\n')
+            }
+            return stringBuilder.toString()
         }
 
         fun loadFromFile(file: File, charset: Charset = StandardCharsets.UTF_8): String {

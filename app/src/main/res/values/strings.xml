@@ -149,4 +149,5 @@
     <string name="language">Language</string>
     <string name="start">Start</string>
     <string name="last_time_wrong">Last time wrong: %1$s</string>
+    <string name="q_start_import">Do you want to start the import of %1$s ??</string>
 </resources>

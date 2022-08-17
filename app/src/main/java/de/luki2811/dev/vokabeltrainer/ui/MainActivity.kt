@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer.ui
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.ComponentName
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,8 +15,10 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
@@ -35,6 +38,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if(intent.scheme == ContentResolver.SCHEME_CONTENT && intent.action == Intent.ACTION_VIEW){
+            MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.action_import)
+                .setMessage(getString(R.string.q_start_import, intent.data?.lastPathSegment))
+                .setIcon(R.drawable.ic_baseline_import_export_24)
+                .setPositiveButton(R.string.yes){ _, _ ->
+                    val uri = intent.data
+                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+                    navHostFragment.findNavController().navigate(MobileNavigationDirections.actionGlobalImportFragment(uri))
+                }
+                .setNegativeButton(R.string.cancel){_, _ ->
+
+                }
+                .setOnCancelListener {
+
+                }.show()
+        }
+
         val settings = Settings(this)
         val systemLang = Locale(AppCompatDelegate.getApplicationLocales().toLanguageTags().replaceAfter('-',"").replace("-","").trim())
 
@@ -52,16 +73,9 @@ class MainActivity : AppCompatActivity() {
         createFiles()
         setupViews()
 
-        if(
-            settings.reminderForStreak &&
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-        )
+        if(settings.reminderForStreak && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
             setupNotifications()
-        else if(
-            settings.reminderForStreak &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        )
+        else if(settings.reminderForStreak && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
             setupNotifications()
 
         // Load Streak for correct information
