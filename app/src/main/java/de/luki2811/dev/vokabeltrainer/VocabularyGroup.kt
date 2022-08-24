@@ -7,7 +7,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class VocabularyGroup {
 
@@ -123,6 +122,7 @@ class VocabularyGroup {
         val jsonObj = JSONObject()
             .put("name", name)
             .put("id", id.number)
+            .put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
             .put("languageKnown", languageKnown.language)
             .put("languageNew", languageNew.language)
         val jsonArray = JSONArray()

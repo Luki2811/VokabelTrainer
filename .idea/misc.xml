@@ -36,6 +36,9 @@
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/drawable/rounded_blue_button.xml" value="0.3625" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/drawable/rounded_green_button.xml" value="0.3625" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/drawable/rouned_dynamic_button.xml" value="0.3625" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/font/allerta_stencil.xml" value="0.22916666666666666" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/font/work_sans_light.xml" value="0.22916666666666666" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/font/worksans.xml" value="0.228125" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/activity_create_new.xml" value="0.29254385964912283" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/activity_create_new_vokabel.xml" value="0.33" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/activity_edit_lektion.xml" value="0.5" />
@@ -56,16 +59,17 @@
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/cardview_layout.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/content_practice.xml" value="0.18" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/default_list_item.xml" value="0.3043859649122807" />
-        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_create_new_main.xml" value="0.3043859649122807" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_create_new_main.xml" value="0.22" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_create_practice.xml" value="0.25" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_create_vocabulary_group_with_image_info.xml" value="0.25" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_dashboard.xml" value="0.5" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_edit_lesson.xml" value="0.3043859649122807" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_edit_vocabulary_group.xml" value="0.25" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_home.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import.xml" value="0.3043859649122807" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import_with_file.xml" value="0.3144736842105263" />
-        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import_with_qr_code.xml" value="0.1" />
-        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import_with_u_r_l.xml" value="0.22" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import_with_qr_code.xml" value="0.22" />
+        <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_import_with_u_r_l.xml" value="0.1" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_learn.xml" value="0.22" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_manage_languages.xml" value="0.3043859649122807" />
         <entry key="..\:/Users/lukas/StudioProjects/VokabelTrainer/app/src/main/res/layout/fragment_manage_start.xml" value="0.29254385964912283" />
@@ -110,5 +114,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.22" />
+      </ProjectState>
+    </option>
   </component>
 </project>

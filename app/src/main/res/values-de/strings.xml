@@ -146,4 +146,15 @@
     <string name="start">Start</string>
     <string name="last_time_wrong">Letztes Mal falsch: %1$s</string>
     <string name="q_start_import">Möchten sie den Import von %1$s starten ?</string>
+    <string name="err_import_failed">Fehler: Import fehlgeschlagen</string>
+    <string name="err_device_offline">Fehler: Gerät ist offline</string>
+    <string name="err_file_not_found">Fehler: Datei nicht gefunden</string>
+    <string name="create">Erstellen</string>
+    <string name="choose_file">Wähle eine Datei</string>
+    <string name="download">Download</string>
+    <string name="scanner">Scanner</string>
+    <string name="gallery">Galerie</string>
+    <string name="create_vocabulary_group_from_picture">Vokabelgruppe aus Bild erstellen</string>
+    <string name="click_to_continue">Klicke auf den Button um fortzusetzen</string>
+    <string name="choose_image">Wähle ein Bild</string>
 </resources>

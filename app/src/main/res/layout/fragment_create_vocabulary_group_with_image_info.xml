@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.create.CreateVocabularyGroupWithImageInfoFragment">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonCreateVocabularyGroupFromPictureXCut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="16dp"
+                android:text="Reload xCut"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sliderCreateVocabularyGroupFromPictureXCut" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateVocabularyGroupFromPictureStep1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonCreateVocabularyGroupFromPictureChooseImage" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateVocabularyGroupFromPictureStep2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/radioGroupCreateVocabularyGroupFromPicture" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateVocabularyGroupFromPictureStep3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonCreateVocabularyGroupFromPictureXCut" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateVocabularyGroupFromPictureStep4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchCreateVocabularyGroupFromPictureTitle" />
+
+            <ImageView
+                android:id="@+id/imageViewCreateVocabularyGroupFromPicturePreview"
+                android:layout_width="match_parent"
+                android:layout_height="450dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupFromPictureStep3"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchCreateVocabularyGroupFromPictureDots"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Remove dots"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupFromPictureStep4" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonCreateVocabularyGroupFromPictureStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/start"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerCreateVocabularyGroupFromPictureStep4" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchCreateVocabularyGroupFromPictureTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Has title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchCreateVocabularyGroupFromPictureAutoCorrectWords" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchCreateVocabularyGroupFromPictureAutoCorrectWords"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Auto Correct Words"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchCreateVocabularyGroupFromPictureDots" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonCreateVocabularyGroupFromPictureChooseImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/choose_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupFromPictureStep1" />
+
+
+            <RadioGroup
+                android:id="@+id/radioGroupCreateVocabularyGroupFromPicture"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewCreateVocabularyGroupFromPictureStep2">
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButtonCreateVocabularyGroupFromPicture1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Methode 1"
+                    app:useMaterialThemeColors="true"
+                    />
+
+                <com.google.android.material.radiobutton.MaterialRadioButton
+                    android:id="@+id/radioButtonCreateVocabularyGroupFromPicture2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Methode 2"
+                    app:useMaterialThemeColors="true"
+                    />
+
+            </RadioGroup>
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderCreateVocabularyGroupFromPictureXCut"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:stepSize="1"
+                app:layout_constraintEnd_toEndOf="@+id/imageViewCreateVocabularyGroupFromPicturePreview"
+                app:layout_constraintStart_toStartOf="@+id/imageViewCreateVocabularyGroupFromPicturePreview"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewCreateVocabularyGroupFromPicturePreview" />
+
+            <TextView
+                android:id="@+id/textViewCreateVocabularyGroupFromPictureStep1"
+                style="@style/Widget.MaterialComponents.TextView.Instructions.CreateWithImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/create_vocabulary_group_from_image_step_1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textViewCreateVocabularyGroupFromPictureStep3"
+                style="@style/Widget.MaterialComponents.TextView.Instructions.CreateWithImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="3. Setzen den xCut (blaue Linie) \nWichtig: Alle bekannten Wörter müssen VOR dem xCut beginnen und alle neuen Wörter NACH der blauen Linie anfangen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerCreateVocabularyGroupFromPictureStep2" />
+
+            <TextView
+                android:id="@+id/textViewCreateVocabularyGroupFromPictureStep2"
+                style="@style/Widget.MaterialComponents.TextView.Instructions.CreateWithImage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="2. Wähle Import-Modus \nImport Modi: \n (1) Für Vokabelseiten mit großen Abstand zwischen den einzeln Wörtern UND mehreren Zeilen pro Wort\n(2) Für Vokabelseiten mit kleinem Abstand zwischen den Wörtern UND einzeiligen Wörtern "
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerCreateVocabularyGroupFromPictureStep1" />
+
+            <TextView
+                android:id="@+id/textViewCreateVocabularyGroupFromPictureStep4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="4. Weitere Einstellungen"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerCreateVocabularyGroupFromPictureStep3" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+

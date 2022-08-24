@@ -44,9 +44,11 @@ class MainActivity : AppCompatActivity() {
                 .setIcon(R.drawable.ic_baseline_import_export_24)
                 .setPositiveButton(R.string.yes){ _, _ ->
                     val uri = intent.data
-                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-                    navHostFragment.findNavController().navigate(MobileNavigationDirections.actionGlobalImportFragment(uri))
+                    // TODO: Set
                     intent.action = null
+                    val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+                    navHostFragment.findNavController().navigate(MobileNavigationDirections.actionGlobalCreateNewMainFragment(uri))
+
                 }
                 .setNegativeButton(R.string.cancel){_, _ ->
                     intent.action = null

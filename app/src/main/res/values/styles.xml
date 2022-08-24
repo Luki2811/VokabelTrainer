@@ -8,4 +8,9 @@
         <item name="android:background">@color/black_overlay</item>
         <item name="android:buttonBarStyle">?android:attr/buttonBarStyle</item>
     </style>
+    <style name="Widget.MaterialComponents.TextView.Instructions.CreateWithImage" parent="Widget.MaterialComponents.TextView">
+        <item name="fontFamily">@font/work_sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="lineHeight">21sp</item>
+    </style>
 </resources>

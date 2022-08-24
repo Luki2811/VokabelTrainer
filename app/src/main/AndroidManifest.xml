@@ -33,6 +33,7 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:enableOnBackInvokedCallback="true"
         android:theme="@style/Theme.VokabelTrainer.DynamicColors">
 
         <provider
@@ -72,13 +73,15 @@
             android:screenOrientation="userPortrait"
             android:theme="@style/Theme.VokabelTrainer.DynamicColors"
             android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation"
             android:exported="true"
             android:screenOrientation="userPortrait"
             android:theme="@style/Theme.VokabelTrainer.DynamicColors"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="adjustResize"
+            tools:targetApi="33">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -125,9 +128,15 @@
             </intent-filter>
         </activity>
 
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui,langid,ocr"/>
+
     </application>
 
 </manifest>

@@ -106,53 +106,18 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_createNewMainFragment_to_importWithURLFragment"
-            app:destination="@id/importWithURLFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_createNewMainFragment_to_importFragment"
-            app:destination="@id/importFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_createNewMainFragment_to_importWithQrCodeFragment"
-            app:destination="@id/importWithQrCodeFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
-    <fragment
-        android:id="@+id/importFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.ImportWithFileFragment"
-        android:label="fragment_import"
-        tools:layout="@layout/fragment_import_with_file" >
-        <action
-            android:id="@+id/action_importFragment_to_newVocabularyGroupFragment"
-            app:destination="@id/newVocabularyGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_importFragment_pop"
-            app:popUpTo="@id/importFragment"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
-            android:name="uri_to_import"
+            android:name="dataToImport"
             app:argType="android.net.Uri"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            android:defaultValue='@null'
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_createNewMainFragment_to_createVocabularyGroupWithImageInfoFragment"
+            app:destination="@id/createVocabularyGroupWithImageInfoFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/newLessonFragment"
@@ -180,48 +145,6 @@
             android:name="key_mode"
             app:argType="integer"
             android:defaultValue="0" />
-    </fragment>
-    <fragment
-        android:id="@+id/importWithQrCodeFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.ImportWithQrCodeFragment"
-        android:label="fragment_import_with_qr_code"
-        tools:layout="@layout/fragment_import_with_qr_code" >
-        <action
-            android:id="@+id/action_importWithQrCodeFragment_to_newVocabularyGroupFragment"
-            app:destination="@id/newVocabularyGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_importWithQrCodeFragment_pop"
-            app:popUpTo="@id/importWithQrCodeFragment"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-    </fragment>
-    <fragment
-        android:id="@+id/importWithURLFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.ImportWithUrlFragment"
-        android:label="fragment_import_with_u_r_l"
-        tools:layout="@layout/fragment_import_with_u_r_l" >
-        <action
-            android:id="@+id/action_importWithUrlFragment_to_newVocabularyGroupFragment"
-            app:destination="@id/newVocabularyGroupFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_importWithURLFragment_pop"
-            app:popUpTo="@id/importWithURLFragment"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <action
         android:id="@+id/action_global_newVocabularyGroupFragment"
@@ -298,13 +221,6 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim"  />
-    <action
-        android:id="@+id/action_global_importWithQrCodeFragment"
-        app:destination="@id/importWithQrCodeFragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     <fragment
         android:id="@+id/createPracticeFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.CreatePracticeFragment"
@@ -317,12 +233,18 @@
         app:exitAnim="@anim/nav_default_exit_anim"
         app:popEnterAnim="@anim/nav_default_pop_enter_anim"
         app:popExitAnim="@anim/nav_default_pop_exit_anim"  />
-    <action
-        android:id="@+id/action_global_importFragment"
-        app:destination="@id/importFragment"
-        app:enterAnim="@anim/nav_default_enter_anim"
-        app:exitAnim="@anim/nav_default_exit_anim"
-        app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-        app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    <fragment
+        android:id="@+id/createVocabularyGroupWithImageInfoFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.create.CreateVocabularyGroupWithImageInfoFragment"
+        android:label="fragment_create_vocabulary_group_with_image_info"
+        tools:layout="@layout/fragment_create_vocabulary_group_with_image_info" >
+        <action
+            android:id="@+id/action_createVocabularyGroupWithImageInfoFragment_to_newVocabularyGroupFragment"
+            app:destination="@id/newVocabularyGroupFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 
 </navigation>

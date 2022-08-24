@@ -95,7 +95,7 @@
     <string name="ok">OK</string>
     <string name="err_lesson_enough_words_long">The selected vocabulary group(s) contains less vocabulary than the number of tasks. Add more vocabulary groups or expand your selected vocabulary groups Error code: 001</string>
     <string name="import_from_internet">Import from url</string>
-    <string name="import_from_qr_code">Import from qr-code</string>
+    <string name="import_from_qr_code">Import from QR-Code</string>
     <string name="import_from_file">Import from file</string>
     <string name="file">File</string>
     <string name="url">URL</string>
@@ -150,4 +150,17 @@
     <string name="start">Start</string>
     <string name="last_time_wrong">Last time wrong: %1$s</string>
     <string name="q_start_import">Do you want to start the import of %1$s ??</string>
+    <string name="err_import_failed">Error: Import failed</string>
+    <string name="err_device_offline">Error: Device is offline</string>
+    <string name="err_file_not_found">Error: File not found</string>
+    <string name="create">Create</string>
+    <string name="choose_file">Choose a file</string>
+    <string name="download">Download</string>
+    <string name="scanner">Scanner</string>
+    <string name="gallery">Gallery</string>
+    <string name="click_to_continue">Click on button to continue</string>
+    <string name="create_vocabulary_group_from_picture">Create vocabulary group from a picture</string>
+    <string name="choose_image">Choose an image</string>
+    <string name="err_could_not_load_image">Error: Could not load image</string>
+    <string name="create_vocabulary_group_from_image_step_1">1. Choose the photo with the vocabulary group. \n<b>Important</b>: The vocabulary has to be structured like below! </string>
 </resources>

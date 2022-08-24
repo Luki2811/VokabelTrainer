@@ -12,7 +12,7 @@ class Id(var context: Context, var number: Int = 0) {
         if(number == 0){
             number = generateRandomNumber()
 
-            // Regestrieren der ID ins Index
+            // Register Id to index
 
             val index: JSONObject =
                 if (indexFile.exists())

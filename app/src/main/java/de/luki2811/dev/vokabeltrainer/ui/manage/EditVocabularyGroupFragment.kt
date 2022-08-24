@@ -14,12 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.Id
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
 import org.json.JSONObject
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 class EditVocabularyGroupFragment : Fragment() {
@@ -62,6 +64,13 @@ class EditVocabularyGroupFragment : Fragment() {
                 pos -= 1
                 refresh()
             }
+        }
+
+        binding.buttonChangeWords.setOnClickListener {
+            val oldKnownWord = binding.editTextVocabularyWordKnownManage.text.toString()
+            val oldNewWord = binding.textEditVocabularyWordNewManage.text.toString()
+            binding.editTextVocabularyWordKnownManage.setText(oldNewWord)
+            binding.textEditVocabularyWordNewManage.setText(oldKnownWord)
         }
 
         binding.buttonNextVocabularyWord.setOnClickListener {
