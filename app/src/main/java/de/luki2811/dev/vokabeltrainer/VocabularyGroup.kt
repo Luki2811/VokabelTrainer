@@ -29,7 +29,7 @@ class VocabularyGroup {
         this.indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
     }
 
-    constructor(jsonObj: JSONObject, name: String = "", context: Context, generateNewId: Boolean = false){
+    constructor(jsonObj: JSONObject, context: Context,name: String = "", generateNewId: Boolean = false){
         indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if(name == "") {
             this.name = jsonObj.getString("name")
@@ -134,11 +134,6 @@ class VocabularyGroup {
             jsonArray.put(voc)
         }
         return jsonObj.put("vocabulary", jsonArray)
-    }
-
-    fun getRandomWord(): VocabularyWord {
-        val random = (Math.random() * vocabulary.size + 1).toInt()
-        return vocabulary[random-1]
     }
 
     /**

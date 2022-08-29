@@ -69,7 +69,6 @@ class Lesson {
             }catch (e: JSONException){
                 e.printStackTrace()
                 typesOfLesson = arrayListOf(1,2,3)
-
             }
 
             isFavorite = try {
@@ -149,9 +148,9 @@ class Lesson {
             jsonArr.put(i, vocabularyGroupIds[i])
         }
         jsonObj.put("vocabularyGroupIds", jsonArr)
-        val listAsString = arrayListOf<String>()
+        val listAsString = arrayListOf<JSONObject>()
         alreadyUsedWords.forEach {
-            listAsString.add(it.getJson().toString())
+            listAsString.add(it.getJson())
         }
         jsonObj.put("alreadyUsedWords", JSONArray(listAsString))
         jsonObj.put("settings",

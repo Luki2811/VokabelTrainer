@@ -163,15 +163,28 @@ class PracticeActivity : AppCompatActivity() {
      * @return Random vocabulary word from allVocabularyWords
      */
     private fun getRandomWord(checkForAlreadyUsed: Boolean = true): VocabularyWord{
+
+        /** allVocabularyWords.forEach { allWords ->
+            alreadyUsedWords.forEach { usedWords ->
+                if(usedWords.equalsVocabularyWord(allWords)){
+                    Log.i("allWords", allWords.getJson(false).toString())
+                    Log.i("usedWord",usedWords.getJson(false).toString())
+                }
+            }
+        } **/
+
+        // Log.i("Test", allVocabularyWords.filter { alreadyUsedWords.contains(it) }.toString())
+
         return if(checkForAlreadyUsed) {
-            val word: VocabularyWord = if(allVocabularyWords.none { alreadyUsedWords.contains(it) }){
+            val word: VocabularyWord = if(allVocabularyWords.all {alreadyUsedWords.contains(it) }){
+                Log.i("Practice", "Cleared alreadyUsedWords")
                 alreadyUsedWords.clear()
                 Toast.makeText(this, "clear alreadyUsedWords", Toast.LENGTH_SHORT).show()
                 allVocabularyWords.random()
             }else
                 allVocabularyWords.filter { !alreadyUsedWords.contains(it) }.random()
 
-            alreadyUsedWords.add(word)
+            alreadyUsedWords.add(word.apply { isKnownWordAskedAsAnswer = false })
             word
         }
         else

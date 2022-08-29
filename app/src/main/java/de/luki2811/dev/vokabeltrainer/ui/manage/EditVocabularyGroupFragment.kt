@@ -85,17 +85,21 @@ class EditVocabularyGroupFragment : Fragment() {
         binding.buttonSaveAndGoBackManage.setOnClickListener { finish() }
 
         binding.sliderEditVocabularyGroupPosition.apply {
-            valueFrom = 1F
-            stepSize = 1F
-            value = pos+1F
-            valueTo = vocabulary.size.toFloat()
-            addOnChangeListener { slider, value, _ ->
-                if(refreshVocabularyWord()) {
-                    pos = value.roundToInt()-1
-                    refresh()
-                }else{
-                    slider.value = pos.toFloat()+1
+            if(args.keyMode != MODE_CREATE){
+                valueFrom = 1F
+                stepSize = 1F
+                value = pos+1F
+                valueTo = vocabulary.size.toFloat()
+                addOnChangeListener { slider, value, _ ->
+                    if(refreshVocabularyWord()) {
+                        pos = value.roundToInt()-1
+                        refresh()
+                    }else{
+                        slider.value = pos.toFloat()+1
+                    }
                 }
+            }else{
+                visibility = View.GONE
             }
         }
 
@@ -121,7 +125,7 @@ class EditVocabularyGroupFragment : Fragment() {
         binding.editTextVocabularyWordKnownManage.isFocusableInTouchMode = true
         binding.textEditVocabularyWordNewManage.isFocusableInTouchMode = true
 
-        // TODO: Nach dem letzten Textfeld soll mit "Enter" Vokabel hinzufügt werden
+        // TODO: After last text edit -> press enter to create new vocabulary word
 
         /** binding.editTextVocabularyWordKnownManage.setOnKeyListener(View.OnKeyListener { view, keyCode, event ->
 
@@ -240,10 +244,13 @@ class EditVocabularyGroupFragment : Fragment() {
             }
         }
 
-        binding.sliderEditVocabularyGroupPosition.apply {
-            value = pos+1F
-            valueTo = vocabulary.size.toFloat()
+        if(args.keyMode != MODE_CREATE){
+            binding.sliderEditVocabularyGroupPosition.apply {
+                value = pos+1F
+                valueTo = vocabulary.size.toFloat()
+            }
         }
+
 
         binding.buttonDeleteVocabularyWord.isEnabled = vocabulary.size > 2
         binding.buttonSaveAndGoBackManage.isEnabled = vocabulary.size > 1

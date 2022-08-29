@@ -38,8 +38,8 @@
     <string name="voc_in">Vokabel auf %1$s</string>
     <string name="number_voc_of_rest">Vokabel %1$d von %2$d</string>
     <string name="save_and_next">Speichern und weiter</string>
-    <string name="streak_in_days">Streak: %1$d Tage</string>
-    <string name="streak_in_day">Streak: %1$d Tag</string>
+    <string name="streak_in_days">%1$d\nTage</string>
+    <string name="streak_in_day">%1$d\nTag</string>
     <string name="streak_left_to_do_for_next_day">Dir fehlen noch %1$d XP zu deinem %2$d Tage Streak</string>
     <string name="streak_reached_goal">Du hast dein Tagesziel erreicht !</string>
     <string name="import_lesson">Importieren aus Datei</string>
@@ -50,7 +50,6 @@
     <string name="err_name_too_long_max">Fehler: Name zu lang ! (max. %1$d Zeichen)</string>
     <string name="settings_main_daily_xp_objective">Tägliches Tagesziel</string>
     <string name="learn">Lernen</string>
-    <string name="plus">+</string>
     <string name="create_new_lesson">Neue Lektion erstellen</string>
     <string name="create_new_vocabulary_group">Neue Vokabelgruppe erstellen</string>
     <string name="vocabulary_group_name">Name der Vokabelgruppe</string>
@@ -131,7 +130,7 @@
     <string name="channel_name_streak">Streak</string>
     <string name="channel_description_streak">Alle Benachrichtungen um den Streak</string>
     <string name="settings_reminder_streak">Erinnerung an Streak</string>
-    <string name="pickTime">Zeit wählen</string>
+    <string name="pick_time">Zeit wählen</string>
     <string name="when_do_you_want_to_be_remembered">Wann willst du erinnert werden ??</string>
     <string name="err_no_permission_reminder">Fehler: Keine Berechtigung um eine Erinnerung zur ausgewählten bestimmten Uhrzeit zu erstellen. \nFehlercode: 002</string>
     <string name="mistakes_overview">Fehlerübersicht</string>
@@ -157,4 +156,14 @@
     <string name="create_vocabulary_group_from_picture">Vokabelgruppe aus Bild erstellen</string>
     <string name="click_to_continue">Klicke auf den Button um fortzusetzen</string>
     <string name="choose_image">Wähle ein Bild</string>
+    <string name="mode_1">Modus 1</string>
+    <string name="mode_2">Modus 2</string>
+    <string name="take_photo">Foto machen</string>
+    <string name="has_title">Hat einen Titel</string>
+    <string name="to_correct_words">Korrigiere Wörter</string>
+    <string name="remove_points">Entferne Punkte</string>
+    <string name="reload_x_cut">xCut neu setzen</string>
+    <string name="err_too_many_vocabulary_groups_to_create_qr_code">Fehler: Zu viele (>25) Wörter in Vokabelgruppe um QR-Code zu erstellen</string>
+    <string name="err_could_not_load_image">Fehler: Bild konnte nicht geladen werden</string>
+    <string name="err_cant_load_qr_code">Fehler: QR-Code konnte nicht geladen werden</string>
 </resources>

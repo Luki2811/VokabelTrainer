@@ -24,8 +24,6 @@ import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -122,13 +120,15 @@ class MainActivity : AppCompatActivity() {
             AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
 
         if (!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()) {
+            /** TODO: Remove comment
             AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
             val streakData = JSONArray().put(
                 JSONObject().put(
                     "date",
                     LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
                 ).put("xp", 0).put("goal", 50)
-            )
+            ) **/
+            val streakData = Streak.getRandomStreak(14)
             AppFile.writeInFile(
                 streakData.toString(),
                 File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK)
@@ -160,15 +160,17 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id != R.id.learnFragment && destination.id != R.id.settingsFragment && destination.id != R.id.streakFragment) {
-                navView.visibility = View.GONE
-                // binding.floatingActionButtonQrCode.visibility = View.GONE
-                binding.floatingActionButton.visibility = View.GONE
-            } else {
+            if(destination.id == R.id.learnFragment || destination.id == R.id.streakFragment || destination.id == R.id.settingsFragment){
                 navView.visibility = View.VISIBLE
-                binding.floatingActionButton.visibility = View.VISIBLE
-                // binding.floatingActionButtonQrCode.visibility = View.VISIBLE
+            }else{
+                navView.visibility = View.GONE
+
             }
+
+            if(destination.id == R.id.learnFragment || destination.id == R.id.settingsFragment)
+                binding.floatingActionButton.visibility = View.VISIBLE
+            else
+                binding.floatingActionButton.visibility = View.GONE
 
             if (destination.id == R.id.learnFragment) {
                 binding.floatingActionButtonPractice.visibility = View.VISIBLE

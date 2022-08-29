@@ -1,7 +1,10 @@
 package de.luki2811.dev.vokabeltrainer.ui.create
 
+import android.Manifest.permission.CAMERA
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.FileProvider
 import androidx.core.graphics.set
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -22,7 +26,9 @@ import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateVocabularyGroupWithImageInfoBinding
+import java.io.File
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -34,64 +40,46 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
     private var name = ""
     private var xCut = 10
 
+    private lateinit var uriOfPhoto: Uri
+
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             try {
                 Log.d("PhotoPicker", "Selected URI: $uri")
-                var image = InputImage.fromFilePath(requireContext(), uri).bitmapInternal!!
-
-                if(image.width < 100 || image.height < 50){
-                    Toast.makeText(requireContext(), "Image too small", Toast.LENGTH_LONG).show()
-                    return@registerForActivityResult
-                }
-
-                xCut = image.width/2
-
-                binding.sliderCreateVocabularyGroupFromPictureXCut.apply {
-                    value = xCut.toFloat()
-                    valueFrom = 10F
-                    valueTo = image.width - 10F
-                }
-
-                binding.buttonCreateVocabularyGroupFromPictureXCut.setOnClickListener {
-                    xCut = binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt()
-
-                    if(binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt() < 3 || binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt() > image.width-3)
-                        return@setOnClickListener
-
-                    image = InputImage.fromFilePath(requireContext(), uri).bitmapInternal!!
-                    binding.imageViewCreateVocabularyGroupFromPicturePreview.setImageBitmap(printXCut(image))
-                }
-
-                binding.buttonCreateVocabularyGroupFromPictureStart.setOnClickListener {
-                    start(InputImage.fromFilePath(requireContext(), uri))
-                }
-
-                binding.imageViewCreateVocabularyGroupFromPicturePreview.setImageBitmap(printXCut(image))
-
-                binding.buttonCreateVocabularyGroupFromPictureStart.isEnabled = true
-                binding.sliderCreateVocabularyGroupFromPictureXCut.isEnabled = true
-                binding.buttonCreateVocabularyGroupFromPictureXCut.isEnabled = true
-
-
+                checkAndContinue(InputImage.fromFilePath(requireContext(), uri))
             }catch (e: IOException){
                 e.printStackTrace()
                 binding.buttonCreateVocabularyGroupFromPictureStart.isEnabled = true
                 Toast.makeText(requireContext(), getString(R.string.err_could_not_load_image), Toast.LENGTH_LONG).show()
             }
-
         } else {
             Log.d("PhotoPicker", "No media selected")
         }
     }
 
-    private fun printXCut(image: Bitmap): Bitmap{
-        val newImage = image.copy(Bitmap.Config.ARGB_8888 , true)
-        for(y in 0 until image.height){
-            for(x in xCut-2 until xCut+2)
-            newImage[x, y] = Color.BLUE
+    private val takePhoto = registerForActivityResult(ActivityResultContracts.TakePicture()) { success  ->
+        if(success){
+            try {
+                checkAndContinue(InputImage.fromFilePath(requireContext(), uriOfPhoto))
+                binding.buttonCreateVocabularyGroupFromPictureStart.isEnabled = true
+            }catch (e: RuntimeException){
+                e.printStackTrace()
+                Toast.makeText(requireContext(), R.string.err_could_not_load_image, Toast.LENGTH_LONG).show()
+            }
+        }else{
+            Log.d("Take Photo", "Returned")
         }
-        return newImage
+    }
+
+    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){ granted ->
+        if(granted){
+            val timeStamp = SimpleDateFormat.getDateTimeInstance().format(Date())
+            uriOfPhoto = FileProvider.getUriForFile(requireContext(),  "${requireActivity().packageName}.provider" , File.createTempFile("JPEG_${timeStamp}_", ".jpg", requireContext().cacheDir))
+            takePhoto.launch(uriOfPhoto)
+        }
+        else{
+            Toast.makeText(requireContext(), R.string.err_no_permission, Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -109,6 +97,19 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
             }
         }
 
+        binding.buttonCreateVocabularyGroupFromImageTakePhoto.apply {
+            setOnClickListener {
+                if(requireContext().checkCallingOrSelfPermission(CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    requestCameraPermission.launch(CAMERA)
+                }
+                else{
+                    val timeStamp = SimpleDateFormat.getDateTimeInstance().format(Date())
+                    uriOfPhoto = FileProvider.getUriForFile(requireContext(),  "${requireActivity().packageName}.provider" , File.createTempFile("JPEG_${timeStamp}_", ".jpg", requireContext().cacheDir))
+                    takePhoto.launch(uriOfPhoto)
+                }
+            }
+        }
+
         binding.radioButtonCreateVocabularyGroupFromPicture1.isChecked = true
         hideXCut()
 
@@ -123,6 +124,51 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
             }
         }
         return binding.root
+    }
+
+    private fun checkAndContinue(imageInput: InputImage){
+        var bitmap = imageInput.bitmapInternal!!
+        if(bitmap.width < 100 || bitmap.height < 50){
+            Toast.makeText(requireContext(), "Image too small", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        xCut = bitmap.width/2
+
+        binding.sliderCreateVocabularyGroupFromPictureXCut.apply {
+            value = xCut.toFloat()
+            valueFrom = 10F
+            valueTo = bitmap.width - 10F
+        }
+
+        binding.buttonCreateVocabularyGroupFromPictureXCut.setOnClickListener {
+            xCut = binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt()
+
+            if(binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt() < 3 || binding.sliderCreateVocabularyGroupFromPictureXCut.value.roundToInt() > bitmap.width-3)
+                return@setOnClickListener
+
+            bitmap = imageInput.bitmapInternal!!
+            binding.imageViewCreateVocabularyGroupFromPicturePreview.setImageBitmap(printXCut(bitmap))
+        }
+
+        binding.buttonCreateVocabularyGroupFromPictureStart.setOnClickListener {
+            start(imageInput)
+        }
+
+        binding.imageViewCreateVocabularyGroupFromPicturePreview.setImageBitmap(printXCut(bitmap))
+
+        binding.buttonCreateVocabularyGroupFromPictureStart.isEnabled = true
+        binding.sliderCreateVocabularyGroupFromPictureXCut.isEnabled = true
+        binding.buttonCreateVocabularyGroupFromPictureXCut.isEnabled = true
+    }
+
+    private fun printXCut(image: Bitmap): Bitmap{
+        val newImage = image.copy(Bitmap.Config.ARGB_8888 , true)
+        for(y in 0 until image.height){
+            for(x in xCut-2 until xCut+2)
+                newImage[x, y] = Color.BLUE
+        }
+        return newImage
     }
 
     private fun showXCut() {
@@ -333,7 +379,11 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
 
             word = word.replace("Cto)", "(to)")
 
-            if(word.first() == '|')
+            if(word.first() == '|'){
+                if(word.contains("|e") || word.contains("|a")){
+                    word.replace("|","l")
+                }
+            }else
                 word = word.replace("|", "")
 
             if(word.trim().last() == '|')

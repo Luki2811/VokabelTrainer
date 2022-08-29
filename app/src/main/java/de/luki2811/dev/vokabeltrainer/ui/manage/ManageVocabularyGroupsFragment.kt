@@ -27,10 +27,6 @@ class ManageVocabularyGroupsFragment : Fragment() {
             findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationCreate())
         }
 
-        // val calback = requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
-        //     findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationMain())
-        // }
-
         val arrayList = ArrayList<VocabularyGroup>()
         val indexVocabularyGroupFile = File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         val indexAsJson = JSONObject(AppFile.loadFromFile(indexVocabularyGroupFile))

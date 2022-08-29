@@ -11,7 +11,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.EncodeHintType
 import com.google.zxing.qrcode.QRCodeWriter
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FrameShowQrCodeSheetBinding
+import org.json.JSONObject
 
 class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
     private var _binding: FrameShowQrCodeSheetBinding? = null
@@ -22,8 +25,14 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
 
         val content = arguments?.getString("vocabularyGroup")!!
 
-        binding.imageViewQrCode.setImageBitmap(getQrCodeBitmap(content))
-        binding.textViewQrCodeFrame.text = arguments?.getString("name","")
+        if(VocabularyGroup(JSONObject(content),requireContext()).vocabulary.size <= 25){
+            binding.imageViewQrCode.setImageBitmap(getQrCodeBitmap(content))
+            binding.textViewQrCodeFrame.text = arguments?.getString("name","")
+        }else{
+            binding.textViewQrCodeFrame.setText(R.string.err_too_many_vocabulary_groups_to_create_qr_code)
+        }
+
+
 
         return binding.root
     }

@@ -8,6 +8,8 @@ import org.json.JSONObject
 import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.collections.ArrayList
 
 class Streak(val context: Context) {
     var isReachedToday = false
@@ -17,6 +19,11 @@ class Streak(val context: Context) {
     var xpGoal = 0
         private set
     var xpToday = 0
+
+    // Set last date to 0
+    var allDaysXp = arrayListOf<Pair<LocalDate, Int>>()
+        private set
+
 
     init {
         try {
@@ -64,6 +71,7 @@ class Streak(val context: Context) {
                 streakData.getJSONObject(i).put("xp", xpToday)
                 streakData.getJSONObject(i).put("goal", xpGoal)
                 AppFile.writeInFile(streakData.toString(), File(context.filesDir, AppFile.NAME_FILE_STREAK))
+                setMap()
                 return
             }
         }
@@ -71,5 +79,35 @@ class Streak(val context: Context) {
         // Create new date-object if it doesn't exist
         streakData.put(JSONObject().put("date", dateToday).put("xp", xpToday).put("goal", xpGoal))
         AppFile.writeInFile(streakData.toString(), File(context.filesDir, AppFile.NAME_FILE_STREAK))
+        setMap()
+
+    }
+
+    private fun setMap(){
+        val streakData = JSONArray(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_STREAK)))
+
+        for(i in 0 until streakData.length()){
+            val date = LocalDate.parse(streakData.getJSONObject(i).getString("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+            val xp = streakData.getJSONObject(i).getInt("xp")
+            allDaysXp.add(date to xp)
+        }
+
+        allDaysXp.sortWith(compareByDescending { it.first })
+    }
+
+    companion object{
+        fun getRandomStreak(durationInDays: Int): JSONArray{
+            val json = JSONArray()
+
+            for(i in 0 until durationInDays){
+                val dayJson = JSONObject()
+                    .put("date", LocalDate.now().minusDays(i.toLong()))
+                    .put("xp", (10..150).random())
+                    .put("goal", 10)
+                json.put(dayJson)
+            }
+
+            return json
+        }
     }
 }

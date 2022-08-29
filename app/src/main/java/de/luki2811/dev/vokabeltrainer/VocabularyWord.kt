@@ -1,6 +1,5 @@
 package de.luki2811.dev.vokabeltrainer
 
-import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
@@ -37,14 +36,38 @@ class VocabularyWord() {
         return knownWordsList
     }
 
-    fun getJson(): JSONObject{
-        return JSONObject()
-            .put("knownWord", knownWord)
-            .put("languageKnownType", languageKnown.language)
-            .put("newWord", newWord)
-            .put("languageNewType", languageNew.language)
-            .put("isIgnoreCase", isIgnoreCase)
-            .put("askKnownWord", isKnownWordAskedAsAnswer)
+    fun equalsVocabularyWord(word: VocabularyWord, controlAll: Boolean = false) = this.getJson(controlAll).toString() == word.getJson(controlAll).toString()
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (this === other) return true
+        return if (other is VocabularyWord){
+            this.getJson(true).toString() == other.getJson(true).toString()
+        }else{
+            false
+        }
     }
+
+    override fun hashCode(): Int {
+        return this.getJson(true).toString().hashCode()
+    }
+
+    fun getJson(all: Boolean = true): JSONObject{
+        return if(all){
+            JSONObject()
+                .put("knownWord", knownWord)
+                .put("languageKnownType", languageKnown.language)
+                .put("newWord", newWord)
+                .put("languageNewType", languageNew.language)
+                .put("isIgnoreCase", isIgnoreCase)
+                .put("askKnownWord", isKnownWordAskedAsAnswer)
+        }else
+            JSONObject()
+                .put("knownWord", knownWord)
+                .put("languageKnownType", languageKnown.language)
+                .put("newWord", newWord)
+                .put("languageNewType", languageNew.language)
+    }
+
 
 }

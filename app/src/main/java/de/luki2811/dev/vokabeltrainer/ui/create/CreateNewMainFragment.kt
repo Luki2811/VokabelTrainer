@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer.ui.create
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
@@ -64,7 +65,9 @@ class CreateNewMainFragment : Fragment() {
                             Toast.makeText(requireContext(), "No barcodes found", Toast.LENGTH_LONG).show()
                         }else{
                             barcodes.forEach {
-                                if(it.rawValue != null) {
+                                if(it.rawValue.isNullOrEmpty()) {
+                                    Toast.makeText(requireContext(), R.string.err_cant_load_qr_code, Toast.LENGTH_LONG).show()
+                                }else{
                                     setDataAndSetupViews(it.rawValue!!)
                                 }
                             }
@@ -86,15 +89,6 @@ class CreateNewMainFragment : Fragment() {
             setDataAndSetupViews(AppFile.loadFromFile(intent?.data!!, requireActivity().contentResolver))
         } else {
             Toast.makeText(requireContext(), getString(R.string.err_file_not_found), Toast.LENGTH_LONG).show()
-        }
-    }
-
-    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            resultLauncherFilePicker.launch(chooser)
-        }
-        else {
-            Toast.makeText(requireContext(), getString(R.string.err_no_permission), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -178,19 +172,16 @@ class CreateNewMainFragment : Fragment() {
                             .build()
                         val scanner = GmsBarcodeScanning.getClient(requireContext(), options)
                         scanner.startScan()
-                            .continueWith {
-                                val result = it.result.rawValue
-
-                                if(result == null)
-                                    Toast.makeText(requireContext(), "Failed to get result", Toast.LENGTH_LONG).show()
+                            .addOnSuccessListener { barcode ->
+                                val result = barcode.rawValue
+                                if(result.isNullOrEmpty())
+                                    Toast.makeText(requireContext(), R.string.err_cant_load_qr_code, Toast.LENGTH_LONG).show()
                                 else {
                                     setDataAndSetupViews(result)
                                 }
                             }
-
                             .addOnCanceledListener { Log.i("GmsBarcodeScanning","Canceled") }
                             .addOnFailureListener { e ->
-
                                 Toast.makeText(requireContext(), "Failure - Wait for a while and try again", Toast.LENGTH_LONG).show()
                                 e.printStackTrace()
                             }
@@ -238,7 +229,11 @@ class CreateNewMainFragment : Fragment() {
 
     private fun requestPermissionToReadFiles() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            permissionLauncher.launch(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            val intent = Intent().apply {
+                action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                data = Uri.fromParts("package", requireActivity().packageName, null)
+            }
+            startActivity(intent)
         } else {
             // below android 11
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 100)

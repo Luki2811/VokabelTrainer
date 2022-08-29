@@ -24,7 +24,7 @@
     <string name="solution">Solution:</string>
     <string name="finish_lesson">Finish lesson</string>
     <string name="save_and_next">Save and next</string>
-    <string name="plus">+</string>
+    <string name="plus" translatable="false">+</string>
     <string name="learn">Learn</string>
     <string name="create_new_lesson">Create new lesson</string>
     <string name="create_new_vocabulary_group">Create new vocabulary group</string>
@@ -43,9 +43,9 @@
     <string name="wrong_the_correct_solution_is">Wrong ! The solution is \"%1$s\"</string>
     <string name="voc_in">Word in %1$s</string>
     <string name="number_voc_of_rest">Word %1$d of %2$d</string>
-    <string name="streak_have_of_goal" translatable="false">" %1$d / %2$d XP"</string>
-    <string name="streak_in_days">Streak: %1$d days</string>
-    <string name="streak_in_day">Streak: %1$d day</string>
+    <string name="streak_have_of_goal" translatable="false">" %1$d/%2$d XP"</string>
+    <string name="streak_in_days">%1$d\ndays</string>
+    <string name="streak_in_day">%1$d\nday</string>
     <string name="streak_left_to_do_for_next_day">You are still missing %1$d XP to your %2$d days streak</string>
     <string name="streak_reached_goal">You have reached your goal for today !</string>
     <string name="xp_reached" translatable="false">+%1$d XP</string>
@@ -136,7 +136,7 @@
     <string name="channel_name_streak">Streak</string>
     <string name="channel_description_streak">All notifications around the Streak</string>
     <string name="settings_reminder_streak">Streak reminder</string>
-    <string name="pickTime">Choose time</string>
+    <string name="pick_time">Choose time</string>
     <string name="when_do_you_want_to_be_remembered">When do you want to be remembered ??</string>
     <string name="err_no_permission_reminder">Error: No permission to create a reminder at the selected specific time.  Error code: 002</string>
     <string name="mistakes_overview">Mistakes overview</string>
@@ -161,6 +161,18 @@
     <string name="click_to_continue">Click on button to continue</string>
     <string name="create_vocabulary_group_from_picture">Create vocabulary group from a picture</string>
     <string name="choose_image">Choose an image</string>
-    <string name="err_could_not_load_image">Error: Could not load image</string>
-    <string name="create_vocabulary_group_from_image_step_1">1. Choose the photo with the vocabulary group. \n<b>Important</b>: The vocabulary has to be structured like below! </string>
+    <string name="err_could_not_load_image">Error: Couldn\'t load image</string>
+    <string name="create_vocabulary_group_from_image_step_1">Choose the photo with the vocabulary group. \n<b>Important</b>: The vocabulary has to be structured in a list!</string>
+    <string name="create_vocabulary_group_from_image_step_2">Choose import mode:\n<b>Mode 1</b>: For pages with larger distance between each vocabulary word AND words over one or several line(s)\n<b>Mode 2</b>: For pages with smaller distance between each vocabulary word AND words over one line (Use xCut)\n<b>Notice</b>: Both need a good large distance between the two columns in each line</string>
+    <string name="create_vocabulary_group_from_image_step_3">Set xCut (blue line)\nAll <i>known</i> words have to start <b>before</b> the blue line and\nall <i>new</i> words have to start <b>after</b> the blue line</string>
+    <string name="create_vocabulary_group_from_image_step_4">Set further settings:\n<b>Remove points</b>:\ne.g. \"all of…\" to \"all of\"\n<b>Correct words</b>: Try to fix common extraction mistakes\ne.g. \"|e\" to \"le\" or \"Cto)\" to \"(to)\"\n<b>Has title</b>: Use first paragraph as name of vocabulary group</string>
+    <string name="err_too_many_vocabulary_groups_to_create_qr_code">Error: Too many (>25) words in vocabulary group to create QR-Code</string>
+    <string name="reload_x_cut">Reload xCut</string>
+    <string name="remove_points">Remove points</string>
+    <string name="to_correct_words">Correct words</string>
+    <string name="has_title">Has title</string>
+    <string name="mode_1">Mode 1</string>
+    <string name="mode_2">Mode 2</string>
+    <string name="take_photo">Take photo</string>
+    <string name="err_cant_load_qr_code">Error: Can\'t load data from QR-Code</string>
 </resources>
