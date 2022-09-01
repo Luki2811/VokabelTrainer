@@ -10,67 +10,74 @@
         android:id="@+id/chipGroupLearnNativeLan"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/chipGroupLearnNewLan"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfo3"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip0LearnNativeLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc0" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip1LearnNativeLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc1" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip2LearnNativeLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc2" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip3LearnNativeLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc3" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip4LearnNativeLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc4" />
 
     </com.google.android.material.chip.ChipGroup>
@@ -79,68 +86,75 @@
         android:id="@+id/chipGroupLearnNewLan"
         android:layout_width="175dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
         android:foregroundGravity="right"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/chipGroupLearnNativeLan"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewPracticeInfo3"
         app:singleSelection="true">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip0LearnNewLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc0" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip1LearnNewLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc1" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip2LearnNewLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc2" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip3LearnNewLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc3" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip4LearnNewLan"
             android:layout_width="match_parent"
             android:layout_height="@dimen/word_selection_height"
-
             android:checkable="true"
+
             android:clickable="true"
             android:gravity="center"
             android:textAlignment="center"
+            android:textAppearance="@style/chipText"
             tools:text="voc4" />
 
 

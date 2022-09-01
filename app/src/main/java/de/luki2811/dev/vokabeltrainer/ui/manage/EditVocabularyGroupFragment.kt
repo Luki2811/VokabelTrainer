@@ -9,10 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.Id
 import de.luki2811.dev.vokabeltrainer.R
@@ -59,13 +59,6 @@ class EditVocabularyGroupFragment : Fragment() {
             vocabularyGroup = VocabularyGroup(args.keyVocGroupName, languageKnown, languageNew, vocabulary.toTypedArray(), requireContext())
         }
 
-        binding.buttonBackVocabularyWord.setOnClickListener {
-            if(refreshVocabularyWord()){
-                pos -= 1
-                refresh()
-            }
-        }
-
         binding.buttonChangeWords.setOnClickListener {
             val oldKnownWord = binding.editTextVocabularyWordKnownManage.text.toString()
             val oldNewWord = binding.textEditVocabularyWordNewManage.text.toString()
@@ -73,10 +66,27 @@ class EditVocabularyGroupFragment : Fragment() {
             binding.textEditVocabularyWordNewManage.setText(oldKnownWord)
         }
 
-        binding.buttonNextVocabularyWord.setOnClickListener {
-            if(refreshVocabularyWord()){
-                pos += 1
-                refresh()
+        binding.buttonBackVocabularyWord.apply {
+            // setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Blue)))
+            setOnClickListener {
+                if(refreshVocabularyWord()){
+                    pos -= 1
+                    if(pos == -1)
+                        pos = vocabulary.size-1
+                    refresh()
+                }
+            }
+        }
+
+        binding.buttonNextVocabularyWord.apply {
+            // setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Blue)))
+            setOnClickListener {
+                if(refreshVocabularyWord()){
+                    pos += 1
+                    if(pos == vocabulary.size)
+                        pos = 0
+                    refresh()
+                }
             }
         }
 
@@ -103,7 +113,10 @@ class EditVocabularyGroupFragment : Fragment() {
             }
         }
 
-        binding.buttonDeleteVocabularyWord.setOnClickListener { removeVocabularyWord() }
+        binding.buttonDeleteVocabularyWord.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Red)))
+            setOnClickListener { removeVocabularyWord() }
+        }
 
         if(args.keyMode == MODE_EDIT)
             binding.buttonDeleteVocabularyGroup.setOnClickListener {
@@ -146,18 +159,32 @@ class EditVocabularyGroupFragment : Fragment() {
     }
 
     private fun refreshVocabularyWord(): Boolean {
-        vocabulary[pos].newWord =
-            binding.textEditVocabularyWordNewManage.text.toString().trim().ifBlank {
-                binding.textEditVocabularyWordNewManage.error = getString(R.string.err_missing_name)
-                return false
-            }
-        vocabulary[pos].knownWord =
-            binding.editTextVocabularyWordKnownManage.text.toString().trim().ifBlank {
-                binding.editTextVocabularyWordKnownManage.error = getString(R.string.err_missing_name)
-                return false
-            }
-        vocabulary[pos].isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
-        return true
+        var isCorrect = true
+
+        val newWord = binding.textEditVocabularyWordNewManage.text.toString().trim()
+        newWord.ifBlank {
+            binding.textEditVocabularyWordNewManage.error = getString(R.string.err_missing_name)
+            isCorrect = false
+        }
+
+        val knownWord = binding.editTextVocabularyWordKnownManage.text.toString().trim()
+        knownWord.ifBlank {
+            binding.editTextVocabularyWordKnownManage.error = getString(R.string.err_missing_name)
+            isCorrect = false
+        }
+
+        val word = VocabularyWord(knownWord, vocabularyGroup.languageKnown, newWord, vocabularyGroup.languageNew, binding.switchVocabularyWordIgnoreCaseManage.isChecked)
+
+        val tempVocGroup = arrayListOf<VocabularyWord>()
+        tempVocGroup.addAll(vocabulary)
+
+        if(tempVocGroup.apply { removeAt(pos) }.contains(word)){
+            Toast.makeText(requireContext(), getString(R.string.word_already_in_vocabulary_group), Toast.LENGTH_LONG).show()
+            isCorrect = false
+        }
+
+        vocabulary[pos] = word
+        return isCorrect
     }
 
     private fun addVocabularyWord(direction: Int) {
@@ -225,10 +252,9 @@ class EditVocabularyGroupFragment : Fragment() {
         binding.editTextVocabularyWordKnownManage.setText(vocabulary[pos].knownWord)
         binding.textEditVocabularyWordNewManage.setText(vocabulary[pos].newWord)
         binding.switchVocabularyWordIgnoreCaseManage.isChecked = vocabulary[pos].isIgnoreCase
-        binding.textViewNumberOfVocManage.text =
-            getString(R.string.number_voc_of_rest, (pos + 1), vocabulary.size)
+        binding.textViewNumberOfVocManage.text = getString(R.string.number_voc_of_rest, (pos + 1), vocabulary.size)
 
-        when (pos) {
+        /** when (pos) {
             vocabulary.size - 1 -> {
                 binding.buttonNextVocabularyWord.isEnabled = false
                 binding.buttonBackVocabularyWord.isEnabled = true
@@ -242,7 +268,7 @@ class EditVocabularyGroupFragment : Fragment() {
                 binding.buttonNextVocabularyWord.isEnabled = true
 
             }
-        }
+        } **/
 
         if(args.keyMode != MODE_CREATE){
             binding.sliderEditVocabularyGroupPosition.apply {
@@ -251,21 +277,31 @@ class EditVocabularyGroupFragment : Fragment() {
             }
         }
 
+        /** binding.buttonNextVocabularyWord.apply {
+            if(isEnabled)
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Blue)))
+            else
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Gray)))
+        }
 
-        binding.buttonDeleteVocabularyWord.isEnabled = vocabulary.size > 2
+        binding.buttonBackVocabularyWord.apply {
+            if(isEnabled)
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Blue)))
+            else
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Gray)))
+        } **/
+
         binding.buttonSaveAndGoBackManage.isEnabled = vocabulary.size > 1
 
-        if(vocabulary.size <= 2){
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(
-                requireContext(),
-                R.color.Gray),
-                android.graphics.PorterDuff.Mode.SRC_IN)
-        }else{
-            binding.buttonDeleteVocabularyWord.setColorFilter(ContextCompat.getColor(
-                requireContext(),
-                R.color.White),
-                android.graphics.PorterDuff.Mode.SRC_IN)
+        binding.buttonDeleteVocabularyWord.apply {
+            isEnabled = vocabulary.size > 2
+            if(isEnabled){
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Red)))
+            }else{
+                setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Gray)))
+            }
         }
+
     }
 
     override fun onDestroyView() {

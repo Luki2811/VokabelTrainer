@@ -175,4 +175,9 @@
     <string name="mode_2">Mode 2</string>
     <string name="take_photo">Take photo</string>
     <string name="err_cant_load_qr_code">Error: Can\'t load data from QR-Code</string>
+    <string name="xp">%1$dXP</string>
+    <string name="general">General</string>
+    <string name="search">Search</string>
+    <string name="err_cant_create_qr_code">Error: Can\'t create QR-Code</string>
+    <string name="word_already_in_vocabulary_group">Word already in vocabulary group</string>
 </resources>

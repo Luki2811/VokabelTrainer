@@ -9,6 +9,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.setFragmentResult
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FrameCorrectionBottomSheetBinding
@@ -21,8 +22,6 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FrameCorrectionBottomSheetBinding.inflate(layoutInflater, container, false)
-
-        val string = "HH"
 
         if(arguments?.getBoolean("isCorrect") == true) {
             binding.textViewCorrection.text = getString(R.string.correct)
@@ -45,8 +44,6 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
         setFragmentResult("finishFragment", bundleOf("isFinished" to true))
         super.onDestroy()
     }
-
-
 
     companion object {
         const val TAG = "CorrectionBottomSheet"

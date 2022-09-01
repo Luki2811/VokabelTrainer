@@ -11,7 +11,7 @@ class VocabularyWord() {
     var isIgnoreCase: Boolean = false
     var isKnownWordAskedAsAnswer = false
 
-    constructor(knownWord: String,languageKnown: Locale, newWord: String, languageNew: Locale, isIgnoreCase: Boolean): this()  {
+    constructor(knownWord: String, languageKnown: Locale, newWord: String, languageNew: Locale, isIgnoreCase: Boolean): this()  {
         this.knownWord = knownWord
         this.languageKnown = languageKnown
         this.newWord = newWord

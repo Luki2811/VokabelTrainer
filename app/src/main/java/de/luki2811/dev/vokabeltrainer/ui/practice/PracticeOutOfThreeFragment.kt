@@ -1,6 +1,5 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
-import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,6 @@ import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeOutOfThreeBind
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity.Companion.quitPractice
 import org.json.JSONObject
 import java.time.LocalDate
-import java.util.*
-import kotlin.collections.ArrayList
 
 class PracticeOutOfThreeFragment: Fragment() {
 
@@ -50,7 +47,7 @@ class PracticeOutOfThreeFragment: Fragment() {
         if(Settings(requireContext()).readOutVocabularyGeneral)
             binding.buttonSpeakChooseThree.setOnClickListener { speakWord(binding.textViewPracticeChooseThreeBottom.text.toString()) }
         else
-            binding.buttonSpeakChooseThree.setImageIcon(Icon.createWithResource(requireContext(),R.drawable.ic_outline_volume_off_24))
+            binding.buttonSpeakChooseThree.setIconResource(R.drawable.ic_outline_volume_off_24)
 
         setWords()
         binding.chipPracticeOption1.text = if(wordOption1.isKnownWordAskedAsAnswer) wordOption1.knownWord else wordOption1.newWord

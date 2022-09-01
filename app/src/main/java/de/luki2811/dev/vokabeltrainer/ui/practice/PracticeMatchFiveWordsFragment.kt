@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.AppTextToSpeak
 import de.luki2811.dev.vokabeltrainer.VocabularyWord

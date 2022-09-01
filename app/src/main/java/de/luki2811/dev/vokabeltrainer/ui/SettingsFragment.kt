@@ -14,8 +14,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -30,6 +28,7 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
 import java.time.LocalTime
 import java.util.*
+import kotlin.math.roundToInt
 
 class SettingsFragment : Fragment() {
 
@@ -55,8 +54,9 @@ class SettingsFragment : Fragment() {
 
         settings = Settings(requireContext())
 
-        binding.menuStreakDailyObjectiveXPAutoComplete.setText(settings.dailyObjectiveStreak, false)
+        binding.menuStreakDailyObjectiveXPAutoComplete.setText(getString(R.string.xp, settings.dailyObjectiveStreak), false)
         binding.switchSettingsReadOutVocabularyCentralForbidden.isChecked = !settings.readOutVocabularyGeneral
+        binding.switchSettingsIncreaseScreenBrightnessShowingQrCode.isChecked = settings.increaseScreenBrightness
 
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             binding.switchSettingsEnableDynamicColors.isChecked = settings.useDynamicColors
@@ -85,16 +85,32 @@ class SettingsFragment : Fragment() {
                 .setIcon(R.drawable.ic_outline_warning_24)
                 .setMessage(R.string.warning_lose_of_progress)
                 .setPositiveButton(R.string.ok){_, _ ->
-                    settings.dailyObjectiveStreak = binding.menuStreakDailyObjectiveXPAutoComplete.text.toString()
+                    settings.dailyObjectiveStreak = binding.menuStreakDailyObjectiveXPAutoComplete.text.toString().replace("XP","").toInt()
                     saveSettings()
                 }
                 .setNegativeButton(R.string.cancel){_, _ ->
-                    binding.menuStreakDailyObjectiveXPAutoComplete.setText(settings.dailyObjectiveStreak, false)
+                    binding.menuStreakDailyObjectiveXPAutoComplete.setText(getString(R.string.xp, settings.dailyObjectiveStreak), false)
                 }
                 .setOnCancelListener {
-                    binding.menuStreakDailyObjectiveXPAutoComplete.setText(settings.dailyObjectiveStreak, false)
+                    binding.menuStreakDailyObjectiveXPAutoComplete.setText(getString(R.string.xp, settings.dailyObjectiveStreak), false)
                 }
                 .show()
+        }
+
+        binding.sliderSettingsStreakChartLength.apply {
+            valueFrom = 3f
+            value = settings.streakChartLengthInDays.toFloat()
+            valueTo = 31f
+            stepSize = 1f
+            addOnChangeListener { _, value, _ ->
+                settings.streakChartLengthInDays = value.roundToInt()
+                saveSettings()
+            }
+        }
+
+        binding.switchSettingsIncreaseScreenBrightnessShowingQrCode.setOnCheckedChangeListener { _, isChecked ->
+            settings.increaseScreenBrightness = isChecked
+            saveSettings()
         }
 
         binding.switchSettingsReadOutVocabularyCentralForbidden.setOnCheckedChangeListener { _, isChecked ->

@@ -16,6 +16,8 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
@@ -43,11 +45,11 @@ class ListLessonsLearnAdapter(
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textCardLessonName: TextView = view.findViewById(R.id.textCardLessonName)
-        val buttonCardDelete: ImageButton = view.findViewById(R.id.buttonCardDelete)
-        val buttonCardEdit: ImageButton = view.findViewById(R.id.buttonCardEdit)
+        val buttonCardDelete: MaterialButton = view.findViewById(R.id.buttonCardDelete)
+        val buttonCardEdit: MaterialButton = view.findViewById(R.id.buttonCardEdit)
         val buttonCardPracticeLesson: Button = view.findViewById(R.id.buttonCardPracticeLesson)
-        val buttonCardShare: ImageButton = view.findViewById(R.id.buttonCardShare)
-        val buttonCardFavorite: ImageButton = view.findViewById(R.id.buttonCardFavorite)
+        val buttonCardShare: MaterialButton = view.findViewById(R.id.buttonCardShare)
+        val buttonCardFavorite: MaterialButton = view.findViewById(R.id.buttonCardFavorite)
     }
 
     // Create new views (invoked by the layout manager)
@@ -66,22 +68,22 @@ class ListLessonsLearnAdapter(
         viewHolder.textCardLessonName.text = dataSetFilter[position].name
 
         if(dataSetFilter[position].isFavorite) {
-            viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_baseline_star_24)
-            viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Yellow))
+            viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_baseline_star_24)
+            viewHolder.buttonCardFavorite.setIconTintResource(R.color.Yellow)
         } else {
-            viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_outline_star_24)
-            viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Gray))
+            viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_outline_star_24)
+            viewHolder.buttonCardFavorite.setIconTintResource(R.color.Gray)
         }
 
         viewHolder.buttonCardFavorite.setOnClickListener {
             if(dataSetFilter[position].isFavorite){
                 dataSetFilter[position].isFavorite = false
-                viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_outline_star_24)
-                viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Gray))
+                viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_outline_star_24)
+                viewHolder.buttonCardFavorite.setIconTintResource(R.color.Gray)
             }else{
                 dataSetFilter[position].isFavorite = true
-                viewHolder.buttonCardFavorite.setImageResource(R.drawable.ic_baseline_star_24)
-                viewHolder.buttonCardFavorite.setColorFilter(context.getColor(R.color.Yellow))
+                viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_baseline_star_24)
+                viewHolder.buttonCardFavorite.setIconTintResource(R.color.Yellow)
 
             }
             dataSetFilter[position].saveInFile()
@@ -89,47 +91,57 @@ class ListLessonsLearnAdapter(
             notifyDataSetChanged()
         }
 
-        viewHolder.buttonCardEdit.setOnClickListener {
-            navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))
+        viewHolder.buttonCardEdit.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
+            setOnClickListener {
+                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))
+            }
         }
 
-        viewHolder.buttonCardDelete.setOnClickListener {
-            MaterialAlertDialogBuilder(context)
-                .setTitle(R.string.delete_lesson)
-                .setIcon(R.drawable.outline_delete_24)
-                .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[position].name))
-                .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
-                    val lesson = dataSetFilter[position]
-                    var file = File(context.filesDir, "lessons")
-                    file.mkdirs()
-                    file = File(file, lesson.id.number.toString() + ".json" )
+        viewHolder.buttonCardDelete.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Red)))
+            setOnClickListener {
+                MaterialAlertDialogBuilder(context)
+                    .setTitle(R.string.delete_lesson)
+                    .setIcon(R.drawable.outline_delete_24)
+                    .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[position].name))
+                    .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
+                        val lesson = dataSetFilter[position]
+                        var file = File(context.filesDir, "lessons")
+                        file.mkdirs()
+                        file = File(file, lesson.id.number.toString() + ".json" )
 
-                    lesson.deleteFromIndex()
+                        lesson.deleteFromIndex()
 
-                    if(!file.delete()){
-                        Log.e("Exception", "Couldn't delete ${lesson.id.number}.json (${lesson.name})")
-                        return@setPositiveButton
+                        if(!file.delete()){
+                            Log.e("Exception", "Couldn't delete ${lesson.id.number}.json (${lesson.name})")
+                            return@setPositiveButton
+                        }
+                        lesson.id.deleteId()
+
+                        Log.i("Info", "Successfully deleted ${lesson.id.number}.json (${lesson.name})")
+
+                        dataSetFilter.removeAt(position)
+                        notifyDataSetChanged()
+                        notifyItemRemoved(position)
                     }
-                    lesson.id.deleteId()
+                    .setNegativeButton(R.string.cancel){ _: DialogInterface, _: Int ->
 
-                    Log.i("Info", "Successfully deleted ${lesson.id.number}.json (${lesson.name})")
-
-                    dataSetFilter.removeAt(position)
-                    notifyDataSetChanged()
-                    notifyItemRemoved(position)
-                }
-                .setNegativeButton(R.string.cancel){ _: DialogInterface, _: Int ->
-                    Toast.makeText(context, context.getString(R.string.cancelled), Toast.LENGTH_SHORT).show()
-                }
-                .show()
+                    }
+                    .show()
+            }
         }
+
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
             activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSetFilter[position].getAsJson().toString()))
         }
 
-        viewHolder.buttonCardShare.setOnClickListener {
-            AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
-            share(position)
+        viewHolder.buttonCardShare.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
+            setOnClickListener {
+                AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
+                share(position)
+            }
         }
     }
 

@@ -11,60 +11,58 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
         app:layout_constraintEnd_toStartOf="@+id/buttonShowQrCodeVocabularyGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Name der Vokabelgruppe" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonEditVocabularyGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:padding="7dp"
-        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        style="@style/Widget.Material3.Button.IconButton"
+        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/rounded_blue_button"
-        app:srcCompat="@drawable/ic_outline_edit_24"
-        android:contentDescription="@string/edit"
-        app:tint="@color/White" />
+        app:backgroundTint="@color/Blue"
+        app:icon="@drawable/ic_outline_edit_24"
+        app:contentDescription="@string/edit"
+        app:iconTint="@color/White" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonShareVocabularyGroup"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:padding="7dp"
-        android:contentDescription="@string/share"
-        android:background="@drawable/rounded_orange_button"
-        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:backgroundTint="@color/Orange"
+        app:contentDescription="@string/share"
+        app:icon="@drawable/ic_baseline_share_24"
+        app:iconTint="@color/White"
+        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
         app:layout_constraintEnd_toStartOf="@+id/buttonEditVocabularyGroup"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/White"
-        app:srcCompat="@drawable/ic_baseline_share_24" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonShowQrCodeVocabularyGroup"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:padding="7dp"
-        android:contentDescription="@string/qr_code"
-        android:background="@drawable/rounded_green_button"
-        app:layout_constraintBottom_toBottomOf="@id/hr1"
+        app:backgroundTint="@color/Green"
+        app:contentDescription="@string/qr_code"
+        app:icon="@drawable/ic_baseline_qr_code_24"
+        app:iconTint="@color/White"
+        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
         app:layout_constraintEnd_toStartOf="@+id/buttonShareVocabularyGroup"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/White"
-        app:srcCompat="@drawable/ic_baseline_qr_code_24" />
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/hr1"
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/dividerListItemVocabularyGroup"
         android:layout_width="match_parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_height="1dp"
+        android:layout_height="wrap_content"
         android:background="@color/Gray"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

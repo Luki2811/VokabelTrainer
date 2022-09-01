@@ -13,6 +13,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.Streak
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentStreakBinding
 import java.time.format.DateTimeFormatter
@@ -77,7 +78,7 @@ class StreakFragment : Fragment() {
                 position = XAxis.XAxisPosition.BOTTOM
                 labelRotationAngle = 0f
                 axisMinimum = 1f
-                axisMaximum = 7f
+                axisMaximum = Settings(requireContext()).streakChartLengthInDays.toFloat()
                 valueFormatter = LineChartXAxisValueFormatter()
             }
             axisLeft.apply {
@@ -103,7 +104,11 @@ class StreakFragment : Fragment() {
         val streak = Streak(requireContext())
         override fun getFormattedValue(value: Float): String {
             val formatter = DateTimeFormatter.ofPattern("dd.MM")
-           return when(value.roundToInt()){
+            return if(value.roundToInt() >= 1){
+                if(streak.allDaysXp.size >= value.roundToInt()) streak.allDaysXp[value.roundToInt()-1].first.format(formatter) else ""
+            }else
+                ""
+           /** return when(value.roundToInt()){
                1 -> streak.allDaysXp[0].first.format(formatter)
                2 -> if(streak.allDaysXp.size >= 2) streak.allDaysXp[1].first.format(formatter) else ""
                3 -> if(streak.allDaysXp.size >= 3) streak.allDaysXp[2].first.format(formatter) else ""
@@ -112,7 +117,7 @@ class StreakFragment : Fragment() {
                6 -> if(streak.allDaysXp.size >= 6) streak.allDaysXp[5].first.format(formatter) else ""
                7 -> if(streak.allDaysXp.size >= 7) streak.allDaysXp[6].first.format(formatter) else ""
                else -> ""
-           }
+           } **/
         }
     }
 

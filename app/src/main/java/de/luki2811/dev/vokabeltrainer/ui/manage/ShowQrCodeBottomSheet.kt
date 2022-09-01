@@ -1,54 +1,81 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Color
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.zxing.BarcodeFormat
-import com.google.zxing.EncodeHintType
-import com.google.zxing.qrcode.QRCodeWriter
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FrameShowQrCodeSheetBinding
+import io.github.g0dkar.qrcode.ErrorCorrectionLevel
+import io.github.g0dkar.qrcode.QRCode
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
+import java.lang.IllegalStateException
 
 class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
     private var _binding: FrameShowQrCodeSheetBinding? = null
     private val binding get() = _binding!!
+
+    private var oldScreenBrightness = 0F
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FrameShowQrCodeSheetBinding.inflate(layoutInflater, container, false)
 
         val content = arguments?.getString("vocabularyGroup")!!
 
-        if(VocabularyGroup(JSONObject(content),requireContext()).vocabulary.size <= 25){
-            binding.imageViewQrCode.setImageBitmap(getQrCodeBitmap(content))
-            binding.textViewQrCodeFrame.text = arguments?.getString("name","")
-        }else{
-            binding.textViewQrCodeFrame.setText(R.string.err_too_many_vocabulary_groups_to_create_qr_code)
-        }
+        oldScreenBrightness = requireActivity().window.attributes.screenBrightness
 
+        binding.textViewQrCodeFrame.text = arguments?.getString("name","")
+        binding.progressBarQrCode.visibility = View.VISIBLE
 
+        Thread{
+            if(VocabularyGroup(JSONObject(content),requireContext()).vocabulary.size <= 25){
+                val outputFile = File(requireContext().cacheDir, "cacheQrCode.png")
+                try {
+                    QRCode(content, ErrorCorrectionLevel.M)
+                        .render(margin = 50)
+                        .writeImage(FileOutputStream(outputFile))
+                }catch (e: IllegalArgumentException){
+                    requireActivity().runOnUiThread {
+                        Toast.makeText(requireContext(), R.string.err_cant_create_qr_code, Toast.LENGTH_SHORT).show()
+                        e.printStackTrace()
+                        binding.progressBarQrCode.visibility = View.GONE
+                    }
+                    return@Thread
+                }
+                try {
+                    requireActivity().runOnUiThread {
+                        if(Settings(requireContext()).increaseScreenBrightness)
+                            requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = 1F }
+
+                        binding.progressBarQrCode.visibility = View.GONE
+                        binding.imageViewQrCode.setImageBitmap(BitmapFactory.decodeFile(outputFile.absolutePath))
+                    }
+                }catch (e: IllegalStateException){
+                    e.printStackTrace()
+                }
+
+            }else{
+                requireActivity().runOnUiThread {
+                    binding.progressBarQrCode.visibility = View.GONE
+                    binding.imageViewQrCode.visibility = View.GONE
+                    binding.textViewQrCodeFrame.setText(R.string.err_too_many_vocabulary_groups_to_create_qr_code)
+                }
+            }
+        }.start()
 
         return binding.root
     }
 
-    private fun getQrCodeBitmap(content: String): Bitmap {
-
-        val size = Resources.getSystem().displayMetrics.widthPixels //pixels
-        val hints = hashMapOf<EncodeHintType, Int>().also { it[EncodeHintType.MARGIN] = 1 } // Make the QR code buffer border narrower
-        val bits = QRCodeWriter().encode(content, BarcodeFormat.QR_CODE, size, size)
-        return Bitmap.createBitmap(size, size, Bitmap.Config.RGB_565).also {
-            for (x in 0 until size) {
-                for (y in 0 until size) {
-                    it.setPixel(x, y, if (bits[x, y]) Color.BLACK else Color.WHITE)
-                }
-            }
-        }
+    override fun onDestroy() {
+        requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = oldScreenBrightness }
+        super.onDestroy()
     }
 
     companion object {

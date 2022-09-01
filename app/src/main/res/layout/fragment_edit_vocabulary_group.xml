@@ -21,10 +21,10 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonChangeWords"
+                style="@style/Widget.Material3.Button.IconButton.Outlined"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                style="@style/Widget.Material3.Button.IconButton.Outlined"
+                android:layout_marginTop="5dp"
                 app:icon="@drawable/ic_baseline_import_export_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -78,16 +78,19 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/settings"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyWordKnownLayoutManage" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchVocabularyWordIgnoreCaseManage"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
                 android:text="@string/ignore_case"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVocabularyWordManage" />
 
@@ -96,12 +99,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="28dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/number_voc_of_rest"
+                app:layout_constraintBottom_toBottomOf="@+id/buttonBackVocabularyWord"
                 app:layout_constraintEnd_toStartOf="@+id/buttonNextVocabularyWord"
                 app:layout_constraintStart_toEndOf="@+id/buttonBackVocabularyWord"
-                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage" />
+                app:layout_constraintTop_toTopOf="@+id/buttonBackVocabularyWord" />
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/sliderEditVocabularyGroupPosition"
@@ -114,76 +118,72 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/buttonDeleteVocabularyWord" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonNextVocabularyWord"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:background="@drawable/rounded_blue_button"
-                android:padding="8dp"
-                android:src="@drawable/ic_baseline_arrow_forward_24"
+                app:backgroundTint="@color/Blue"
+                app:icon="@drawable/ic_baseline_arrow_forward_24"
+                app:iconTint="@color/White"
+                app:layout_constraintBottom_toBottomOf="@+id/buttonBackVocabularyWord"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
-                app:tint="@color/white" />
+                app:layout_constraintTop_toTopOf="@+id/buttonBackVocabularyWord" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonDeleteVocabularyWord"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/rounded_red_button"
-                android:padding="8dp"
-                android:src="@drawable/outline_delete_24"
+                app:backgroundTint="@color/Red"
+                app:icon="@drawable/outline_delete_24"
+                app:iconTint="@color/White"
                 app:layout_constraintEnd_toStartOf="@+id/buttonAddNewVocabularyWordRightManage"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toEndOf="@+id/buttonAddNewVocabularyWordLeftManage"
-                app:layout_constraintTop_toBottomOf="@+id/textViewNumberOfVocManage"
-                app:tint="@color/White" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonBackVocabularyWord" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonAddNewVocabularyWordRightManage"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/rounded_green_button"
-                android:padding="8dp"
-                android:src="@drawable/ic_outline_add_24"
+                android:layout_marginStart="8dp"
+                app:backgroundTint="@color/Green"
+                app:icon="@drawable/ic_outline_add_24"
+                app:iconTint="@color/White"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/buttonDeleteVocabularyWord"
-                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
-                app:tint="@color/White" />
+                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonAddNewVocabularyWordLeftManage"
+                style="@style/Widget.Material3.Button.IconButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="@drawable/rounded_green_button"
-                android:padding="8dp"
-                android:src="@drawable/ic_outline_add_24"
+                android:layout_marginEnd="8dp"
+                app:backgroundTint="@color/Green"
+                app:icon="@drawable/ic_outline_add_24"
+                app:iconTint="@color/White"
                 app:layout_constraintEnd_toStartOf="@+id/buttonDeleteVocabularyWord"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord"
-                app:tint="@color/White" />
+                app:layout_constraintTop_toTopOf="@+id/buttonDeleteVocabularyWord" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonBackVocabularyWord"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/rounded_blue_button"
-                android:padding="8dp"
-                android:src="@drawable/ic_baseline_arrow_back_24"
+                style="@style/Widget.Material3.Button.IconButton"
+                app:backgroundTint="@color/Blue"
+                app:icon="@drawable/ic_baseline_arrow_back_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchVocabularyWordIgnoreCaseManage"
-                app:tint="@color/white" />
+                app:iconTint="@color/White" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

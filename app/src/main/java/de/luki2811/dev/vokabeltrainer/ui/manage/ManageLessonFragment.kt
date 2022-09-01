@@ -157,18 +157,20 @@ class ManageLessonFragment: Fragment() {
     }
 
     private fun addChipToGroup(groupName: String){
-        val chip = Chip(requireContext())
-        chip.text = groupName
-        chip.chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.book_open_page_variant_outline)
-        chip.isChipIconVisible = false
-        chip.isCloseIconVisible = true
-        // necessary to get single selection working
-        chip.isClickable = true
-        chip.isCheckable = false
-        binding.chipGroupSelectedVocabularyGroups.addView(chip as View)
-        chip.setOnCloseIconClickListener {
-            arrayListGroup.remove(groupName)
-            binding.chipGroupSelectedVocabularyGroups.removeView(chip as View)
+        val chip = Chip(requireContext()).apply {
+            text = groupName
+            chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.book_open_page_variant_outline)
+            isCloseIconVisible = true
+            isChipIconVisible = false
+            setTextAppearanceResource(R.style.chipText)
+            isClickable = true
+            isCheckable = false
+            setOnCloseIconClickListener {
+                arrayListGroup.remove(groupName)
+                binding.chipGroupSelectedVocabularyGroups.removeView(this as View)
+            }
         }
+
+        binding.chipGroupSelectedVocabularyGroups.addView(chip as View)
     }
 }

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_bottom_sheet_qr_code"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,22 +19,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@+id/imageViewQrCode"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1-20" />
 
         <ImageView
             android:id="@+id/imageViewQrCode"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="400sp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"
+            app:contentDescription="@string/qr_code"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBarQrCode"
+            style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="@string/qr_code" />
+            app:layout_constraintBottom_toBottomOf="@+id/imageViewQrCode"
+            app:layout_constraintEnd_toEndOf="@+id/imageViewQrCode"
+            app:layout_constraintStart_toStartOf="@+id/imageViewQrCode"
+            app:layout_constraintTop_toTopOf="@+id/imageViewQrCode" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

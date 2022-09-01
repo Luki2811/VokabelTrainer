@@ -114,11 +114,13 @@ class PracticeActivity : AppCompatActivity() {
             binding.progressBarPractice.progress = position
             binding.progressBarPractice.max = numberOfExercises + mistakes.size
 
+            /** TODO: Add again after redesign of
             if(mode == MODE_PRACTICE_MISTAKES){
                 Mistake.loadAllFromFile(this).forEach {
                     if(it.word.getJson().toString() == words[0].getJson().toString()) it.removeFromFile(this)
                 }
             }
+            **/
             setNext()
         }
 

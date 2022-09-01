@@ -58,6 +58,7 @@
             android:id="@+id/chipPracticeOption1"
             android:clickable="true"
             android:checkable="true"
+            android:textAppearance="@style/chipText"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             tools:text="text1"
@@ -67,6 +68,7 @@
             android:id="@+id/chipPracticeOption2"
             android:clickable="true"
             android:checkable="true"
+            android:textAppearance="@style/chipText"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             tools:text="text2"
@@ -74,6 +76,7 @@
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipPracticeOption3"
+            android:textAppearance="@style/chipText"
             android:clickable="true"
             android:checkable="true"
             android:layout_width="match_parent"
@@ -96,14 +99,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonSpeakChooseThree"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:background="@drawable/rounded_blue_button"
-        android:padding="8dp"
-        android:src="@drawable/ic_outline_volume_up_24"
+        style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+        app:icon="@drawable/ic_outline_volume_up_24"
         app:layout_constraintBottom_toBottomOf="@+id/textViewPracticeChooseThreeBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/textViewPracticeChooseThreeTop"

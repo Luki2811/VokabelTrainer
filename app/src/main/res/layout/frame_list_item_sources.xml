@@ -6,12 +6,14 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.google.android.material.card.MaterialCardView
+        style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        style="@style/Widget.Material3.CardView.Elevated"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -27,26 +29,26 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                tools:text="Name"
                 android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Name" />
 
             <TextView
                 android:id="@+id/textViewSourceType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
-                tools:text="The Apache Open Source Licence, Verison 2.0"
-
                 android:layout_marginStart="8dp"
+
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-
                 app:layout_constraintEnd_toEndOf="parent"
+
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewSourceName" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewSourceName"
+                tools:text="The Apache Open Source Licence, Verison 2.0" />
 
             <TextView
                 android:id="@+id/textViewSourceLink"

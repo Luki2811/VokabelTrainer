@@ -10,11 +10,11 @@ import java.util.*
 
 class Settings(var context: Context) {
     val jsonObject = if (File(context.filesDir, AppFile.NAME_FILE_SETTINGS).exists()) JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))) else JSONObject()
-    var dailyObjectiveStreak: String = try {
-        jsonObject.getString("dailyObjectiveStreak")
+    var dailyObjectiveStreak: Int = try {
+        jsonObject.getInt("dailyObjectiveStreak")
     }catch (e: JSONException){
         e.printStackTrace()
-        "20XP"
+        20
     }
     var readOutVocabularyGeneral: Boolean = try {
         jsonObject.getBoolean("readOutVocabularyGeneral")
@@ -22,7 +22,6 @@ class Settings(var context: Context) {
         e.printStackTrace()
         true
     }
-    // TODO: Replace with appTheme = THEME_DYNAMIC_COLORS
     var useDynamicColors: Boolean = try {
         jsonObject.getBoolean("useDynamicColors")
     }catch (e: JSONException){
@@ -59,6 +58,16 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         false
     }
+    var streakChartLengthInDays: Int = try {
+        jsonObject.getInt("streakChartLengthInDays")
+    }catch (e: JSONException){
+        7
+    }
+    var increaseScreenBrightness: Boolean = try {
+        jsonObject.getBoolean("increaseScreenBrightness")
+    }catch (e: JSONException){
+        true
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()
@@ -70,6 +79,8 @@ class Settings(var context: Context) {
             .put("appLanguage", appLanguage.language)
             .put("numberOfExercisesToPracticeMistakes", numberOfExercisesToPracticeMistakes)
             .put("readOnlyNewWordsPracticeMistake", readOnlyNewWordsPracticeMistake)
+            .put("streakChartLengthInDays", streakChartLengthInDays)
+            .put("increaseScreenBrightness", increaseScreenBrightness)
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
     }
 }

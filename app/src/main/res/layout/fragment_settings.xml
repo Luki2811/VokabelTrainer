@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,11 +8,27 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageViewSettingsAppIco"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:contentDescription="@string/app_icon"
+                android:src="@mipmap/ic_launcher"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewSettingsAppName"
@@ -25,17 +41,6 @@
                 app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
                 app:layout_constraintTop_toTopOf="@+id/imageViewSettingsAppIco"
                 app:layout_constraintVertical_chainStyle="spread_inside" />
-
-            <ImageView
-                android:id="@+id/imageViewSettingsAppIco"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:contentDescription="@string/app_icon"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textViewSettingsVersion"
@@ -58,25 +63,52 @@
                 app:layout_constraintStart_toEndOf="@+id/imageViewSettingsAppIco"
                 app:layout_constraintTop_toBottomOf="@+id/textViewSettingsVersion" />
 
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerSettingsAppInfo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerSettingsStreak1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsManageVocabularyGroups" />
+
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerSettingsGeneral"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsNotificationStreak" />
+
             <Button
                 android:id="@+id/buttonSettingsManageVocabularyGroups"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/manage_vocabulary_groups"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.523"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageViewSettingsAppIco" />
-
-            <TextView
-                android:id="@+id/textViewSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/settings"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsManageVocabularyGroups" />
+                app:layout_constraintTop_toBottomOf="@+id/dividerSettingsAppInfo" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menuStreakDailyObjectiveXPLayout"
@@ -88,8 +120,9 @@
                 android:layout_marginEnd="16dp"
                 android:hint="@string/settings_main_daily_xp_objective"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewSettings">
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsStreak">
 
                 <AutoCompleteTextView
                     android:id="@+id/menuStreakDailyObjectiveXPAutoComplete"
@@ -117,22 +150,49 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/settings_main_read_out_forbidden_central"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsGoTextToSpeakSettings" />
+
+            <com.google.android.material.slider.Slider
+                android:id="@+id/sliderSettingsStreakChartLength"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/menuStreakDailyObjectiveXPLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsStreakChartLength" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchSettingsEnableDynamicColors"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/settings_enable_dynamic_colors"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/menuSettingsAppLanguageLayout" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchSettingsIncreaseScreenBrightnessShowingQrCode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="Increase Display Screen Birghtness when QR-Code is showing"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -143,43 +203,46 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/settings_reminder_streak"
                 app:layout_constraintEnd_toStartOf="@+id/buttonSettingsStreakTime"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchSettingsEnableDynamicColors" />
+                app:layout_constraintTop_toBottomOf="@+id/sliderSettingsStreakChartLength" />
 
             <Button
                 android:id="@+id/buttonSettingsSources"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:text="@string/open_source_licences"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsGoTextToSpeakSettings" />
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsIncreaseScreenBrightnessShowingQrCode" />
 
             <Button
                 android:id="@+id/buttonSettingsGoTextToSpeakSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/tts_settings"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/menuSettingsAppLanguageLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsEnableDynamicColors" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSettingsStreakTime"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                app:icon="@drawable/ic_baseline_clock_24"
                 app:layout_constraintBottom_toBottomOf="@+id/switchSettingsNotificationStreak"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/switchSettingsNotificationStreak"
-                app:icon="@drawable/ic_baseline_clock_24" />
+                app:layout_constraintTop_toTopOf="@+id/switchSettingsNotificationStreak" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/menuSettingsAppLanguageLayout"
@@ -192,7 +255,7 @@
                 android:hint="@string/language"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchSettingsNotificationStreak">
+                app:layout_constraintTop_toBottomOf="@+id/textViewSettingsGeneral">
 
                 <AutoCompleteTextView
                     android:id="@+id/menuSettingsAppLanguage"
@@ -203,11 +266,42 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/textViewSettingsStreak"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/streak"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerSettingsStreak1" />
 
+            <TextView
+                android:id="@+id/textViewSettingsStreakChartLength"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Lenght in days of streak chart"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/menuStreakDailyObjectiveXPLayout" />
+
+            <TextView
+                android:id="@+id/textViewSettingsGeneral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/general"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dividerSettingsGeneral" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

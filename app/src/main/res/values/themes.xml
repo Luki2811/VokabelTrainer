@@ -4,5 +4,7 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!-- <item name="android:windowLightStatusBar">?attr/isLightTheme</item> -->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+        <item name="android:fontFamily">@font/work_sans</item>
+        <item name="fontFamily">@font/work_sans</item>
     </style>
 </resources>

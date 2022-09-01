@@ -5,11 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.textfield.TextInputLayout
 import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
@@ -53,7 +55,8 @@ class LearnFragment : Fragment() {
         }
 
         if(arrayList.isEmpty()){
-            binding.searchView.visibility = View.GONE
+            binding.searchViewLearnLayout.visibility = View.GONE
+            binding.searchViewLearn.visibility = View.GONE
             binding.listOfLessonsCards.visibility = View.GONE
             binding.textViewLearnFragmentInfo.visibility = View.VISIBLE
             binding.textViewLearnFragmentInfo.text = getString(R.string.create_lesson_or_vocabulary_group)
@@ -65,9 +68,22 @@ class LearnFragment : Fragment() {
 
         binding.listOfLessonsCards.adapter = adapter
 
+        binding.searchViewLearnLayout.apply {
+            endIconMode = TextInputLayout.END_ICON_CLEAR_TEXT
+            isErrorEnabled = false
+            isStartIconVisible = true
+            startIconDrawable = AppCompatResources.getDrawable(requireContext(), R.drawable.ic_baseline_search_24)
+        }
 
+        binding.searchViewLearn.addTextChangedListener {
+            if(it.isNullOrEmpty()){
+                adapter.filter.filter("")
+            }else{
+                adapter.filter.filter(it.toString())
+            }
+        }
 
-        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+        /** binding.searchView.setOnQueryTextListener(object: androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -76,7 +92,7 @@ class LearnFragment : Fragment() {
                 adapter.filter.filter(newText)
                 return false
             }
-        })
+        }) **/
         return binding.root
     }
 

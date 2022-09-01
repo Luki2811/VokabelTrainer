@@ -9,13 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
@@ -46,10 +47,9 @@ class ListVocabularyGroupsAdapter(
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
-        val buttonShare: ImageButton = view.findViewById(R.id.buttonShareVocabularyGroup)
-        val buttonEdit: ImageButton = view.findViewById(R.id.buttonEditVocabularyGroup)
-        val buttonShowQrCode: ImageButton = view.findViewById(R.id.buttonShowQrCodeVocabularyGroup)
-
+        val buttonShare: MaterialButton = view.findViewById(R.id.buttonShareVocabularyGroup)
+        val buttonEdit: MaterialButton = view.findViewById(R.id.buttonEditVocabularyGroup)
+        val buttonShowQrCode: MaterialButton = view.findViewById(R.id.buttonShowQrCodeVocabularyGroup)
     }
 
     // Create new views (invoked by the layout manager)
@@ -66,17 +66,24 @@ class ListVocabularyGroupsAdapter(
 
         viewHolder.textView.text = dataSetFilter[position].name
         viewHolder.buttonShare.setOnClickListener { share(position) }
+        viewHolder.buttonShare.setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
 
-        viewHolder.buttonShowQrCode.setOnClickListener {
-            val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
+        viewHolder.buttonShowQrCode.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Green)))
+            setOnClickListener {
+                val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
 
-            showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
+                showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
 
-            showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
+                showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
+            }
         }
 
-        viewHolder.buttonEdit.setOnClickListener {
-            navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
+        viewHolder.buttonEdit.apply {
+            setOnClickListener {
+                navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
+            }
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
         }
     }
 
