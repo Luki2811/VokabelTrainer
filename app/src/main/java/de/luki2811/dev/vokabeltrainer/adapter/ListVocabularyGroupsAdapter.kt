@@ -103,8 +103,7 @@ class ListVocabularyGroupsAdapter(
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
         val chooser = Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ...")
-        val resInfoList: List<ResolveInfo> = context.packageManager
-            .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+        val resInfoList: List<ResolveInfo> = context.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
 
         for (resolveInfo in resInfoList) {
             val packageName = resolveInfo.activityInfo.packageName

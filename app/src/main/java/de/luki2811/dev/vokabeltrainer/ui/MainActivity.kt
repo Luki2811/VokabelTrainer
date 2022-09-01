@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer.ui
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.ContentResolver
 import android.content.Context
@@ -25,6 +26,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -214,6 +216,21 @@ class MainActivity : AppCompatActivity() {
                     PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
                     PackageManager.DONT_KILL_APP
                 )
+    }
 
+    override fun onStop() {
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val remoteViews = StreakWidget.getUpdatedViews(applicationContext)
+        val componentName = ComponentName(application, StreakWidget::class.java)
+        val ids: IntArray = AppWidgetManager.getInstance(application).getAppWidgetIds(componentName)
+
+        val intent = Intent(this, StreakWidget::class.java).apply {
+            action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+
+        appWidgetManager.updateAppWidget(componentName, remoteViews)
+        sendBroadcast(intent)
+        super.onStop()
     }
 }

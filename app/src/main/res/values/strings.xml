@@ -180,4 +180,7 @@
     <string name="search">Search</string>
     <string name="err_cant_create_qr_code">Error: Can\'t create QR-Code</string>
     <string name="word_already_in_vocabulary_group">Word already in vocabulary group</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>

@@ -1,12 +1,17 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
+import android.content.ContentProvider
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
@@ -33,6 +38,10 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
 
         binding.textViewQrCodeFrame.text = arguments?.getString("name","")
         binding.progressBarQrCode.visibility = View.VISIBLE
+        binding.buttonQrCodeShare.apply {
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Orange)))
+            setOnClickListener { Toast.makeText(requireContext(), "Wait until QR-Code is generated", Toast.LENGTH_SHORT).show() }
+        }
 
         Thread{
             if(VocabularyGroup(JSONObject(content),requireContext()).vocabulary.size <= 25){
@@ -56,6 +65,14 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
 
                         binding.progressBarQrCode.visibility = View.GONE
                         binding.imageViewQrCode.setImageBitmap(BitmapFactory.decodeFile(outputFile.absolutePath))
+                        binding.buttonQrCodeShare.setOnClickListener {
+                            val shareIntent = Intent().apply {
+                                action = Intent.ACTION_SEND
+                                putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(requireContext(), requireActivity().packageName + ".provider", outputFile))
+                                type = "image/*"
+                            }
+                            startActivity(Intent.createChooser(shareIntent, null))
+                        }
                     }
                 }catch (e: IllegalStateException){
                     e.printStackTrace()
@@ -63,6 +80,7 @@ class ShowQrCodeBottomSheet: BottomSheetDialogFragment() {
 
             }else{
                 requireActivity().runOnUiThread {
+                    binding.buttonQrCodeShare.visibility = View.GONE
                     binding.progressBarQrCode.visibility = View.GONE
                     binding.imageViewQrCode.visibility = View.GONE
                     binding.textViewQrCodeFrame.setText(R.string.err_too_many_vocabulary_groups_to_create_qr_code)

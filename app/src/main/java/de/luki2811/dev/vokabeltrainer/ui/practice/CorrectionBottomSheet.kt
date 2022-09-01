@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FrameCorrectionBottomSheetBinding
 import java.util.*
@@ -25,7 +26,7 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
 
         if(arguments?.getBoolean("isCorrect") == true) {
             binding.textViewCorrection.text = getString(R.string.correct)
-            binding.layoutBottomSheet.setBackgroundColor(requireActivity().getColor(R.color.Green))
+            binding.layoutBottomSheet.setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), requireContext().getColor(R.color.Green)))
             binding.textViewCorrectAnswer.visibility = View.GONE
         }
         else {
@@ -34,7 +35,7 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
                 binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("correctWord"))
             else
                 binding.textViewCorrectAnswer.visibility = View.GONE
-            binding.layoutBottomSheet.setBackgroundColor(requireActivity().getColor(R.color.DarkRed))
+            binding.layoutBottomSheet.setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), requireContext().getColor(R.color.DarkRed)))
         }
 
         return binding.root

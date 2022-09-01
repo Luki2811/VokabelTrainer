@@ -26,12 +26,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:contentDescription="@string/delete"
                 app:backgroundTint="@color/Blue"
+                app:contentDescription="@string/delete"
                 app:icon="@drawable/ic_outline_edit_24"
                 app:iconTint="@color/White"
                 app:layout_constraintEnd_toStartOf="@id/buttonCardDelete"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonCardDelete"
@@ -40,13 +41,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:contentDescription="@string/delete"
                 app:backgroundTint="@color/Red"
+                app:contentDescription="@string/delete"
                 app:icon="@drawable/outline_delete_24"
                 app:iconTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/white"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonCardShare"
@@ -54,12 +56,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:contentDescription="@string/delete"
                 app:backgroundTint="@color/Orange"
+                app:contentDescription="@string/delete"
                 app:icon="@drawable/ic_baseline_share_24"
                 app:iconTint="@color/white"
                 app:layout_constraintEnd_toStartOf="@id/buttonCardEdit"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpeakableTextPresentCheck" />
 
             <TextView
                 android:id="@+id/textCardLessonName"
@@ -101,7 +104,8 @@
                 app:layout_constraintBottom_toTopOf="@+id/textCardLessonName"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.0" />
+                app:layout_constraintVertical_bias="0.0"
+                tools:ignore="SpeakableTextPresentCheck" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

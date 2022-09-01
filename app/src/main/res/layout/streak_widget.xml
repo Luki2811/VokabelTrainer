@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_streak_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/colorBackground"
+    android:theme="@style/Theme.Material3.DynamicColors.DayNight">
+
+    <TextView
+        android:id="@+id/widgetStreakTextUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/progressBarStreakWidget"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="80dp"
+        android:fontFamily="@font/work_sans"
+        android:text="@string/streak"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/widget_streak_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="@font/work_sans"
+        android:textSize="24sp"
+        android:text="13/20XP" />
+
+    <ProgressBar
+        android:id="@+id/progressBarStreakWidget"
+        style="@style/CircularDeterminateProgressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_alignStart="@+id/widget_streak_text"
+        android:layout_alignTop="@+id/widget_streak_text"
+        android:layout_alignEnd="@+id/widget_streak_text"
+        android:layout_alignBottom="@+id/widget_streak_text"
+        android:layout_marginStart="-40dp"
+        android:layout_marginTop="-60dp"
+        android:layout_marginEnd="-40dp"
+        android:layout_marginBottom="-60dp" />
+
+    <TextView
+        android:id="@+id/widgetStreakTextDown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBarStreakWidget"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="72dp"
+        android:fontFamily="@font/work_sans"
+        android:gravity="center"
+        android:text="123 days"
+        android:textSize="20sp" />
+
+</RelativeLayout>
