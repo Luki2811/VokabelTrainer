@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="de.luki2811.dev.vokabeltrainer">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
@@ -41,7 +40,8 @@
         android:localeConfig="@xml/locales_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VokabelTrainer.DynamicColors">
+        android:theme="@style/Theme.VokabelTrainer.DynamicColors"
+        tools:targetApi="tiramisu">
         <receiver
             android:name=".StreakWidget"
             android:exported="false">
@@ -99,7 +99,8 @@
             android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="userPortrait"
             android:theme="@style/Theme.VokabelTrainer.DynamicColors"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            tools:ignore="LockedOrientationActivity"/>
         <activity
             android:name=".ui.MainActivity"
             android:configChanges="orientation"
@@ -107,7 +108,7 @@
             android:screenOrientation="userPortrait"
             android:theme="@style/Theme.VokabelTrainer.DynamicColors"
             android:windowSoftInputMode="adjustResize"
-            tools:targetApi="33">
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

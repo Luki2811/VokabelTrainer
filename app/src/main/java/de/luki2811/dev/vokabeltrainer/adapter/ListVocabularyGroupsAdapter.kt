@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.adapter
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -23,7 +24,6 @@ import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
 import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
 import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
-import de.luki2811.dev.vokabeltrainer.ui.practice.CorrectionBottomSheet
 import org.json.JSONObject
 import java.io.File
 import java.util.*
@@ -75,7 +75,7 @@ class ListVocabularyGroupsAdapter(
 
                 showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
 
-                showQrCodeBottomSheet.show(supportFragmentManager, CorrectionBottomSheet.TAG)
+                showQrCodeBottomSheet.show(supportFragmentManager, ShowQrCodeBottomSheet.TAG)
             }
         }
 
@@ -94,15 +94,15 @@ class ListVocabularyGroupsAdapter(
         val vocabularyGroupJson = JSONObject(AppFile.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSetFilter[position].id.number}.json")))
         vocabularyGroupJson.put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
 
-        File.createTempFile("vocabularyGroupToExport.json", null, context.cacheDir)
-        val cacheFile = File(context.cacheDir,"vocabularyGroupToExport.json")
+        File.createTempFile(dataSet[position].getShareFileName(), null, context.cacheDir)
+        val cacheFile = File(context.cacheDir,dataSet[position].getShareFileName())
         AppFile.writeInFile(vocabularyGroupJson.toString(), cacheFile)
 
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, context.packageName + ".provider", cacheFile)
         sharingIntent.type = "application/json"
         sharingIntent.putExtra(Intent.EXTRA_STREAM, fileUri)
-        val chooser = Intent.createChooser(sharingIntent, "Vokabelgruppe teilen mit ...")
+        val chooser = Intent.createChooser(sharingIntent, null)
         val resInfoList: List<ResolveInfo> = context.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
 
         for (resolveInfo in resInfoList) {
@@ -137,6 +137,7 @@ class ListVocabularyGroupsAdapter(
                 return filterResults
             }
 
+            @SuppressLint("NotifyDataSetChanged")
             @Suppress("UNCHECKED_CAST")
             override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
                 val result = results?.values as ArrayList<VocabularyGroup>

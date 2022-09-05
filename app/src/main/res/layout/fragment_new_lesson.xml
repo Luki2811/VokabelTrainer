@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.create.CreateNewLessonFragment">
+    tools:context=".ui.manage.ManageLessonFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/view"
+        app:layout_constraintBottom_toTopOf="@+id/dividerNewLesson"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp">
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/buttonAddVocabularyGroupToLesson"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewSelectedVocabularyGroups">
@@ -131,17 +131,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/autoCompleteTextVocabularyGroupsLayout" />
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonAddVocabularyGroupToLesson"
-                style="@style/Widget.Material3.Button.IconButton"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
-                android:contentDescription="@string/plus"
-                android:src="@drawable/ic_outline_add_24"
+                app:contentDescription="@string/plus"
+                app:icon="@drawable/ic_outline_add_24"
                 app:layout_constraintBottom_toBottomOf="@+id/autoCompleteTextVocabularyGroupsLayout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/autoCompleteTextVocabularyGroupsLayout" />
+                app:layout_constraintTop_toTopOf="@+id/autoCompleteTextVocabularyGroupsLayout"
+                app:layout_constraintVertical_bias="1.0" />
 
             <TextView
                 android:id="@+id/textViewNewLessonTypesOfLesson"
@@ -212,7 +213,7 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -226,12 +227,11 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 
-    <View
-        android:id="@+id/view"
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/dividerNewLesson"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/Gray"
         app:layout_constraintBottom_toTopOf="@id/button_next"
         tools:layout_editor_absoluteX="0dp" />
 

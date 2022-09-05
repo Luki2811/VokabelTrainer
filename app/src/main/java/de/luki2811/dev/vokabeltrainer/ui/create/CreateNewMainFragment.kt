@@ -22,6 +22,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
@@ -32,6 +33,7 @@ import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.Importer
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateNewMainBinding
+import de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment
 import java.io.IOException
 import java.net.*
 import javax.net.ssl.HttpsURLConnection
@@ -62,7 +64,7 @@ class CreateNewMainFragment : Fragment() {
                 scanner.process(image)
                     .addOnSuccessListener { barcodes ->
                         if(barcodes.isNullOrEmpty()){
-                            Toast.makeText(requireContext(), "No barcodes found", Toast.LENGTH_LONG).show()
+                            Toast.makeText(requireContext(), getString(R.string.err_no_barcode_found), Toast.LENGTH_LONG).show()
                         }else{
                             barcodes.forEach {
                                 if(it.rawValue.isNullOrEmpty()) {
@@ -74,7 +76,11 @@ class CreateNewMainFragment : Fragment() {
                         }
                     }
                     .addOnFailureListener {
-                        Toast.makeText(requireContext(), "Failure", Toast.LENGTH_LONG).show()
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setMessage(it.localizedMessage)
+                            .setIcon(R.drawable.ic_outline_error_24)
+                            .setTitle(R.string.err)
+                            .setPositiveButton(R.string.ok){ _, _ -> }
                     }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -82,18 +88,16 @@ class CreateNewMainFragment : Fragment() {
         } else { Log.d("PhotoPicker", "No media selected") }
     }
 
-    private val resultLauncherFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        result ->
+    private val resultLauncherFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             val intent = result.data
             setDataAndSetupViews(AppFile.loadFromFile(intent?.data!!, requireActivity().contentResolver))
         } else {
-            Toast.makeText(requireContext(), getString(R.string.err_file_not_found), Toast.LENGTH_LONG).show()
+            Log.d("FilePicker", "No file selected or file not found")
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentCreateNewMainBinding.inflate(inflater, container, false)
 
         // Handle files
@@ -130,7 +134,7 @@ class CreateNewMainFragment : Fragment() {
         }
 
         binding.buttonCreateLesson.setOnClickListener {
-            findNavController().navigate(R.id.action_createNewMainFragment_to_newLessonFragment)
+            findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = ManageLessonFragment.MODE_CREATE))
         }
         binding.buttonCreateVocabularyGroup.setOnClickListener {
             findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(null, NewVocabularyGroupFragment.MODE_CREATE))
@@ -182,7 +186,12 @@ class CreateNewMainFragment : Fragment() {
                             }
                             .addOnCanceledListener { Log.i("GmsBarcodeScanning","Canceled") }
                             .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Failure - Wait for a while and try again", Toast.LENGTH_LONG).show()
+                                MaterialAlertDialogBuilder(requireContext())
+                                    .setIcon(R.drawable.ic_outline_error_24)
+                                    .setTitle(R.string.err)
+                                    .setMessage(e.localizedMessage)
+                                    .setPositiveButton(R.string.ok) { _, _ -> }
+                                    .show()
                                 e.printStackTrace()
                             }
                     }

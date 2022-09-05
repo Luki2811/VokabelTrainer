@@ -36,8 +36,6 @@ class VocabularyWord() {
         return knownWordsList
     }
 
-    fun equalsVocabularyWord(word: VocabularyWord, controlAll: Boolean = false) = this.getJson(controlAll).toString() == word.getJson(controlAll).toString()
-
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (this === other) return true

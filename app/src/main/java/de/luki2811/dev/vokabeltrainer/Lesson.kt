@@ -102,6 +102,22 @@ class Lesson {
     }
 
     /**
+     * @return converted name as file name
+     */
+    fun getShareFileName(): String{
+        val stringBuilder = StringBuilder()
+        for(i in name.indices){
+            if(name[i] == '/' || name[i] == ' ' || name[i] == '\\' || name[i] == '\"' || name[i] == '|' || name[i] == '*' || name[i] == '?' ||
+                name[i] == '<' || name[i] == '>' || name[i] == ':' || name[i] == '+' || name[i] == '[' || name[i] == ']' || name[i] == '\'' ||
+                name[i] == ':' || name[i] == ';' || name[i] == '.'){
+                stringBuilder.append("_")
+            }else
+                stringBuilder.append(name[i].lowercase())
+        }
+        return stringBuilder.apply { append("_les.json") }.toString()
+    }
+
+    /**
      * Saves a lesson with name and ID in the index
      */
     fun saveInIndex(){

@@ -22,10 +22,8 @@
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/leave" />
 
-
-    <ProgressBar
+    <com.google.android.material.progressindicator.LinearProgressIndicator
         android:id="@+id/progressBarPractice"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
@@ -34,7 +32,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/buttonExitPractice"
-        app:layout_constraintTop_toTopOf="@+id/buttonExitPractice" />
+        app:layout_constraintTop_toTopOf="@+id/buttonExitPractice"
+        app:trackCornerRadius="5dp" />
 
     <TextView
         android:id="@+id/textViewPracticeInfoMistake"
@@ -64,7 +63,7 @@
         android:id="@+id/textViewPracticeCorrectInRow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
+        android:layout_marginBottom="8dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/progressBarPractice"
         app:layout_constraintEnd_toEndOf="@+id/progressBarPractice"

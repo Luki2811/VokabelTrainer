@@ -27,7 +27,7 @@ android {
             minSdk 27
             targetSdk 33
             versionCode = code
-            versionName = "0.0.1 (" + code + ")"
+            versionName = "0.1.0 (" + code + ")"
 
             resConfigs("en", "de")
 
@@ -54,6 +54,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'de.luki2811.dev.vokabeltrainer'
 }
 
 dependencies {
@@ -62,7 +63,7 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.0-alpha02'
     implementation 'androidx.appcompat:appcompat:1.6.0-beta01'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha03'
-    implementation 'com.google.android.material:material:1.7.0-rc01'
+    implementation 'com.google.android.material:material:1.8.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.core:core-ktx:1.9.0-rc01'
     implementation 'io.github.g0dkar:qrcode-kotlin-android:3.2.0'

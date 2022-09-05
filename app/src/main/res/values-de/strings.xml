@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Vokabel Trainer</string>
+    <string name="app_name">Vokabeltrainer</string>
     <string name="close">Schließen</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name der Lektion</string>
@@ -32,7 +32,7 @@
     <string name="wrong">Falsch</string>
     <string name="incorrect">Inkorrekt</string>
     <string name="solution">Lösung:</string>
-    <string name="wrong_the_correct_solution_is">Falsch ! Die Lösung ist: \"%1$s\"</string>
+    <string name="wrong_the_correct_solution_is">Falsch! Die Lösung ist: \"%1$s\"</string>
     <string name="correct_in_percent">%1$d %%</string>
     <string name="finish_lesson">Übung geschafft</string>
     <string name="voc_in">Vokabel auf %1$s</string>
@@ -45,7 +45,7 @@
     <string name="import_lesson">Importieren aus Datei</string>
     <string name="err_could_not_import_lesson">Fehler: Lektion konnte nicht erstellt werden !</string>
     <string name="import_lesson_successful">Neue Lektion erfolgreich importiert !</string>
-    <string name="err_no_permission">Fehler: Keine Berechtigung !</string>
+    <string name="err_no_permission">Fehler: Keine Berechtigung!</string>
     <string name="import_">importieren</string>
     <string name="err_name_too_long_max">Fehler: Name zu lang ! (max. %1$d Zeichen)</string>
     <string name="settings_main_daily_xp_objective">Tägliches Tagesziel</string>
@@ -60,7 +60,6 @@
     <string name="edit">Bearbeiten</string>
     <string name="share">Teilen</string>
     <string name="remove_vocabularyWord">Vokabel entfernen</string>
-    <string name="remove_vocabularyGroup">Vokabelgruppe löschen</string>
     <string name="save">Speichern</string>
     <string name="err_could_not_delete_vocabulary_group">Fehler: Vokabelgruppe konnte nicht gelöscht werden</string>
     <string name="do_you_really_want_to_delete_vocabulary_group">Möchten sie wirklich die Vokabelgruppe löschen ??</string>
@@ -87,7 +86,7 @@
     <string name="leave">Verlassen</string>
     <string name="look_for_case">Achte auf Groß- und Kleinschreibung !</string>
     <string name="word_previous_mistake">Vorheriger Fehler</string>
-    <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet(en) weniger Vokabeln als Anzahl von Aufgaben. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen \nFehlercode: 001</string>
+    <string name="err_lesson_enough_words_long"> Die ausgeählte(n) Vokabelgruppe(n) beinhaltet(en) weniger Vokabeln als Anzahl von Aufgaben. Füge weitere Vokabelgruppen hinzu oder erweitere deine ausgewählten Vokabelgruppen.</string>
     <string name="import_from_internet">Importieren aus URL</string>
     <string name="import_from_qr_code">Importieren aus QR-Code</string>
     <string name="import_from_file">Importieren aus Datei</string>
@@ -132,14 +131,13 @@
     <string name="settings_reminder_streak">Erinnerung an Streak</string>
     <string name="pick_time">Zeit wählen</string>
     <string name="when_do_you_want_to_be_remembered">Wann willst du erinnert werden ??</string>
-    <string name="err_no_permission_reminder">Fehler: Keine Berechtigung um eine Erinnerung zur ausgewählten bestimmten Uhrzeit zu erstellen. \nFehlercode: 002</string>
+    <string name="err_no_permission_reminder">Fehler: Keine Berechtigung um eine Erinnerung zur ausgewählten bestimmten Uhrzeit zu erstellen.</string>
     <string name="mistakes_overview">Fehlerübersicht</string>
     <string name="finish">Fertig</string>
     <string name="practice_mistakes">Fehler üben</string>
     <string name="ok">Ok</string>
     <string name="number_of_exercises">Anzahl Aufgaben</string>
-    <string name="create_lesson_or_vocabulary_group">....</string>
-    <string name="correct_in_row">%1$d hintereinander richtig</string>
+    <string name="correct_in_row">%1$d in Folge richtig</string>
     <string name="number_of_mistakes">Anzahl von Fehlern: %1$d</string>
     <string name="language">Sprache</string>
     <string name="start">Start</string>
@@ -159,11 +157,33 @@
     <string name="mode_1">Modus 1</string>
     <string name="mode_2">Modus 2</string>
     <string name="take_photo">Foto machen</string>
-    <string name="has_title">Hat einen Titel</string>
+    <string name="has_title">Besitzt einen Titel</string>
     <string name="to_correct_words">Korrigiere Wörter</string>
     <string name="remove_points">Entferne Punkte</string>
     <string name="reload_x_cut">xCut neu setzen</string>
     <string name="err_too_many_vocabulary_groups_to_create_qr_code">Fehler: Zu viele (>25) Wörter in Vokabelgruppe um QR-Code zu erstellen</string>
     <string name="err_could_not_load_image">Fehler: Bild konnte nicht geladen werden</string>
     <string name="err_cant_load_qr_code">Fehler: QR-Code konnte nicht geladen werden</string>
+    <string name="streak_widget_description">Ein paar Informationen zu deinem Streak</string>
+    <string name="qr_code_correction_level">QR-Code Korrekturlevel</string>
+    <string name="word_already_in_vocabulary_group">Wort bereits in Vokabelgruppe</string>
+    <string name="err_cant_create_qr_code">Fehler: QR-Code konnte nicht erstellt werden</string>
+    <string name="search">Suche</string>
+    <string name="general">Allgemein</string>
+    <string name="create_vocabulary_group_from_image_step_1">Wähle das Bild mit der Vokabelliste.<b>Wichtig</b>: Die Vokabeln müssen in einer Liste strukturiert sein!</string>
+    <string name="create_vocabulary_group_from_image_step_2">Wähle den Importmodus:\n<b>Modus 1</b>: Für Listen mit großen Abständen zwischen jeder Vokabel UND Vokabeln über eine oder mehrere Zeile(n)\n<b>Modus 2</b>: Für Seiten mit kleinerem Abstand zwischen jeder Vokabel UND Vokabeln in einer Zeile (Benutzt xCut) \n<b>Beachte</b>: Beide brauchen einen gut-großen Abstand zwischen den zwei Spalten (Säulen) in jeder Zeile</string>
+    <string name="create_vocabulary_group_from_image_step_3">Setze den xCut (blaue Linie)\nAlle <i>bekannten</i> Wörter müssen <b>vor</b> der blauen Linie starten und alle <i>neuen</i> Wörter müssen <b>nach</b> der blauen Linie starten</string>
+    <string name="create_vocabulary_group_from_image_step_4">Weitere Einstellungen:\n<b>Punkte entfernen</b>:\nbspw.: \"all of…\" zu \"all of\"\n<b>Korrigiere Wörter</b>: Versucht häufige Fehler zu beheben \nbspw.: \"|e\" zu \"le\" oder \"Cto)\" zu \"(to)\"\n<b>Besitzt einen Titel</b>: Der erste Paragraph wird als Name der Vokabelgruppe verwendet.</string>
+    <string name="duration_shown_in_streak_chart_in_days">Zeitraum gezeigt im Streak Diagramm in Tagen</string>
+    <string name="increase_brightness_when_qr_code_shown">Erhöhen der Bildschirmhelligkeit, wenn ein QR-Code angezeigt wird</string>
+    <string name="advanced_setting">Fortgeschrittene Einstellung</string>
+    <string name="err_image_too_small">Fehler: BIld zu klein</string>
+    <string name="err_could_not_identify_known_language">Fehler: Bekannte Sprache konnte nicht erkannt werden</string>
+    <string name="err_could_not_identify_new_language">Fehler: Neue Sprache konnte nicht erkannt werden</string>
+    <string name="err_no_webbrowser">Fehler: Kein Webbrowser</string>
+    <string name="err_missing_vocabulary_group">Fehler: Vokabelgruppe fehlt</string>
+    <string name="create_lesson_or_vocabulary_group">Erstelle oder importiere eine Lektion/Vokabelgruppe. Tippe auf das \"+\" um zu starten.</string>
+    <string name="err_no_barcode_found">Fehler: Kein Barcode gefunden</string>
+    <string name="wait_until_qr_code_is_generated">Warte bis QR-Code erstellt wurde</string>
+    <string name="err_type_not_valid">Fehler: Typ (%1$s) ist nicht gültig!</string>
 </resources>

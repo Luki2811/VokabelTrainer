@@ -99,13 +99,6 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <action
-            android:id="@+id/action_createNewMainFragment_to_newLessonFragment"
-            app:destination="@id/newLessonFragment"
-            app:enterAnim="@anim/nav_default_enter_anim"
-            app:exitAnim="@anim/nav_default_exit_anim"
-            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="dataToImport"
             app:argType="android.net.Uri"
@@ -118,12 +111,10 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_createNewMainFragment_to_manageLessonFragment"
+            app:destination="@id/manageLessonFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/newLessonFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.CreateNewLessonFragment"
-        android:label="fragment_new_lesson"
-        tools:layout="@layout/fragment_new_lesson" />
     <fragment
         android:id="@+id/newVocabularyGroupFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment"
@@ -213,6 +204,10 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"  />
+        <argument
+            android:name="mode"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
     <action
         android:id="@+id/action_global_createNewMainFragment"

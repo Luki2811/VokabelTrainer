@@ -29,9 +29,10 @@ class StreakFragment : Fragment() {
 
         // set Streak
         val streak = Streak(requireContext())
-
-        binding.progressBarFinishedLesson.max = streak.xpGoal
-        binding.progressBarFinishedLesson.progress = streak.xpToday
+        binding.progressBarFinishedLesson.apply {
+            setProgress(streak.xpToday, true)
+            max = streak.xpGoal
+        }
         binding.textViewMainProgressStreak.text = getString(R.string.streak_have_of_goal, streak.xpToday, streak.xpGoal)
         if (streak.xpToday < streak.xpGoal) binding.textViewMainStreakBottom.text = getString(
             R.string.streak_left_to_do_for_next_day,

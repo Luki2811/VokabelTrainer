@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.os.BuildCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -103,7 +102,7 @@ class NewVocabularyGroupFragment : Fragment() {
         val languageKnown = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.textInputLanguageKnown.text.toString()}
 
         if(languageKnown == null || languageNew == null) {
-            Toast.makeText(requireContext(), "Fehler: Sprache nicht gefunden !!", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), R.string.err_lang_not_available, Toast.LENGTH_LONG).show()
             return
         }
 

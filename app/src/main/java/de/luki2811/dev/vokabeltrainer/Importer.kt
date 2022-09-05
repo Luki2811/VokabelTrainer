@@ -29,7 +29,7 @@ class Importer(private val data: String, val context: Context) {
 
     }
 
-    fun tryVocabularyGroup(cancelWithWrongType: Boolean = true): Int{
+    private fun tryVocabularyGroup(cancelWithWrongType: Boolean = true): Int{
         if(data.isEmpty())
             return IMPORT_EMPTY
         try {
@@ -64,7 +64,7 @@ class Importer(private val data: String, val context: Context) {
         }
     }
 
-    fun tryLesson(): Int{
+    private fun tryLesson(): Int{
         if(data.isEmpty())
             return IMPORT_EMPTY
         try {

@@ -20,6 +20,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
 import java.util.*
@@ -94,7 +95,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardEdit.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
             setOnClickListener {
-                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(dataSetFilter[position].getAsJson().toString()))
+                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[position].getAsJson().toString(), mode = ManageLessonFragment.MODE_EDIT))
             }
         }
 
@@ -146,8 +147,8 @@ class ListLessonsLearnAdapter(
     }
 
     private fun share(position: Int){
-        File.createTempFile("lessonToExport.json", null, context.cacheDir)
-        val cacheFile = File(context.cacheDir,"lessonToExport.json")
+        File.createTempFile(dataSetFilter[position].getShareFileName(), null, context.cacheDir)
+        val cacheFile = File(context.cacheDir, dataSetFilter[position].getShareFileName())
         AppFile.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
 
         val sharingIntent = Intent(Intent.ACTION_SEND)
@@ -158,7 +159,7 @@ class ListLessonsLearnAdapter(
         val resInfoList: List<ResolveInfo> = if (Build.VERSION.SDK_INT >= 33) {
             context.packageManager.queryIntentActivities(chooser, PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_DEFAULT_ONLY.toLong()))
         } else {
-            context.packageManager.queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+            context.packageManager.queryIntentActivities(chooser, PackageManager.GET_RESOLVED_FILTER)
         }
 
         for (resolveInfo in resInfoList) {

@@ -2,10 +2,12 @@ package de.luki2811.dev.vokabeltrainer.ui
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat.is24HourFormat
@@ -14,6 +16,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
@@ -26,6 +29,7 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
+import io.github.g0dkar.qrcode.ErrorCorrectionLevel
 import java.time.LocalTime
 import java.util.*
 import kotlin.math.roundToInt
@@ -73,10 +77,26 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSourcesFragment())
         }
 
+        binding.materialButton.apply {
+                setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                        data = if(settings.appLanguage == Locale.GERMAN)
+                            Uri.parse("https://de.wikipedia.org/wiki/QR-Code#Kapazit%C3%A4t_und_Fehlertoleranz")
+                        else
+                            Uri.parse("https://en.wikipedia.org/wiki/QR_code#Error_correction")
+                    }
+                    try {
+                        startActivity(intent)
+                    }catch (e: ActivityNotFoundException){
+                        e.printStackTrace()
+                        Toast.makeText(requireContext(), getText(R.string.err_no_webbrowser), Toast.LENGTH_LONG).show()
+                    }
+
+                }
+        }
 
         // Setup Views
-        val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, Streak.getStreakGoals())
         binding.menuStreakDailyObjectiveXPAutoComplete.setAdapter(adapter)
 
         binding.menuStreakDailyObjectiveXPAutoComplete.setOnItemClickListener { _, _, _, _ ->
@@ -132,25 +152,16 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
-        /** if(Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            binding.menuSettingsAppLanguageLayout.isEnabled = false
-            binding.menuSettingsAppLanguage.isEnabled = false
-        } **/
-
-        binding.menuSettingsAppLanguage.setText(settings.appLanguage.getDisplayLanguage(settings.appLanguage), false)
-
         val adapterLanguages = ArrayAdapter(
             requireContext(),
             R.layout.list_item_default,
-            arrayOf(
-                Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH),
-                Locale.GERMANY.getDisplayLanguage(Locale.GERMANY)
-            )
+            arrayOf(Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH), Locale.GERMANY.getDisplayLanguage(Locale.GERMANY))
         )
 
-        binding.menuSettingsAppLanguage.setAdapter(adapterLanguages)
-
-        binding.menuSettingsAppLanguage.setOnItemClickListener { _, _, _, _ ->
+        binding.menuSettingsAppLanguage.apply {
+            setText(settings.appLanguage.getDisplayLanguage(settings.appLanguage), false)
+            setAdapter(adapterLanguages)
+            setOnItemClickListener { _, _, _, _ ->
                 settings.appLanguage = when(binding.menuSettingsAppLanguage.text.toString()){
                     Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH) -> Locale.ENGLISH
                     Locale.GERMAN.getDisplayLanguage(Locale.GERMAN) -> Locale.GERMAN
@@ -159,6 +170,30 @@ class SettingsFragment : Fragment() {
                 saveSettings()
                 AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
             }
+        }
+
+
+        binding.menuSettingsQrCodeCorrectionLevel.apply {
+            val tempErrorCorrectionLevel = when(settings.correctionLevelQrCode.value){
+                ErrorCorrectionLevel.M.value -> "M"
+                ErrorCorrectionLevel.H.value -> "H"
+                ErrorCorrectionLevel.L.value -> "L"
+                ErrorCorrectionLevel.Q.value -> "Q"
+                else -> "M"
+            }
+            setText(tempErrorCorrectionLevel,false)
+            setAdapter(ArrayAdapter(requireContext(), R.layout.list_item_default, arrayOf("L","M","Q","H")))
+            setOnItemClickListener { _, _, _, _ ->
+                settings.correctionLevelQrCode = when(this.text.toString()){
+                    "L" -> ErrorCorrectionLevel.L
+                    "M" -> ErrorCorrectionLevel.M
+                    "Q" -> ErrorCorrectionLevel.Q
+                    "H" -> ErrorCorrectionLevel.H
+                    else -> ErrorCorrectionLevel.M
+                }
+                saveSettings()
+            }
+        }
 
         binding.switchSettingsNotificationStreak.isChecked = if(
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
@@ -289,20 +324,18 @@ class SettingsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // settings = Settings(requireContext())
-        val items = arrayListOf("10XP","20XP","30XP","40XP","50XP","60XP","70XP","80XP","90XP","100XP","110XP","120XP","130XP","140XP","150XP","160XP","170XP","180XP","190XP","200XP")
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, items)
+
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item_default, Streak.getStreakGoals())
         binding.menuStreakDailyObjectiveXPAutoComplete.setAdapter(adapter)
-        val adapterLanguages = ArrayAdapter(
-            requireContext(),
-            R.layout.list_item_default, arrayOf(
-                Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH),
-                Locale.GERMAN.getDisplayLanguage(Locale.GERMAN)
-            )
-        )
+
+        val adapterLanguages = ArrayAdapter(requireContext(), R.layout.list_item_default, arrayOf(Locale.ENGLISH.getDisplayLanguage(Locale.ENGLISH), Locale.GERMAN.getDisplayLanguage(Locale.GERMAN)))
         binding.menuSettingsAppLanguage.apply {
             setAdapter(adapterLanguages)
             setText(settings.appLanguage.getDisplayLanguage(settings.appLanguage), false)
+        }
+
+        binding.menuSettingsQrCodeCorrectionLevel.apply {
+            setAdapter(ArrayAdapter(requireContext(), R.layout.list_item_default, arrayOf("L","M","Q","H")))
         }
     }
 

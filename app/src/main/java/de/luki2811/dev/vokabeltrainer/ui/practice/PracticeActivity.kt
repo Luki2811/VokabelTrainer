@@ -111,16 +111,16 @@ class PracticeActivity : AppCompatActivity() {
                 mistake.addToFile(this)
             }
 
-            binding.progressBarPractice.progress = position
+            binding.progressBarPractice.setProgress(position, true)
             binding.progressBarPractice.max = numberOfExercises + mistakes.size
 
-            /** TODO: Add again after redesign of
+
             if(mode == MODE_PRACTICE_MISTAKES){
                 Mistake.loadAllFromFile(this).forEach {
-                    if(it.word.getJson().toString() == words[0].getJson().toString()) it.removeFromFile(this)
+                    if(it.word.getJson(false).toString() == words[0].getJson(false).toString()) it.removeFromFile(this)
                 }
             }
-            **/
+
             setNext()
         }
 
@@ -181,7 +181,6 @@ class PracticeActivity : AppCompatActivity() {
             val word: VocabularyWord = if(allVocabularyWords.all {alreadyUsedWords.contains(it) }){
                 Log.i("Practice", "Cleared alreadyUsedWords")
                 alreadyUsedWords.clear()
-                Toast.makeText(this, "clear alreadyUsedWords", Toast.LENGTH_SHORT).show()
                 allVocabularyWords.random()
             }else
                 allVocabularyWords.filter { !alreadyUsedWords.contains(it) }.random()
@@ -307,7 +306,7 @@ class PracticeActivity : AppCompatActivity() {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(wordAsJson = wordsInArray.toTypedArray(), settingsReadBoth = readOutBoth))
             }
             else -> {
-                Toast.makeText(applicationContext, "Type ($typeOfPractice) isn't valid", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext, getString(R.string.err_type_not_valid, typeOfPractice.toString()), Toast.LENGTH_LONG).show()
                 Log.e("Exception", "Type ($typeOfPractice) isn't valid -> return to MainActivity")
                 startActivity(Intent(applicationContext, MainActivity::class.java))
             }
@@ -339,7 +338,6 @@ class PracticeActivity : AppCompatActivity() {
         override fun run() {
             try {
                 timeInSeconds += 1
-               // Log.i("Runnable","statusChecker: $timeInSeconds")
             } finally {
                 handler.postDelayed(this, 1000L)
             }

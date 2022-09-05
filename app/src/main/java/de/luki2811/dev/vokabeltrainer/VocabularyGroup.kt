@@ -51,8 +51,6 @@ class VocabularyGroup {
 
         this.context = context
 
-
-
         try {
             val vocabularyTemp = ArrayList<VocabularyWord>()
             for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
@@ -72,12 +70,32 @@ class VocabularyGroup {
         }
     }
 
-    /** fun addVocabularyFromVocabularyGroup(vocabularyGroup: VocabularyGroup){
-        val vocabulary = ArrayList<VocabularyWord>()
-        vocabulary.addAll(this.vocabulary)
-        vocabulary.addAll(vocabularyGroup.vocabulary)
-        this.vocabulary = vocabulary.toTypedArray()
-    } **/
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (this === other) return true
+        return if (other is VocabularyGroup){
+            this.getAsJson().toString() == other.getAsJson().toString()
+        }else{
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return getAsJson().hashCode()
+    }
+
+    fun getShareFileName(): String{
+        val stringBuilder = StringBuilder()
+        for(i in name.indices){
+            if(name[i] == '/' || name[i] == ' ' || name[i] == '\\' || name[i] == '\"' || name[i] == '|' || name[i] == '*' || name[i] == '?' ||
+                name[i] == '<' || name[i] == '>' || name[i] == ':' || name[i] == '+' || name[i] == '[' || name[i] == ']' || name[i] == '\'' ||
+                name[i] == ':' || name[i] == ';' || name[i] == '.'){
+                stringBuilder.append("_")
+            }else
+                stringBuilder.append(name[i].lowercase())
+        }
+        return stringBuilder.apply { append("_voc.json") }.toString()
+    }
 
     fun refreshNameInIndex(){
         val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))

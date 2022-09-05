@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider
 import androidx.core.graphics.set
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.mlkit.nl.languageid.LanguageIdentification
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.Text
@@ -73,13 +74,17 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
 
     private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){ granted ->
         if(granted){
-            val timeStamp = SimpleDateFormat.getDateTimeInstance().format(Date())
-            uriOfPhoto = FileProvider.getUriForFile(requireContext(),  "${requireActivity().packageName}.provider" , File.createTempFile("JPEG_${timeStamp}_", ".jpg", requireContext().cacheDir))
-            takePhoto.launch(uriOfPhoto)
-        }
-        else{
-            Toast.makeText(requireContext(), R.string.err_no_permission, Toast.LENGTH_LONG).show()
-        }
+            Thread{
+                val timeStamp = SimpleDateFormat.getDateTimeInstance().format(Date())
+                val cacheFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", requireContext().cacheDir)
+                cacheFile.deleteOnExit()
+                uriOfPhoto = FileProvider.getUriForFile(requireContext(),  "${requireActivity().packageName}.provider" , cacheFile)
+                requireActivity().runOnUiThread {
+                    takePhoto.launch(uriOfPhoto)
+                }
+            }.start()
+
+        } else{ Toast.makeText(requireContext(), R.string.err_no_permission, Toast.LENGTH_LONG).show() }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -129,7 +134,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
     private fun checkAndContinue(imageInput: InputImage){
         var bitmap = imageInput.bitmapInternal!!
         if(bitmap.width < 100 || bitmap.height < 50){
-            Toast.makeText(requireContext(), "Image too small", Toast.LENGTH_LONG).show()
+            Toast.makeText(requireContext(), getString(R.string.err_image_too_small), Toast.LENGTH_LONG).show()
             return
         }
 
@@ -194,8 +199,13 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                 createVocabulary(visionText)
             }
             .addOnFailureListener { e ->
+                MaterialAlertDialogBuilder(requireContext())
+                    .setIcon(R.drawable.ic_outline_error_24)
+                    .setTitle(R.string.err)
+                    .setMessage(e.localizedMessage)
+                    .setPositiveButton(R.string.ok) { _, _ -> }
+                    .show()
                 e.printStackTrace()
-                Toast.makeText(requireContext(), getString(R.string.err), Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
     }
@@ -216,7 +226,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                 text.textBlocks.forEach { block ->
                     if(hasTitle && index == -1){
                         name = block.text
-                        index += 1
+                        index = 0
                     }else{
                         if(isLoadingNewWord){
                             newWords.add(index, block.text)
@@ -299,7 +309,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                 addNewLanguageToVocabulary(vocGroup)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Couldn't identify language for known words", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.err_could_not_identify_known_language), Toast.LENGTH_LONG).show()
                 e.printStackTrace()
             }
     }
@@ -313,7 +323,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
         languageIdentifier.identifyLanguage(sb.toString())
             .addOnSuccessListener { languageCode ->
                 if (languageCode == "und") {
-                    Log.w("IdentifyLanguage","Couldn't identify language for new words")
+                    Log.w("IdentifyLanguage","Couldn't identify language for new words" )
                 }
                 vocGroup.forEach {
                     it.languageNew = Locale(languageCode)
@@ -321,7 +331,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                 createVocabularyGroup(vocGroup)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Couldn't identify language for new words", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(R.string.err_could_not_identify_new_language) , Toast.LENGTH_LONG).show()
                 e.printStackTrace()
             }
     }

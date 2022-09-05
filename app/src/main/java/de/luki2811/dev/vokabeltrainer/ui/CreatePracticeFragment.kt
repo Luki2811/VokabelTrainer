@@ -9,7 +9,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.Mistake
-import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.adapter.ListMistakesAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreatePracticeBinding
@@ -38,7 +37,7 @@ class CreatePracticeFragment : Fragment() {
             adapter = ListMistakesAdapter(allMistakes, -1, requireContext())
         }
 
-        if(allMistakes.size < 5){
+        if(allMistakes.size < 3){
             binding.buttonCreateMistakeLesson.isEnabled = false
             binding.sliderCreatePracticeNumberOfExercises.isEnabled = false
         }else{

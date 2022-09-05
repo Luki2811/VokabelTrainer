@@ -1,6 +1,8 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.os.Build
+import io.github.g0dkar.qrcode.ErrorCorrectionLevel
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
@@ -26,7 +28,7 @@ class Settings(var context: Context) {
         jsonObject.getBoolean("useDynamicColors")
     }catch (e: JSONException){
         e.printStackTrace()
-        true
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     }
     var reminderForStreak: Boolean = try {
         jsonObject.getBoolean("reminderForStreak")
@@ -68,6 +70,17 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         true
     }
+    var correctionLevelQrCode: ErrorCorrectionLevel = try {
+        when(jsonObject.getInt("correctionLevelQrCode")){
+            ErrorCorrectionLevel.L.value -> ErrorCorrectionLevel.L
+            ErrorCorrectionLevel.M.value -> ErrorCorrectionLevel.M
+            ErrorCorrectionLevel.Q.value -> ErrorCorrectionLevel.Q
+            ErrorCorrectionLevel.H.value -> ErrorCorrectionLevel.H
+            else -> ErrorCorrectionLevel.M
+        }
+    }catch (e: JSONException){
+        ErrorCorrectionLevel.M
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()
@@ -81,6 +94,7 @@ class Settings(var context: Context) {
             .put("readOnlyNewWordsPracticeMistake", readOnlyNewWordsPracticeMistake)
             .put("streakChartLengthInDays", streakChartLengthInDays)
             .put("increaseScreenBrightness", increaseScreenBrightness)
+            .put("correctionLevelQrCode", correctionLevelQrCode.value)
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
     }
 }

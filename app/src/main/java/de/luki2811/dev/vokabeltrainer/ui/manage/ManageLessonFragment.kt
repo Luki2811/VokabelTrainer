@@ -11,70 +11,75 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
-import de.luki2811.dev.vokabeltrainer.AppFile
-import de.luki2811.dev.vokabeltrainer.Lesson
-import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
+import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
 import org.json.JSONObject
 import java.io.File
 
 class ManageLessonFragment: Fragment() {
     private var _binding: FragmentNewLessonBinding? = null
     private val binding get() = _binding!!
-    private lateinit var arrayList: ArrayList<String>
-    private var arrayListOfVocabularyGroupNames = ArrayList<String>()
-    private var arrayListGroup = ArrayList<String>()
-    private lateinit var lesson: Lesson
+
     private val args: ManageLessonFragmentArgs by navArgs()
+
+    private val allVocabularyGroups = ArrayList<VocabularyGroup>()
+    private val vocabularyGroupsSelected = ArrayList<VocabularyGroup>()
+    private lateinit var lesson: Lesson
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentNewLessonBinding.inflate(layoutInflater, container, false)
-        lesson = Lesson(JSONObject(args.lessonJson), requireContext())
 
-        binding.buttonNext.setOnClickListener { saveLesson() }
-        binding.buttonNext.text = getString(R.string.save)
+        binding.buttonNext.apply {
+            setOnClickListener { saveLesson() }
+            text = if(args.mode == MODE_EDIT) getString(R.string.save) else getString(R.string.to_finish)
+        }
 
         val index = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
 
-        arrayList = ArrayList()
+        allVocabularyGroups.clear()
         for(i in 0 until index.getJSONArray("index").length()) {
-            arrayList.add(index.getJSONArray("index").getJSONObject(i).getString("name"))
-        }
-        val adapter = ArrayAdapter(requireContext(), R.layout.default_list_item, arrayList.toTypedArray().sortedArray())
-        binding.autoCompleteTextVocabularyGroups.setAdapter(adapter)
-
-        for(indexArray in 0 until index.getJSONArray("index").length())
-            if(lesson.vocabularyGroupIds.contains(index.getJSONArray("index").getJSONObject(indexArray).getInt("id"))) {
-                arrayListOfVocabularyGroupNames.add(index.getJSONArray("index").getJSONObject(indexArray).getString("name"))
-            }
-
-
-        for(i in arrayListOfVocabularyGroupNames){
-            addChipToGroup(i)
-            arrayListGroup.add(i)
+            VocabularyGroup.loadFromFileWithId(Id(requireContext(),index.getJSONArray("index").getJSONObject(i).getInt("id")), requireContext())?.let { allVocabularyGroups.add(it) }
         }
 
         binding.buttonAddVocabularyGroupToLesson.setOnClickListener {
-            for (i in arrayList){
-                if(binding.autoCompleteTextVocabularyGroups.text.toString() == i && !arrayListGroup.contains(binding.autoCompleteTextVocabularyGroups.text.toString())){
-                    addChipToGroup(i)
-                    arrayListGroup.add(i)
+            allVocabularyGroups.forEach {
+                if(binding.autoCompleteTextVocabularyGroups.text.toString() == it.name && !vocabularyGroupsSelected.contains(it)){
+                    addChipToGroup(it)
+                    vocabularyGroupsSelected.add(it)
                     binding.autoCompleteTextVocabularyGroups.text = null
                 }
             }
+            refreshList()
         }
 
-        binding.textLessonName.setText(lesson.name)
-        binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
-        binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askOnlyNewWords
+        if(args.mode == MODE_EDIT){
+            lesson = Lesson(JSONObject(args.lessonJson), requireContext())
+
+            vocabularyGroupsSelected.clear()
+            for(indexArray in 0 until index.getJSONArray("index").length())
+                if(lesson.vocabularyGroupIds.contains(index.getJSONArray("index").getJSONObject(indexArray).getInt("id"))) {
+                    VocabularyGroup.loadFromFileWithId(Id(requireContext(), index.getJSONArray("index").getJSONObject(indexArray).getInt("id")),requireContext())?.let { vocabularyGroupsSelected.add(it) }
+                }
+
+            vocabularyGroupsSelected.forEach{
+                addChipToGroup(it)
+            }
+
+            binding.textLessonName.setText(lesson.name)
+            binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
+            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askOnlyNewWords
 
 
-        binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
-        binding.chipTypeLesson2.isChecked = lesson.typesOfLesson.contains(2)
-        binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
+            binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
+            binding.chipTypeLesson2.isChecked = lesson.typesOfLesson.contains(2)
+            binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
 
-        binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
+            binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
+        }
 
+        refreshList()
         return binding.root
     }
 
@@ -109,10 +114,8 @@ class ManageLessonFragment: Fragment() {
         // Settings
 
         // If selected is it false
-        val settingReadOutBoth: Boolean = !binding.switchLessonSettingsReadOutBoth.isChecked
-
-        val settingAskOnlyNewWords: Boolean = binding.switchLessonSettingsAskOnlyNewWords.isChecked
-
+        val settingReadOutBoth = !binding.switchLessonSettingsReadOutBoth.isChecked
+        val settingAskOnlyNewWords = binding.switchLessonSettingsAskOnlyNewWords.isChecked
         val numberOfExercises = binding.sliderCreateLessonNumberExercises.value.toInt()
 
         val typesOfLesson: ArrayList<Int> = arrayListOf()
@@ -128,49 +131,68 @@ class ManageLessonFragment: Fragment() {
             return
         }
 
-
-        val vocabularyGroupsIds: ArrayList<Int> = ArrayList()
-
-        val index = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir,AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
-
-        if(arrayListGroup.isEmpty()){
-            Toast.makeText(requireContext(), "Vokabelgruppe fehlt", Toast.LENGTH_SHORT).show()
+        if(vocabularyGroupsSelected.isEmpty()){
+            Toast.makeText(requireContext(), R.string.err_missing_vocabulary_group, Toast.LENGTH_SHORT).show()
             return
         }
 
-
-        for(i in 0 until index.getJSONArray("index").length()) {
-            if(arrayListGroup.contains(index.getJSONArray("index").getJSONObject(i).getString("name"))){
-                vocabularyGroupsIds.add(index.getJSONArray("index").getJSONObject(i).getInt("id"))
-            }
+        val vocabularyGroupsIds = ArrayList<Int>()
+        vocabularyGroupsSelected.forEach {
+            vocabularyGroupsIds.add(it.id.number)
         }
 
-        lesson.name = name
-        lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
-        lesson.settingReadOutBoth = settingReadOutBoth
-        lesson.askOnlyNewWords = settingAskOnlyNewWords
-        lesson.typesOfLesson = typesOfLesson
-        lesson.numberOfExercises = numberOfExercises
+        if(args.mode == MODE_CREATE){
+            lesson = Lesson(name, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson, numberOfExercises = numberOfExercises)
+            lesson.saveInIndex()
+        }else{
+            lesson.name = name
+            lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
+            lesson.settingReadOutBoth = settingReadOutBoth
+            lesson.askOnlyNewWords = settingAskOnlyNewWords
+            lesson.typesOfLesson = typesOfLesson
+            lesson.numberOfExercises = numberOfExercises
+        }
 
         lesson.saveInFile()
         findNavController().navigate(ManageLessonFragmentDirections.actionManageLessonFragmentToNavigationMain())
     }
 
-    private fun addChipToGroup(groupName: String){
+    private fun addChipToGroup(vocabularyGroup: VocabularyGroup){
         val chip = Chip(requireContext()).apply {
-            text = groupName
+            text = vocabularyGroup.name
             chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.book_open_page_variant_outline)
             isCloseIconVisible = true
             isChipIconVisible = false
             setTextAppearanceResource(R.style.chipText)
             isClickable = true
             isCheckable = false
+
             setOnCloseIconClickListener {
-                arrayListGroup.remove(groupName)
+                vocabularyGroupsSelected.remove(vocabularyGroup)
                 binding.chipGroupSelectedVocabularyGroups.removeView(this as View)
+                refreshList()
+            }
+            setOnClickListener {
+                findNavController().navigate(ManageLessonFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), keyMode = NewVocabularyGroupFragment.MODE_EDIT))
             }
         }
 
         binding.chipGroupSelectedVocabularyGroups.addView(chip as View)
+    }
+
+    private fun refreshList(){
+        val names = ArrayList<String>()
+        allVocabularyGroups.filter { !vocabularyGroupsSelected.contains(it) }.forEach {
+            names.add(it.name)
+        }
+
+        binding.autoCompleteTextVocabularyGroups.setAdapter(ArrayAdapter(requireContext(), R.layout.default_list_item, names.toTypedArray().sortedBy { it }))
+
+    }
+
+    companion object{
+        const val MODE_CREATE = 0
+        const val MODE_EDIT = 1
+        // const val MODE_IMPORT = 2
     }
 }

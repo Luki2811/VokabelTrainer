@@ -1,14 +1,12 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
@@ -36,12 +34,6 @@ class LearnFragment : Fragment() {
         val indexAsJson = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
         val arrayList = ArrayList<Lesson>()
 
-        setFragmentResultListener("refreshList"){ _, _ ->
-            Log.e("1","Executed")
-            /** adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
-            adapter.notifyDataSetChanged() **/
-        }
-
         try {
             for(i in 0 until indexAsJson.getJSONArray("index").length()){
                 var file = File(requireContext().filesDir, "lessons")
@@ -54,10 +46,15 @@ class LearnFragment : Fragment() {
             e.printStackTrace()
         }
 
+        binding.buttonPracticeMistakes.setOnClickListener {
+            findNavController().navigate(R.id.action_global_createPracticeFragment)
+        }
+
         if(arrayList.isEmpty()){
             binding.searchViewLearnLayout.visibility = View.GONE
             binding.searchViewLearn.visibility = View.GONE
             binding.listOfLessonsCards.visibility = View.GONE
+            binding.buttonPracticeMistakes.visibility = View.GONE
             binding.textViewLearnFragmentInfo.visibility = View.VISIBLE
             binding.textViewLearnFragmentInfo.text = getString(R.string.create_lesson_or_vocabulary_group)
 

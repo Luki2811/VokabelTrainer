@@ -16,7 +16,6 @@ class Mistake {
     var lastTimeWrong: LocalDate = LocalDate.now()
     var position: Int = -1
     var isRepeated = false
-    var alreadyUsed = false
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
@@ -45,7 +44,7 @@ class Mistake {
         this.position = position
     }
 
-    fun getAsJson(): JSONObject {
+    fun getAsJson(ignoreDate: Boolean = false): JSONObject {
         val wordAsJson = word.getJson()
         wordAsJson.remove("isWrong")
         wordAsJson.remove("typeWrong")
@@ -53,33 +52,64 @@ class Mistake {
 
         val dateAsString = lastTimeWrong.format(dateTimeFormatter)
 
-        return JSONObject()
-            .put("vocabularyWord", wordAsJson)
-            .put("wrongAnswer", wrongAnswer)
-            .put("typeOfPractice", typeOfPractice)
-            .put("lastTimeWrong", dateAsString)
-            .put("position", position)
+        return if(ignoreDate){
+            JSONObject()
+                .put("vocabularyWord", wordAsJson)
+                .put("wrongAnswer", wrongAnswer)
+                .put("typeOfPractice", typeOfPractice)
+                .put("position", position)
+        }else{
+            JSONObject()
+                .put("vocabularyWord", wordAsJson)
+                .put("wrongAnswer", wrongAnswer)
+                .put("typeOfPractice", typeOfPractice)
+                .put("lastTimeWrong", dateAsString)
+                .put("position", position)
+        }
     }
 
     fun addToFile(context: Context) {
         val file = File(context.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
         val jsonArray = JSONArray(AppFile.loadFromFile(file))
-        jsonArray.put(getAsJson())
-        AppFile.writeInFile(jsonArray.toString(), file)
+
+        val allMistakes = loadAllFromFile(context)
+
+        if(!allMistakes.contains(this)){
+            jsonArray.put(this.getAsJson())
+            AppFile.writeInFile(jsonArray.toString(), file)
+            return
+        }else{
+            allMistakes[allMistakes.indexOf(this)].lastTimeWrong = this.lastTimeWrong
+            Log.i("Mistake", "Mistake already in list, update lastTimeWrong")
+        }
     }
 
     fun removeFromFile(context: Context){
         val file = File(context.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
         val jsonArray = JSONArray(AppFile.loadFromFile(file))
-        for(i in 0 until jsonArray.length() - 1){
-            val mistake = Mistake(jsonArray.getJSONObject(i))
-            if(mistake.lastTimeWrong == this.lastTimeWrong && mistake.wrongAnswer == this.wrongAnswer){
+
+        for(i in 0 until jsonArray.length()){
+            if(Mistake(jsonArray.getJSONObject(i)) == this){
                 jsonArray.remove(i)
-                Log.i("Mistake","Removed a mistake from file")
+                Log.i("Mistake","Removed mistake (${this.word.newWord}) from file")
                 AppFile.writeInFile(jsonArray.toString(), file)
                 return
             }
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (this === other) return true
+        return if (other is Mistake){
+            this.word == other.word
+        }else{
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return word.hashCode()
     }
 
     companion object{
@@ -88,8 +118,10 @@ class Mistake {
             val jsonArray = JSONArray(AppFile.loadFromFile(file))
             val mistakes = arrayListOf<Mistake>()
             for(i in 0 until jsonArray.length()){
-                mistakes.add(Mistake(jsonArray.getJSONObject(i)))
+                val mistakeToAdd = Mistake(jsonArray.getJSONObject(i))
+                mistakes.add(mistakeToAdd)
             }
+
             return mistakes
         }
     }

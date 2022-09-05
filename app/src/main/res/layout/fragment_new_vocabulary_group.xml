@@ -9,7 +9,8 @@
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/dividerNewVocabularyGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -47,6 +48,8 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textInputLanguageNewLayout">
@@ -85,14 +88,12 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <View
-        android:id="@+id/view10"
+    <com.google.android.material.divider.MaterialDivider
+        android:id="@+id/dividerNewVocabularyGroup"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_marginBottom="16dp"
-        android:background="@color/Gray"
-        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteVocabularyGroup2"
-        tools:layout_editor_absoluteX="0dp" />
+        app:layout_constraintBottom_toTopOf="@+id/buttonDeleteVocabularyGroup2" />
 
     <Button
         android:id="@+id/buttonCreateVocabularyGroupNext"
@@ -114,7 +115,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:contentDescription="@string/delete"
-        android:text="@string/remove_vocabularyGroup"
+        android:text="@string/delete_vocabulary_group"
         app:icon="@drawable/outline_delete_24"
         app:layout_constraintBottom_toTopOf="@+id/buttonCreateVocabularyGroupNext"
         app:layout_constraintEnd_toEndOf="parent"

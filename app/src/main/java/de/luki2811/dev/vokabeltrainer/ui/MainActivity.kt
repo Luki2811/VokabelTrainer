@@ -18,7 +18,6 @@ import androidx.core.os.LocaleListCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
@@ -120,19 +119,8 @@ class MainActivity : AppCompatActivity() {
             AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
 
         if (!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()) {
-            /** TODO: Remove comment
-            AppFile.writeInFile("[]", File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
-            val streakData = JSONArray().put(
-                JSONObject().put(
-                    "date",
-                    LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                ).put("xp", 0).put("goal", 50)
-            ) **/
-            val streakData = Streak.getRandomStreak(14)
-            AppFile.writeInFile(
-                streakData.toString(),
-                File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK)
-            )
+            val streakData = Streak.getRandomStreak(0)
+            AppFile.writeInFile(streakData.toString(), File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
         }
     }
 
@@ -140,43 +128,18 @@ class MainActivity : AppCompatActivity() {
      * Setup views
      */
     private fun setupViews() {
-        val navView: BottomNavigationView = binding.bottomNavigation
-
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
         val navController = navHostFragment.navController
 
-        binding.floatingActionButton.setOnClickListener {
+        binding.floatingActionButtonAdd.setOnClickListener {
             navController.navigate(R.id.action_global_createNewMainFragment)
         }
-        // binding.floatingActionButtonQrCode.setOnClickListener {
-        // navController.navigate(R.id.action_global_importWithQrCodeFragment)
-        // }
-        binding.floatingActionButtonPractice.setOnClickListener {
-            // startActivity(Intent(this, PracticeActivity::class.java))
-            navController.navigate(R.id.action_global_createPracticeFragment)
-        }
 
-        navView.setupWithNavController(navController)
+        binding.bottomNavigation.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if(destination.id == R.id.learnFragment || destination.id == R.id.streakFragment || destination.id == R.id.settingsFragment){
-                navView.visibility = View.VISIBLE
-            }else{
-                navView.visibility = View.GONE
-
-            }
-
-            if(destination.id == R.id.learnFragment || destination.id == R.id.settingsFragment)
-                binding.floatingActionButton.visibility = View.VISIBLE
-            else
-                binding.floatingActionButton.visibility = View.GONE
-
-            if (destination.id == R.id.learnFragment) {
-                binding.floatingActionButtonPractice.visibility = View.VISIBLE
-            } else {
-                binding.floatingActionButtonPractice.visibility = View.GONE
-            }
+            binding.bottomNavigation.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.streakFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
+            binding.floatingActionButtonAdd.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
         }
     }
 
