@@ -1,13 +1,7 @@
 package de.luki2811.dev.vokabeltrainer.ui.create
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,8 +10,6 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -47,9 +39,10 @@ class CreateNewMainFragment : Fragment() {
 
     private val args: CreateNewMainFragmentArgs by navArgs()
 
-    private val chooser: Intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+    private val chooser: Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
         type = "application/json"
+        putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("application/json"))
     }
 
     // QR-Code
@@ -126,7 +119,6 @@ class CreateNewMainFragment : Fragment() {
             isEnabled = false
         }
 
-
         // Create
 
         binding.buttonCreateVocabularyGroupFromPicture.setOnClickListener {
@@ -143,13 +135,7 @@ class CreateNewMainFragment : Fragment() {
         // File
 
         binding.buttonImportFileStart.apply {
-            setOnClickListener {
-                if (checkPermissionToReadFiles())
-                    resultLauncherFilePicker.launch(chooser)
-                else
-                    requestPermissionToReadFiles()
-
-            }
+            setOnClickListener { resultLauncherFilePicker.launch(chooser) }
         }
 
         // QR-Code
@@ -219,7 +205,6 @@ class CreateNewMainFragment : Fragment() {
                 Thread{
                     importFromUrl(urlToDownload)
                 }.start()
-                // Toast.makeText(requireContext(), getString(R.string.download_started), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -233,19 +218,6 @@ class CreateNewMainFragment : Fragment() {
             }else {
                 binding.textEditLayoutImportUrl.prefixText = "https://"
             }
-        }
-    }
-
-    private fun requestPermissionToReadFiles() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            val intent = Intent().apply {
-                action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
-                data = Uri.fromParts("package", requireActivity().packageName, null)
-            }
-            startActivity(intent)
-        } else {
-            // below android 11
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 100)
         }
     }
 
@@ -324,20 +296,6 @@ class CreateNewMainFragment : Fragment() {
             Importer.IMPORT_WRONG_OR_NONE_TYPE, Importer.IMPORT_NO_JSON -> {
                 Toast.makeText(requireContext(), getString(R.string.err_import_failed), Toast.LENGTH_LONG).show()
             }
-        }
-    }
-
-    /**
-     * Check if has necessary permissions to load file
-     * @return true if has permission, otherwise false
-     */
-    private fun checkPermissionToReadFiles(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            Environment.isExternalStorageManager()
-        } else {
-            val result = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
-            val result1 = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            result == PackageManager.PERMISSION_GRANTED && result1 == PackageManager.PERMISSION_GRANTED
         }
     }
 
