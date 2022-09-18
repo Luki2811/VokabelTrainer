@@ -242,7 +242,9 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
             }
             binding.radioButtonCreateVocabularyGroupFromPicture2.id -> {
                 if(hasTitle){
-                    name = text.textBlocks[0].lines[0].text
+                    if(text.text.isNotEmpty() || text.textBlocks.isNotEmpty()){
+                        name = text.textBlocks[0].lines[0].text
+                    }
                 }
                 try {
                     text.textBlocks.forEach { textBlock ->

@@ -58,14 +58,15 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.1'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.1'
+    implementation "androidx.work:work-runtime-ktx:2.7.1"
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
     implementation 'androidx.fragment:fragment-ktx:1.6.0-alpha02'
-    implementation 'androidx.appcompat:appcompat:1.6.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.6.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.0-alpha03'
     implementation 'com.google.android.material:material:1.8.0-alpha01'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.core:core-ktx:1.9.0-rc01'
+    implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'io.github.g0dkar:qrcode-kotlin-android:3.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10"
     implementation 'com.google.android.gms:play-services-code-scanner:16.0.0-beta3'

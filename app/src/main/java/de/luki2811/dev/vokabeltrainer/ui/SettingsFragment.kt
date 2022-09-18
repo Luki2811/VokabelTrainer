@@ -1,10 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.ActivityNotFoundException
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -24,14 +20,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
 import io.github.g0dkar.qrcode.ErrorCorrectionLevel
+import java.time.Duration
 import java.time.LocalTime
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class SettingsFragment : Fragment() {
@@ -77,7 +78,7 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSourcesFragment())
         }
 
-        binding.materialButton.apply {
+        binding.buttonSettingsInfoQrCodeCorrectionLevel.apply {
                 setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW).apply {
                         data = if(settings.appLanguage == Locale.GERMAN)
@@ -224,77 +225,27 @@ class SettingsFragment : Fragment() {
     }
 
     private fun setupNotifications(){
-        try {
-            // Setup all for notifications
+        val streakNotificationTag = "streakNotification"
 
-            val dailyNotify = settings.reminderForStreak
-            val pm = requireContext().packageManager
-            val receiver = ComponentName(requireContext(), DeviceBootReceiver::class.java)
-            val alarmIntent = Intent(requireContext(), AlarmReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE)
-            val manager = requireContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        WorkManager.getInstance(requireContext()).cancelAllWorkByTag(streakNotificationTag)
 
-            if (dailyNotify) {
-                //region Enable Daily Notifications
-                val calendar: Calendar = Calendar.getInstance()
-                calendar.timeInMillis = System.currentTimeMillis()
-                calendar.set(Calendar.HOUR_OF_DAY, settings.timeReminderStreak.hour)
-                calendar.set(Calendar.MINUTE, settings.timeReminderStreak.minute)
-                calendar.set(Calendar.SECOND, 1)
-                // if notification time is before selected time, send notification the next day
-                if (calendar.before(Calendar.getInstance())) {
-                    calendar.add(Calendar.DATE, 1)
-                }
-                manager.setRepeating(
-                    AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY, pendingIntent
-                )
-                manager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    pendingIntent
-                )
-                //To enable Boot Receiver class
-                pm.setComponentEnabledSetting(
-                    receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-                // Toast.makeText(requireContext(),"Streak Notifications were updated", Toast.LENGTH_SHORT).show()
-                //endregion
-            } else { //Disable Daily Notifications
-                if (PendingIntent.getBroadcast(requireContext(), 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE) != null) {
-                    manager.cancel(pendingIntent)
-                    //Toast.makeText(requireContext(),"Streak Notifications were updated", Toast.LENGTH_SHORT).show()
-                }
-                pm.setComponentEnabledSetting(
-                    receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                    PackageManager.DONT_KILL_APP
-                )
-            }
-        }catch (e: SecurityException){
-            e.printStackTrace()
-            MaterialAlertDialogBuilder(requireContext())
-                .setMessage(R.string.err_no_permission_reminder)
-                .setTitle(R.string.err)
-                .setIcon(R.drawable.ic_outline_error_24)
-                .setNegativeButton(R.string.ok){ _, _ -> }
-                .setOnCancelListener {  }
-                .show()
-            settings.reminderForStreak = false
-            binding.switchSettingsNotificationStreak.isChecked = false
-            saveSettings()
-        }
+        val notificationWorkerRequest: WorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
+            .setInitialDelay(Duration.between(LocalTime.now(), LocalTime.of(settings.timeReminderStreak.hour, settings.timeReminderStreak.minute)))
+            .addTag(streakNotificationTag)
+            .build()
 
+        WorkManager.getInstance(requireContext()).enqueue(notificationWorkerRequest)
+
+        Log.i("StreakNotification","Setup streak")
     }
 
     private fun pickTimeStreak() {
         val picker = MaterialTimePicker.Builder()
             .setHour(settings.timeReminderStreak.hour)
             .setMinute(settings.timeReminderStreak.minute)
-            .setTimeFormat(if (is24HourFormat(requireContext())) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
+            .setTimeFormat(if(is24HourFormat(requireContext())) TimeFormat.CLOCK_24H else TimeFormat.CLOCK_12H)
             .setTitleText(getString(R.string.when_do_you_want_to_be_remembered))
+            .setInputMode(MaterialTimePicker.INPUT_MODE_CLOCK)
             .build()
 
         picker.addOnPositiveButtonClickListener {
@@ -313,9 +264,7 @@ class SettingsFragment : Fragment() {
 
     @RequiresApi(33)
     private fun requestPermission(){
-        if(ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        }
+        launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
     }
 
     private fun saveSettings(){

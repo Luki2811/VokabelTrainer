@@ -186,4 +186,5 @@
     <string name="err_no_barcode_found">Fehler: Kein Barcode gefunden</string>
     <string name="wait_until_qr_code_is_generated">Warte bis QR-Code erstellt wurde</string>
     <string name="err_type_not_valid">Fehler: Typ (%1$s) ist nicht gültig!</string>
+    <string name="notification_have_you_reached_your_streak">Hast du heute schon dein Tagesziel erreicht ??</string>
 </resources>

@@ -196,4 +196,6 @@
     <string name="wait_until_qr_code_is_generated">Wait until QR-Code is generated</string>
     <string name="err_type_not_valid">Error: Type (%1$s) isn\'t valid</string>
 
+    <string name="notification_have_you_reached_your_streak">Have you reached your daily goal ??</string>
+
 </resources>

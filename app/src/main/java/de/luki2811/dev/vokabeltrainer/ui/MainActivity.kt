@@ -1,11 +1,8 @@
 package de.luki2811.dev.vokabeltrainer.ui
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -72,11 +69,6 @@ class MainActivity : AppCompatActivity() {
         createFiles()
         setupViews()
 
-        if(settings.reminderForStreak && Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-            setupNotifications()
-        else if(settings.reminderForStreak && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED)
-            setupNotifications()
-
         // Load Streak for correct information
         Streak(applicationContext)
 
@@ -141,44 +133,6 @@ class MainActivity : AppCompatActivity() {
             binding.bottomNavigation.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.streakFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
             binding.floatingActionButtonAdd.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
         }
-    }
-
-    private fun setupNotifications(){
-        val settings = Settings(this)
-
-            // Setup all for notifications
-
-            val receiver = ComponentName(this, DeviceBootReceiver::class.java)
-            val alarmIntent = Intent(this, AlarmReceiver::class.java)
-            val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_IMMUTABLE)
-            val manager = this.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
-
-                // region Enable Daily Notifications
-                val calendar: Calendar = Calendar.getInstance()
-                calendar.timeInMillis = System.currentTimeMillis()
-                calendar.set(Calendar.HOUR_OF_DAY, settings.timeReminderStreak.hour)
-                calendar.set(Calendar.MINUTE, settings.timeReminderStreak.minute)
-                calendar.set(Calendar.SECOND, 1)
-                // if notification time is before selected time, send notification the next day
-                if (calendar.before(Calendar.getInstance())) {
-                    calendar.add(Calendar.DATE, 1)
-                }
-                manager.setRepeating(
-                    AlarmManager.RTC_WAKEUP, calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY, pendingIntent
-                )
-                manager.setExactAndAllowWhileIdle(
-                    AlarmManager.RTC_WAKEUP,
-                    calendar.timeInMillis,
-                    pendingIntent
-                )
-                //To enable Boot Receiver class
-                packageManager.setComponentEnabledSetting(
-                    receiver,
-                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                    PackageManager.DONT_KILL_APP
-                )
     }
 
     override fun onStop() {

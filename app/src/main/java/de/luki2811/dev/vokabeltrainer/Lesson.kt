@@ -22,15 +22,17 @@ class Lesson {
     var numberOfExercises = 10
     private val context: Context
 
-    constructor(name: String,
-                vocabularyGroupIds: Array<Int>,
-                context: Context,
-                settingReadOutBoth: Boolean = true,
-                askOnlyNewWords:Boolean = false,
-                typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3),
-                isFavorite: Boolean = false,
-                numberOfExercises: Int = 10,
-                alreadyUsedWords: ArrayList<VocabularyWord> = arrayListOf()) {
+    constructor(
+        name: String,
+        vocabularyGroupIds: Array<Int>,
+        context: Context,
+        settingReadOutBoth: Boolean = true,
+        askOnlyNewWords: Boolean = false,
+        typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3),
+        isFavorite: Boolean = false,
+        numberOfExercises: Int = 10,
+        alreadyUsedWords: ArrayList<VocabularyWord> = arrayListOf(),
+    ) {
         this.name = name
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
