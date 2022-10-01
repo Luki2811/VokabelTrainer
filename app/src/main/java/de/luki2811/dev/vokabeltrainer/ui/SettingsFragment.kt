@@ -20,7 +20,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -30,9 +31,10 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentSettingsBinding
 import io.github.g0dkar.qrcode.ErrorCorrectionLevel
 import java.time.Duration
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
 class SettingsFragment : Fragment() {
@@ -209,7 +211,7 @@ class SettingsFragment : Fragment() {
             settings.reminderForStreak = isChecked
             saveSettings()
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && isChecked){
-                requestPermission()
+                requestNotificationPermission()
             }else{
                 setupNotifications()
             }
@@ -228,11 +230,26 @@ class SettingsFragment : Fragment() {
         val streakNotificationTag = "streakNotification"
 
         WorkManager.getInstance(requireContext()).cancelAllWorkByTag(streakNotificationTag)
+        var durationDelay = Duration.between(LocalTime.now(), LocalTime.of(settings.timeReminderStreak.hour, settings.timeReminderStreak.minute))
 
-        val notificationWorkerRequest: WorkRequest = PeriodicWorkRequestBuilder<NotificationWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(Duration.between(LocalTime.now(), LocalTime.of(settings.timeReminderStreak.hour, settings.timeReminderStreak.minute)))
-            .addTag(streakNotificationTag)
-            .build()
+        if(durationDelay.isNegative || durationDelay.isZero){
+            durationDelay = Duration.between(
+                LocalDateTime.now(),
+                LocalDateTime.of(
+                    LocalDate.now().plusDays(1),
+                    LocalTime.of(
+                        settings.timeReminderStreak.hour, settings.timeReminderStreak.minute
+                    )
+                )
+            )
+        }
+
+        val notificationWorkerRequest: WorkRequest = OneTimeWorkRequestBuilder<NotificationWorker>().apply {
+            addTag(streakNotificationTag)
+            setInputData(Data.Builder().putBoolean("oneTimeRequest", true).build())
+            setInitialDelay(durationDelay)
+        }.build()
+
 
         WorkManager.getInstance(requireContext()).enqueue(notificationWorkerRequest)
 
@@ -253,7 +270,7 @@ class SettingsFragment : Fragment() {
             saveSettings()
 
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
-                requestPermission()
+                requestNotificationPermission()
             }else{
                 setupNotifications()
             }
@@ -263,7 +280,7 @@ class SettingsFragment : Fragment() {
     }
 
     @RequiresApi(33)
-    private fun requestPermission(){
+    private fun requestNotificationPermission(){
         launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
     }
 

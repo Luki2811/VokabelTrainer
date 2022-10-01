@@ -20,6 +20,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
 import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
@@ -46,7 +47,9 @@ class ListVocabularyGroupsAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
+        val textViewText: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
+        val textViewNewLanguage: TextView = view.findViewById(R.id.textViewNewLanguage)
+        val textViewKnownLanguage: TextView = view.findViewById(R.id.textViewKnownLanguage)
         val buttonShare: MaterialButton = view.findViewById(R.id.buttonShareVocabularyGroup)
         val buttonEdit: MaterialButton = view.findViewById(R.id.buttonEditVocabularyGroup)
         val buttonShowQrCode: MaterialButton = view.findViewById(R.id.buttonShowQrCodeVocabularyGroup)
@@ -64,9 +67,13 @@ class ListVocabularyGroupsAdapter(
         // Get element from your dataSetFilter at this position and replace the
         // contents of the view with that element
 
-        viewHolder.textView.text = dataSetFilter[position].name
-        viewHolder.buttonShare.setOnClickListener { share(position) }
-        viewHolder.buttonShare.setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
+        viewHolder.textViewText.text = dataSetFilter[position].name
+        viewHolder.textViewNewLanguage.text = dataSetFilter[position].languageNew.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.textViewKnownLanguage.text = dataSetFilter[position].languageKnown.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.buttonShare.apply {
+            setOnClickListener { share(position) }
+            setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
+        }
 
         viewHolder.buttonShowQrCode.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Green)))

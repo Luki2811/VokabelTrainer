@@ -3,15 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/textViewlistVocabularyGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
+        android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/buttonShowQrCodeVocabularyGroup"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -19,17 +20,17 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonEditVocabularyGroup"
+        style="@style/Widget.Material3.Button.IconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        style="@style/Widget.Material3.Button.IconButton"
+        app:backgroundTint="@color/Blue"
+        app:contentDescription="@string/edit"
+        app:icon="@drawable/ic_outline_edit_24"
+        app:iconTint="@color/White"
         app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:backgroundTint="@color/Blue"
-        app:icon="@drawable/ic_outline_edit_24"
-        app:contentDescription="@string/edit"
-        app:iconTint="@color/White" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonShareVocabularyGroup"
@@ -60,9 +61,46 @@
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/dividerListItemVocabularyGroup"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_height="wrap_content"
         android:background="@color/Gray"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewNewLanguage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Französisch"
+        android:textAlignment="textStart"
+        app:layout_constraintEnd_toEndOf="@+id/textViewlistVocabularyGroup"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+    <TextView
+        android:id="@+id/textViewKnownLanguage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Deutsch"
+        android:textAlignment="textStart"
+        app:layout_constraintEnd_toStartOf="@+id/imageView7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/textViewlistVocabularyGroup"
+        app:layout_constraintTop_toTopOf="@+id/imageView7" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textViewNewLanguage"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textViewKnownLanguage"
+        app:layout_constraintTop_toBottomOf="@+id/textViewlistVocabularyGroup"
+        app:srcCompat="@drawable/ic_baseline_arrow_forward_24" />
 </androidx.constraintlayout.widget.ConstraintLayout>
