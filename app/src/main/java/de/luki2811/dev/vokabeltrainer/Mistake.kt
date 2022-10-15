@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter
 
 class Mistake {
     lateinit var word: VocabularyWord
+    var askedForSecondWord = false
     lateinit var wrongAnswer: String
     var typeOfPractice: Int = -1
     var lastTimeWrong: LocalDate = LocalDate.now()
@@ -21,6 +22,7 @@ class Mistake {
 
     constructor(json: JSONObject){
         try {
+            this.askedForSecondWord = try { json.getBoolean("askedForSecondWord") } catch (e: JSONException){ false }
             this.word = VocabularyWord(json.getJSONObject("vocabularyWord"))
             this.wrongAnswer = json.getString("wrongAnswer")
             this.typeOfPractice = json.getInt("typeOfPractice")
@@ -36,12 +38,13 @@ class Mistake {
         }
     }
 
-    constructor(word: VocabularyWord, wrongAnswer: String, typeOfPractice: Int, lastTimeWrong: LocalDate, position: Int = -1){
+    constructor(word: VocabularyWord, wrongAnswer: String, typeOfPractice: Int, lastTimeWrong: LocalDate, position: Int = -1, askedForSecondWord: Boolean){
         this.word = word
         this.wrongAnswer = wrongAnswer
         this.typeOfPractice = typeOfPractice
         this.lastTimeWrong = lastTimeWrong
         this.position = position
+        this.askedForSecondWord = askedForSecondWord
     }
 
     fun getAsJson(ignoreDate: Boolean = false): JSONObject {
@@ -58,6 +61,7 @@ class Mistake {
                 .put("wrongAnswer", wrongAnswer)
                 .put("typeOfPractice", typeOfPractice)
                 .put("position", position)
+                .put("askedForSecondWord", askedForSecondWord)
         }else{
             JSONObject()
                 .put("vocabularyWord", wordAsJson)
@@ -65,6 +69,7 @@ class Mistake {
                 .put("typeOfPractice", typeOfPractice)
                 .put("lastTimeWrong", dateAsString)
                 .put("position", position)
+                .put("askedForSecondWord",askedForSecondWord)
         }
     }
 
@@ -91,7 +96,7 @@ class Mistake {
         for(i in 0 until jsonArray.length()){
             if(Mistake(jsonArray.getJSONObject(i)) == this){
                 jsonArray.remove(i)
-                Log.i("Mistake","Removed mistake (${this.word.newWord}) from file")
+                Log.i("Mistake","Removed mistake (${this.word.secondWord}) from file")
                 AppFile.writeInFile(jsonArray.toString(), file)
                 return
             }

@@ -22,9 +22,7 @@ import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
-import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
-import de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragmentDirections
-import de.luki2811.dev.vokabeltrainer.ui.manage.ShowQrCodeBottomSheet
+import de.luki2811.dev.vokabeltrainer.ui.manage.*
 import org.json.JSONObject
 import java.io.File
 import java.util.*
@@ -48,8 +46,8 @@ class ListVocabularyGroupsAdapter(
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textViewText: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
-        val textViewNewLanguage: TextView = view.findViewById(R.id.textViewNewLanguage)
-        val textViewKnownLanguage: TextView = view.findViewById(R.id.textViewKnownLanguage)
+        val textViewSecondLanguage: TextView = view.findViewById(R.id.textViewSecondLanguage)
+        val textViewFirstLanguage: TextView = view.findViewById(R.id.textViewFirstLanguage)
         val buttonShare: MaterialButton = view.findViewById(R.id.buttonShareVocabularyGroup)
         val buttonEdit: MaterialButton = view.findViewById(R.id.buttonEditVocabularyGroup)
         val buttonShowQrCode: MaterialButton = view.findViewById(R.id.buttonShowQrCodeVocabularyGroup)
@@ -68,8 +66,8 @@ class ListVocabularyGroupsAdapter(
         // contents of the view with that element
 
         viewHolder.textViewText.text = dataSetFilter[position].name
-        viewHolder.textViewNewLanguage.text = dataSetFilter[position].languageNew.getDisplayLanguage(Settings(context).appLanguage)
-        viewHolder.textViewKnownLanguage.text = dataSetFilter[position].languageKnown.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.textViewSecondLanguage.text = dataSetFilter[position].secondLanguage.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.textViewFirstLanguage.text = dataSetFilter[position].firstLanguage.getDisplayLanguage(Settings(context).appLanguage)
         viewHolder.buttonShare.apply {
             setOnClickListener { share(position) }
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
@@ -78,17 +76,17 @@ class ListVocabularyGroupsAdapter(
         viewHolder.buttonShowQrCode.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Green)))
             setOnClickListener {
-                val showQrCodeBottomSheet = ShowQrCodeBottomSheet()
+                val qrCodeBottomSheet = QrCodeBottomSheet()
 
-                showQrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
+                qrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
 
-                showQrCodeBottomSheet.show(supportFragmentManager, ShowQrCodeBottomSheet.TAG)
+                qrCodeBottomSheet.show(supportFragmentManager, QrCodeBottomSheet.TAG)
             }
         }
 
         viewHolder.buttonEdit.apply {
             setOnClickListener {
-                navController.navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), NewVocabularyGroupFragment.MODE_EDIT))
+                navController.navigate(VocabularyGroupListFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), VocabularyGroupBasicFragment.MODE_EDIT))
             }
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
         }

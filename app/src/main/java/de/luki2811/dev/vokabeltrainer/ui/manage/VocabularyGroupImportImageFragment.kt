@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui.create
+package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.Manifest.permission.CAMERA
 import android.content.pm.PackageManager
@@ -33,7 +33,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
-class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
+class VocabularyGroupImportImageFragment : Fragment() {
 
     private var _binding: FragmentCreateVocabularyGroupWithImageInfoBinding? = null
     private val binding get() = _binding!!
@@ -284,20 +284,20 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
         }
 
         vocabulary.forEach {
-            it.knownWord = autoCorrectWord(it.knownWord)
-            it.newWord = autoCorrectWord(it.newWord)
+            it.firstWord = autoCorrectWord(it.firstWord)
+            it.secondWord = autoCorrectWord(it.secondWord)
         }
 
         if(!hasTitle)
             name = ""
 
-        addKnownLanguageToVocabulary(vocabulary)
+        addFirstLanguageToVocabulary(vocabulary)
     }
 
-    private fun addKnownLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
+    private fun addFirstLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
         val sb = StringBuilder()
         vocGroup.forEach {
-            sb.append(it.knownWord).append("; ")
+            sb.append(it.firstWord).append("; ")
         }
         val languageIdentifier = LanguageIdentification.getClient()
         languageIdentifier.identifyLanguage(sb.toString())
@@ -306,9 +306,9 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                    Log.w("IdentifyLanguage","Couldn't identify language for known words")
                 }
                 vocGroup.forEach {
-                    it.languageKnown = Locale(languageCode)
+                    it.firstLanguage = Locale(languageCode)
                 }
-                addNewLanguageToVocabulary(vocGroup)
+                addSecondLanguageToVocabulary(vocGroup)
             }
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), getString(R.string.err_could_not_identify_known_language), Toast.LENGTH_LONG).show()
@@ -316,10 +316,10 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
             }
     }
 
-    private fun addNewLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
+    private fun addSecondLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
         val sb = StringBuilder()
         vocGroup.forEach {
-            sb.append(it.newWord).append("; ")
+            sb.append(it.secondWord).append("; ")
         }
         val languageIdentifier = LanguageIdentification.getClient()
         languageIdentifier.identifyLanguage(sb.toString())
@@ -328,7 +328,7 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
                     Log.w("IdentifyLanguage","Couldn't identify language for new words" )
                 }
                 vocGroup.forEach {
-                    it.languageNew = Locale(languageCode)
+                    it.secondLanguage = Locale(languageCode)
                 }
                 createVocabularyGroup(vocGroup)
             }
@@ -340,6 +340,11 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
 
     private fun autoCorrectWord(toEdit: String): String{
         var word = "$toEdit "
+        Log.i("AutoCorrect","\"$word\"")
+
+        if(word.isBlank() || word.isEmpty()){
+            return ""
+        }
 
         if(binding.switchCreateVocabularyGroupFromPictureAutoCorrectWords.isChecked){
 
@@ -393,13 +398,15 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
 
             if(word.first() == '|'){
                 if(word.contains("|e") || word.contains("|a")){
-                    word.replace("|","l")
+                    word = word.replace("|","l")
                 }
             }else
                 word = word.replace("|", "")
 
-            if(word.trim().last() == '|')
-                word = word.replace("|", "")
+            if(word.trim().isNotEmpty()){
+                if(word.trim().last() == '|')
+                    word = word.replace("|", "")
+            }
         }
 
         if(binding.switchCreateVocabularyGroupFromPictureDots.isChecked){
@@ -423,9 +430,9 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
         try {
             val finalVocabularyGroup = VocabularyGroup(
                 name = name,
-                languageNew = vocGroup[0].languageNew,
-                languageKnown = vocGroup[0].languageKnown,
-                vocabulary = vocGroup.toTypedArray(),
+                secondLanguage = vocGroup[0].secondLanguage,
+                firstLanguage = vocGroup[0].firstLanguage,
+                vocabulary = vocGroup,
                 context = requireContext()
             )
             finish(finalVocabularyGroup)
@@ -436,6 +443,6 @@ class CreateVocabularyGroupWithImageInfoFragment : Fragment() {
     }
 
     private fun finish(vocGroup: VocabularyGroup) {
-        findNavController().navigate(CreateVocabularyGroupWithImageInfoFragmentDirections.actionGlobalNewVocabularyGroupFragment(keyVocGroup = vocGroup.getAsJson().toString(), keyMode = NewVocabularyGroupFragment.MODE_IMPORT))
+        findNavController().navigate(VocabularyGroupImportImageFragmentDirections.actionGlobalNewVocabularyGroupFragment(keyVocGroup = vocGroup.getAsJson().toString(), keyMode = VocabularyGroupBasicFragment.MODE_IMPORT))
     }
 }

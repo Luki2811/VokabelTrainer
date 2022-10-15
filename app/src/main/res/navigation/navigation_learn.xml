@@ -10,10 +10,6 @@
         android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeTranslateTextFragment"
         android:label="fragment_practice_translate_text"
         tools:layout="@layout/fragment_practice_translate_text">
-        <argument
-            android:name="settings_read_both"
-            app:argType="boolean"
-            android:defaultValue="true" />
         <action
             android:id="@+id/action_practiceTranslateTextFragment_to_practiceStartFragment"
             app:destination="@id/practiceStartFragment"
@@ -22,7 +18,7 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
-            android:name="word_as_json"
+            android:name="exercise"
             app:argType="string"
             android:defaultValue=" " />
     </fragment>
@@ -32,9 +28,9 @@
         android:label="fragment_practice_out_of_three"
         tools:layout="@layout/fragment_practice_out_of_three" >
         <argument
-            android:name="settings_read_both"
-            app:argType="boolean"
-            android:defaultValue="true" />
+            android:name="exercise"
+            app:argType="string"
+            android:defaultValue=" " />
         <action
             android:id="@+id/action_practiceOutOfThreeFragment_to_practiceStartFragment"
             app:destination="@id/practiceStartFragment"
@@ -42,19 +38,12 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <argument
-            android:name="word_as_json"
-            app:argType="string[]" />
     </fragment>
     <fragment
         android:id="@+id/practiceMatchFiveWordsFragment"
         android:name="de.luki2811.dev.vokabeltrainer.ui.practice.PracticeMatchFiveWordsFragment"
         android:label="fragment_practice_match_five_words"
         tools:layout="@layout/fragment_practice_match_five_words" >
-        <argument
-            android:name="settings_read_both"
-            app:argType="boolean"
-            android:defaultValue="true" />
         <action
             android:id="@+id/action_practiceMatchFiveWordsFragment_to_practiceStartFragment"
             app:destination="@id/practiceStartFragment"
@@ -63,8 +52,9 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <argument
-            android:name="word_as_json"
-            app:argType="string[]" />
+            android:name="exercise"
+            app:argType="string"
+            android:defaultValue=" " />
     </fragment>
     <fragment
         android:id="@+id/practiceFinishFragment"

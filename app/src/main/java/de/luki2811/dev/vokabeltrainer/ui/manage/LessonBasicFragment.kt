@@ -13,15 +13,14 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewLessonBinding
-import de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment
 import org.json.JSONObject
 import java.io.File
 
-class ManageLessonFragment: Fragment() {
+class LessonBasicFragment: Fragment() {
     private var _binding: FragmentNewLessonBinding? = null
     private val binding get() = _binding!!
 
-    private val args: ManageLessonFragmentArgs by navArgs()
+    private val args: LessonBasicFragmentArgs by navArgs()
 
     private val allVocabularyGroups = ArrayList<VocabularyGroup>()
     private val vocabularyGroupsSelected = ArrayList<VocabularyGroup>()
@@ -69,7 +68,7 @@ class ManageLessonFragment: Fragment() {
 
             binding.textLessonName.setText(lesson.name)
             binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
-            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askOnlyNewWords
+            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWords
 
 
             binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
@@ -148,13 +147,13 @@ class ManageLessonFragment: Fragment() {
             lesson.name = name
             lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
             lesson.settingReadOutBoth = settingReadOutBoth
-            lesson.askOnlyNewWords = settingAskOnlyNewWords
+            lesson.askForSecondWords = settingAskOnlyNewWords
             lesson.typesOfLesson = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
         }
 
         lesson.saveInFile()
-        findNavController().navigate(ManageLessonFragmentDirections.actionManageLessonFragmentToNavigationMain())
+        findNavController().navigate(LessonBasicFragmentDirections.actionManageLessonFragmentToNavigationMain())
     }
 
     private fun addChipToGroup(vocabularyGroup: VocabularyGroup){
@@ -173,7 +172,7 @@ class ManageLessonFragment: Fragment() {
                 refreshList()
             }
             setOnClickListener {
-                findNavController().navigate(ManageLessonFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), keyMode = NewVocabularyGroupFragment.MODE_EDIT))
+                findNavController().navigate(LessonBasicFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), keyMode = VocabularyGroupBasicFragment.MODE_EDIT))
             }
         }
 

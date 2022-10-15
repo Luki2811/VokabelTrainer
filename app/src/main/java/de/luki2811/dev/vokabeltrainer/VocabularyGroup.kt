@@ -7,33 +7,34 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
 class VocabularyGroup {
 
     var name: String
     var id: Id
-    var languageNew: Locale
-    var languageKnown: Locale
-    lateinit var vocabulary: Array<VocabularyWord>
+    var firstLanguage: Locale
+    var secondLanguage: Locale
+    var vocabulary = ArrayList<VocabularyWord>()
 
     private var context: Context
     private val indexFile: File
 
-    constructor(name: String, languageNew: Locale, languageKnown: Locale, vocabulary: Array<VocabularyWord>, context: Context) {
+    constructor(name: String, firstLanguage: Locale, secondLanguage: Locale, vocabulary: ArrayList<VocabularyWord>, context: Context, id: Id? = null) {
         this.name = name
-        this.id = Id(context)
-        this.languageNew = languageNew
-        this.languageKnown = languageKnown
+        this.id = id ?: Id(context)
+        this.secondLanguage = secondLanguage
+        this.firstLanguage = firstLanguage
         this.vocabulary = vocabulary
         this.context = context
         this.indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
     }
 
-    constructor(jsonObj: JSONObject, context: Context,name: String = "", generateNewId: Boolean = false){
+    constructor(json: JSONObject, context: Context, name: String = "", generateNewId: Boolean = false){
         indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if(name == "") {
-            this.name = jsonObj.getString("name")
-            this.id = if(generateNewId) Id(context) else Id(context, jsonObj.getInt("id"))
+            this.name = json.getString("name")
+            this.id = if(generateNewId) Id(context) else Id(context, json.getInt("id"))
         }
         else {
             this.name = name
@@ -41,32 +42,26 @@ class VocabularyGroup {
         }
 
         try {
-            this.languageKnown = Locale(jsonObj.getString("languageKnown"))
-            this.languageNew = Locale(jsonObj.getString("languageNew"))
+            this.firstLanguage = try {
+                Locale(json.getString("firstLanguage"))
+            }catch (e: JSONException){
+                Locale(json.getString("languageKnown"))
+            }
+            this.secondLanguage = try {
+                Locale(json.getString("secondLanguage"))
+            }catch (e: JSONException){
+                Locale(json.getString("languageNew"))
+            }
 
         }catch (e: JSONException){
-            this.languageKnown = Locale.GERMAN
-            this.languageNew = Locale.ENGLISH
+            this.firstLanguage = Locale.GERMAN
+            this.secondLanguage = Locale.ENGLISH
         }
 
         this.context = context
 
-        try {
-            val vocabularyTemp = ArrayList<VocabularyWord>()
-            for (i in 0 until jsonObj.getJSONArray("vocabulary").length()) {
-                vocabularyTemp.add(
-                    VocabularyWord(
-                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("native"),
-                        this.languageKnown,
-                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getString("new"),
-                        this.languageNew,
-                        jsonObj.getJSONArray("vocabulary").getJSONObject(i).getBoolean("ignoreCase")
-                    )
-                )
-                vocabulary = vocabularyTemp.toTypedArray()
-            }
-        }catch (e: JSONException){
-            vocabulary = arrayOf()
+        for (i in 0 until json.getJSONArray("vocabulary").length()){
+            vocabulary.add(VocabularyWord(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
         }
     }
 
@@ -137,21 +132,18 @@ class VocabularyGroup {
 
 
     fun getAsJson(): JSONObject{
-        val jsonObj = JSONObject()
+        val jsonArray = JSONArray()
+        vocabulary.forEach { jsonArray.put(it.getJson(false)) }
+
+        Log.w("Test",jsonArray.toString())
+
+        return JSONObject()
             .put("name", name)
             .put("id", id.number)
             .put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
-            .put("languageKnown", languageKnown.language)
-            .put("languageNew", languageNew.language)
-        val jsonArray = JSONArray()
-        for (i in vocabulary.indices) {
-            val voc = JSONObject()
-            voc.put("ignoreCase", vocabulary[i].isIgnoreCase)
-            voc.put("new", vocabulary[i].newWord)
-            voc.put("native", vocabulary[i].knownWord)
-            jsonArray.put(voc)
-        }
-        return jsonObj.put("vocabulary", jsonArray)
+            .put("firstLanguage", firstLanguage.language)
+            .put("secondLanguage", secondLanguage.language)
+            .put("vocabulary", jsonArray)
     }
 
     /**
@@ -169,7 +161,6 @@ class VocabularyGroup {
     }
 
     companion object{
-
         fun loadFromFileWithId(id: Id, context: Context): VocabularyGroup?{
             var file = File(context.filesDir, "vocabularyGroups")
             file.mkdirs()

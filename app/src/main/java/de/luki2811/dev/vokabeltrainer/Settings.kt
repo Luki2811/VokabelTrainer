@@ -81,6 +81,11 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         ErrorCorrectionLevel.M
     }
+    var suggestTranslation: Boolean = try {
+        jsonObject.getBoolean("suggestTranslation")
+    }catch (e: JSONException){
+        true
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()

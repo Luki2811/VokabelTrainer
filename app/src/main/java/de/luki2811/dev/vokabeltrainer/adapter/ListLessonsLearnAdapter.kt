@@ -20,7 +20,7 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import de.luki2811.dev.vokabeltrainer.*
-import de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment
+import de.luki2811.dev.vokabeltrainer.ui.manage.LessonBasicFragment
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 import java.io.File
 import java.util.*
@@ -95,7 +95,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardEdit.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
             setOnClickListener {
-                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[position].getAsJson().toString(), mode = ManageLessonFragment.MODE_EDIT))
+                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[position].getAsJson().toString(), mode = LessonBasicFragment.MODE_EDIT))
             }
         }
 

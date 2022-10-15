@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -19,7 +18,7 @@ import de.luki2811.dev.vokabeltrainer.databinding.FragmentManageVocabularyGroups
 import org.json.JSONObject
 import java.io.File
 
-class ManageVocabularyGroupsFragment : Fragment() {
+class VocabularyGroupListFragment : Fragment() {
 
     private var _binding: FragmentManageVocabularyGroupsBinding? = null
     private val binding get() = _binding!!
@@ -28,7 +27,7 @@ class ManageVocabularyGroupsFragment : Fragment() {
         _binding = FragmentManageVocabularyGroupsBinding.inflate(inflater, container, false)
 
         binding.buttonManageCreateNewVocabularyGroup.setOnClickListener {
-            findNavController().navigate(ManageVocabularyGroupsFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationCreate())
+            findNavController().navigate(VocabularyGroupListFragmentDirections.actionManageVocabularyGroupsFragmentToNavigationCreate())
         }
 
         val arrayList = ArrayList<VocabularyGroup>()

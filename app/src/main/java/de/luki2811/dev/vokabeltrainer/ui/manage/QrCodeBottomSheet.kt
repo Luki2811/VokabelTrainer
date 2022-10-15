@@ -17,7 +17,7 @@ import io.github.g0dkar.qrcode.QRCode
 import java.io.File
 import java.io.FileOutputStream
 
-class ShowQrCodeBottomSheet : BottomSheetDialogFragment() {
+class QrCodeBottomSheet : BottomSheetDialogFragment() {
     private var _binding: FrameShowQrCodeSheetBinding? = null
     private val binding get() = _binding!!
 

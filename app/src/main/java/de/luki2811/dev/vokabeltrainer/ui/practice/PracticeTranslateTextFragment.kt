@@ -20,7 +20,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private var _binding: FragmentPracticeTranslateTextBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
-    private lateinit var word: VocabularyWord
+    private lateinit var exercise: Exercise
     private var isCorrect = false
     private var mistake: Mistake? = null
     private var textToSpeak: AppTextToSpeak? = null
@@ -29,21 +29,21 @@ class PracticeTranslateTextFragment : Fragment(){
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeTranslateTextBinding.inflate(inflater, container, false)
 
-        word = VocabularyWord(JSONObject(args.wordAsJson))
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
-        if(word.isKnownWordAskedAsAnswer){
-            binding.textViewPracticeTranslateTextBottom.text = word.newWord
-            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageKnown.getDisplayLanguage(Settings(requireContext()).appLanguage))
+        exercise = Exercise(JSONObject(args.exercise))
+
+        if(exercise.isSecondWordAskedAsAnswer){
+            binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].firstWord
+            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, exercise.words[0].secondLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
             speakWord()
         }
         else {
-            binding.textViewPracticeTranslateTextBottom.text = word.knownWord
-            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, word.languageNew.getDisplayLanguage(Settings(requireContext()).appLanguage))
-            if(args.settingsReadBoth){
+            binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].secondWord
+            binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, exercise.words[0].firstLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+            if(exercise.readOut[1]){
                 speakWord()
             }
         }
@@ -53,7 +53,7 @@ class PracticeTranslateTextFragment : Fragment(){
         else
             binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
 
-        if(word.isIgnoreCase) {
+        if(exercise.words[0].isIgnoreCase) {
             binding.textViewPracticeInfo.text = ""
             binding.textViewPracticeInfo.visibility = View.GONE
         }
@@ -76,7 +76,7 @@ class PracticeTranslateTextFragment : Fragment(){
             if(isCorrect)
                 requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordMistake" to null))
             else{
-                mistake = Mistake(word, binding.practiceTextInput.text.toString(), Exercise.TYPE_TRANSLATE_TEXT, LocalDate.now())
+                mistake = Mistake(exercise.words[0], binding.practiceTextInput.text.toString(), Exercise.TYPE_TRANSLATE_TEXT, LocalDate.now(), askedForSecondWord = exercise.isSecondWordAskedAsAnswer )
                 requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordMistake" to mistake!!.getAsJson().toString()))
             }
         }
@@ -92,7 +92,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private fun speakWord(){
         Thread {
             Thread.sleep(200L)
-            val lang = if (word.isKnownWordAskedAsAnswer) word.languageNew else word.languageKnown
+            val lang = if (exercise.isSecondWordAskedAsAnswer) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
             textToSpeak = AppTextToSpeak(binding.textViewPracticeTranslateTextBottom.text.toString(),lang,requireContext())
         }.start()
     }
@@ -101,10 +101,10 @@ class PracticeTranslateTextFragment : Fragment(){
         isCorrect = isInputCorrect()
         val correctionBottomSheet = CorrectionBottomSheet()
 
-        if(word.isKnownWordAskedAsAnswer)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.knownWord, "isCorrect" to isCorrect)
+        if(exercise.isSecondWordAskedAsAnswer)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].secondWord, "isCorrect" to isCorrect)
         else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.newWord, "isCorrect" to isCorrect)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].firstWord, "isCorrect" to isCorrect)
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }
@@ -112,16 +112,22 @@ class PracticeTranslateTextFragment : Fragment(){
     private fun isInputCorrect(): Boolean{
         val solution = binding.practiceTextInput.text.toString()
 
-        return if(word.isKnownWordAskedAsAnswer){
-            val knownWords = word.getKnownWordList()
-            for(word in knownWords) {
-                if(word.trim().equals(solution.trim(), this.word.isIgnoreCase)) {
+        if(!exercise.isSecondWordAskedAsAnswer){
+            val firstWords = exercise.words[0].getFirstWordList()
+            for(word in firstWords) {
+                if(word.trim().equals(solution.trim(), this.exercise.words[0].isIgnoreCase)) {
                      return true
                 }
             }
             return false
         }else{
-            solution.trim().equals(word.newWord, word.isIgnoreCase)
+            val secondWords = exercise.words[0].getSecondWordList()
+            for(word in secondWords) {
+                if(word.trim().equals(solution.trim(), this.exercise.words[0].isIgnoreCase)) {
+                    return true
+                }
+            }
+            return false
         }
     }
 }

@@ -17,9 +17,10 @@ class Lesson {
     var alreadyUsedWords = arrayListOf<VocabularyWord>()
     var typesOfLesson: ArrayList<Int> = arrayListOf()
     var settingReadOutBoth: Boolean = true
-    var askOnlyNewWords: Boolean = false
+    var askForSecondWords: Boolean = false
     var isFavorite: Boolean = false
     var numberOfExercises = 10
+    var askForAllWords: Boolean = false
     private val context: Context
 
     constructor(
@@ -37,7 +38,7 @@ class Lesson {
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
         this.settingReadOutBoth = settingReadOutBoth
-        this.askOnlyNewWords = askOnlyNewWords
+        this.askForSecondWords = askOnlyNewWords
         this.context = context
         this.typesOfLesson = typesOfLesson
         this.isFavorite = isFavorite
@@ -55,7 +56,7 @@ class Lesson {
                groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
             vocabularyGroupIds = groupIds.toTypedArray()
             settingReadOutBoth = json.getJSONObject("settings").getBoolean("readOutBoth")
-            askOnlyNewWords = try {
+            askForSecondWords = try {
                 json.getJSONObject("settings").getBoolean("askOnlyNewWords")
             }catch (e: JSONException){
                 e.printStackTrace()
@@ -174,7 +175,7 @@ class Lesson {
         jsonObj.put("settings",
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
-                .put("askOnlyNewWords", askOnlyNewWords)
+                .put("askOnlyNewWords", askForSecondWords)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
@@ -203,7 +204,7 @@ class Lesson {
             .put("settings",
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
-                .put("askOnlyNewWords", askOnlyNewWords)
+                .put("askOnlyNewWords", askForSecondWords)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))

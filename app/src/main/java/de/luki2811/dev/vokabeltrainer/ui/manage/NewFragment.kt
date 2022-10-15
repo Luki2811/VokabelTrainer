@@ -1,4 +1,4 @@
-package de.luki2811.dev.vokabeltrainer.ui.create
+package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.content.Intent
 import android.os.Bundle
@@ -25,19 +25,18 @@ import de.luki2811.dev.vokabeltrainer.AppFile
 import de.luki2811.dev.vokabeltrainer.Importer
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateNewMainBinding
-import de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment
 import java.io.IOException
 import java.net.*
 import javax.net.ssl.HttpsURLConnection
 
-class CreateNewMainFragment : Fragment() {
+class NewFragment : Fragment() {
 
     private var _binding: FragmentCreateNewMainBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var dataToImport: String
 
-    private val args: CreateNewMainFragmentArgs by navArgs()
+    private val args: NewFragmentArgs by navArgs()
 
     private val chooser: Intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
         addCategory(Intent.CATEGORY_OPENABLE)
@@ -122,14 +121,14 @@ class CreateNewMainFragment : Fragment() {
         // Create
 
         binding.buttonCreateVocabularyGroupFromPicture.setOnClickListener {
-            findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToCreateVocabularyGroupWithImageInfoFragment())
+            findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToCreateVocabularyGroupWithImageInfoFragment())
         }
 
         binding.buttonCreateLesson.setOnClickListener {
-            findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = ManageLessonFragment.MODE_CREATE))
+            findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = LessonBasicFragment.MODE_CREATE))
         }
         binding.buttonCreateVocabularyGroup.setOnClickListener {
-            findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(null, NewVocabularyGroupFragment.MODE_CREATE))
+            findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(null, VocabularyGroupBasicFragment.MODE_CREATE))
         }
 
         // File
@@ -287,7 +286,7 @@ class CreateNewMainFragment : Fragment() {
         val importer = Importer(data, requireContext())
         when(importer.tryAll()){
             Importer.IMPORT_SUCCESSFULLY_VOCABULARY_GROUP -> {
-                findNavController().navigate(CreateNewMainFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(importer.vocabularyGroup!!.getAsJson().toString(), NewVocabularyGroupFragment.MODE_IMPORT))
+                findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(importer.vocabularyGroup!!.getAsJson().toString(), VocabularyGroupBasicFragment.MODE_IMPORT))
             }
             Importer.IMPORT_SUCCESSFULLY_LESSON -> {
                 Toast.makeText(context, R.string.import_lesson_successful, Toast.LENGTH_LONG).show()

@@ -1,39 +1,80 @@
 package de.luki2811.dev.vokabeltrainer
 
+import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
 class VocabularyWord() {
-    lateinit var knownWord: String
-    lateinit var languageKnown: Locale
-    lateinit var newWord: String
-    lateinit var languageNew: Locale
+    var typeOfWord: Int = TYPE_UNKNOWN
+
+    lateinit var firstWord: String
+    lateinit var firstLanguage: Locale
+
+    lateinit var secondWord: String
+    lateinit var secondLanguage: Locale
+
     var isIgnoreCase: Boolean = false
-    var isKnownWordAskedAsAnswer = false
 
-    constructor(knownWord: String, languageKnown: Locale, newWord: String, languageNew: Locale, isIgnoreCase: Boolean): this()  {
-        this.knownWord = knownWord
-        this.languageKnown = languageKnown
-        this.newWord = newWord
-        this.languageNew = languageNew
+    constructor(firstWord: String, firstLanguage: Locale, secondWord: String, secondLanguage: Locale, isIgnoreCase: Boolean, typeOfWord: Int = TYPE_NORMAL): this(){
+        this.firstWord = firstWord
+        this.firstLanguage = firstLanguage
+        this.secondWord = secondWord
+        this.secondLanguage = secondLanguage
         this.isIgnoreCase = isIgnoreCase
+        this.typeOfWord = typeOfWord
     }
 
-    constructor(json: JSONObject) : this() {
-        knownWord = json.getString("knownWord")
-        languageKnown = Locale(json.getString("languageKnownType"))
-        newWord = json.getString("newWord")
-        languageNew = Locale(json.getString("languageNewType"))
-        isIgnoreCase = json.getBoolean("isIgnoreCase")
-        isKnownWordAskedAsAnswer = json.getBoolean("askKnownWord")
+    constructor(json: JSONObject, tempFirstLanguage: Locale? = null, tempSecondLanguage: Locale? = null) : this() {
+        typeOfWord = try {
+            json.getInt("type")
+        }
+        catch (e: JSONException){
+            try {
+                json.getInt("typeOfWord")
+            } catch (e: JSONException) {
+                TYPE_NORMAL
+            }
+        }
+        firstWord = try {
+            json.getString("first")
+        } catch (e: JSONException){
+            try {
+                json.getString("knownWord")
+            } catch (e: JSONException){
+                json.getString("native")
+            }
+        }
+        firstLanguage = tempFirstLanguage ?: try { Locale(json.getString("firstLanguage")) } catch (e: JSONException){ Locale(json.getString("languageKnownType")) }
+
+        secondWord = try {
+            json.getString("second")
+        } catch (e: JSONException){
+            try {
+                json.getString("newWord")
+            } catch (e: JSONException){
+                json.getString("new")
+            }
+        }
+        secondLanguage = tempSecondLanguage ?: try { Locale(json.getString("secondLanguage")) } catch (e: JSONException){ Locale(json.getString("languageNewType")) }
+        isIgnoreCase = try{ json.getBoolean("ignoreCase") } catch (e: JSONException){ json.getBoolean("isIgnoreCase") }
+
+        // isKnownWordAskedAsAnswer = json.getBoolean("askKnownWord")
     }
 
-    fun getKnownWordList(): List<String>{
-        val knownWordsList = knownWord.split(";")
-        for (i in knownWordsList){
+    fun getFirstWordList(): List<String>{
+        val firstWordList = firstWord.split(";")
+        for (i in firstWordList){
             i.trim()
         }
-        return knownWordsList
+        return firstWordList
+    }
+
+    fun getSecondWordList(): List<String>{
+        val secondWordList = secondWord.split(";")
+        for (i in secondWordList){
+            i.trim()
+        }
+        return secondWordList
     }
 
     override fun equals(other: Any?): Boolean {
@@ -53,18 +94,26 @@ class VocabularyWord() {
     fun getJson(all: Boolean = true): JSONObject{
         return if(all){
             JSONObject()
-                .put("knownWord", knownWord)
-                .put("languageKnownType", languageKnown.language)
-                .put("newWord", newWord)
-                .put("languageNewType", languageNew.language)
-                .put("isIgnoreCase", isIgnoreCase)
-                .put("askKnownWord", isKnownWordAskedAsAnswer)
+                .put("type", typeOfWord)
+                .put("first", firstWord)
+                .put("firstLanguage", firstLanguage.language)
+                .put("second", secondWord)
+                .put("secondLanguage", secondLanguage.language)
+                .put("ignoreCase", isIgnoreCase)
         }else
             JSONObject()
-                .put("knownWord", knownWord)
-                .put("languageKnownType", languageKnown.language)
-                .put("newWord", newWord)
-                .put("languageNewType", languageNew.language)
+                .put("type", typeOfWord)
+                .put("first", firstWord)
+                .put("second", secondWord)
+                .put("ignoreCase", isIgnoreCase)
+    }
+
+    companion object{
+        const val TYPE_UNKNOWN = -1
+        const val TYPE_NORMAL = 0
+        const val TYPE_SYNONYM = 1
+        const val TYPE_ANTONYM = 2
+        const val TYPE_WORD_FAMILY = 3
     }
 
 

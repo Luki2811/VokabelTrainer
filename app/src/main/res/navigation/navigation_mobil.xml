@@ -12,7 +12,7 @@
 
     <fragment
         android:id="@+id/manageVocabularyGroupsFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.ManageVocabularyGroupsFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.VocabularyGroupListFragment"
         android:label="fragment_manage_vocabulary_groups"
         tools:layout="@layout/fragment_manage_vocabulary_groups" >
         <action
@@ -32,7 +32,7 @@
     </fragment>
     <fragment
         android:id="@+id/editVocabularyGroupFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.EditVocabularyGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.VocabularyGroupWordEditorFragment"
         android:label="fragment_edit_vocabulary_group"
         tools:layout="@layout/fragment_edit_vocabulary_group" >
         <action
@@ -89,7 +89,7 @@
 
     <fragment
         android:id="@+id/createNewMainFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.CreateNewMainFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.NewFragment"
         android:label="fragment_create_new_main"
         tools:layout="@layout/fragment_create_new_main" >
         <action
@@ -117,7 +117,7 @@
     </fragment>
     <fragment
         android:id="@+id/newVocabularyGroupFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.NewVocabularyGroupFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.VocabularyGroupBasicFragment"
         android:label="fragment_new_vocabulary_group"
         tools:layout="@layout/fragment_new_vocabulary_group" >
         <argument
@@ -187,7 +187,7 @@
         tools:layout="@layout/fragment_sources"/>
     <fragment
         android:id="@+id/manageLessonFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.ManageLessonFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.LessonBasicFragment"
         android:label="ManageLessonFragment"
         tools:layout="@layout/fragment_new_lesson">
 
@@ -230,7 +230,7 @@
         app:popExitAnim="@anim/nav_default_pop_exit_anim"  />
     <fragment
         android:id="@+id/createVocabularyGroupWithImageInfoFragment"
-        android:name="de.luki2811.dev.vokabeltrainer.ui.create.CreateVocabularyGroupWithImageInfoFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.VocabularyGroupImportImageFragment"
         android:label="fragment_create_vocabulary_group_with_image_info"
         tools:layout="@layout/fragment_create_vocabulary_group_with_image_info" >
         <action

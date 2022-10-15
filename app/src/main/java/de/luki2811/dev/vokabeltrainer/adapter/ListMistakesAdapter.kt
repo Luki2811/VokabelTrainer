@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
-import de.luki2811.dev.vokabeltrainer.Settings
 import java.time.format.DateTimeFormatter
 
 class ListMistakesAdapter(
@@ -43,9 +42,9 @@ class ListMistakesAdapter(
             else -> "-1"
         }
         viewHolder.textViewType.text = context.getString(R.string.type_of_lesson, typeAsString)
-        viewHolder.textViewAskedWord.text = if(dataSet[position].word.isKnownWordAskedAsAnswer) dataSet[position].word.newWord else dataSet[position].word.knownWord
+        viewHolder.textViewAskedWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.firstWord else dataSet[position].word.secondWord
         viewHolder.textViewAnsweredWord.text = dataSet[position].wrongAnswer
-        viewHolder.textViewCorrectWord.text = if(dataSet[position].word.isKnownWordAskedAsAnswer) dataSet[position].word.knownWord else dataSet[position].word.newWord
+        viewHolder.textViewCorrectWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.secondWord else dataSet[position].word.firstWord
     }
 
     override fun getItemCount() = dataSet.size

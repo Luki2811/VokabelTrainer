@@ -197,5 +197,14 @@
     <string name="err_type_not_valid">Error: Type (%1$s) isn\'t valid</string>
 
     <string name="notification_have_you_reached_your_streak">Have you reached your daily goal ??</string>
+    <string name="synonym">Synonym</string>
+    <string name="antonym">Antonym</string>
+    <string name="word_in_first_language">Word in native (first) language</string>
+    <string name="word_in_second_language">Word in new (second) language</string>
+    <string name="info_text_second_language" >The second (new) language is set for all synonyms and antonyms in this vocabulary group</string>
+    <string name="synonym_other">Synonyms</string>
+    <string name="synonym_main">Main word</string>
+    <string name="antonym_main">Main word</string>
+    <string name="antonym_second">Antonyms</string>
 
 </resources>

@@ -36,6 +36,7 @@ class PracticeActivity : AppCompatActivity() {
     private var numberOfExercises = 10
     private var readOutBoth = true
     private var askOnlyNewWords = false
+    private var isKnownWordAskedAsAnswer = false
     private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
     private var correctInARow: Int = 0
     private var alreadyUsedWords = arrayListOf<VocabularyWord>()
@@ -65,7 +66,7 @@ class PracticeActivity : AppCompatActivity() {
             numberOfExercises = lesson.numberOfExercises
             readOutBoth = lesson.settingReadOutBoth
             typesOfLesson = lesson.typesOfLesson
-            askOnlyNewWords = lesson.askOnlyNewWords
+            askOnlyNewWords = lesson.askForSecondWords
             alreadyUsedWords = lesson.alreadyUsedWords
 
         }
@@ -185,7 +186,7 @@ class PracticeActivity : AppCompatActivity() {
             }else
                 allVocabularyWords.filter { !alreadyUsedWords.contains(it) }.random()
 
-            alreadyUsedWords.add(word.apply { isKnownWordAskedAsAnswer = false })
+            alreadyUsedWords.add(word)
             word
         }
         else
@@ -210,7 +211,7 @@ class PracticeActivity : AppCompatActivity() {
     private fun setNextWord(){
         if(typeOfPractice != Exercise.TYPE_MATCH_FIVE_WORDS){
             words.add(0, getRandomWord(true))
-            words[0].isKnownWordAskedAsAnswer = if (askOnlyNewWords) false else (0..1).random() == 0
+            isKnownWordAskedAsAnswer = if (askOnlyNewWords) false else (0..1).random() == 0
         }else {
             words.add(0, getRandomWord(false))
             for(i in 1..4)
@@ -220,10 +221,6 @@ class PracticeActivity : AppCompatActivity() {
         if(typeOfPractice == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
             words.add(1, allVocabularyWords.filter { !words.contains(it) }.random())
             words.add(2, allVocabularyWords.filter { !words.contains(it) }.random())
-        }
-
-        words.forEach {
-            it.isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
         }
     }
 
@@ -240,9 +237,6 @@ class PracticeActivity : AppCompatActivity() {
         if(typeOfPractice == Exercise.TYPE_CHOOSE_OF_THREE_WORDS){
             words.add(1, allVocabularyWords.filter { !words.contains(it) }.random())
             words.add(2, allVocabularyWords.filter { !words.contains(it) }.random())
-            words.forEach {
-                it.isKnownWordAskedAsAnswer = words[0].isKnownWordAskedAsAnswer
-            }
         }
 
         mistakes[mistakes.indexOf(mistake)].isRepeated = true
@@ -276,10 +270,10 @@ class PracticeActivity : AppCompatActivity() {
     private fun changeFragment(){
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
 
-        val wordsInArray = ArrayList<String>()
-        for (i in words){
-            wordsInArray.add(i.getJson().toString())
-        }
+        val readOut = if(readOutBoth) arrayListOf(true, true) else arrayListOf(true, false)
+
+        val exercise = Exercise(typeOfPractice, words, readOut, askAllWords = false, !isKnownWordAskedAsAnswer)
+
         when(typeOfPractice){
             0 -> {
                 binding.progressBarPractice.visibility = View.GONE
@@ -297,13 +291,13 @@ class PracticeActivity : AppCompatActivity() {
                 navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeFinishFragment(correctInPercent.roundToInt(), mistakes.size, timeInSeconds = this.timeInSeconds, numberOfExercises))
             }
             Exercise.TYPE_TRANSLATE_TEXT -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(readOutBoth, words[0].getJson().toString()))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(exercise.getJson().toString()))
             }
             Exercise.TYPE_CHOOSE_OF_THREE_WORDS -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(wordAsJson = wordsInArray.toTypedArray(), settingsReadBoth = readOutBoth))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(exercise.getJson().toString()))
             }
             Exercise.TYPE_MATCH_FIVE_WORDS -> {
-                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(wordAsJson = wordsInArray.toTypedArray(), settingsReadBoth = readOutBoth))
+                navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(exercise.getJson().toString()))
             }
             else -> {
                 Toast.makeText(applicationContext, getString(R.string.err_type_not_valid, typeOfPractice.toString()), Toast.LENGTH_LONG).show()

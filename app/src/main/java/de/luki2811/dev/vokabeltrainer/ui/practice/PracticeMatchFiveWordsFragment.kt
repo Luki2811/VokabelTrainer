@@ -9,9 +9,9 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.AppTextToSpeak
+import de.luki2811.dev.vokabeltrainer.Exercise
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
 import org.json.JSONObject
@@ -21,6 +21,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private var _binding: FragmentPracticeMatchFiveWordsBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeMatchFiveWordsFragmentArgs by navArgs()
+    private lateinit var exercise: Exercise
     private var words: ArrayList<VocabularyWord> = arrayListOf()
 
     private lateinit var vocKnown0: VocabularyWord
@@ -42,9 +43,10 @@ class PracticeMatchFiveWordsFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
-        for(string in args.wordAsJson){
-            words.add(VocabularyWord(JSONObject(string)))
-        }
+
+         exercise = Exercise(JSONObject(args.exercise))
+
+        words = exercise.words
 
         setWords()
 
@@ -76,7 +78,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             val correctionBottomSheet = CorrectionBottomSheet()
 
             for(word in words){
-                if(word.knownWord == chipKnownWordChecked.text && word.newWord == chipNewWordChecked.text){
+                if(word.firstWord == chipKnownWordChecked.text && word.secondWord == chipNewWordChecked.text){
                     chipKnownWordChecked.isEnabled = false
                     chipNewWordChecked.isEnabled = false
                     resetSelection()
@@ -97,20 +99,20 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private fun speakOutWord(chipId: Int){
         Thread{
             when(chipId) {
-                binding.chip0LearnNativeLan.id -> AppTextToSpeak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.languageKnown, requireContext())
-                binding.chip0LearnNewLan.id -> AppTextToSpeak(binding.chip0LearnNewLan.text.toString(), vocKnown0.languageNew, requireContext())
+                binding.chip0LearnNativeLan.id -> AppTextToSpeak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.firstLanguage, requireContext())
+                binding.chip0LearnNewLan.id -> AppTextToSpeak(binding.chip0LearnNewLan.text.toString(), vocKnown0.secondLanguage, requireContext())
 
-                binding.chip1LearnNativeLan.id -> AppTextToSpeak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.languageKnown, requireContext())
-                binding.chip1LearnNewLan.id -> AppTextToSpeak(binding.chip1LearnNewLan.text.toString(), vocKnown1.languageNew, requireContext())
+                binding.chip1LearnNativeLan.id -> AppTextToSpeak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.firstLanguage, requireContext())
+                binding.chip1LearnNewLan.id -> AppTextToSpeak(binding.chip1LearnNewLan.text.toString(), vocKnown1.secondLanguage, requireContext())
 
-                binding.chip2LearnNativeLan.id -> AppTextToSpeak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.languageKnown, requireContext())
-                binding.chip2LearnNewLan.id -> AppTextToSpeak(binding.chip2LearnNewLan.text.toString(), vocKnown2.languageNew, requireContext())
+                binding.chip2LearnNativeLan.id -> AppTextToSpeak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.firstLanguage, requireContext())
+                binding.chip2LearnNewLan.id -> AppTextToSpeak(binding.chip2LearnNewLan.text.toString(), vocKnown2.secondLanguage, requireContext())
 
-                binding.chip3LearnNativeLan.id -> AppTextToSpeak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.languageKnown, requireContext())
-                binding.chip3LearnNewLan.id -> AppTextToSpeak(binding.chip3LearnNewLan.text.toString(), vocKnown3.languageNew, requireContext())
+                binding.chip3LearnNativeLan.id -> AppTextToSpeak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.firstLanguage, requireContext())
+                binding.chip3LearnNewLan.id -> AppTextToSpeak(binding.chip3LearnNewLan.text.toString(), vocKnown3.secondLanguage, requireContext())
 
-                binding.chip4LearnNativeLan.id -> AppTextToSpeak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.languageKnown, requireContext())
-                binding.chip4LearnNewLan.id -> AppTextToSpeak(binding.chip4LearnNewLan.text.toString(), vocKnown4.languageNew, requireContext())
+                binding.chip4LearnNativeLan.id -> AppTextToSpeak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.firstLanguage, requireContext())
+                binding.chip4LearnNewLan.id -> AppTextToSpeak(binding.chip4LearnNewLan.text.toString(), vocKnown4.secondLanguage, requireContext())
             }
         }.start()
 
@@ -145,57 +147,51 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
 
     private fun setWords(){
-        val tempWords: ArrayList<VocabularyWord> = arrayListOf()
-
-        for(string in args.wordAsJson){
-            tempWords.add(VocabularyWord(JSONObject(string)))
-        }
+        val tempWords = ArrayList<VocabularyWord>()
+        tempWords.addAll(exercise.words)
 
         vocKnown0 = tempWords.random()
         tempWords.remove(vocKnown0)
-        binding.chip0LearnNativeLan.text = vocKnown0.knownWord
+        binding.chip0LearnNativeLan.text = vocKnown0.firstWord
 
         vocKnown1 = tempWords.random()
         tempWords.remove(vocKnown1)
-        binding.chip1LearnNativeLan.text = vocKnown1.knownWord
+        binding.chip1LearnNativeLan.text = vocKnown1.firstWord
 
         vocKnown2 = tempWords.random()
         tempWords.remove(vocKnown2)
-        binding.chip2LearnNativeLan.text = vocKnown2.knownWord
+        binding.chip2LearnNativeLan.text = vocKnown2.firstWord
 
         vocKnown3 = tempWords.random()
         tempWords.remove(vocKnown3)
-        binding.chip3LearnNativeLan.text = vocKnown3.knownWord
+        binding.chip3LearnNativeLan.text = vocKnown3.firstWord
 
         vocKnown4 = tempWords.random()
         tempWords.remove(vocKnown4)
-        binding.chip4LearnNativeLan.text = vocKnown4.knownWord
+        binding.chip4LearnNativeLan.text = vocKnown4.firstWord
 
         // New
-        val tempWords2: ArrayList<VocabularyWord> = arrayListOf()
-
-        for(string in args.wordAsJson){
-            tempWords2.add(VocabularyWord(JSONObject(string)))
-        }
+        val tempWords2 = ArrayList<VocabularyWord>()
+        tempWords2.addAll(exercise.words)
 
         vocNew0 = tempWords2.random()
         tempWords2.remove(vocNew0)
-        binding.chip0LearnNewLan.text = vocNew0.newWord
+        binding.chip0LearnNewLan.text = vocNew0.secondWord
 
         vocNew1 = tempWords2.random()
         tempWords2.remove(vocNew1)
-        binding.chip1LearnNewLan.text = vocNew1.newWord
+        binding.chip1LearnNewLan.text = vocNew1.secondWord
 
         vocNew2 = tempWords2.random()
         tempWords2.remove(vocNew2)
-        binding.chip2LearnNewLan.text = vocNew2.newWord
+        binding.chip2LearnNewLan.text = vocNew2.secondWord
 
         vocNew3 = tempWords2.random()
         tempWords2.remove(vocNew3)
-        binding.chip3LearnNewLan.text = vocNew3.newWord
+        binding.chip3LearnNewLan.text = vocNew3.secondWord
 
         vocNew4 = tempWords2.random()
         tempWords2.remove(vocNew4)
-        binding.chip4LearnNewLan.text = vocNew4.newWord
+        binding.chip4LearnNewLan.text = vocNew4.secondWord
     }
 }
