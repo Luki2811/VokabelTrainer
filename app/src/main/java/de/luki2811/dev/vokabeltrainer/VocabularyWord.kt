@@ -15,7 +15,7 @@ class VocabularyWord() {
 
     var isIgnoreCase: Boolean = false
 
-    constructor(firstWord: String, firstLanguage: Locale, secondWord: String, secondLanguage: Locale, isIgnoreCase: Boolean, typeOfWord: Int = TYPE_NORMAL): this(){
+    constructor(firstWord: String, firstLanguage: Locale, secondWord: String, secondLanguage: Locale, isIgnoreCase: Boolean, typeOfWord: Int = TYPE_TRANSLATION): this(){
         this.firstWord = firstWord
         this.firstLanguage = firstLanguage
         this.secondWord = secondWord
@@ -32,7 +32,7 @@ class VocabularyWord() {
             try {
                 json.getInt("typeOfWord")
             } catch (e: JSONException) {
-                TYPE_NORMAL
+                TYPE_TRANSLATION
             }
         }
         firstWord = try {
@@ -110,10 +110,10 @@ class VocabularyWord() {
 
     companion object{
         const val TYPE_UNKNOWN = -1
-        const val TYPE_NORMAL = 0
+        const val TYPE_TRANSLATION = 0
         const val TYPE_SYNONYM = 1
         const val TYPE_ANTONYM = 2
-        const val TYPE_WORD_FAMILY = 3
+        // const val TYPE_WORD_FAMILY = 3
     }
 
 

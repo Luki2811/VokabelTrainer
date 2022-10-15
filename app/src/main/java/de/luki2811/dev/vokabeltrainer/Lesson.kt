@@ -62,6 +62,13 @@ class Lesson {
                 e.printStackTrace()
                 false
             }
+
+            askForAllWords = try {
+                json.getJSONObject("settings").getBoolean("askForAllWords")
+            }catch (e: JSONException){
+                false
+            }
+
             try {
                 if(json.getJSONObject("settings").getBoolean("useType1"))
                     typesOfLesson.add(TYPE_TRANSLATE_TEXT)
@@ -181,6 +188,7 @@ class Lesson {
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
                 .put("favorite", isFavorite)
                 .put("numberOfExercises", numberOfExercises)
+                .put("askForAllWords", askForAllWords)
         )
         return jsonObj
     }
@@ -209,6 +217,7 @@ class Lesson {
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
                 .put("numberOfExercises", numberOfExercises)
+                .put("askForAllWords", askForAllWords)
             )
             .put("vocabularyGroups", vocabularyInOneJson)
     }

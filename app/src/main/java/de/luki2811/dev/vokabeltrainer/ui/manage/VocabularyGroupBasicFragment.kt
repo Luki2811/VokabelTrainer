@@ -105,14 +105,19 @@ class VocabularyGroupBasicFragment : Fragment() {
         val secondLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupSecondLanguage.text.toString()}
 
 
-        if(firstLanguage == null || secondLanguage == null) {
-            Toast.makeText(requireContext(), R.string.err_lang_not_available, Toast.LENGTH_LONG).show()
+        if(firstLanguage == null) {
+            binding.editTextVocabularyGroupFirstLanguageLayout.error = getString(R.string.err_lang_not_available)
+            return
+        }
+
+        if(secondLanguage == null){
+            binding.editTextVocabularyGroupSecondLanguageLayout.error = getString(R.string.err_lang_not_available)
             return
         }
 
         when (VocabularyGroup.isNameValid(requireContext(), binding.editTextVocabularyGroupName.text.toString(), if (args.keyMode == MODE_EDIT) vocabularyGroup.name else "")) {
             0 -> {
-                binding.editTextVocabularyGroupName.error = null
+                binding.editTextVocabularyGroupNameLayout.error = null
 
                 if(args.keyMode == MODE_CREATE){
                     vocabularyGroup = VocabularyGroup(
@@ -138,19 +143,19 @@ class VocabularyGroupBasicFragment : Fragment() {
                     vocabularyGroup.getAsJson().toString(), "", args.keyMode))
             }
             1 -> {
-                binding.editTextVocabularyGroupName.error = getString(R.string.err_name_contains_wrong_letter)
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_contains_wrong_letter)
                 return
             }
             2 -> {
-                binding.editTextVocabularyGroupName.error = getString(R.string.err_name_already_taken)
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_already_taken)
                 return
             }
             3 -> {
-                binding.editTextVocabularyGroupName.error = getString(R.string.err_name_too_long_max, 50)
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_too_long_max, 50)
                 return
             }
             4 -> {
-                binding.editTextVocabularyGroupName.error = getString(R.string.err_missing_name)
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_missing_name)
                 return
             }
         }

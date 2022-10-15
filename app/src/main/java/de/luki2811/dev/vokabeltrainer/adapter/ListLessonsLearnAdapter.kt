@@ -140,7 +140,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardShare.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
             setOnClickListener {
-                AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
+                // AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
                 share(position)
             }
         }

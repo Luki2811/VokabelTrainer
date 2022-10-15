@@ -206,5 +206,7 @@
     <string name="synonym_main">Main word</string>
     <string name="antonym_main">Main word</string>
     <string name="antonym_second">Antonyms</string>
+    <string name="settings_enable_suggestion_in_editor">Enable Suggestions in VocabularyGroup Editor</string>
+    <string name="lesson_request_all_possible_answer">Have to answer all possible answers</string>
 
 </resources>

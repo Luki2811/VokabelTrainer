@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Settings(var context: Context) {
-    val jsonObject = if (File(context.filesDir, AppFile.NAME_FILE_SETTINGS).exists()) JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))) else JSONObject()
+    private val jsonObject = if (File(context.filesDir, AppFile.NAME_FILE_SETTINGS).exists()) JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))) else JSONObject()
     var dailyObjectiveStreak: Int = try {
         jsonObject.getInt("dailyObjectiveStreak")
     }catch (e: JSONException){
@@ -100,6 +100,7 @@ class Settings(var context: Context) {
             .put("streakChartLengthInDays", streakChartLengthInDays)
             .put("increaseScreenBrightness", increaseScreenBrightness)
             .put("correctionLevelQrCode", correctionLevelQrCode.value)
+            .put("suggestTranslation", suggestTranslation)
         AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
     }
 }

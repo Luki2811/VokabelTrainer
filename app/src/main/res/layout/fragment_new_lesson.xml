@@ -75,7 +75,7 @@
                 android:valueTo="20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/textViewCreateLessonNumberExercises"
-                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsReadOutBoth" />
+                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsRequestAllPossibleAnswer" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchLessonSettingsAskOnlyNewWords"
@@ -85,6 +85,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/settings_lesson_ask_only_new_words"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textViewLessonSettings" />
 
             <TextView
@@ -207,6 +209,18 @@
                 app:layout_constraintTop_toTopOf="@+id/sliderCreateLessonNumberExercises"
                 tools:text="Anzahl Aufgaben" />
 
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchLessonSettingsRequestAllPossibleAnswer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/lesson_request_all_possible_answer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsReadOutBoth" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -230,7 +244,7 @@
     <com.google.android.material.divider.MaterialDivider
         android:id="@+id/dividerNewLesson"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toTopOf="@id/button_next"
         tools:layout_editor_absoluteX="0dp" />

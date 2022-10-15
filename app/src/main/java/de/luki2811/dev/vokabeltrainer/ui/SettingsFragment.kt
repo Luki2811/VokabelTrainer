@@ -120,6 +120,14 @@ class SettingsFragment : Fragment() {
                 .show()
         }
 
+        binding.switchSettingsEnableSuggestionsEditor.apply {
+            isChecked = settings.suggestTranslation
+            setOnCheckedChangeListener { _, isChecked ->
+                settings.suggestTranslation = isChecked
+                saveSettings()
+            }
+        }
+
         binding.sliderSettingsStreakChartLength.apply {
             valueFrom = 3f
             value = settings.streakChartLengthInDays.toFloat()

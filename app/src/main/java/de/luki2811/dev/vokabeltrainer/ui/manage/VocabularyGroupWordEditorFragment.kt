@@ -42,32 +42,22 @@ class VocabularyGroupWordEditorFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentEditVocabularyGroupBinding.inflate(inflater, container, false)
 
+        vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroupWithName!!), context = requireContext())
+        firstLanguage = vocabularyGroup.firstLanguage
+        secondLanguage = vocabularyGroup.secondLanguage
+
+
         if(args.keyMode == MODE_EDIT || args.keyMode == MODE_IMPORT){
-            vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroupWithName!!), context = requireContext())
-
-            Log.w("", args.keyVocGroupWithName!!)
-
-            firstLanguage = vocabularyGroup.firstLanguage
-            secondLanguage = vocabularyGroup.secondLanguage
 
             if(args.keyMode == MODE_IMPORT){
                 vocabularyGroup.id = Id(requireContext())
             }
             vocabulary.addAll(vocabularyGroup.vocabulary)
         } else {
-            firstLanguage = Locale(args.vocGroupLangTypeKnown)
-            secondLanguage = Locale(args.vocGroupLangTypeNew)
-
             vocabulary.add(VocabularyWord("", firstLanguage , "", secondLanguage, true))
-            vocabularyGroup = VocabularyGroup(
-                name = args.keyVocGroupName,
-                firstLanguage = firstLanguage,
-                secondLanguage = secondLanguage,
-                vocabulary = vocabulary,
-                context = requireContext())
         }
 
-        if( Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language) != null){
+        if(Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language) != null && vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION){
             val options = TranslatorOptions.Builder()
                 .setTargetLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language)!!)
                 .setSourceLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language)!!)
@@ -88,7 +78,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                             secondToFirstTranslator.translate(it.toString())
                                 .addOnSuccessListener { translatedText ->
                                     binding.chipGroupEditorSuggestions.removeAllViews()
-                                    if(!binding.textEditEditorFirstWord.text.toString().contains(translatedText, ignoreCase = false)) {
+                                    if(!binding.textEditEditorFirstWord.text.toString().contains(translatedText)) {
                                         binding.chipGroupEditorSuggestions.addView(
                                             Chip(requireContext()).apply {
                                                 setOnClickListener {
@@ -106,13 +96,12 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                                         )
                                     }
                                 }
-                                .addOnCanceledListener {
-                                    binding.chipGroupEditorSuggestions.removeAllViews()
-                                }
                                 .addOnFailureListener { exception ->
                                     binding.chipGroupEditorSuggestions.removeAllViews()
                                     Toast.makeText(requireContext(), exception.localizedMessage, Toast.LENGTH_LONG).show()
                                 }
+                        }else{
+                            binding.chipGroupEditorSuggestions.removeAllViews()
                         }
                     }
                 }
@@ -122,7 +111,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
 
         }else
-            Log.w("Translator", args.vocGroupLangTypeKnown + " or " + args.vocGroupLangTypeKnown + " are not TranslatorLanguages")
+            Log.w("Translator", args.vocGroupLangTypeKnown + " or " + args.vocGroupLangTypeKnown + " are no TranslatorLanguages")
 
         Log.d("Editor VocabularyGroups", "Length: ${vocabulary.size}")
 
@@ -134,7 +123,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         binding.buttonToggleGroupTypeOfWord.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if(isChecked){
                 when(checkedId){
-                    binding.buttonToggleTypeofWord1.id -> setLayoutType(VocabularyWord.TYPE_NORMAL)
+                    binding.buttonToggleTypeofWord1.id -> setLayoutType(VocabularyWord.TYPE_TRANSLATION)
                     binding.buttonToggleTypeofWord2.id -> setLayoutType(VocabularyWord.TYPE_SYNONYM)
                     binding.buttonToggleTypeofWord3.id -> setLayoutType(VocabularyWord.TYPE_ANTONYM)
                 }
@@ -245,7 +234,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         // binding.textEditEditorSecondWordLayout.hint = "Second word"
         Log.d("Test",type.toString())
         when(type){
-            VocabularyWord.TYPE_NORMAL -> {
+            VocabularyWord.TYPE_TRANSLATION -> {
                 binding.textEditEditorFirstWordLayout.helperText = getString(R.string.word_in_first_language)
                 binding.textEditEditorSecondWordLayout.helperText = getString(R.string.word_in_second_language)
             }
@@ -278,7 +267,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         }
 
         val typeOfWord = when(binding.buttonToggleGroupTypeOfWord.checkedButtonId){
-            binding.buttonToggleTypeofWord1.id -> VocabularyWord.TYPE_NORMAL
+            binding.buttonToggleTypeofWord1.id -> VocabularyWord.TYPE_TRANSLATION
             binding.buttonToggleTypeofWord2.id -> VocabularyWord.TYPE_SYNONYM
             binding.buttonToggleTypeofWord3.id -> VocabularyWord.TYPE_ANTONYM
             else -> VocabularyWord.TYPE_UNKNOWN
@@ -388,7 +377,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         Log.w("Test",vocabulary[pos].typeOfWord.toString())
 
         when(vocabulary[pos].typeOfWord){
-            VocabularyWord.TYPE_NORMAL -> binding.buttonToggleTypeofWord1.isChecked = true
+            VocabularyWord.TYPE_TRANSLATION -> binding.buttonToggleTypeofWord1.isChecked = true
             VocabularyWord.TYPE_SYNONYM -> binding.buttonToggleTypeofWord2.isChecked = true
             VocabularyWord.TYPE_ANTONYM -> binding.buttonToggleTypeofWord3.isChecked = true
         }

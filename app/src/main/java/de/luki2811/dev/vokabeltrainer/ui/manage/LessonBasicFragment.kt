@@ -76,6 +76,8 @@ class LessonBasicFragment: Fragment() {
             binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
 
             binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
+
+            binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked = lesson.askForAllWords
         }
 
         refreshList()
@@ -125,6 +127,8 @@ class LessonBasicFragment: Fragment() {
         if(binding.chipTypeLesson3.isChecked)
             typesOfLesson.add(3)
 
+        val askForAllWords = binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked
+
         if(typesOfLesson.isEmpty()){
             Toast.makeText(requireContext(), R.string.err_need_one_type_of_lesson, Toast.LENGTH_LONG).show()
             return
@@ -141,7 +145,9 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_CREATE){
-            lesson = Lesson(name, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson, numberOfExercises = numberOfExercises)
+            lesson = Lesson(name, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson, numberOfExercises = numberOfExercises).apply {
+                this.askForAllWords = askForAllWords
+            }
             lesson.saveInIndex()
         }else{
             lesson.name = name
@@ -150,6 +156,7 @@ class LessonBasicFragment: Fragment() {
             lesson.askForSecondWords = settingAskOnlyNewWords
             lesson.typesOfLesson = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
+            lesson.askForAllWords = askForAllWords
         }
 
         lesson.saveInFile()
