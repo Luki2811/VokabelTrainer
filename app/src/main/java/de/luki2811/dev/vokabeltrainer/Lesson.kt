@@ -14,10 +14,9 @@ class Lesson {
     lateinit var name: String
     lateinit var id: Id
     lateinit var vocabularyGroupIds: Array<Int>
-    var alreadyUsedWords = arrayListOf<VocabularyWord>()
     var typesOfLesson: ArrayList<Int> = arrayListOf()
     var settingReadOutBoth: Boolean = true
-    var askForSecondWords: Boolean = false
+    var askForSecondWordsOnly: Boolean = false
     var isFavorite: Boolean = false
     var numberOfExercises = 10
     var askForAllWords: Boolean = false
@@ -38,12 +37,11 @@ class Lesson {
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
         this.settingReadOutBoth = settingReadOutBoth
-        this.askForSecondWords = askOnlyNewWords
+        this.askForSecondWordsOnly = askOnlyNewWords
         this.context = context
         this.typesOfLesson = typesOfLesson
         this.isFavorite = isFavorite
         this.numberOfExercises = numberOfExercises
-        this.alreadyUsedWords = alreadyUsedWords
     }
 
     constructor(json: JSONObject, context: Context) {
@@ -56,7 +54,7 @@ class Lesson {
                groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
             vocabularyGroupIds = groupIds.toTypedArray()
             settingReadOutBoth = json.getJSONObject("settings").getBoolean("readOutBoth")
-            askForSecondWords = try {
+            askForSecondWordsOnly = try {
                 json.getJSONObject("settings").getBoolean("askOnlyNewWords")
             }catch (e: JSONException){
                 e.printStackTrace()
@@ -93,17 +91,6 @@ class Lesson {
             }catch (e: JSONException){
                 Log.w("Lesson","No value numberOfExercises in $name (${id.number}) => set default" )
                 10
-            }
-
-            alreadyUsedWords = try {
-                val list = arrayListOf<VocabularyWord>()
-                val array = json.getJSONArray("alreadyUsedWords")
-                for(i in 0 until array.length()){
-                    list.add(VocabularyWord(array.getJSONObject(i)))
-                }
-                list
-            }catch (e: JSONException){
-                arrayListOf()
             }
 
         } catch (e: JSONException) {
@@ -175,14 +162,11 @@ class Lesson {
         }
         jsonObj.put("vocabularyGroupIds", jsonArr)
         val listAsString = arrayListOf<JSONObject>()
-        alreadyUsedWords.forEach {
-            listAsString.add(it.getJson())
-        }
         jsonObj.put("alreadyUsedWords", JSONArray(listAsString))
         jsonObj.put("settings",
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
-                .put("askOnlyNewWords", askForSecondWords)
+                .put("askOnlyNewWords", askForSecondWordsOnly)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))
@@ -212,7 +196,7 @@ class Lesson {
             .put("settings",
             JSONObject()
                 .put("readOutBoth", settingReadOutBoth)
-                .put("askOnlyNewWords", askForSecondWords)
+                .put("askOnlyNewWords", askForSecondWordsOnly)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 .put("useType3", typesOfLesson.contains(TYPE_MATCH_FIVE_WORDS))

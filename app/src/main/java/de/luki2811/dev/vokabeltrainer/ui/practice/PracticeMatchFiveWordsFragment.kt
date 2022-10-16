@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.AppTextToSpeak
 import de.luki2811.dev.vokabeltrainer.Exercise
+import de.luki2811.dev.vokabeltrainer.ExerciseResult
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
 import org.json.JSONObject
@@ -44,7 +45,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
-         exercise = Exercise(JSONObject(args.exercise))
+        exercise = Exercise(JSONObject(args.exercise))
 
         words = exercise.words
 
@@ -64,7 +65,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
         childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             if(words.isEmpty()){
                 findNavController().navigate(PracticeMatchFiveWordsFragmentDirections.actionPracticeMatchFiveWordsFragmentToPracticeStartFragment())
-                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to ""))
+                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("result" to ExerciseResult(true, "")))
 
             }
         }
@@ -78,7 +79,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             val correctionBottomSheet = CorrectionBottomSheet()
 
             for(word in words){
-                if(word.firstWord == chipKnownWordChecked.text && word.secondWord == chipNewWordChecked.text){
+                if(word.getFirstWordList()[0] == chipKnownWordChecked.text && word.getSecondWordList()[0] == chipNewWordChecked.text){
                     chipKnownWordChecked.isEnabled = false
                     chipNewWordChecked.isEnabled = false
                     resetSelection()
@@ -152,23 +153,23 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
         vocKnown0 = tempWords.random()
         tempWords.remove(vocKnown0)
-        binding.chip0LearnNativeLan.text = vocKnown0.firstWord
+        binding.chip0LearnNativeLan.text = vocKnown0.getFirstWordList()[0]
 
         vocKnown1 = tempWords.random()
         tempWords.remove(vocKnown1)
-        binding.chip1LearnNativeLan.text = vocKnown1.firstWord
+        binding.chip1LearnNativeLan.text = vocKnown1.getFirstWordList()[0]
 
         vocKnown2 = tempWords.random()
         tempWords.remove(vocKnown2)
-        binding.chip2LearnNativeLan.text = vocKnown2.firstWord
+        binding.chip2LearnNativeLan.text = vocKnown2.getFirstWordList()[0]
 
         vocKnown3 = tempWords.random()
         tempWords.remove(vocKnown3)
-        binding.chip3LearnNativeLan.text = vocKnown3.firstWord
+        binding.chip3LearnNativeLan.text = vocKnown3.getFirstWordList()[0]
 
         vocKnown4 = tempWords.random()
         tempWords.remove(vocKnown4)
-        binding.chip4LearnNativeLan.text = vocKnown4.firstWord
+        binding.chip4LearnNativeLan.text = vocKnown4.getFirstWordList()[0]
 
         // New
         val tempWords2 = ArrayList<VocabularyWord>()
@@ -176,22 +177,22 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
         vocNew0 = tempWords2.random()
         tempWords2.remove(vocNew0)
-        binding.chip0LearnNewLan.text = vocNew0.secondWord
+        binding.chip0LearnNewLan.text = vocNew0.getSecondWordList()[0]
 
         vocNew1 = tempWords2.random()
         tempWords2.remove(vocNew1)
-        binding.chip1LearnNewLan.text = vocNew1.secondWord
+        binding.chip1LearnNewLan.text = vocNew1.getSecondWordList()[0]
 
         vocNew2 = tempWords2.random()
         tempWords2.remove(vocNew2)
-        binding.chip2LearnNewLan.text = vocNew2.secondWord
+        binding.chip2LearnNewLan.text = vocNew2.getSecondWordList()[0]
 
         vocNew3 = tempWords2.random()
         tempWords2.remove(vocNew3)
-        binding.chip3LearnNewLan.text = vocNew3.secondWord
+        binding.chip3LearnNewLan.text = vocNew3.getSecondWordList()[0]
 
         vocNew4 = tempWords2.random()
         tempWords2.remove(vocNew4)
-        binding.chip4LearnNewLan.text = vocNew4.secondWord
+        binding.chip4LearnNewLan.text = vocNew4.getSecondWordList()[0]
     }
 }

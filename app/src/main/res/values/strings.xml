@@ -208,5 +208,9 @@
     <string name="antonym_second">Antonyms</string>
     <string name="settings_enable_suggestion_in_editor">Enable Suggestions in VocabularyGroup Editor</string>
     <string name="lesson_request_all_possible_answer">Have to answer all possible answers</string>
+    <string name="alternatives">Alternatives: %1$s</string>
+    <string name="reset_all_word_levels">Reset \"level\" of all words</string>
+    <string name="message_reset_levels">Do you really want to reset all levels. This step is not reversible</string>
+    <string name="title_reset_all_levels">Reset all levels ??</string>
 
 </resources>

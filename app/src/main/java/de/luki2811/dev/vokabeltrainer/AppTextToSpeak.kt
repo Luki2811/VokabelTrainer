@@ -13,22 +13,22 @@ class AppTextToSpeak(private var textToSpeak: String, var language: Locale, val 
 
 
     private fun replaceKnownShorts(){
-        textToSpeak = textToSpeak.replace("etw","etwas", ignoreCase = true)
+        textToSpeak = textToSpeak.replace("etw ","etwas ", ignoreCase = true)
         textToSpeak = textToSpeak.replace("etw.","etwas", ignoreCase = true)
-        textToSpeak = textToSpeak.replace("sth", "something", ignoreCase = true)
+        textToSpeak = textToSpeak.replace("sth ", "something ", ignoreCase = true)
         textToSpeak = textToSpeak.replace("sth.", "something", ignoreCase = true)
-        textToSpeak = textToSpeak.replace("sb", "somebody", ignoreCase = true)
+        textToSpeak = textToSpeak.replace("sb ", "somebody ", ignoreCase = true)
         textToSpeak = textToSpeak.replace("sb.", "somebody", ignoreCase = true)
-        textToSpeak = textToSpeak.replace("pl", "plural", ignoreCase = true)
+        textToSpeak = textToSpeak.replace("pl ", "plural ", ignoreCase = true)
         textToSpeak = textToSpeak.replace("pl.", "plural", ignoreCase = true)
-        textToSpeak = textToSpeak.replace("sg", "singular", ignoreCase = true)
+        textToSpeak = textToSpeak.replace("sg ", "singular ", ignoreCase = true)
         textToSpeak = textToSpeak.replace("sg.", "singular", ignoreCase = true)
 
         if(language == Locale.FRENCH){
-            textToSpeak = textToSpeak.replace("qc","quelque chose", ignoreCase = true)
-            textToSpeak = textToSpeak.replace("qn", "quelqu'un", ignoreCase = true)
-            textToSpeak = textToSpeak.replace("f.","féminin", ignoreCase = true)
-            textToSpeak = textToSpeak.replace("m.", "masculin", ignoreCase = true)
+            textToSpeak = textToSpeak.replace(" qc"," quelque chose", ignoreCase = true)
+            textToSpeak = textToSpeak.replace(" qn", " quelqu'un", ignoreCase = true)
+            textToSpeak = textToSpeak.replace(" f."," féminin", ignoreCase = true)
+            textToSpeak = textToSpeak.replace(" m.", " masculin", ignoreCase = true)
         }
     }
 

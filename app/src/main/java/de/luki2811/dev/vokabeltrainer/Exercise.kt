@@ -11,8 +11,6 @@ class Exercise() {
     var readOut: ArrayList<Boolean> = arrayListOf(false, false)
     var words: ArrayList<VocabularyWord> = arrayListOf()
     var typeOfWord: Int = VocabularyWord.TYPE_UNKNOWN
-    // Result
-    var isCorrect: Boolean = false
 
     constructor(type: Int, words: ArrayList<VocabularyWord>, read: ArrayList<Boolean>, askAllWords: Boolean, askForSecondWord: Boolean) : this() {
         this.type = type
@@ -27,14 +25,13 @@ class Exercise() {
         this.type = json.getInt("type")
         this.words = arrayListOf()
         for(i in 0 until json.getJSONArray("words").length())
-            this.words.add(VocabularyWord(json.getJSONArray("words").getJSONObject(i)))
+            this.words.add(VocabularyWord.getVocabularyWord(json.getJSONArray("words").getJSONObject(i)))
         this.typeOfWord = words[0].typeOfWord
         val readOutList = json.getString("readOut").split(';')
         this.readOut.add(0, (readOutList[0] == "true"))
         this.readOut.add(1, (readOutList[1] == "true"))
         this.askAllWords = json.getBoolean("askAllWords")
         this.isSecondWordAskedAsAnswer = json.getBoolean("askForSecondWord")
-        this.isCorrect = json.getBoolean("isCorrect")
     }
 
     fun getJson(): JSONObject{
@@ -48,7 +45,6 @@ class Exercise() {
             .put("readOut", readOut)
             .put("askAllWords", askAllWords)
             .put("askForSecondWord", isSecondWordAskedAsAnswer)
-            .put("isCorrect", isCorrect)
     }
 
     companion object{

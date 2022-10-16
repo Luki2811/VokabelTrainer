@@ -23,7 +23,7 @@ class Mistake {
     constructor(json: JSONObject){
         try {
             this.askedForSecondWord = try { json.getBoolean("askedForSecondWord") } catch (e: JSONException){ false }
-            this.word = VocabularyWord(json.getJSONObject("vocabularyWord"))
+            this.word = VocabularyWord.getVocabularyWord(json.getJSONObject("vocabularyWord"))
             this.wrongAnswer = json.getString("wrongAnswer")
             this.typeOfPractice = json.getInt("typeOfPractice")
             this.lastTimeWrong = LocalDate.parse(json.getString("lastTimeWrong"), dateTimeFormatter)

@@ -22,7 +22,6 @@ class PracticeTranslateTextFragment : Fragment(){
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private var mistake: Mistake? = null
     private var textToSpeak: AppTextToSpeak? = null
 
 
@@ -73,20 +72,16 @@ class PracticeTranslateTextFragment : Fragment(){
 
         childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             findNavController().navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeStartFragment())
-            if(isCorrect)
-                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordMistake" to null))
-            else{
-                mistake = Mistake(exercise.words[0], binding.practiceTextInput.text.toString(), Exercise.TYPE_TRANSLATE_TEXT, LocalDate.now(), askedForSecondWord = exercise.isSecondWordAskedAsAnswer )
-                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordMistake" to mistake!!.getAsJson().toString()))
-            }
+
+            requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("result" to ExerciseResult(isCorrect, binding.practiceTextInput.text.toString())))
         }
 
         return binding.root
     }
 
-    override fun onDestroy() {
+    override fun onStop() {
+        super.onStop()
         textToSpeak?.shutdown()
-        super.onDestroy()
     }
 
     private fun speakWord(){
@@ -102,9 +97,9 @@ class PracticeTranslateTextFragment : Fragment(){
         val correctionBottomSheet = CorrectionBottomSheet()
 
         if(exercise.isSecondWordAskedAsAnswer)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].secondWord, "isCorrect" to isCorrect)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].secondWord, "isCorrect" to isCorrect, "givenAnswer" to binding.practiceTextInput.text.toString().trim())
         else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].firstWord, "isCorrect" to isCorrect)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].firstWord, "isCorrect" to isCorrect, "givenAnswer" to binding.practiceTextInput.text.toString().trim())
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }

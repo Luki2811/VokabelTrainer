@@ -55,6 +55,24 @@ class VocabularyGroupBasicFragment : Fragment() {
             binding.editTextVocabularyGroupSecondLanguage.setText(vocabularyGroup.secondLanguage.getDisplayLanguage(appSettings.appLanguage))
         }
 
+        binding.buttonResetLevels.apply {
+            if(args.keyMode != MODE_CREATE){
+                setOnClickListener {
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setIcon(R.drawable.ic_baseline_refresh_24)
+                        .setTitle(context.getString(R.string.title_reset_all_levels))
+                        .setMessage(context.getString(R.string.message_reset_levels))
+                        .setPositiveButton(R.string.ok){ _, _ ->
+                            vocabularyGroup.resetLevels()
+                        }
+                        .setNegativeButton(R.string.cancel){_, _ -> }
+                        .show()
+                }
+            }else{
+                visibility = View.GONE
+            }
+        }
+
         binding.buttonCreateVocabularyGroupNext.setOnClickListener { goNext() }
 
         if(args.keyMode == VocabularyGroupWordEditorFragment.MODE_EDIT)

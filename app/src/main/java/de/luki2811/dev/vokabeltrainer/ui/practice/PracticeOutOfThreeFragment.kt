@@ -23,7 +23,6 @@ class PracticeOutOfThreeFragment: Fragment() {
     private lateinit var word: VocabularyWord
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private var mistake: Mistake? = null
     private lateinit var wordOption1: VocabularyWord
     private lateinit var wordOption2: VocabularyWord
     private lateinit var wordOption3: VocabularyWord
@@ -106,15 +105,8 @@ class PracticeOutOfThreeFragment: Fragment() {
 
         childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             findNavController().navigate(PracticeOutOfThreeFragmentDirections.actionPracticeOutOfThreeFragmentToPracticeStartFragment())
-            if(isCorrect)
-                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString()))
-            else{
-                mistake = Mistake(word, wordSelected, Exercise.TYPE_CHOOSE_OF_THREE_WORDS, LocalDate.now(), askedForSecondWord = exercise.isSecondWordAskedAsAnswer)
-                requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("wordResult" to word.getJson().toString(), "wordMistake" to mistake!!.getAsJson().toString()))
-            }
-
+            requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("result" to ExerciseResult(isCorrect, wordSelected) ))
         }
-
 
         return binding.root
     }
@@ -148,16 +140,14 @@ class PracticeOutOfThreeFragment: Fragment() {
     }
 
     private fun startCorrection(){
-
         isCorrect = isInputCorrect()
 
         val correctionBottomSheet = CorrectionBottomSheet()
 
-
-        if(!exercise.isSecondWordAskedAsAnswer)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.firstWord, "isCorrect" to isCorrect)
+        if(exercise.isSecondWordAskedAsAnswer)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to word.secondWord, "isCorrect" to isCorrect, "givenAnswer" to wordSelected)
         else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.secondWord, "isCorrect" to isCorrect)
+            correctionBottomSheet.arguments = bundleOf("correctWord" to word.firstWord, "isCorrect" to isCorrect, "givenAnswer" to wordSelected)
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }

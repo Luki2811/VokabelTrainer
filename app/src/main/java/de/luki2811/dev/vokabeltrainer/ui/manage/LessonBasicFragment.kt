@@ -68,7 +68,7 @@ class LessonBasicFragment: Fragment() {
 
             binding.textLessonName.setText(lesson.name)
             binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
-            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWords
+            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWordsOnly
 
 
             binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
@@ -153,7 +153,7 @@ class LessonBasicFragment: Fragment() {
             lesson.name = name
             lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
             lesson.settingReadOutBoth = settingReadOutBoth
-            lesson.askForSecondWords = settingAskOnlyNewWords
+            lesson.askForSecondWordsOnly = settingAskOnlyNewWords
             lesson.typesOfLesson = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
             lesson.askForAllWords = askForAllWords

@@ -61,7 +61,7 @@ class VocabularyGroup {
         this.context = context
 
         for (i in 0 until json.getJSONArray("vocabulary").length()){
-            vocabulary.add(VocabularyWord(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
+            vocabulary.add(VocabularyWord.getVocabularyWord(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
         }
     }
 
@@ -135,8 +135,6 @@ class VocabularyGroup {
         val jsonArray = JSONArray()
         vocabulary.forEach { jsonArray.put(it.getJson(false)) }
 
-        Log.w("Test",jsonArray.toString())
-
         return JSONObject()
             .put("name", name)
             .put("id", id.number)
@@ -158,6 +156,14 @@ class VocabularyGroup {
         file.mkdirs()
         file = File(file, id.number.toString() + ".json" )
         AppFile.writeInFile(getAsJson().toString(), file)
+    }
+
+    fun resetLevels() {
+        Log.i("VocabularyGroup", "Delete all levels of vocabularyGroup \"$name\" (${id.number})")
+        vocabulary.forEach {
+            it.level = 0
+        }
+        saveInFile()
     }
 
     companion object{
