@@ -29,7 +29,7 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
 
                 if(null != otherAlternatives) {
                     otherAlternatives.forEach { it.trim() }
-                    otherAlternatives.remove(arguments?.getString("givenAnswer")?.trim())
+                    otherAlternatives.removeAll{ it.trim() == arguments?.getString("givenAnswer")?.trim() }
 
                     if(otherAlternatives.isEmpty()){
                         binding.textViewCorrectAnswer.visibility = View.GONE

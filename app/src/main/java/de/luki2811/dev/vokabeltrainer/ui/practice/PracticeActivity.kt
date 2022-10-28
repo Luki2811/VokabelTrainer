@@ -126,7 +126,7 @@ class PracticeActivity : AppCompatActivity() {
             }else if(mode == MODE_NORMAL){
                 val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
 
-                if(exerciseResult.isCorrect && exercise.type != Exercise.TYPE_MATCH_FIVE_WORDS) {
+                if(exerciseResult.isCorrect && (exercise.type != Exercise.TYPE_MATCH_FIVE_WORDS)) {
                     allVocabularyWords.find { it == exercise.words[0] }?.apply { level += 1 }
 
                     lesson.loadVocabularyGroups().forEach { group ->

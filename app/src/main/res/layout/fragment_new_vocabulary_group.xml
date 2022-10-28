@@ -105,13 +105,13 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonResetLevels"
+                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="@string/reset_all_word_levels"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
                 app:icon="@drawable/ic_baseline_refresh_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

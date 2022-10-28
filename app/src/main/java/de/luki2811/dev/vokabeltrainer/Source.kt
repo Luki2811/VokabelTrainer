@@ -2,7 +2,7 @@ package de.luki2811.dev.vokabeltrainer
 
 import java.net.URL
 
-class Source(val name: String, val version: String?, val type: String, val link: URL, val other: String = "") {
+data class Source(val name: String, val version: String?, val type: String, val link: URL, val other: String = "") {
 
     companion object{
         const val TYPE_MIT = "The MIT License"
