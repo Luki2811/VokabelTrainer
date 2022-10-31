@@ -9,7 +9,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/dividerNewLesson"
+        app:layout_constraintBottom_toTopOf="@+id/dividerCreateLesson3"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         tools:layout_editor_absoluteX="0dp">
@@ -48,18 +48,48 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/settings"
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textLessonNameLayout" />
 
-            <com.google.android.material.materialswitch.MaterialSwitch
-                android:id="@+id/switchLessonSettingsReadOutBoth"
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:text="Read out ..."
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsAskOnlyNewWords" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupLessonSettingsReadOutBoth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/settings_lesson_read_out_both"
-                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsAskOnlyNewWords" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLessonSettingsChipReadFirstWords"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="First words"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipLessonSettingsChipReadSecondWords"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:text="Second words"/>
+
+            </com.google.android.material.chip.ChipGroup>
 
             <com.google.android.material.slider.Slider
                 android:id="@+id/sliderCreateLessonNumberExercises"
@@ -97,6 +127,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/vocabulary_groups"
 
+                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/chipGroupTypesOfLesson" />
 
@@ -152,7 +183,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/settings_types_of_lesson"
-                app:layout_constraintStart_toStartOf="@+id/switchLessonSettingsReadOutBoth"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/chipGroupLessonSettingsReadOutBoth"
                 app:layout_constraintTop_toBottomOf="@+id/sliderCreateLessonNumberExercises" />
 
             <com.google.android.material.chip.ChipGroup
@@ -219,7 +251,43 @@
                 android:text="@string/lesson_request_all_possible_answer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsReadOutBoth" />
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupLessonSettingsReadOutBoth" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateLesson1"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewLessonSettings"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textViewLessonSettings"
+                app:layout_constraintTop_toTopOf="@+id/textViewLessonSettings" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateLesson2"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewNewLessonTypesOfLesson"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textViewNewLessonTypesOfLesson"
+                app:layout_constraintTop_toTopOf="@+id/textViewNewLessonTypesOfLesson" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/dividerCreateLesson4"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@+id/textViewSelectedVocabularyGroups"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textViewSelectedVocabularyGroups"
+                app:layout_constraintTop_toTopOf="@+id/textViewSelectedVocabularyGroups" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -242,7 +310,7 @@
 
 
     <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/dividerNewLesson"
+        android:id="@+id/dividerCreateLesson3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"

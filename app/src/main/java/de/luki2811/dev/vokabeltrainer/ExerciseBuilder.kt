@@ -69,7 +69,7 @@ class ExerciseBuilder(
             mistake!!.filter { !it.isRepeated }.random().word
         }else{
             allWordsToSelectFrom.shuffle()
-            allWordsToSelectFrom.minWith(Comparator.comparingInt { it.level })
+            allWordsToSelectFrom.filter { !it.alreadyUsedInExercise }.minWith(Comparator.comparingInt { it.level })
         }
     }
 

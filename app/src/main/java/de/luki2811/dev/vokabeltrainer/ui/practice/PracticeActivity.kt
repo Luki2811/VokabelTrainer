@@ -103,7 +103,7 @@ class PracticeActivity : AppCompatActivity() {
                 }
             }
 
-            Log.i("Misktakes", mistakes.toString())
+            Log.i("Mistakes", mistakes.toString())
 
             if(exerciseResult.isCorrect){
                 correctInARow += 1
@@ -167,12 +167,11 @@ class PracticeActivity : AppCompatActivity() {
     private fun setNextExercise() {
         if(mode == MODE_NORMAL){
             val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
-            val readOut = if(lesson.settingReadOutBoth) arrayListOf(true, true) else arrayListOf(true, false)
 
             exercise = ExerciseBuilder(
                 allVocabularyWords,
                 lesson.askForAllWords,
-                readOut,
+                lesson.readOut,
                 lesson.typesOfLesson,
                 lesson.askForSecondWordsOnly,
                 position > numberOfExercises,
@@ -182,7 +181,7 @@ class PracticeActivity : AppCompatActivity() {
             val readOut = if(intent.getBooleanExtra("readOutBoth", false)) arrayListOf(true, true) else arrayListOf(true, false)
             exercise = ExerciseBuilder(
                 allVocabularyWords,
-                false, // TODO: Add in settings of practiceMistakesFragment
+                intent.getBooleanExtra("askAllWords", false),
                 readOut,
                 arrayListOf(Exercise.TYPE_TRANSLATE_TEXT),
                 false,
@@ -190,6 +189,8 @@ class PracticeActivity : AppCompatActivity() {
                 mistakes
             ).build()
         }
+        allVocabularyWords[allVocabularyWords.indexOf(exercise.words[0])].alreadyUsedInExercise = true
+
     }
 
     private fun hideSystemUI() {
@@ -273,6 +274,11 @@ class PracticeActivity : AppCompatActivity() {
                     Log.e("Exception", "Type (${exercise.type}) isn't valid -> return to MainActivity")
                     startActivity(Intent(applicationContext, MainActivity::class.java))
                 }
+            }
+            if(position > numberOfExercises){
+                binding.textViewPracticeInfoMistake.visibility = View.VISIBLE
+            }else{
+                binding.textViewPracticeInfoMistake.visibility = View.GONE
             }
         }
     }

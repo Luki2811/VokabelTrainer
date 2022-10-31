@@ -120,9 +120,11 @@ class NewFragment : Fragment() {
 
         // Create
 
-        binding.buttonCreateVocabularyGroupFromPicture.setOnClickListener {
+        /** binding.buttonCreateVocabularyGroupFromPicture.setOnClickListener {
             findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToCreateVocabularyGroupWithImageInfoFragment())
-        }
+        } **/
+
+        binding.buttonCreateVocabularyGroupFromPicture.isEnabled = false
 
         binding.buttonCreateLesson.setOnClickListener {
             findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = LessonBasicFragment.MODE_CREATE))
@@ -220,7 +222,9 @@ class NewFragment : Fragment() {
         }
     }
 
-    // DO NOT RUN ON UI THREAD
+    /**
+     * DO NOT RUN ON UI THREAD
+     */
     private fun importFromUrl(url: URL){
         val data: String = if(isOnline()){
             try {

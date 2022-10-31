@@ -3,12 +3,9 @@
     <string name="close">Close</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name of lesson</string>
-    <string name="known_word_language">Word translated</string>
-    <string name="new_word_language">Word in new language</string>
-    <string name="native_language">Known language</string>
-    <string name="new_language">New language</string>
+    <string name="native_language">First (known) language</string>
+    <string name="new_language">Second (new) language</string>
     <string name="next">Next</string>
-
     <string name="ignore_case">Ignore upper and lower case</string>
     <string name="settings">Settings</string>
     <string name="create_additional_vocabulary">Add word</string>
@@ -104,9 +101,9 @@
     <string name="download_started">Download started !</string>
     <string name="settings_lesson_ask_only_new_words">Ask for new words only</string>
     <string name="vocabulary_group_restart">Vocabulary group starts again</string>
-    <string name="type_of_lesson_1">Direct free translation</string>
-    <string name="type_of_lesson_2">Choose from three vocabulary words</string>
-    <string name="type_of_lesson_3">Match five vocabulary words</string>
+    <string name="type_of_lesson_1">Write translation</string>
+    <string name="type_of_lesson_2">Choose between three words</string>
+    <string name="type_of_lesson_3">Match five words</string>
     <string name="settings_types_of_lesson">Types of exercises</string>
     <string name="err_need_one_type_of_lesson">Error: At least one type of exercises is needed</string>
     <string name="settings_main_read_out_forbidden_central">Centrally deactivate read out vocabulary</string>
@@ -212,5 +209,8 @@
     <string name="reset_all_word_levels">Reset \"level\" of all words</string>
     <string name="message_reset_levels">Do you really want to reset all levels. This step is not reversible</string>
     <string name="title_reset_all_levels">Reset all levels ??</string>
+    <string name="err_missing_language_data_tts">Error: Missing language data to read word(s)</string>
+    <string name="action_install">Install</string>
+    <string name="err_too_many_lines">Error: Too many lines (max. %1$d)</string>
 
 </resources>

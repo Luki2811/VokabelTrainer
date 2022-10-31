@@ -7,7 +7,6 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.util.*
-import kotlin.collections.ArrayList
 
 class VocabularyGroup {
 
@@ -167,6 +166,16 @@ class VocabularyGroup {
     }
 
     companion object{
+
+        const val MAX_LINES = 3
+        const val MAX_CHARS = 50
+
+        const val VALID = 0
+        const val INVALID_TOO_MANY_CHARS = -1
+        const val INVALID_TOO_MANY_LINES = -2
+        const val INVALID_EMPTY = -3
+        const val INVALID_NAME_ALREADY_USED = -4
+
         fun loadFromFileWithId(id: Id, context: Context): VocabularyGroup?{
             var file = File(context.filesDir, "vocabularyGroups")
             file.mkdirs()
@@ -180,22 +189,25 @@ class VocabularyGroup {
         fun isNameValid(context: Context, nameToCheck: String, ignoreName: String = ""): Int {
             val indexAppFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
 
-            if (nameToCheck.length > 50)
-                return 3
+            if(nameToCheck.lines().size > MAX_LINES) {
+                return INVALID_TOO_MANY_LINES
+            }
+
+            if (nameToCheck.length > MAX_CHARS)
+                return INVALID_TOO_MANY_CHARS
 
             if(nameToCheck.trim().isEmpty())
-                return 4
+                return INVALID_EMPTY
 
             if (indexAppFile.exists()) {
                 val indexVocabularyGroups = JSONObject(AppFile.loadFromFile(indexAppFile)).getJSONArray("index")
                 for (i in 0 until indexVocabularyGroups.length()) {
                     if ((indexVocabularyGroups.getJSONObject(i).getString("name") == nameToCheck.trim()) && (nameToCheck.trim() != ignoreName)) {
-                        return 2
+                        return INVALID_NAME_ALREADY_USED
                     }
                 }
             }
-            return 0
+            return VALID
         }
     }
-
 }

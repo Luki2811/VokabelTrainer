@@ -47,7 +47,7 @@ class CreatePracticeFragment : Fragment() {
                     Settings(requireContext()).numberOfExercisesToPracticeMistakes.toFloat()
                 else
                     1F
-                valueTo = allMistakes.size.toFloat()
+                valueTo = if(allMistakes.size.toFloat() <= 20) allMistakes.size.toFloat() else 20F
             }
             binding.buttonCreateMistakeLesson.setOnClickListener { createMistakeLesson() }
         }
@@ -61,6 +61,7 @@ class CreatePracticeFragment : Fragment() {
             numberOfExercisesToPracticeMistakes = binding.sliderCreatePracticeNumberOfExercises.value.roundToInt()
         }.saveSettingsInFile()
         intent.apply {
+            putExtra("askAllWords", !binding.switchCreatePracticeSettingsAskAllWords.isChecked)
             putExtra("numberOfMistakes", binding.sliderCreatePracticeNumberOfExercises.value.roundToInt())
             putExtra("readOutBoth", !binding.switchCreatePracticeSettingsReadOutBoth.isChecked)
         }

@@ -67,7 +67,8 @@ class LessonBasicFragment: Fragment() {
             }
 
             binding.textLessonName.setText(lesson.name)
-            binding.switchLessonSettingsReadOutBoth.isChecked = !lesson.settingReadOutBoth
+            binding.chipLessonSettingsChipReadFirstWords.isChecked = lesson.readOut[0]
+            binding.chipLessonSettingsChipReadSecondWords.isChecked = lesson.readOut[1]
             binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWordsOnly
 
 
@@ -86,23 +87,19 @@ class LessonBasicFragment: Fragment() {
 
     private fun saveLesson() {
         val name: String = when(Lesson.isNameValid(requireContext(), binding.textLessonName.text.toString())){
-            0 -> {
+            Lesson.VALID, Lesson.INVALID_NAME_ALREADY_USED -> {
                 binding.textLessonName.error = null
                 binding.textLessonName.text.toString()
             }
-            1 -> {
-                binding.textLessonName.error = getString(R.string.err_name_contains_wrong_letter)
+            Lesson.INVALID_TOO_MANY_CHARS -> {
+                binding.textLessonName.error = getString(R.string.err_name_too_long_max, Lesson.MAX_CHARS)
                 return
             }
-            2 -> {
-                binding.textLessonName.error = null
-                binding.textLessonName.text.toString()
-            }
-            3 -> {
-                binding.textLessonName.error = getString(R.string.err_name_too_long_max, 50)
+            Lesson.INVALID_TOO_MANY_LINES -> {
+                binding.textLessonName.error = getString(R.string.err_too_many_lines, Lesson.MAX_LINES)
                 return
             }
-            4 -> {
+            Lesson.INVALID_EMPTY -> {
                 binding.textLessonName.error = getString(R.string.err_missing_name)
                 return
             }
@@ -115,7 +112,11 @@ class LessonBasicFragment: Fragment() {
         // Settings
 
         // If selected is it false
-        val settingReadOutBoth = !binding.switchLessonSettingsReadOutBoth.isChecked
+        val settingReadOutBoth = arrayListOf<Boolean>()
+
+        settingReadOutBoth.add(0, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadFirstWords.id))
+        settingReadOutBoth.add(1, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadSecondWords.id))
+
         val settingAskOnlyNewWords = binding.switchLessonSettingsAskOnlyNewWords.isChecked
         val numberOfExercises = binding.sliderCreateLessonNumberExercises.value.toInt()
 
@@ -152,7 +153,7 @@ class LessonBasicFragment: Fragment() {
         }else{
             lesson.name = name
             lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
-            lesson.settingReadOutBoth = settingReadOutBoth
+            lesson.readOut = settingReadOutBoth
             lesson.askForSecondWordsOnly = settingAskOnlyNewWords
             lesson.typesOfLesson = typesOfLesson
             lesson.numberOfExercises = numberOfExercises

@@ -1,6 +1,8 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
+import android.content.Intent
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +12,11 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeTranslateTextBinding
 import org.json.JSONObject
-import java.time.LocalDate
+
 
 class PracticeTranslateTextFragment : Fragment(){
 
@@ -22,8 +25,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private var textToSpeak: AppTextToSpeak? = null
-
+    private var tts: TextToSpeechUtil? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeTranslateTextBinding.inflate(inflater, container, false)
@@ -72,57 +74,74 @@ class PracticeTranslateTextFragment : Fragment(){
 
         childFragmentManager.setFragmentResultListener("finishFragment", this){ _, _ ->
             findNavController().navigate(PracticeTranslateTextFragmentDirections.actionPracticeTranslateTextFragmentToPracticeStartFragment())
-
             requireActivity().supportFragmentManager.setFragmentResult("finished", bundleOf("result" to ExerciseResult(isCorrect, binding.practiceTextInput.text.toString())))
         }
 
         return binding.root
     }
 
-    override fun onStop() {
-        super.onStop()
-        textToSpeak?.shutdown()
+    private fun speakWord(){
+        tts = TextToSpeechUtil(requireContext())
+
+        val lang = if (exercise.isSecondWordAskedAsAnswer) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
+        when(tts?.speak(binding.textViewPracticeTranslateTextBottom.text.toString(), lang)){
+            TextToSpeechUtil.ERROR_MISSING_LANG_DATA -> Snackbar.make(
+                binding.root,
+                getString(R.string.err_missing_language_data_tts),
+                Snackbar.LENGTH_LONG
+            ).apply {
+                setAction(getString(R.string.action_install)){
+                    requireActivity().startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA))
+                }
+            }.show()
+        }
     }
 
-    private fun speakWord(){
-        Thread {
-            Thread.sleep(200L)
-            val lang = if (exercise.isSecondWordAskedAsAnswer) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
-            textToSpeak = AppTextToSpeak(binding.textViewPracticeTranslateTextBottom.text.toString(),lang,requireContext())
-        }.start()
+    override fun onDestroy() {
+        tts?.finish()
+        super.onDestroy()
     }
 
     private fun startCorrection(){
-        isCorrect = isInputCorrect()
         val correctionBottomSheet = CorrectionBottomSheet()
 
-        if(exercise.isSecondWordAskedAsAnswer)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].secondWord, "isCorrect" to isCorrect, "givenAnswer" to binding.practiceTextInput.text.toString().trim())
-        else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to exercise.words[0].firstWord, "isCorrect" to isCorrect, "givenAnswer" to binding.practiceTextInput.text.toString().trim())
+        val proofreader = if(exercise.isSecondWordAskedAsAnswer){
+            Proofreader(exercise.words[0].getSecondWordList().toMutableList() as ArrayList<String>, binding.practiceTextInput.text.toString(), exercise.askAllWords)
+        }else{
+            Proofreader(exercise.words[0].getFirstWordList().toMutableList() as ArrayList<String>, binding.practiceTextInput.text.toString(), exercise.askAllWords)
+        }
+
+        isCorrect = proofreader.correct(exercise.words[0].isIgnoreCase)
+
+        val alternativeText: String
+        var wrongIndex = arrayListOf<Int>()
+
+        if(isCorrect){
+            val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) exercise.words[0].getSecondWordList().toMutableList() else exercise.words[0].getFirstWordList().toMutableList()
+
+            otherAlternatives.forEach { it.trim() }
+            otherAlternatives.removeAll{ it.trim().equals(binding.practiceTextInput.text.toString().trim(), exercise.words[0].isIgnoreCase)  }
+
+            alternativeText = if(otherAlternatives.isEmpty()){
+                ""
+            }else {
+                val sb = StringBuilder(otherAlternatives[0].trim())
+                if(otherAlternatives.size > 1) {
+                    for (i in 1 until otherAlternatives.size) {
+                        sb.append("; ").append(otherAlternatives[i].trim())
+                    }
+                }
+                sb.toString()
+            }
+        }else{
+            alternativeText = if(exercise.isSecondWordAskedAsAnswer) exercise.words[0].secondWord else exercise.words[0].firstWord
+            wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)
+        }
+
+        correctionBottomSheet.arguments = bundleOf("wrongIndex" to wrongIndex, "alternativesText" to alternativeText, "isCorrect" to isCorrect)
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }
 
-    private fun isInputCorrect(): Boolean{
-        val solution = binding.practiceTextInput.text.toString()
 
-        if(!exercise.isSecondWordAskedAsAnswer){
-            val firstWords = exercise.words[0].getFirstWordList()
-            for(word in firstWords) {
-                if(word.trim().equals(solution.trim(), this.exercise.words[0].isIgnoreCase)) {
-                     return true
-                }
-            }
-            return false
-        }else{
-            val secondWords = exercise.words[0].getSecondWordList()
-            for(word in secondWords) {
-                if(word.trim().equals(solution.trim(), this.exercise.words[0].isIgnoreCase)) {
-                    return true
-                }
-            }
-            return false
-        }
-    }
 }

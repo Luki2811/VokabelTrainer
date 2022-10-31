@@ -4,8 +4,6 @@
     <string name="close">Schließen</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name der Lektion</string>
-    <string name="known_word_language">Vokabel übersetzt</string>
-    <string name="new_word_language">Vokabel in der neuen Sprache</string>
     <string name="native_language">Bekannte Sprache</string>
     <string name="new_language">Neue Sprache</string>
     <string name="next">Weiter</string>

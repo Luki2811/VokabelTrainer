@@ -15,7 +15,7 @@ class Lesson {
     lateinit var id: Id
     lateinit var vocabularyGroupIds: Array<Int>
     var typesOfLesson: ArrayList<Int> = arrayListOf()
-    var settingReadOutBoth: Boolean = true
+    var readOut: ArrayList<Boolean> = arrayListOf(true, true)
     var askForSecondWordsOnly: Boolean = false
     var isFavorite: Boolean = false
     var numberOfExercises = 10
@@ -26,7 +26,7 @@ class Lesson {
         name: String,
         vocabularyGroupIds: Array<Int>,
         context: Context,
-        settingReadOutBoth: Boolean = true,
+        readOut: ArrayList<Boolean> = arrayListOf(true, true),
         askOnlyNewWords: Boolean = false,
         typesOfLesson: ArrayList<Int> = arrayListOf(1,2,3),
         isFavorite: Boolean = false,
@@ -36,7 +36,7 @@ class Lesson {
         this.name = name
         this.id = Id(context)
         this.vocabularyGroupIds = vocabularyGroupIds
-        this.settingReadOutBoth = settingReadOutBoth
+        this.readOut = readOut
         this.askForSecondWordsOnly = askOnlyNewWords
         this.context = context
         this.typesOfLesson = typesOfLesson
@@ -53,7 +53,14 @@ class Lesson {
             for(i in 0 until json.getJSONArray("vocabularyGroupIds").length())
                groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
             vocabularyGroupIds = groupIds.toTypedArray()
-            settingReadOutBoth = json.getJSONObject("settings").getBoolean("readOutBoth")
+            readOut = try {
+                if(json.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)
+            }catch (e: JSONException){
+                val tempArr = arrayListOf<Boolean>()
+                tempArr.add(0, json.getJSONObject("settings").getBoolean("readOutFirstWords"))
+                tempArr.add(1, json.getJSONObject("settings").getBoolean("readOutSecondWords"))
+                tempArr
+            }
             askForSecondWordsOnly = try {
                 json.getJSONObject("settings").getBoolean("askOnlyNewWords")
             }catch (e: JSONException){
@@ -165,7 +172,8 @@ class Lesson {
         jsonObj.put("alreadyUsedWords", JSONArray(listAsString))
         jsonObj.put("settings",
             JSONObject()
-                .put("readOutBoth", settingReadOutBoth)
+                .put("readOutFirstWords", readOut[0])
+                .put("readOutSecondWords", readOut[1])
                 .put("askOnlyNewWords", askForSecondWordsOnly)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
@@ -195,7 +203,7 @@ class Lesson {
             .put("type", AppFile.TYPE_FILE_LESSON)
             .put("settings",
             JSONObject()
-                .put("readOutBoth", settingReadOutBoth)
+                .put("readOutBoth", readOut)
                 .put("askOnlyNewWords", askForSecondWordsOnly)
                 .put("useType1", typesOfLesson.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfLesson.contains(TYPE_CHOOSE_OF_THREE_WORDS))
@@ -232,44 +240,40 @@ class Lesson {
     }
 
     companion object{
+
+        const val MAX_LINES = 3
+        const val MAX_CHARS = 50
+
+        const val VALID = 0
+        const val INVALID_TOO_MANY_CHARS = -1
+        const val INVALID_TOO_MANY_LINES = -2
+        const val INVALID_EMPTY = -3
+        const val INVALID_NAME_ALREADY_USED = -4
+
         /**
          * Checks, if a lesson has a valid name
          */
         fun isNameValid(context: Context, name: String): Int {
             val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
 
-            if (name.length > 50)
-                return 3
+            if (name.length > MAX_CHARS)
+                return INVALID_TOO_MANY_CHARS
+
+            if(name.lines().size > MAX_LINES)
+                return INVALID_TOO_MANY_LINES
 
             if(name.trim().isEmpty())
-                return 4
-
-            /** if(isAppFile(textInputEditText.text.toString().trim()))
-                return 2
-
-            if (textInputEditText.text.toString().trim().contains("/") ||
-                textInputEditText.text.toString().trim().contains("<") ||
-                textInputEditText.text.toString().trim().contains(">") ||
-                textInputEditText.text.toString().trim().contains("\\") ||
-                textInputEditText.text.toString().trim().contains("|") ||
-                textInputEditText.text.toString().trim().contains("*") ||
-                textInputEditText.text.toString().trim().contains(":") ||
-                textInputEditText.text.toString().trim().contains("\"") ||
-                textInputEditText.text.toString().trim().contains("?")
-            ) return 1
-
-             **/
+                return INVALID_EMPTY
 
             if (indexFile.exists()) {
-
                 val indexLessons =
                     JSONObject(AppFile.loadFromFile(indexFile)).getJSONArray("index")
                 for (i in 0 until indexLessons.length()) {
                     if (indexLessons.getJSONObject(i).getString("name") == name.trim())
-                        return 2
+                        return INVALID_NAME_ALREADY_USED
                 }
             }
-            return 0
+            return VALID
         }
     }
 }

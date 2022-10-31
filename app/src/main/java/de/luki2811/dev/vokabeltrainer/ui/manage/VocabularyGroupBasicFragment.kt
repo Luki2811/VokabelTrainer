@@ -1,8 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.content.DialogInterface
-import android.content.res.Resources
-import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -134,7 +132,7 @@ class VocabularyGroupBasicFragment : Fragment() {
         }
 
         when (VocabularyGroup.isNameValid(requireContext(), binding.editTextVocabularyGroupName.text.toString(), if (args.keyMode == MODE_EDIT) vocabularyGroup.name else "")) {
-            0 -> {
+            VocabularyGroup.VALID -> {
                 binding.editTextVocabularyGroupNameLayout.error = null
 
                 if(args.keyMode == MODE_CREATE){
@@ -160,19 +158,18 @@ class VocabularyGroupBasicFragment : Fragment() {
                 findNavController().navigate(VocabularyGroupBasicFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(
                     vocabularyGroup.getAsJson().toString(), "", args.keyMode))
             }
-            1 -> {
-                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_contains_wrong_letter)
-                return
+            VocabularyGroup.INVALID_TOO_MANY_LINES -> {
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_too_many_lines, VocabularyGroup.MAX_LINES)
             }
-            2 -> {
+            VocabularyGroup.INVALID_NAME_ALREADY_USED -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_already_taken)
                 return
             }
-            3 -> {
-                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_too_long_max, 50)
+            VocabularyGroup.INVALID_TOO_MANY_CHARS -> {
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_too_long_max, VocabularyGroup.MAX_CHARS)
                 return
             }
-            4 -> {
+            VocabularyGroup.INVALID_EMPTY -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_missing_name)
                 return
             }

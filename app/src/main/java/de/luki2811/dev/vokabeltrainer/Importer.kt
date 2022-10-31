@@ -97,9 +97,9 @@ class Importer(private val data: String, val context: Context) {
                 vocGroupFromLesson.saveInIndex()
             }
 
-            var nameOfLesson = dataAsJson.getString("name")
+            var nameOfLesson = dataAsJson.getString("name").trim()
             var tempInt = 0
-            while(Lesson.isNameValid(context, nameOfLesson) != 0){
+            while(Lesson.isNameValid(context, nameOfLesson) != Lesson.VALID){
                 tempInt += 1
 
                 nameOfLesson = if(tempInt > 1)
@@ -109,7 +109,14 @@ class Importer(private val data: String, val context: Context) {
 
             }
             val askOnlyNewWords = dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
-            val readOutBoth = dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")
+            val readOutBoth = try {
+                if(dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)
+            }catch (e: JSONException){
+                val tempArr = arrayListOf<Boolean>()
+                tempArr.add(0, dataAsJson.getJSONObject("settings").getBoolean("readOutFirstWords"))
+                tempArr.add(1, dataAsJson.getJSONObject("settings").getBoolean("readOutSecondWords"))
+                tempArr
+            }
             val numberOfExercises = try {
                 dataAsJson.getJSONObject("settings").getInt("numberOfExercises")
             } catch (e: JSONException){

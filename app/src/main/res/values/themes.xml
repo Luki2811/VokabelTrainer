@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Theme.VokabelTrainer.DynamicColors" parent="Theme.Material3.Dark.NoActionBar">
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <!-- <item name="android:windowLightStatusBar">?attr/isLightTheme</item> -->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:fontFamily">@font/work_sans</item>
         <item name="fontFamily">@font/work_sans</item>

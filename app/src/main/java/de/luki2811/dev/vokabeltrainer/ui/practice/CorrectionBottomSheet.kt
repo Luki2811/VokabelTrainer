@@ -1,7 +1,8 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.os.Bundle
-import android.util.Log
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,37 +25,32 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
             binding.textViewCorrection.text = getString(R.string.correct)
             binding.layoutBottomSheet.setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), requireContext().getColor(R.color.Green)))
 
-            if (!arguments?.getString("correctWord").isNullOrEmpty()){
-                val otherAlternatives = arguments?.getString("correctWord")?.split(";")?.toMutableList()
-
-                if(null != otherAlternatives) {
-                    otherAlternatives.forEach { it.trim() }
-                    otherAlternatives.removeAll{ it.trim() == arguments?.getString("givenAnswer")?.trim() }
-
-                    if(otherAlternatives.isEmpty()){
-                        binding.textViewCorrectAnswer.visibility = View.GONE
-                    }else {
-                        val sb = StringBuilder(otherAlternatives[0].trim())
-                        if(otherAlternatives.size > 1) {
-                            for (i in 1 until otherAlternatives.size) {
-                                sb.append("; ").append(otherAlternatives[i].trim())
-                            }
-                        }
-                        binding.textViewCorrectAnswer.text = getString(R.string.alternatives, sb.toString())
-                    }
-                }
-            } else
+            if(!arguments?.getString("alternativesText", "").isNullOrBlank()){
+                binding.textViewCorrectAnswer.text = getString(R.string.alternatives, arguments?.getString("alternativesText"))
+            }else{
                 binding.textViewCorrectAnswer.visibility = View.GONE
-
-
+            }
         }
         else {
             binding.textViewCorrection.text = getString(R.string.wrong)
             binding.layoutBottomSheet.setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), requireContext().getColor(R.color.DarkRed)))
 
-            if (!arguments?.getString("correctWord").isNullOrEmpty())
-                binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("correctWord"))
-            else
+            if (!arguments?.getString("alternativesText").isNullOrBlank()) {
+                if(arguments?.getIntegerArrayList("wrongIndex") != null){
+                    val wrongIndex = arguments?.getIntegerArrayList("wrongIndex")!!
+                    if(wrongIndex.isNotEmpty()){
+                        val content = SpannableString("${arguments?.getString("alternativesText")} ")
+                        wrongIndex.forEach {
+                            if(it <= arguments?.getString("alternativesText")!!.length && it >= 0){
+                                content.setSpan(UnderlineSpan(), it, it + 1, 0)
+                            }
+                        }
+                        binding.textViewCorrectAnswer.text = content
+                    }
+                }else{
+                    binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("alternativesText"))
+                }
+            } else
                 binding.textViewCorrectAnswer.visibility = View.GONE
         }
 

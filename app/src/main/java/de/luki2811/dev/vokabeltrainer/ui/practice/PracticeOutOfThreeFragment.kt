@@ -13,7 +13,6 @@ import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeOutOfThreeBinding
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity.Companion.quitPractice
 import org.json.JSONObject
-import java.time.LocalDate
 
 class PracticeOutOfThreeFragment: Fragment() {
 
@@ -27,11 +26,12 @@ class PracticeOutOfThreeFragment: Fragment() {
     private lateinit var wordOption2: VocabularyWord
     private lateinit var wordOption3: VocabularyWord
     private var wordSelected: String = ""
-
-
+    private var tts: TextToSpeechUtil? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeOutOfThreeBinding.inflate(inflater, container, false)
+
+        tts = TextToSpeechUtil(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             quitPractice(requireActivity(),requireContext())
@@ -82,17 +82,20 @@ class PracticeOutOfThreeFragment: Fragment() {
                 binding.chipPracticeOption3.id -> wordSelected = binding.chipPracticeOption3.text.toString()
             }
 
-            if(exercise.readOut[1]){
-                when(binding.chipGroupPracticeOptions.checkedChipId){
-                    binding.chipPracticeOption1.id -> AppTextToSpeak(binding.chipPracticeOption1.text.toString(), if (exercise.isSecondWordAskedAsAnswer) wordOption1.secondLanguage else wordOption1.firstLanguage, requireContext() )
-                    binding.chipPracticeOption2.id -> AppTextToSpeak(binding.chipPracticeOption2.text.toString(), if (exercise.isSecondWordAskedAsAnswer) wordOption2.secondLanguage else wordOption2.firstLanguage, requireContext() )
-                    binding.chipPracticeOption3.id -> AppTextToSpeak(binding.chipPracticeOption3.text.toString(), if (exercise.isSecondWordAskedAsAnswer) wordOption3.secondLanguage else wordOption3.firstLanguage, requireContext() )
+            val lang = if (exercise.isSecondWordAskedAsAnswer) word.secondLanguage else word.firstLanguage
+
+            when(binding.chipGroupPracticeOptions.checkedChipId){
+                binding.chipPracticeOption1.id -> {
+                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                        tts?.speak(binding.chipPracticeOption1.text.toString(), lang)
                 }
-            }else if(exercise.isSecondWordAskedAsAnswer){
-                when(binding.chipGroupPracticeOptions.checkedChipId){
-                    binding.chipPracticeOption1.id -> AppTextToSpeak(binding.chipPracticeOption1.text.toString(), wordOption1.secondLanguage, requireContext() )
-                    binding.chipPracticeOption2.id -> AppTextToSpeak(binding.chipPracticeOption2.text.toString(), wordOption1.secondLanguage, requireContext() )
-                    binding.chipPracticeOption3.id -> AppTextToSpeak(binding.chipPracticeOption3.text.toString(), wordOption1.secondLanguage, requireContext() )
+                binding.chipPracticeOption2.id -> {
+                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                        tts?.speak(binding.chipPracticeOption2.text.toString(), lang)
+                }
+                binding.chipPracticeOption3.id -> {
+                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                        tts?.speak(binding.chipPracticeOption3.text.toString(), lang)
                 }
             }
         }
@@ -113,41 +116,58 @@ class PracticeOutOfThreeFragment: Fragment() {
 
     private fun setWords() {
         val tempWords = exercise.words
-
-        //1
-        var tempWord = tempWords.random()
-        tempWords.remove(tempWord)
-        wordOption1 = tempWord
-
-        //2
-        tempWord = tempWords.random()
-        tempWords.remove(tempWord)
-        wordOption2 = tempWord
-
-        //3
-        tempWord = tempWords.random()
-        tempWords.remove(tempWord)
-        wordOption3 = tempWord
+        tempWords.shuffle()
+        wordOption1 = tempWords[0]
+        wordOption2 = tempWords[1]
+        wordOption3 = tempWords[2]
 
     }
 
     private fun speakWord(text: String){
-        Thread {
-            Thread.sleep(200L)
-            val lang = if (exercise.isSecondWordAskedAsAnswer) word.firstLanguage else word.secondLanguage
-            AppTextToSpeak(text, lang, requireContext())
-        }.start()
+        val lang = if (exercise.isSecondWordAskedAsAnswer) word.firstLanguage else word.secondLanguage
+        if((exercise.readOut[0] && exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && !exercise.isSecondWordAskedAsAnswer))
+            tts?.speak(text, lang)
     }
 
     private fun startCorrection(){
         isCorrect = isInputCorrect()
 
         val correctionBottomSheet = CorrectionBottomSheet()
+        val alternativeText: String
 
-        if(exercise.isSecondWordAskedAsAnswer)
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.secondWord, "isCorrect" to isCorrect, "givenAnswer" to wordSelected)
-        else
-            correctionBottomSheet.arguments = bundleOf("correctWord" to word.firstWord, "isCorrect" to isCorrect, "givenAnswer" to wordSelected)
+        if(isCorrect){
+            val solution: String = when(binding.chipGroupPracticeOptions.checkedChipId){
+                binding.chipPracticeOption1.id -> binding.chipPracticeOption1.text.toString()
+                binding.chipPracticeOption2.id -> binding.chipPracticeOption2.text.toString()
+                binding.chipPracticeOption3.id -> binding.chipPracticeOption3.text.toString()
+                else -> ""
+            }
+
+            val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) word.getSecondWordList().toMutableList() else word.getFirstWordList().toMutableList()
+
+            otherAlternatives.forEach { it.trim() }
+            otherAlternatives.removeAll{ it.trim().equals(solution.trim(), word.isIgnoreCase)  }
+
+            alternativeText = if(otherAlternatives.isEmpty()){
+                ""
+            }else {
+                val sb = StringBuilder(otherAlternatives[0].trim())
+                if(otherAlternatives.size > 1) {
+                    for (i in 1 until otherAlternatives.size) {
+                        sb.append("; ").append(otherAlternatives[i].trim())
+                    }
+                }
+                sb.toString()
+            }
+            correctionBottomSheet.arguments = bundleOf("alternativesText" to alternativeText, "isCorrect" to true)
+        }else{
+            if(exercise.isSecondWordAskedAsAnswer)
+                correctionBottomSheet.arguments = bundleOf("alternativesText" to word.secondWord, "isCorrect" to false)
+            else
+                correctionBottomSheet.arguments = bundleOf("alternativesText" to word.firstWord, "isCorrect" to false)
+        }
+
+
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }

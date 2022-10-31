@@ -10,9 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
-import de.luki2811.dev.vokabeltrainer.AppTextToSpeak
 import de.luki2811.dev.vokabeltrainer.Exercise
 import de.luki2811.dev.vokabeltrainer.ExerciseResult
+import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
 import org.json.JSONObject
@@ -24,6 +24,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private val args: PracticeMatchFiveWordsFragmentArgs by navArgs()
     private lateinit var exercise: Exercise
     private var words: ArrayList<VocabularyWord> = arrayListOf()
+    private var tts: TextToSpeechUtil? = null
 
     private lateinit var vocKnown0: VocabularyWord
     private lateinit var vocKnown1: VocabularyWord
@@ -40,6 +41,8 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeMatchFiveWordsBinding.inflate(layoutInflater, container, false)
+
+        tts = TextToSpeechUtil(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
@@ -85,37 +88,36 @@ class PracticeMatchFiveWordsFragment : Fragment() {
                     resetSelection()
                     words.remove(word)
                     if(words.isEmpty()){
-                        correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to true)
+                        correctionBottomSheet.arguments = bundleOf("alternativesText" to "", "isCorrect" to true)
                         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
                     }
                     return
                 }
             }
             resetSelection()
-            correctionBottomSheet.arguments = bundleOf("correctWord" to "", "isCorrect" to false)
+            correctionBottomSheet.arguments = bundleOf("alternativesText" to "", "isCorrect" to false)
             correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
         }
     }
 
     private fun speakOutWord(chipId: Int){
-        Thread{
+
             when(chipId) {
-                binding.chip0LearnNativeLan.id -> AppTextToSpeak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.firstLanguage, requireContext())
-                binding.chip0LearnNewLan.id -> AppTextToSpeak(binding.chip0LearnNewLan.text.toString(), vocKnown0.secondLanguage, requireContext())
+                binding.chip0LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.firstLanguage)
+                binding.chip0LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip0LearnNewLan.text.toString(), vocKnown0.secondLanguage)
 
-                binding.chip1LearnNativeLan.id -> AppTextToSpeak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.firstLanguage, requireContext())
-                binding.chip1LearnNewLan.id -> AppTextToSpeak(binding.chip1LearnNewLan.text.toString(), vocKnown1.secondLanguage, requireContext())
+                binding.chip1LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.firstLanguage)
+                binding.chip1LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip1LearnNewLan.text.toString(), vocKnown1.secondLanguage)
 
-                binding.chip2LearnNativeLan.id -> AppTextToSpeak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.firstLanguage, requireContext())
-                binding.chip2LearnNewLan.id -> AppTextToSpeak(binding.chip2LearnNewLan.text.toString(), vocKnown2.secondLanguage, requireContext())
+                binding.chip2LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.firstLanguage)
+                binding.chip2LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip2LearnNewLan.text.toString(), vocKnown2.secondLanguage)
 
-                binding.chip3LearnNativeLan.id -> AppTextToSpeak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.firstLanguage, requireContext())
-                binding.chip3LearnNewLan.id -> AppTextToSpeak(binding.chip3LearnNewLan.text.toString(), vocKnown3.secondLanguage, requireContext())
+                binding.chip3LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.firstLanguage)
+                binding.chip3LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip3LearnNewLan.text.toString(), vocKnown3.secondLanguage)
 
-                binding.chip4LearnNativeLan.id -> AppTextToSpeak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.firstLanguage, requireContext())
-                binding.chip4LearnNewLan.id -> AppTextToSpeak(binding.chip4LearnNewLan.text.toString(), vocKnown4.secondLanguage, requireContext())
+                binding.chip4LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.firstLanguage)
+                binding.chip4LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip4LearnNewLan.text.toString(), vocKnown4.secondLanguage)
             }
-        }.start()
 
     }
 

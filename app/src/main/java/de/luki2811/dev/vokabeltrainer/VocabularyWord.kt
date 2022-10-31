@@ -4,7 +4,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
-data class VocabularyWord(var firstWord: String, var firstLanguage: Locale, var secondWord: String, var secondLanguage: Locale, var isIgnoreCase: Boolean, var typeOfWord: Int = TYPE_TRANSLATION) {
+data class VocabularyWord(var firstWord: String, var firstLanguage: Locale, var secondWord: String, var secondLanguage: Locale, var isIgnoreCase: Boolean, var typeOfWord: Int = TYPE_TRANSLATION, var alreadyUsedInExercise: Boolean = false) {
 
     var level: Int = 0
 
