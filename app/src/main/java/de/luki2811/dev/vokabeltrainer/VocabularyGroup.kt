@@ -8,13 +8,14 @@ import org.json.JSONObject
 import java.io.File
 import java.util.*
 
-class VocabularyGroup {
+class VocabularyGroup: Exportable {
 
     var name: String
     var id: Id
     var firstLanguage: Locale
     var secondLanguage: Locale
     var vocabulary = ArrayList<VocabularyWord>()
+    override val type = Exportable.TYPE_VOCABULARY_GROUP
 
     private var context: Context
     private val indexFile: File
@@ -26,11 +27,11 @@ class VocabularyGroup {
         this.firstLanguage = firstLanguage
         this.vocabulary = vocabulary
         this.context = context
-        this.indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        this.indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
     }
 
     constructor(json: JSONObject, context: Context, name: String = "", generateNewId: Boolean = false){
-        indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if(name == "") {
             this.name = json.getString("name")
             this.id = if(generateNewId) Id(context) else Id(context, json.getInt("id"))
@@ -64,6 +65,10 @@ class VocabularyGroup {
         }
     }
 
+    override fun export(): JSONObject {
+        return getAsJson()
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (this === other) return true
@@ -92,29 +97,29 @@ class VocabularyGroup {
     }
 
     fun refreshNameInIndex(){
-        val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
+        val index = JSONObject(FileUtil.loadFromFile(File(context.filesDir ,FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
                 index.getJSONArray("index").getJSONObject(i).put("name", name)
         }
-        AppFile.writeInFile(index.toString(),indexFile)
+        FileUtil.writeInFile(index.toString(),indexFile)
     }
 
     fun saveInIndex(){
-        if(File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS).exists()){
-            val index = JSONObject(AppFile.loadFromFile(File(context.filesDir ,AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
+        if(File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS).exists()){
+            val index = JSONObject(FileUtil.loadFromFile(File(context.filesDir ,FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             index.getJSONArray("index").put(index.getJSONArray("index").length(), toIndexJson)
-            AppFile.writeInFile(index.toString(),indexFile)
+            FileUtil.writeInFile(index.toString(),indexFile)
         }else{
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             val index = JSONObject().put("index", JSONArray().put(0, toIndexJson))
-            AppFile.writeInFile(index.toString(),indexFile)
+            FileUtil.writeInFile(index.toString(),indexFile)
         }
     }
 
     fun deleteFromIndex(){
-        val index = JSONObject(AppFile.loadFromFile(indexFile))
+        val index = JSONObject(FileUtil.loadFromFile(indexFile))
         val fieldToDelete = arrayListOf<Int>()
 
         for(i in 0 until index.getJSONArray("index").length()){
@@ -126,7 +131,7 @@ class VocabularyGroup {
             index.getJSONArray("index").remove(i)
         }
 
-        AppFile.writeInFile(index.toString(),indexFile)
+        FileUtil.writeInFile(index.toString(),indexFile)
     }
 
 
@@ -137,7 +142,7 @@ class VocabularyGroup {
         return JSONObject()
             .put("name", name)
             .put("id", id.number)
-            .put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
+            .put("type", type)
             .put("firstLanguage", firstLanguage.language)
             .put("secondLanguage", secondLanguage.language)
             .put("vocabulary", jsonArray)
@@ -154,7 +159,7 @@ class VocabularyGroup {
         var file = File(context.filesDir, "vocabularyGroups")
         file.mkdirs()
         file = File(file, id.number.toString() + ".json" )
-        AppFile.writeInFile(getAsJson().toString(), file)
+        FileUtil.writeInFile(getAsJson().toString(), file)
     }
 
     fun resetLevels() {
@@ -181,13 +186,13 @@ class VocabularyGroup {
             file.mkdirs()
             file = File(file, id.number.toString() + ".json" )
             return if(file.exists())
-                VocabularyGroup(JSONObject(AppFile.loadFromFile(file)), context = context)
+                VocabularyGroup(JSONObject(FileUtil.loadFromFile(file)), context = context)
             else null
         }
 
 
         fun isNameValid(context: Context, nameToCheck: String, ignoreName: String = ""): Int {
-            val indexAppFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+            val indexAppFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
 
             if(nameToCheck.lines().size > MAX_LINES) {
                 return INVALID_TOO_MANY_LINES
@@ -200,7 +205,7 @@ class VocabularyGroup {
                 return INVALID_EMPTY
 
             if (indexAppFile.exists()) {
-                val indexVocabularyGroups = JSONObject(AppFile.loadFromFile(indexAppFile)).getJSONArray("index")
+                val indexVocabularyGroups = JSONObject(FileUtil.loadFromFile(indexAppFile)).getJSONArray("index")
                 for (i in 0 until indexVocabularyGroups.length()) {
                     if ((indexVocabularyGroups.getJSONObject(i).getString("name") == nameToCheck.trim()) && (nameToCheck.trim() != ignoreName)) {
                         return INVALID_NAME_ALREADY_USED

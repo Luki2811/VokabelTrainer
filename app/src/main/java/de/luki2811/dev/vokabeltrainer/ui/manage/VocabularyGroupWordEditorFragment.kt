@@ -192,7 +192,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         if(args.keyMode == MODE_EDIT)
             binding.buttonDeleteVocabularyGroup.setOnClickListener {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setIcon(R.drawable.outline_delete_24)
+                    .setIcon(R.drawable.ic_outline_delete_24)
                     .setTitle(getString(R.string.delete_vocabulary_group))
                     .setMessage(R.string.do_you_really_want_to_delete_vocabulary_group)
                     .setPositiveButton(getString(R.string.delete)){ _: DialogInterface, _: Int ->

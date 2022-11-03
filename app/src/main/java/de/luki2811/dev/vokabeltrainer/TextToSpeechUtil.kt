@@ -26,7 +26,8 @@ class TextToSpeechUtil(val context: Context) {
         }
     }
 
-    fun speak(text: String, language: Locale): Int{
+    fun speak(_text: String, language: Locale): Int{
+        var text = _text
 
         if(!settings.readOutVocabularyGeneral)
             return ERROR_GLOBAL_DEACTIVATED_SPEAKING
@@ -43,7 +44,7 @@ class TextToSpeechUtil(val context: Context) {
                 return ERROR_MISSING_LANG_DATA
             }
             TextToSpeech.LANG_AVAILABLE, TextToSpeech.LANG_COUNTRY_AVAILABLE, TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE -> {
-                replaceKnownShorts(text, language)
+                text = replaceKnownShorts(text, language, context)
                 return when(tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TTS")){
                     TextToSpeech.SUCCESS -> { SUCCESS }
                     TextToSpeech.ERROR -> {
@@ -63,8 +64,14 @@ class TextToSpeechUtil(val context: Context) {
     }
 
     companion object{
-        fun replaceKnownShorts(textToCheck: String, language: Locale): String{
+        fun replaceKnownShorts(textToCheck: String, language: Locale, context: Context): String{
+            val allShortForms = ShortForm.loadAllShortForms(context).filter { it.language == language }
             var text = textToCheck
+            allShortForms.forEach {
+                text = text.replace(it.shortForm, it.longForm, ignoreCase = true)
+            }
+
+            /**
             text = text.replace("etw ","etwas ", ignoreCase = true)
             text = text.replace("etw.","etwas", ignoreCase = true)
             text = text.replace("sth ", "something ", ignoreCase = true)
@@ -81,7 +88,7 @@ class TextToSpeechUtil(val context: Context) {
                 text = text.replace(" qn", " quelqu'un", ignoreCase = true)
                 text = text.replace(" f."," féminin", ignoreCase = true)
                 text = text.replace(" m.", " masculin", ignoreCase = true)
-            }
+            } **/
 
             return text
         }

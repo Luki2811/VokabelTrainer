@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 
 class Settings(var context: Context) {
-    private val jsonObject = if (File(context.filesDir, AppFile.NAME_FILE_SETTINGS).exists()) JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))) else JSONObject()
+    private val jsonObject = if (File(context.filesDir, FileUtil.NAME_FILE_SETTINGS).exists()) JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))) else JSONObject()
     var dailyObjectiveStreak: Int = try {
         jsonObject.getInt("dailyObjectiveStreak")
     }catch (e: JSONException){
@@ -86,6 +86,11 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         true
     }
+    var allowShortFormInAnswer: Boolean = try {
+        jsonObject.getBoolean("allowShortFormInAnswer")
+    }catch (e: JSONException){
+        true
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()
@@ -101,6 +106,6 @@ class Settings(var context: Context) {
             .put("increaseScreenBrightness", increaseScreenBrightness)
             .put("correctionLevelQrCode", correctionLevelQrCode.value)
             .put("suggestTranslation", suggestTranslation)
-        AppFile.writeInFile(new.toString(), File(context.filesDir, AppFile.NAME_FILE_SETTINGS))
+        FileUtil.writeInFile(new.toString(), File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))
     }
 }

@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer.ui.manage
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import io.github.g0dkar.qrcode.QRCode
 import java.io.File
 import java.io.FileOutputStream
 
-class QrCodeBottomSheet : BottomSheetDialogFragment() {
+class QrCodeBottomSheet(val content: String, private val textToShow: String) : BottomSheetDialogFragment() {
     private var _binding: FrameShowQrCodeSheetBinding? = null
     private val binding get() = _binding!!
 
@@ -26,11 +27,9 @@ class QrCodeBottomSheet : BottomSheetDialogFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FrameShowQrCodeSheetBinding.inflate(layoutInflater, container, false)
 
-        val content = arguments?.getString("vocabularyGroup")!!
-
         oldScreenBrightness = requireActivity().window.attributes.screenBrightness
 
-        binding.textViewQrCodeFrame.text = arguments?.getString("name", "")
+        binding.textViewQrCodeFrame.text = textToShow
         binding.progressBarQrCode.visibility = View.VISIBLE
         binding.buttonQrCodeShare.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(requireContext(), context.getColor(R.color.Orange)))
@@ -38,6 +37,8 @@ class QrCodeBottomSheet : BottomSheetDialogFragment() {
                 Toast.makeText(requireContext(), context.getString(R.string.wait_until_qr_code_is_generated), Toast.LENGTH_SHORT).show()
             }
         }
+
+        Log.i("QrCodeSheet", content)
 
         Thread {
             val outputFile = File(requireContext().cacheDir, "cacheQrCode.png")

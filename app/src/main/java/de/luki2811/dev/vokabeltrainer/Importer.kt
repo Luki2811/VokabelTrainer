@@ -16,8 +16,9 @@ class Importer(private val data: String, val context: Context) {
             val dataAsJson = JSONObject(data)
             try {
                 when(dataAsJson.getInt("type")){
-                    AppFile.TYPE_FILE_LESSON -> tryLesson()
-                    AppFile.TYPE_FILE_VOCABULARY_GROUP -> tryVocabularyGroup()
+                    Exportable.TYPE_LESSON -> tryLesson()
+                    Exportable.TYPE_VOCABULARY_GROUP -> tryVocabularyGroup()
+                    Exportable.TYPE_SHORT_FORM -> tryShortForm()
                     else -> IMPORT_WRONG_OR_NONE_TYPE
                 }
             }catch (e: JSONException){
@@ -26,7 +27,32 @@ class Importer(private val data: String, val context: Context) {
         }catch (e: JSONException){
             IMPORT_NO_JSON
         }
+    }
 
+    private fun tryShortForm(): Int{
+        if(data.isEmpty()){
+            return IMPORT_EMPTY
+        }
+        return try {
+            val dataObject = JSONObject(data)
+            val dataArray = dataObject.getJSONArray("items")
+            val allShortForms = ShortForm.loadAllShortForms(context)
+
+            for (i in 0 until dataArray.length()){
+                val newShortForm = ShortForm.fromJson(dataArray.getJSONObject(i))
+                if(allShortForms.contains(newShortForm)){
+                    Log.i("Importer","Short Form ($newShortForm) already in list")
+                }else{
+                    Log.i("Importer","Add short form ($newShortForm) in list")
+                    allShortForms.add(newShortForm)
+                }
+                ShortForm.setNewShortForms(context, allShortForms)
+            }
+
+            IMPORT_SUCCESSFULLY_SHORT_FORM
+        }catch (e: JSONException){
+            IMPORT_NO_JSON
+        }
     }
 
     private fun tryVocabularyGroup(cancelWithWrongType: Boolean = true): Int{
@@ -36,7 +62,7 @@ class Importer(private val data: String, val context: Context) {
             val dataAsJson = JSONObject(data)
 
             if(cancelWithWrongType){
-                if(dataAsJson.getInt("type") != AppFile.TYPE_FILE_VOCABULARY_GROUP){
+                if(dataAsJson.getInt("type") != Exportable.TYPE_VOCABULARY_GROUP){
                     return IMPORT_WRONG_OR_NONE_TYPE
                 }
             }
@@ -70,7 +96,7 @@ class Importer(private val data: String, val context: Context) {
         try {
             val dataAsJson = JSONObject(data)
 
-            if(dataAsJson.getInt("type") != AppFile.TYPE_FILE_LESSON){
+            if(dataAsJson.getInt("type") != Exportable.TYPE_LESSON){
                 return IMPORT_WRONG_OR_NONE_TYPE
             }
 
@@ -144,6 +170,7 @@ class Importer(private val data: String, val context: Context) {
     companion object{
         const val IMPORT_SUCCESSFULLY_VOCABULARY_GROUP = 100
         const val IMPORT_SUCCESSFULLY_LESSON = 101
+        const val IMPORT_SUCCESSFULLY_SHORT_FORM = 102
 
         const val IMPORT_WRONG_OR_NONE_TYPE = 1
         const val IMPORT_EMPTY = 2

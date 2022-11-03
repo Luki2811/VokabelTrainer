@@ -80,6 +80,20 @@ class SettingsFragment : Fragment() {
             findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToSourcesFragment())
         }
 
+        binding.switchSettingsAllowShortFormInAnswer.apply {
+            isChecked = settings.allowShortFormInAnswer
+            setOnCheckedChangeListener { _, isChecked ->
+                settings.allowShortFormInAnswer = isChecked
+                saveSettings()
+            }
+        }
+
+        binding.buttonSettingsManageShortForms.apply {
+            setOnClickListener {
+                findNavController().navigate(SettingsFragmentDirections.actionSettingsFragmentToShortFormsManageFragment())
+            }
+        }
+
         binding.buttonSettingsInfoQrCodeCorrectionLevel.apply {
                 setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW).apply {

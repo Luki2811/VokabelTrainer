@@ -35,7 +35,7 @@ class LessonBasicFragment: Fragment() {
             text = if(args.mode == MODE_EDIT) getString(R.string.save) else getString(R.string.to_finish)
         }
 
-        val index = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
+        val index = JSONObject(FileUtil.loadFromFile(File(requireContext().filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
 
         allVocabularyGroups.clear()
         for(i in 0 until index.getJSONArray("index").length()) {
@@ -88,19 +88,19 @@ class LessonBasicFragment: Fragment() {
     private fun saveLesson() {
         val name: String = when(Lesson.isNameValid(requireContext(), binding.textLessonName.text.toString())){
             Lesson.VALID, Lesson.INVALID_NAME_ALREADY_USED -> {
-                binding.textLessonName.error = null
+                binding.textLessonNameLayout.error = null
                 binding.textLessonName.text.toString()
             }
             Lesson.INVALID_TOO_MANY_CHARS -> {
-                binding.textLessonName.error = getString(R.string.err_name_too_long_max, Lesson.MAX_CHARS)
+                binding.textLessonNameLayout.error = getString(R.string.err_name_too_long_max, Lesson.MAX_CHARS)
                 return
             }
             Lesson.INVALID_TOO_MANY_LINES -> {
-                binding.textLessonName.error = getString(R.string.err_too_many_lines, Lesson.MAX_LINES)
+                binding.textLessonNameLayout.error = getString(R.string.err_too_many_lines, Lesson.MAX_LINES)
                 return
             }
             Lesson.INVALID_EMPTY -> {
-                binding.textLessonName.error = getString(R.string.err_missing_name)
+                binding.textLessonNameLayout.error = getString(R.string.err_missing_name)
                 return
             }
             else -> {
@@ -167,7 +167,7 @@ class LessonBasicFragment: Fragment() {
     private fun addChipToGroup(vocabularyGroup: VocabularyGroup){
         val chip = Chip(requireContext()).apply {
             text = vocabularyGroup.name
-            chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.book_open_page_variant_outline)
+            chipIcon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_book_open_page_variant_outline)
             isCloseIconVisible = true
             isChipIconVisible = false
             setTextAppearanceResource(R.style.chipText)

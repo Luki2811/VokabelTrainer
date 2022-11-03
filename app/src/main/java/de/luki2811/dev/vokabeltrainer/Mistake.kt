@@ -74,14 +74,14 @@ class Mistake {
     }
 
     fun addToFile(context: Context) {
-        val file = File(context.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
-        val jsonArray = JSONArray(AppFile.loadFromFile(file))
+        val file = File(context.filesDir, FileUtil.NAME_FILE_LIST_WRONG_WORDS)
+        val jsonArray = JSONArray(FileUtil.loadFromFile(file))
 
         val allMistakes = loadAllFromFile(context)
 
         if(!allMistakes.contains(this)){
             jsonArray.put(this.getAsJson())
-            AppFile.writeInFile(jsonArray.toString(), file)
+            FileUtil.writeInFile(jsonArray.toString(), file)
             return
         }else{
             allMistakes[allMistakes.indexOf(this)].lastTimeWrong = this.lastTimeWrong
@@ -90,14 +90,14 @@ class Mistake {
     }
 
     fun removeFromFile(context: Context){
-        val file = File(context.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
-        val jsonArray = JSONArray(AppFile.loadFromFile(file))
+        val file = File(context.filesDir, FileUtil.NAME_FILE_LIST_WRONG_WORDS)
+        val jsonArray = JSONArray(FileUtil.loadFromFile(file))
 
         for(i in 0 until jsonArray.length()){
             if(Mistake(jsonArray.getJSONObject(i)) == this){
                 jsonArray.remove(i)
                 Log.i("Mistake","Removed mistake (${this.word.secondWord}) from file")
-                AppFile.writeInFile(jsonArray.toString(), file)
+                FileUtil.writeInFile(jsonArray.toString(), file)
                 return
             }
         }
@@ -119,8 +119,8 @@ class Mistake {
 
     companion object{
         fun loadAllFromFile(context: Context): ArrayList<Mistake>{
-            val file = File(context.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
-            val jsonArray = JSONArray(AppFile.loadFromFile(file))
+            val file = File(context.filesDir, FileUtil.NAME_FILE_LIST_WRONG_WORDS)
+            val jsonArray = JSONArray(FileUtil.loadFromFile(file))
             val mistakes = arrayListOf<Mistake>()
             for(i in 0 until jsonArray.length()){
                 val mistakeToAdd = Mistake(jsonArray.getJSONObject(i))

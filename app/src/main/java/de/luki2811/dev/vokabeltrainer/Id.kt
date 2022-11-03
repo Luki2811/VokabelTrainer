@@ -6,7 +6,7 @@ import org.json.JSONObject
 import java.io.File
 
 class Id(var context: Context, var number: Int = 0) {
-    private val indexFile: File = File(context.filesDir,AppFile.NAME_FILE_INDEX_ID)
+    private val indexFile: File = File(context.filesDir,FileUtil.NAME_FILE_INDEX_ID)
 
     init {
         if(number == 0){
@@ -16,10 +16,10 @@ class Id(var context: Context, var number: Int = 0) {
 
             val index: JSONObject =
                 if (indexFile.exists())
-                    JSONObject(AppFile.loadFromFile(indexFile))
+                    JSONObject(FileUtil.loadFromFile(indexFile))
                 else JSONObject().put("index", JSONArray())
             index.getJSONArray("index").put(number)
-            AppFile.writeInFile(index.toString(), indexFile)
+            FileUtil.writeInFile(index.toString(), indexFile)
         }
     }
 
@@ -28,7 +28,7 @@ class Id(var context: Context, var number: Int = 0) {
 
          val index: JSONObject =
             if (indexFile.exists())
-                JSONObject(AppFile.loadFromFile(indexFile))
+                JSONObject(FileUtil.loadFromFile(indexFile))
             else JSONObject().put("index", JSONArray())
 
          for(i in 0 until index.getJSONArray("index").length()){
@@ -41,7 +41,7 @@ class Id(var context: Context, var number: Int = 0) {
     }
 
     fun deleteId() {
-        val index = JSONObject(AppFile.loadFromFile(indexFile))
+        val index = JSONObject(FileUtil.loadFromFile(indexFile))
         var temp = -1
         for (i in 0 until index.getJSONArray("index").length()) {
             if (index.getJSONArray("index").getInt(i) == this.number){
@@ -51,6 +51,6 @@ class Id(var context: Context, var number: Int = 0) {
         if(temp != -1)
             index.getJSONArray("index").remove(temp)
         number = 0
-        AppFile.writeInFile(index.toString(), indexFile)
+        FileUtil.writeInFile(index.toString(), indexFile)
     }
 }

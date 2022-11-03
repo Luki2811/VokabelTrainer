@@ -148,7 +148,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@string/delete"
         android:text="@string/delete"
-        app:icon="@drawable/outline_delete_24"
+        app:icon="@drawable/ic_outline_delete_24"
         app:layout_constraintBottom_toBottomOf="@+id/buttonCreateVocabularyGroupNext"
         app:layout_constraintEnd_toStartOf="@+id/buttonCreateVocabularyGroupNext"
         app:layout_constraintHorizontal_bias="0.5"

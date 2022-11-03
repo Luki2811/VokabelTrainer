@@ -51,7 +51,7 @@ class ExerciseBuilder(
     private fun getAskSecondWord(word: VocabularyWord): Boolean{
         return if(practiceMistake){
             mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.askedForSecondWord
-        }else if(askForSecondWordsOnly) { true } else { (0..1).random() == 1 }
+        }else if(askForSecondWordsOnly || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) { true } else { (0..1).random() == 1 }
     }
 
     private fun getTypeToPractice(typeOfWord: Int): Int{

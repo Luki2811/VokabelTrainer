@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
-import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.FileUtil
 import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.adapter.ListLessonsLearnAdapter
@@ -31,7 +31,7 @@ class LearnFragment : Fragment() {
 
         binding.listOfLessonsCards.layoutManager = LinearLayoutManager(requireContext())
 
-        val indexAsJson = JSONObject(AppFile.loadFromFile(File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
+        val indexAsJson = JSONObject(FileUtil.loadFromFile(File(requireContext().filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)))
         val arrayList = ArrayList<Lesson>()
 
         try {
@@ -39,7 +39,7 @@ class LearnFragment : Fragment() {
                 var file = File(requireContext().filesDir, "lessons")
                 file.mkdirs()
                 file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
-                val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
+                val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
                 arrayList.add(Lesson(jsonOfVocGroup, requireContext()))
             }
         }catch (e: JSONException){

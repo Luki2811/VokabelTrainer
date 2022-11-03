@@ -85,31 +85,36 @@ class MainActivity : AppCompatActivity() {
      * Create files which did not exist before
      */
     private fun createFiles() {
-        val indexVocGroupsFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        val indexVocGroupsFile = File(this.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if (!indexVocGroupsFile.exists())
-            AppFile.writeInFile(
+            FileUtil.writeInFile(
                 JSONObject().put("index", JSONArray()).toString(),
                 indexVocGroupsFile
             )
 
-        if (!File(this.filesDir, AppFile.NAME_FILE_SETTINGS).exists())
+        if (!File(this.filesDir, FileUtil.NAME_FILE_SETTINGS).exists())
             Settings(this).saveSettingsInFile()
 
-        val wrongWordsFile = File(this.filesDir, AppFile.NAME_FILE_LIST_WRONG_WORDS)
+        val shortFormFile = File(this.filesDir, FileUtil.NAME_FILE_SHORT_FORMS)
+        if(!shortFormFile.exists()){
+            ShortForm.setNewShortForms(applicationContext, ShortForm.getSomeKnownShortForms())
+        }
+
+        val wrongWordsFile = File(this.filesDir, FileUtil.NAME_FILE_LIST_WRONG_WORDS)
         if (!wrongWordsFile.exists())
-            AppFile.writeInFile("[]", wrongWordsFile)
+            FileUtil.writeInFile("[]", wrongWordsFile)
 
-        val indexIdFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_ID)
+        val indexIdFile = File(this.filesDir, FileUtil.NAME_FILE_INDEX_ID)
         if (!indexIdFile.exists())
-            AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexIdFile)
+            FileUtil.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexIdFile)
 
-        val indexLessonFile = File(this.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+        val indexLessonFile = File(this.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)
         if (!indexLessonFile.exists())
-            AppFile.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
+            FileUtil.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
 
-        if (!File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK).exists()) {
+        if (!File(applicationContext.filesDir, FileUtil.NAME_FILE_STREAK).exists()) {
             val streakData = Streak.getRandomStreak(0)
-            AppFile.writeInFile(streakData.toString(), File(applicationContext.filesDir, AppFile.NAME_FILE_STREAK))
+            FileUtil.writeInFile(streakData.toString(), File(applicationContext.filesDir, FileUtil.NAME_FILE_STREAK))
         }
     }
 

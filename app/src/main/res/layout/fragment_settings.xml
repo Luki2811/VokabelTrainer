@@ -186,6 +186,19 @@
                 app:layout_constraintTop_toBottomOf="@+id/menuSettingsAppLanguageLayout" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchSettingsAllowShortFormInAnswer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/settings_correct_short_forms"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsManageShortForms" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchSettingsEnableSuggestionsEditor"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -246,6 +259,17 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchSettingsReadOutVocabularyCentralForbidden" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/buttonSettingsManageShortForms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:text="@string/action_manage_short_forms"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsGoTextToSpeakSettings" />
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonSettingsStreakTime"
                 style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
@@ -367,7 +391,7 @@
                 android:layout_marginEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonSettingsGoTextToSpeakSettings" />
+                app:layout_constraintTop_toBottomOf="@+id/switchSettingsAllowShortFormInAnswer" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -21,7 +21,7 @@ class Streak(val context: Context) {
 
     init {
         try {
-            val streakData = JSONArray(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_STREAK)))
+            val streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
             val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
             for(i in 0 until streakData.length()){
                 val data = streakData.getJSONObject(i)
@@ -36,9 +36,9 @@ class Streak(val context: Context) {
     }
 
     fun refresh(){
-        xpGoal = JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_SETTINGS))).getString("dailyObjectiveStreak").removeSuffix("XP").toInt()
+        xpGoal = JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))).getString("dailyObjectiveStreak").removeSuffix("XP").toInt()
 
-        var streakData = JSONArray(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_STREAK)))
+        var streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
         val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         lengthInDay = if(xpToday >= xpGoal) streakData.length() else streakData.length()-1
@@ -60,7 +60,7 @@ class Streak(val context: Context) {
             if(data.getString("date").equals(dateToday)){
                 streakData.getJSONObject(i).put("xp", xpToday)
                 streakData.getJSONObject(i).put("goal", xpGoal)
-                AppFile.writeInFile(streakData.toString(), File(context.filesDir, AppFile.NAME_FILE_STREAK))
+                FileUtil.writeInFile(streakData.toString(), File(context.filesDir, FileUtil.NAME_FILE_STREAK))
                 setMap()
                 return
             }
@@ -68,13 +68,13 @@ class Streak(val context: Context) {
 
         // Create new date-object if it doesn't exist
         streakData.put(JSONObject().put("date", dateToday).put("xp", xpToday).put("goal", xpGoal))
-        AppFile.writeInFile(streakData.toString(), File(context.filesDir, AppFile.NAME_FILE_STREAK))
+        FileUtil.writeInFile(streakData.toString(), File(context.filesDir, FileUtil.NAME_FILE_STREAK))
         setMap()
 
     }
 
     private fun setMap(){
-        val streakData = JSONArray(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_STREAK)))
+        val streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
 
         for(i in 0 until streakData.length()){
             val date = LocalDate.parse(streakData.getJSONObject(i).getString("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd"))

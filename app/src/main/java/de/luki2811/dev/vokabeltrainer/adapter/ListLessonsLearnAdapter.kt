@@ -104,7 +104,7 @@ class ListLessonsLearnAdapter(
             setOnClickListener {
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.delete_lesson)
-                    .setIcon(R.drawable.outline_delete_24)
+                    .setIcon(R.drawable.ic_outline_delete_24)
                     .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[position].name))
                     .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
                         val lesson = dataSetFilter[position]
@@ -149,7 +149,7 @@ class ListLessonsLearnAdapter(
     private fun share(position: Int){
         File.createTempFile(dataSetFilter[position].getShareFileName(), null, context.cacheDir)
         val cacheFile = File(context.cacheDir, dataSetFilter[position].getShareFileName())
-        AppFile.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
+        FileUtil.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
 
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)

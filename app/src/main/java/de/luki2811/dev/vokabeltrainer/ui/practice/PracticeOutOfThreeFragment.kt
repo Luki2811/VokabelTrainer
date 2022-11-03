@@ -54,7 +54,8 @@ class PracticeOutOfThreeFragment: Fragment() {
         if(exercise.isSecondWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.firstWord
             binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.secondLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
-            speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
+            if(exercise.readOut[0])
+                speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
             binding.textViewPracticeChooseThreeBottom.text = word.secondWord
@@ -145,7 +146,7 @@ class PracticeOutOfThreeFragment: Fragment() {
 
             val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) word.getSecondWordList().toMutableList() else word.getFirstWordList().toMutableList()
 
-            otherAlternatives.forEach { it.trim() }
+            otherAlternatives.replaceAll { it.trim() }
             otherAlternatives.removeAll{ it.trim().equals(solution.trim(), word.isIgnoreCase)  }
 
             alternativeText = if(otherAlternatives.isEmpty()){

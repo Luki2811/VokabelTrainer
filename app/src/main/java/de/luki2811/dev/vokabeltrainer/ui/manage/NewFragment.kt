@@ -21,7 +21,7 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import com.google.mlkit.vision.common.InputImage
-import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.FileUtil
 import de.luki2811.dev.vokabeltrainer.Importer
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateNewMainBinding
@@ -83,7 +83,7 @@ class NewFragment : Fragment() {
     private val resultLauncherFilePicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
         if (result.resultCode == AppCompatActivity.RESULT_OK) {
             val intent = result.data
-            setDataAndSetupViews(AppFile.loadFromFile(intent?.data!!, requireActivity().contentResolver))
+            setDataAndSetupViews(FileUtil.loadFromFile(intent?.data!!, requireActivity().contentResolver))
         } else {
             Log.d("FilePicker", "No file selected or file not found")
         }
@@ -94,7 +94,7 @@ class NewFragment : Fragment() {
 
         // Handle files
         if(args.dataToImport != null){
-            startFinalImport(AppFile.loadFromFile(args.dataToImport!!, requireActivity().contentResolver))
+            startFinalImport(FileUtil.loadFromFile(args.dataToImport!!, requireActivity().contentResolver))
         }
 
         setupViews()
@@ -296,6 +296,11 @@ class NewFragment : Fragment() {
                 Toast.makeText(context, R.string.import_lesson_successful, Toast.LENGTH_LONG).show()
                 findNavController().popBackStack()
             }
+            Importer.IMPORT_SUCCESSFULLY_SHORT_FORM -> {
+                Toast.makeText(context, R.string.import_short_form_successful, Toast.LENGTH_LONG).show()
+                findNavController().navigate(NewFragmentDirections.actionGlobalShortFormsManageFragment())
+            }
+
             Importer.IMPORT_WRONG_OR_NONE_TYPE, Importer.IMPORT_NO_JSON -> {
                 Toast.makeText(requireContext(), getString(R.string.err_import_failed), Toast.LENGTH_LONG).show()
             }

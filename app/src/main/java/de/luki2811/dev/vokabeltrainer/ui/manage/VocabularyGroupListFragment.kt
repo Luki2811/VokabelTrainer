@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
-import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.FileUtil
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.adapter.ListVocabularyGroupsAdapter
@@ -31,8 +31,8 @@ class VocabularyGroupListFragment : Fragment() {
         }
 
         val arrayList = ArrayList<VocabularyGroup>()
-        val indexVocabularyGroupFile = File(requireContext().filesDir, AppFile.NAME_FILE_INDEX_VOCABULARY_GROUPS)
-        val indexAsJson = JSONObject(AppFile.loadFromFile(indexVocabularyGroupFile))
+        val indexVocabularyGroupFile = File(requireContext().filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
+        val indexAsJson = JSONObject(FileUtil.loadFromFile(indexVocabularyGroupFile))
 
         binding.listOfVocabularyGroups.layoutManager = LinearLayoutManager(requireContext())
 
@@ -40,7 +40,7 @@ class VocabularyGroupListFragment : Fragment() {
             var file = File(requireContext().filesDir, "vocabularyGroups")
             file.mkdirs()
             file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
-            val jsonOfVocGroup = JSONObject(AppFile.loadFromFile(file))
+            val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
             arrayList.add(VocabularyGroup(jsonOfVocGroup, context =  requireContext()))
         }
 

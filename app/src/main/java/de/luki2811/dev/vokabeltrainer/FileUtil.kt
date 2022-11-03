@@ -7,7 +7,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
-class AppFile(var name: String) {
+class FileUtil(var name: String) {
     companion object {
 
         /**
@@ -56,9 +56,8 @@ class AppFile(var name: String) {
         const val NAME_FILE_INDEX_ID = "indexId.json"
         const val NAME_FILE_SETTINGS = "settings.json"
         const val NAME_FILE_LIST_WRONG_WORDS = "listWrongWords.json"
+        const val NAME_FILE_SHORT_FORMS = "shortForms.json"
 
-        const val TYPE_FILE_UNKNOWN = 0
-        const val TYPE_FILE_LESSON = 1
         const val TYPE_FILE_VOCABULARY_GROUP = 2
     }
 }

@@ -166,6 +166,13 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim"  />
+        <action
+            android:id="@+id/action_settingsFragment_to_shortFormsManageFragment"
+            app:destination="@id/shortFormsManageFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
     <fragment
         android:id="@+id/streakFragment"
@@ -245,5 +252,15 @@
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
+    <fragment
+        android:id="@+id/shortFormsManageFragment"
+        android:name="de.luki2811.dev.vokabeltrainer.ui.manage.ShortFormsManageFragment"
+        android:label="fragment_short_forms_manage"
+        tools:layout="@layout/fragment_short_forms_manage" />
+    <action
+        android:id="@+id/action_global_shortFormsManageFragment"
+        app:destination="@id/shortFormsManageFragment"
+        app:enterAnim="@anim/nav_default_enter_anim"
+        app:exitAnim="@anim/nav_default_exit_anim" />
 
 </navigation>

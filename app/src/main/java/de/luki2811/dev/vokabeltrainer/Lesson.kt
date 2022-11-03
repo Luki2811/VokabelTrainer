@@ -10,7 +10,8 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 
-class Lesson {
+class Lesson: Exportable {
+    override val type = Exportable.TYPE_LESSON
     lateinit var name: String
     lateinit var id: Id
     lateinit var vocabularyGroupIds: Array<Int>
@@ -125,16 +126,16 @@ class Lesson {
      * Saves a lesson with name and ID in the index
      */
     fun saveInIndex(){
-        val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+        val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)
         if(indexFile.exists()){
-            val index = JSONObject(AppFile.loadFromFile(File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)))
+            val index = JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             index.getJSONArray("index").put(index.getJSONArray("index").length(), toIndexJson)
-            AppFile.writeInFile(index.toString(),indexFile)
+            FileUtil.writeInFile(index.toString(),indexFile)
         }else{
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
             val index = JSONObject().put("index", JSONArray().put(0, toIndexJson))
-            AppFile.writeInFile(index.toString(),indexFile)
+            FileUtil.writeInFile(index.toString(),indexFile)
         }
     }
 
@@ -143,8 +144,8 @@ class Lesson {
      */
 
     fun deleteFromIndex(){
-        val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
-        val index = JSONObject(AppFile.loadFromFile(indexFile))
+        val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)
+        val index = JSONObject(FileUtil.loadFromFile(indexFile))
         var temp = -1
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
@@ -152,7 +153,7 @@ class Lesson {
         }
         if(temp != -1)
             index.getJSONArray("index").remove(temp)
-        AppFile.writeInFile(index.toString(),indexFile)
+        FileUtil.writeInFile(index.toString(),indexFile)
     }
 
     /**
@@ -191,7 +192,7 @@ class Lesson {
      * Without Id, alreadyUsedWords, isFavorite and vocabularyGroupIds
      */
 
-    fun export(): JSONObject{
+    override fun export(): JSONObject{
         val vocabularyInOneJson = JSONArray()
         val vocabularyGroups = loadVocabularyGroups()
         for (i in vocabularyGroups){
@@ -200,7 +201,7 @@ class Lesson {
 
         return JSONObject()
             .put("name",this.name)
-            .put("type", AppFile.TYPE_FILE_LESSON)
+            .put("type", type)
             .put("settings",
             JSONObject()
                 .put("readOutBoth", readOut)
@@ -212,6 +213,7 @@ class Lesson {
                 .put("askForAllWords", askForAllWords)
             )
             .put("vocabularyGroups", vocabularyInOneJson)
+
     }
 
     /**
@@ -236,7 +238,7 @@ class Lesson {
         var file = File(context.filesDir, "lessons")
         file.mkdirs()
         file = File(file, id.number.toString() + ".json" )
-        AppFile.writeInFile(getAsJson().toString(), file)
+        FileUtil.writeInFile(getAsJson().toString(), file)
     }
 
     companion object{
@@ -254,7 +256,7 @@ class Lesson {
          * Checks, if a lesson has a valid name
          */
         fun isNameValid(context: Context, name: String): Int {
-            val indexFile = File(context.filesDir, AppFile.NAME_FILE_INDEX_LESSONS)
+            val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)
 
             if (name.length > MAX_CHARS)
                 return INVALID_TOO_MANY_CHARS
@@ -267,7 +269,7 @@ class Lesson {
 
             if (indexFile.exists()) {
                 val indexLessons =
-                    JSONObject(AppFile.loadFromFile(indexFile)).getJSONArray("index")
+                    JSONObject(FileUtil.loadFromFile(indexFile)).getJSONArray("index")
                 for (i in 0 until indexLessons.length()) {
                     if (indexLessons.getJSONObject(i).getString("name") == name.trim())
                         return INVALID_NAME_ALREADY_USED

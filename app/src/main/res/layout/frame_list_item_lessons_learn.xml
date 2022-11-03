@@ -43,7 +43,7 @@
                 android:layout_marginEnd="8dp"
                 app:backgroundTint="@color/Red"
                 app:contentDescription="@string/delete"
-                app:icon="@drawable/outline_delete_24"
+                app:icon="@drawable/ic_outline_delete_24"
                 app:iconTint="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

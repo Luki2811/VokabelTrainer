@@ -12,13 +12,12 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import androidx.core.content.FileProvider
-import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
-import de.luki2811.dev.vokabeltrainer.AppFile
+import de.luki2811.dev.vokabeltrainer.FileUtil
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
@@ -76,10 +75,7 @@ class ListVocabularyGroupsAdapter(
         viewHolder.buttonShowQrCode.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Green)))
             setOnClickListener {
-                val qrCodeBottomSheet = QrCodeBottomSheet()
-
-                qrCodeBottomSheet.arguments = bundleOf("vocabularyGroup" to dataSetFilter[position].getAsJson().toString(), "name" to dataSetFilter[position].name)
-
+                val qrCodeBottomSheet = QrCodeBottomSheet(dataSetFilter[position].export().toString(), dataSetFilter[position].name)
                 qrCodeBottomSheet.show(supportFragmentManager, QrCodeBottomSheet.TAG)
             }
         }
@@ -96,12 +92,12 @@ class ListVocabularyGroupsAdapter(
     override fun getItemCount() = dataSetFilter.size
 
     private fun share(position: Int){
-        val vocabularyGroupJson = JSONObject(AppFile.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSetFilter[position].id.number}.json")))
-        vocabularyGroupJson.put("type", AppFile.TYPE_FILE_VOCABULARY_GROUP)
+        val vocabularyGroupJson = JSONObject(FileUtil.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSetFilter[position].id.number}.json")))
+        vocabularyGroupJson.put("type", FileUtil.TYPE_FILE_VOCABULARY_GROUP)
 
         File.createTempFile(dataSet[position].getShareFileName(), null, context.cacheDir)
         val cacheFile = File(context.cacheDir,dataSet[position].getShareFileName())
-        AppFile.writeInFile(vocabularyGroupJson.toString(), cacheFile)
+        FileUtil.writeInFile(vocabularyGroupJson.toString(), cacheFile)
 
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, context.packageName + ".provider", cacheFile)

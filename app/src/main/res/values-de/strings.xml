@@ -185,4 +185,25 @@
     <string name="wait_until_qr_code_is_generated">Warte bis QR-Code erstellt wurde</string>
     <string name="err_type_not_valid">Fehler: Typ (%1$s) ist nicht gültig!</string>
     <string name="notification_have_you_reached_your_streak">Hast du heute schon dein Tagesziel erreicht ??</string>
+
+    <string name="synonym">Synonym</string>
+    <string name="antonym">Antonym</string>
+    <string name="word_in_first_language">Wort in bekannter (erster) Sprache</string>
+    <string name="word_in_second_language">Wort in neuer (zweiten) Sprache</string>
+    <string name="info_text_second_language" >Die zweite (neue) Sprache wird für alle Synonyme und Antonyme in dieser Vokabelgruppe festgelegt</string>
+    <string name="synonym_other">Synonyme</string>
+    <string name="synonym_main">Stammwort</string>
+    <string name="antonym_main">Stammwort</string>
+    <string name="antonym_second">Antonyme</string>
+    <string name="settings_enable_suggestion_in_editor">Vorschläge im Vokabelgruppen-Editor</string>
+    <string name="lesson_request_all_possible_answer">Alle möglichen Antworten fordern</string>
+    <string name="alternatives">Alternativen: %1$s</string>
+    <string name="reset_all_word_levels">Alle \"level\" zurücksetzten</string>
+    <string name="message_reset_levels">Möchten sie wirklich alle Level zurücksitzen. Dieser Schritt ist nicht umkehrbar !</string>
+    <string name="title_reset_all_levels">Alle level zurücksetzen ??</string>
+    <string name="err_missing_language_data_tts">Fehler: Fehlende Sprachdaten um Wörter vorzulesen</string>
+    <string name="action_install">Installieren</string>
+    <string name="err_too_many_lines">Fehler: Zu viele Zeilen (max. %1$d)</string>
+    <string name="action_write_synonyms">Schreibe die Synonyme</string>
+    <string name="action_write_antonyms">Schreibe die Antonyme</string>
 </resources>
