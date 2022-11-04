@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Read out ..."
+                android:text="@string/settings_lesson_read_out"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switchLessonSettingsAskOnlyNewWords" />
 
@@ -78,7 +78,7 @@
                     android:id="@+id/chipLessonSettingsChipReadFirstWords"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="First words"
+                    android:text="@string/first_words"
                     style="@style/Widget.Material3.Chip.Filter"
                     />
 
@@ -87,7 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/Widget.Material3.Chip.Filter"
-                    android:text="Second words"/>
+                    android:text="@string/second_words"/>
 
             </com.google.android.material.chip.ChipGroup>
 

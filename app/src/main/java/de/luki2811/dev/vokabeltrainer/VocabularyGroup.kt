@@ -22,7 +22,7 @@ class VocabularyGroup: Exportable {
 
     constructor(name: String, firstLanguage: Locale, secondLanguage: Locale, vocabulary: ArrayList<VocabularyWord>, context: Context, id: Id? = null) {
         this.name = name
-        this.id = id ?: Id(context)
+        this.id = id ?: Id.generate(context).apply { register(context) }
         this.secondLanguage = secondLanguage
         this.firstLanguage = firstLanguage
         this.vocabulary = vocabulary
@@ -34,11 +34,11 @@ class VocabularyGroup: Exportable {
         indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if(name == "") {
             this.name = json.getString("name")
-            this.id = if(generateNewId) Id(context) else Id(context, json.getInt("id"))
+            this.id = if(generateNewId) Id.generate(context).apply { register(context) } else Id(json.getInt("id"))
         }
         else {
             this.name = name
-            this.id = Id(context)
+            this.id = Id.generate(context).apply { register(context) }
         }
 
         try {
@@ -65,7 +65,7 @@ class VocabularyGroup: Exportable {
         }
     }
 
-    override fun export(): JSONObject {
+    fun export(): JSONObject {
         return getAsJson()
     }
 

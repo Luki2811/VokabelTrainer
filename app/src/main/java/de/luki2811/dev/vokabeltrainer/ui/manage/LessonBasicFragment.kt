@@ -39,7 +39,7 @@ class LessonBasicFragment: Fragment() {
 
         allVocabularyGroups.clear()
         for(i in 0 until index.getJSONArray("index").length()) {
-            VocabularyGroup.loadFromFileWithId(Id(requireContext(),index.getJSONArray("index").getJSONObject(i).getInt("id")), requireContext())?.let { allVocabularyGroups.add(it) }
+            VocabularyGroup.loadFromFileWithId(Id(index.getJSONArray("index").getJSONObject(i).getInt("id")), requireContext())?.let { allVocabularyGroups.add(it) }
         }
 
         binding.buttonAddVocabularyGroupToLesson.setOnClickListener {
@@ -54,12 +54,12 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_EDIT){
-            lesson = Lesson(JSONObject(args.lessonJson), requireContext())
+            lesson = Lesson.fromJSON(JSONObject(args.lessonJson), requireContext(), false)!!
 
             vocabularyGroupsSelected.clear()
             for(indexArray in 0 until index.getJSONArray("index").length())
                 if(lesson.vocabularyGroupIds.contains(index.getJSONArray("index").getJSONObject(indexArray).getInt("id"))) {
-                    VocabularyGroup.loadFromFileWithId(Id(requireContext(), index.getJSONArray("index").getJSONObject(indexArray).getInt("id")),requireContext())?.let { vocabularyGroupsSelected.add(it) }
+                    VocabularyGroup.loadFromFileWithId(Id(index.getJSONArray("index").getJSONObject(indexArray).getInt("id")),requireContext())?.let { vocabularyGroupsSelected.add(it) }
                 }
 
             vocabularyGroupsSelected.forEach{
@@ -72,9 +72,9 @@ class LessonBasicFragment: Fragment() {
             binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWordsOnly
 
 
-            binding.chipTypeLesson1.isChecked = lesson.typesOfLesson.contains(1)
-            binding.chipTypeLesson2.isChecked = lesson.typesOfLesson.contains(2)
-            binding.chipTypeLesson3.isChecked = lesson.typesOfLesson.contains(3)
+            binding.chipTypeLesson1.isChecked = lesson.typesOfExercises.contains(1)
+            binding.chipTypeLesson2.isChecked = lesson.typesOfExercises.contains(2)
+            binding.chipTypeLesson3.isChecked = lesson.typesOfExercises.contains(3)
 
             binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
 
@@ -112,10 +112,10 @@ class LessonBasicFragment: Fragment() {
         // Settings
 
         // If selected is it false
-        val settingReadOutBoth = arrayListOf<Boolean>()
+        val settingReadOut = arrayListOf<Boolean>()
 
-        settingReadOutBoth.add(0, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadFirstWords.id))
-        settingReadOutBoth.add(1, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadSecondWords.id))
+        settingReadOut.add(0, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadFirstWords.id))
+        settingReadOut.add(1, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadSecondWords.id))
 
         val settingAskOnlyNewWords = binding.switchLessonSettingsAskOnlyNewWords.isChecked
         val numberOfExercises = binding.sliderCreateLessonNumberExercises.value.toInt()
@@ -146,21 +146,19 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_CREATE){
-            lesson = Lesson(name, vocabularyGroupsIds.toTypedArray(), requireContext(), settingReadOutBoth, settingAskOnlyNewWords, typesOfLesson, numberOfExercises = numberOfExercises).apply {
-                this.askForAllWords = askForAllWords
-            }
-            lesson.saveInIndex()
+            lesson = Lesson(name, Id.generate(requireContext()).apply { register(requireContext()) }, typesOfExercises = typesOfLesson, vocabularyGroupIds =  vocabularyGroupsIds, readOut = settingReadOut, askForAllWords =  askForAllWords , askForSecondWordsOnly = settingAskOnlyNewWords, numberOfExercises = numberOfExercises)
+            lesson.saveInIndex(requireContext())
         }else{
             lesson.name = name
-            lesson.vocabularyGroupIds = vocabularyGroupsIds.toTypedArray()
-            lesson.readOut = settingReadOutBoth
+            lesson.vocabularyGroupIds = vocabularyGroupsIds
+            lesson.readOut = settingReadOut
             lesson.askForSecondWordsOnly = settingAskOnlyNewWords
-            lesson.typesOfLesson = typesOfLesson
+            lesson.typesOfExercises = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
             lesson.askForAllWords = askForAllWords
         }
 
-        lesson.saveInFile()
+        lesson.saveInFile(requireContext())
         findNavController().navigate(LessonBasicFragmentDirections.actionManageLessonFragmentToNavigationMain())
     }
 

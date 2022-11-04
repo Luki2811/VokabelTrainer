@@ -61,7 +61,6 @@ class ListLessonsLearnAdapter(
     }
 
     // Replace the contents of a view (invoked by the layout manager)
-    @SuppressLint("NotifyDataSetChanged")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
@@ -77,17 +76,18 @@ class ListLessonsLearnAdapter(
         }
 
         viewHolder.buttonCardFavorite.setOnClickListener {
-            if(dataSetFilter[position].isFavorite){
-                dataSetFilter[position].isFavorite = false
+            if(dataSetFilter[viewHolder.layoutPosition].isFavorite){
+                dataSetFilter[viewHolder.layoutPosition].isFavorite = false
                 viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_outline_star_24)
                 viewHolder.buttonCardFavorite.setIconTintResource(R.color.Gray)
             }else{
-                dataSetFilter[position].isFavorite = true
+                dataSetFilter[viewHolder.layoutPosition].isFavorite = true
                 viewHolder.buttonCardFavorite.setIconResource(R.drawable.ic_baseline_star_24)
                 viewHolder.buttonCardFavorite.setIconTintResource(R.color.Yellow)
 
             }
-            dataSetFilter[position].saveInFile()
+            dataSetFilter[viewHolder.layoutPosition].saveInFile(context)
+            notifyItemChanged(viewHolder.layoutPosition)
             dataSetFilter.sortWith(compareByDescending<Lesson> { it.isFavorite }.thenBy { it.name })
             notifyDataSetChanged()
         }
@@ -95,7 +95,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardEdit.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
             setOnClickListener {
-                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[position].getAsJson().toString(), mode = LessonBasicFragment.MODE_EDIT))
+                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[viewHolder.layoutPosition].getAsJson().toString(), mode = LessonBasicFragment.MODE_EDIT))
             }
         }
 
@@ -105,26 +105,25 @@ class ListLessonsLearnAdapter(
                 MaterialAlertDialogBuilder(context)
                     .setTitle(R.string.delete_lesson)
                     .setIcon(R.drawable.ic_outline_delete_24)
-                    .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[position].name))
+                    .setMessage(activity.getString(R.string.do_you_really_want_to_delete_lesson, dataSetFilter[viewHolder.layoutPosition].name))
                     .setPositiveButton(R.string.delete){ _: DialogInterface, _: Int ->
-                        val lesson = dataSetFilter[position]
+                        val lesson = dataSetFilter[viewHolder.layoutPosition]
                         var file = File(context.filesDir, "lessons")
                         file.mkdirs()
                         file = File(file, lesson.id.number.toString() + ".json" )
 
-                        lesson.deleteFromIndex()
+                        lesson.deleteFromIndex(context)
 
                         if(!file.delete()){
                             Log.e("Exception", "Couldn't delete ${lesson.id.number}.json (${lesson.name})")
                             return@setPositiveButton
                         }
-                        lesson.id.deleteId()
+                        lesson.id.unregister(context)
 
                         Log.i("Info", "Successfully deleted ${lesson.id.number}.json (${lesson.name})")
 
-                        dataSetFilter.removeAt(position)
-                        notifyDataSetChanged()
-                        notifyItemRemoved(position)
+                        dataSetFilter.removeAt(viewHolder.layoutPosition)
+                        notifyItemRemoved(viewHolder.layoutPosition)
                     }
                     .setNegativeButton(R.string.cancel){ _: DialogInterface, _: Int ->
 
@@ -134,14 +133,17 @@ class ListLessonsLearnAdapter(
         }
 
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
-            activity.startActivity(Intent(context, PracticeActivity::class.java).putExtra("data_lesson", dataSetFilter[position].getAsJson().toString()))
+            activity.startActivity(Intent(context, PracticeActivity::class.java).apply {
+                // putExtra("lesson", dataSetFilter[viewHolder.layoutPosition])
+                putExtra("data_lesson", dataSetFilter[viewHolder.layoutPosition].getAsJson().toString())
+            })
         }
 
         viewHolder.buttonCardShare.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))
             setOnClickListener {
                 // AppFile.writeInFile(dataSetFilter[position].export().toString(), File(context.filesDir,"testFile"))
-                share(position)
+                share(viewHolder.layoutPosition)
             }
         }
     }
@@ -149,7 +151,7 @@ class ListLessonsLearnAdapter(
     private fun share(position: Int){
         File.createTempFile(dataSetFilter[position].getShareFileName(), null, context.cacheDir)
         val cacheFile = File(context.cacheDir, dataSetFilter[position].getShareFileName())
-        FileUtil.writeInFile(dataSetFilter[position].export().toString(), cacheFile)
+        FileUtil.writeInFile(dataSetFilter[position].export(context).toString(), cacheFile)
 
         val sharingIntent = Intent(Intent.ACTION_SEND)
         val fileUri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", cacheFile)

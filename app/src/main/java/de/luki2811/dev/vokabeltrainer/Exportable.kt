@@ -1,11 +1,7 @@
 package de.luki2811.dev.vokabeltrainer
 
-import org.json.JSONObject
-
 interface Exportable {
     val type: Int
-
-    fun export(): JSONObject
 
     companion object{
 

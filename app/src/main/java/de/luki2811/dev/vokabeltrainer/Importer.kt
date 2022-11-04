@@ -148,15 +148,21 @@ class Importer(private val data: String, val context: Context) {
             } catch (e: JSONException){
                 10
             }
+            val askForSecondWordsOnly = try {
+                dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
+            }catch (e: JSONException){
+                e.printStackTrace()
+                false
+            }
 
             val useTypes = arrayListOf<Int>()
             if(dataAsJson.getJSONObject("settings").getBoolean("useType1")) useTypes.add(Exercise.TYPE_TRANSLATE_TEXT)
             if(dataAsJson.getJSONObject("settings").getBoolean("useType2")) useTypes.add(Exercise.TYPE_CHOOSE_OF_THREE_WORDS)
             if(dataAsJson.getJSONObject("settings").getBoolean("useType3")) useTypes.add(Exercise.TYPE_MATCH_FIVE_WORDS)
 
-            val lesson = Lesson(nameOfLesson, newIdsVocabularyGroups.toTypedArray() , context, readOutBoth, askOnlyNewWords, useTypes, numberOfExercises = numberOfExercises)
-            lesson.saveInFile()
-            lesson.saveInIndex()
+            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, newIdsVocabularyGroups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly)
+            lesson.saveInFile(context)
+            lesson.saveInIndex(context)
 
             return IMPORT_SUCCESSFULLY_LESSON
 

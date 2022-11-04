@@ -215,9 +215,15 @@
     <string name="action_write_synonyms">Write the synonym(s)</string>
     <string name="action_write_antonyms">Write the antonym(s)</string>
 
-    <string name="action_manage_short_forms">Short Form Manager</string>
+    <string name="action_manage_short_forms">Manage short forms</string>
     <string name="import_short_form_successful">New short form successfully imported</string>
     <string name="all_short_forms">All short forms</string>
     <string name="settings_correct_short_forms">Correct short forms</string>
+    <string name="first_words">First words</string>
+    <string name="second_words">Second words</string>
+    <string name="settings_lesson_read_out">Read out…</string>
+    <string name="err_no_short_forms">Error: There are no short forms</string>
+    <string name="short_form">Short form</string>
+    <string name="long_form">Long form</string>
 
 </resources>

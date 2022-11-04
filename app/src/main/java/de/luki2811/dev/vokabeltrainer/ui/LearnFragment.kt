@@ -25,8 +25,7 @@ class LearnFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: ListLessonsLearnAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
         binding.listOfLessonsCards.layoutManager = LinearLayoutManager(requireContext())
@@ -40,7 +39,7 @@ class LearnFragment : Fragment() {
                 file.mkdirs()
                 file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
                 val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
-                arrayList.add(Lesson(jsonOfVocGroup, requireContext()))
+                arrayList.add(Lesson.fromJSON(jsonOfVocGroup, requireContext(), false)!!)
             }
         }catch (e: JSONException){
             e.printStackTrace()

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import de.luki2811.dev.vokabeltrainer.Exportable
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.ShortForm
@@ -87,6 +88,10 @@ class ShortFormsManageFragment : Fragment() {
     }
 
     private fun shareAll() {
+        if(shortFormAdapter.dataset.isEmpty()){
+            Snackbar.make(binding.root, getString(R.string.err_no_short_forms), Snackbar.LENGTH_SHORT).apply { setAction(R.string.add){shortFormAdapter.addNewItem()} }.show()
+            return
+        }
         val jsonArrayToShow = JSONArray()
         shortFormAdapter.dataset.forEach {
             jsonArrayToShow.put(it.export())

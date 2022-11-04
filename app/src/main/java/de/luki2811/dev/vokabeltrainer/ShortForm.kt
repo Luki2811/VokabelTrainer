@@ -85,7 +85,7 @@ data class ShortForm(
         }
     }
 
-    override fun export(): JSONObject {
+    fun export(): JSONObject {
         return getAsJson()
     }
 }

@@ -49,8 +49,8 @@ class PracticeActivity : AppCompatActivity() {
 
         if(!intent.getStringExtra("data_lesson").isNullOrEmpty()){
             mode = MODE_NORMAL
-            val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
-            lesson.loadVocabularyGroups().forEach { group ->
+            val lesson: Lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+            lesson.loadVocabularyGroups(applicationContext).forEach { group ->
                 allVocabularyWords.addAll(group.vocabulary)
             }
             numberOfExercises = lesson.numberOfExercises
@@ -124,12 +124,12 @@ class PracticeActivity : AppCompatActivity() {
                 Mistake.loadAllFromFile(this).find { it.word == exercise.words[0] }?.removeFromFile(this)
 
             }else if(mode == MODE_NORMAL){
-                val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
+                val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
 
                 if(exerciseResult.isCorrect && (exercise.type != Exercise.TYPE_MATCH_FIVE_WORDS)) {
                     allVocabularyWords.find { it == exercise.words[0] }?.apply { level += 1 }
 
-                    lesson.loadVocabularyGroups().forEach { group ->
+                    lesson.loadVocabularyGroups(applicationContext).forEach { group ->
                         val groupWord = group.vocabulary.find { it == exercise.words[0] }
                         if ((groupWord != null)) {
                             group.vocabulary[group.vocabulary.indexOf(groupWord)].level += 1
@@ -166,13 +166,13 @@ class PracticeActivity : AppCompatActivity() {
 
     private fun setNextExercise() {
         if(mode == MODE_NORMAL){
-            val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
+            val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
 
             exercise = ExerciseBuilder(
                 allVocabularyWords,
                 lesson.askForAllWords,
                 lesson.readOut,
-                lesson.typesOfLesson,
+                lesson.typesOfExercises,
                 lesson.askForSecondWordsOnly,
                 position > numberOfExercises,
                 mistakes
@@ -248,9 +248,9 @@ class PracticeActivity : AppCompatActivity() {
             binding.textViewPracticeInfoMistake.visibility = View.GONE
             binding.textViewPracticeCorrectInRow.visibility = View.GONE
             if(mode == MODE_NORMAL) {
-                val lesson = Lesson(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext)
+                val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
 
-                lesson.saveInFile()
+                lesson.saveInFile(applicationContext)
             }
             // Calculate
             val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + numberOfExercises)*100)

@@ -206,4 +206,14 @@
     <string name="err_too_many_lines">Fehler: Zu viele Zeilen (max. %1$d)</string>
     <string name="action_write_synonyms">Schreibe die Synonyme</string>
     <string name="action_write_antonyms">Schreibe die Antonyme</string>
+    <string name="action_manage_short_forms">Abkürzungen verwalten</string>
+    <string name="first_words">Erste Wörter</string>
+    <string name="second_words">Zweite Wörter</string>
+    <string name="settings_lesson_read_out">Vorlesen…</string>
+    <string name="all_short_forms">Alle Abkürzungen</string>
+    <string name="import_short_form_successful">Neue Abkürzung erfolgreich importiert</string>
+    <string name="settings_correct_short_forms">Abkürzungen korrigieren</string>
+    <string name="err_no_short_forms">Fehler: Keine Abkürzungen</string>
+    <string name="short_form">Kurze Form</string>
+    <string name="long_form">Lange Form</string>
 </resources>

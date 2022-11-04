@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -50,7 +51,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         if(args.keyMode == MODE_EDIT || args.keyMode == MODE_IMPORT){
 
             if(args.keyMode == MODE_IMPORT){
-                vocabularyGroup.id = Id(requireContext())
+                vocabularyGroup.id = Id.generate(requireContext()).apply { register(requireContext()) }
             }
             vocabulary.addAll(vocabularyGroup.vocabulary)
         } else {
@@ -78,7 +79,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                             secondToFirstTranslator.translate(it.toString())
                                 .addOnSuccessListener { translatedText ->
                                     binding.chipGroupEditorSuggestions.removeAllViews()
-                                    if(!binding.textEditEditorFirstWord.text.toString().contains(translatedText)) {
+                                    if(!binding.textEditEditorFirstWord.text.toString().contains(translatedText, ignoreCase = true)) {
                                         binding.chipGroupEditorSuggestions.addView(
                                             Chip(requireContext()).apply {
                                                 setOnClickListener {
@@ -92,6 +93,8 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                                                     }
                                                 }
                                                 text = translatedText
+                                                chipIcon = getDrawable(requireContext(), R.drawable.ic_outline_add_24)
+                                                isChipIconVisible = true
                                             }
                                         )
                                     }
@@ -232,7 +235,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
     private fun setLayoutType(type: Int) {
         // binding.textEditEditorFirstWordLayout.hint = "First word"
         // binding.textEditEditorSecondWordLayout.hint = "Second word"
-        Log.d("Test",type.toString())
+
         when(type){
             VocabularyWord.TYPE_TRANSLATION -> {
                 binding.textEditEditorFirstWordLayout.helperText = getString(R.string.word_in_first_language)
@@ -323,7 +326,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             return
         }
         vocabularyGroup.deleteFromIndex()
-        vocabularyGroup.id.deleteId()
+        vocabularyGroup.id.unregister(requireContext())
         Log.i("Info", "Successfully deleted vocabularyGroup with id ${vocabularyGroup.id}")
         findNavController().navigate(R.id.action_editVocabularyGroupFragment_to_manageVocabularyGroupsFragment)
     }
@@ -373,8 +376,6 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
             }
         } **/
-
-        Log.w("Test",vocabulary[pos].typeOfWord.toString())
 
         when(vocabulary[pos].typeOfWord){
             VocabularyWord.TYPE_TRANSLATION -> binding.buttonToggleTypeofWord1.isChecked = true

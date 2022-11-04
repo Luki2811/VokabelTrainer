@@ -108,7 +108,7 @@ class VocabularyGroupBasicFragment : Fragment() {
             return
         }
         vocabularyGroup.deleteFromIndex()
-        vocabularyGroup.id.deleteId()
+        vocabularyGroup.id.unregister(requireContext())
         Log.i("Info", "Successfully deleted vocabularyGroup with id ${vocabularyGroup.id}")
         findNavController().popBackStack()
     }
