@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.parcelize.Parcelize
 import org.json.JSONObject
 import java.io.File
@@ -24,9 +25,11 @@ data class Id(var number: Int) : Parcelable {
         for (i in 0 until index.getJSONArray("index").length()) {
             if (index.getJSONArray("index").getInt(i) == this.number){
                 index.getJSONArray("index").remove(i)
+                FileUtil.writeInFile(index.toString(), indexFile)
+                return
             }
         }
-        FileUtil.writeInFile(index.toString(), indexFile)
+        Log.e("Id","Failed to unregister Id ($number)")
     }
 
     companion object{
