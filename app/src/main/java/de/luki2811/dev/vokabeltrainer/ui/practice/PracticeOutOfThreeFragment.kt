@@ -22,9 +22,7 @@ class PracticeOutOfThreeFragment: Fragment() {
     private lateinit var word: VocabularyWord
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private lateinit var wordOption1: VocabularyWord
-    private lateinit var wordOption2: VocabularyWord
-    private lateinit var wordOption3: VocabularyWord
+    private lateinit var wordOptions: ArrayList<VocabularyWord>
     private var wordSelected: String = ""
     private var tts: TextToSpeechUtil? = null
 
@@ -46,10 +44,13 @@ class PracticeOutOfThreeFragment: Fragment() {
         else
             binding.buttonSpeakChooseThree.setIconResource(R.drawable.ic_outline_volume_off_24)
 
-        setWords()
-        binding.chipPracticeOption1.text = if(!exercise.isSecondWordAskedAsAnswer) wordOption1.firstWord else wordOption1.secondWord
-        binding.chipPracticeOption2.text = if(!exercise.isSecondWordAskedAsAnswer) wordOption2.firstWord else wordOption2.secondWord
-        binding.chipPracticeOption3.text = if(!exercise.isSecondWordAskedAsAnswer) wordOption3.firstWord else wordOption3.secondWord
+        // Set words
+        wordOptions.addAll(exercise.words)
+        wordOptions.shuffle()
+
+        binding.chipPracticeOption1.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[0].firstWord else wordOptions[0].secondWord
+        binding.chipPracticeOption2.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[1].firstWord else wordOptions[1].secondWord
+        binding.chipPracticeOption3.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[2].firstWord else wordOptions[2].secondWord
 
         if(exercise.isSecondWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.firstWord
@@ -113,15 +114,6 @@ class PracticeOutOfThreeFragment: Fragment() {
         }
 
         return binding.root
-    }
-
-    private fun setWords() {
-        val tempWords = exercise.words
-        tempWords.shuffle()
-        wordOption1 = tempWords[0]
-        wordOption2 = tempWords[1]
-        wordOption3 = tempWords[2]
-
     }
 
     private fun speakWord(text: String){
