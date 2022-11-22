@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,12 +47,15 @@ class CorrectionBottomSheet: BottomSheetDialogFragment() {
                             }
                         }
                         binding.textViewCorrectAnswer.text = content
-                    }
+                    }else
+                        binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("alternativesText"))
                 }else{
                     binding.textViewCorrectAnswer.text = getString(R.string.correct_answer, arguments?.getString("alternativesText"))
                 }
-            } else
+            } else {
+                Log.w("Correction", "Can't find alternativesText")
                 binding.textViewCorrectAnswer.visibility = View.GONE
+            }
         }
 
         return binding.root

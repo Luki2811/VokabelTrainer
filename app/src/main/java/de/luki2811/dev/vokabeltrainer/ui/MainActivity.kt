@@ -64,6 +64,12 @@ class MainActivity : AppCompatActivity() {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
 
         createFiles()
+
+        /** if(!settings.alreadyShownStart){
+            startActivity(Intent(applicationContext, StartActivity::class.java).apply { /** flags = Intent.FLAG_ACTIVITY_CLEAR_TOP **/})
+            // TODO settings.alreadyShownStart = false
+            settings.saveSettingsInFile()
+        } **/
         setupViews()
 
         // Load Streak for correct information

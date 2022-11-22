@@ -3,6 +3,7 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -163,6 +164,9 @@ class PracticeTranslateTextFragment : Fragment(){
             alternativeText = if(exercise.isSecondWordAskedAsAnswer) exercise.words[0].secondWord else exercise.words[0].firstWord
             wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)
         }
+
+        Log.w("Test", alternativeText)
+        Log.w("TestWrongIndex", wrongIndex.toString())
 
         correctionBottomSheet.arguments = bundleOf("wrongIndex" to wrongIndex, "alternativesText" to alternativeText, "isCorrect" to isCorrect)
 

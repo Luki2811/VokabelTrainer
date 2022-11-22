@@ -17,10 +17,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.color.MaterialColors
-import de.luki2811.dev.vokabeltrainer.FileUtil
-import de.luki2811.dev.vokabeltrainer.R
-import de.luki2811.dev.vokabeltrainer.Settings
-import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.ui.manage.*
 import org.json.JSONObject
 import java.io.File
@@ -93,7 +90,7 @@ class ListVocabularyGroupsAdapter(
 
     private fun share(position: Int){
         val vocabularyGroupJson = JSONObject(FileUtil.loadFromFile(File(File(context.filesDir, "vocabularyGroups"), "${dataSetFilter[position].id.number}.json")))
-        vocabularyGroupJson.put("type", FileUtil.TYPE_FILE_VOCABULARY_GROUP)
+        vocabularyGroupJson.put("type", Exportable.TYPE_VOCABULARY_GROUP)
 
         File.createTempFile(dataSet[position].getShareFileName(), null, context.cacheDir)
         val cacheFile = File(context.cacheDir,dataSet[position].getShareFileName())

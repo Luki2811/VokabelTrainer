@@ -2,6 +2,7 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -51,6 +52,7 @@ class Importer(private val data: String, val context: Context) {
 
             IMPORT_SUCCESSFULLY_SHORT_FORM
         }catch (e: JSONException){
+            e.printStackTrace()
             IMPORT_NO_JSON
         }
     }
@@ -167,7 +169,7 @@ class Importer(private val data: String, val context: Context) {
             return IMPORT_SUCCESSFULLY_LESSON
 
         } catch (e: JSONException){
-            // Toast.makeText(context, context.getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
             e.printStackTrace()
             return IMPORT_NO_JSON
         }

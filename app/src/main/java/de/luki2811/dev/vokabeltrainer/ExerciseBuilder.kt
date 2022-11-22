@@ -27,20 +27,26 @@ class ExerciseBuilder(
         if(exercise.type == Exercise.TYPE_MATCH_FIVE_WORDS){
             try {
                 for(i in 1..4)
-                    exercise.words.add(i, allWordsToSelectFrom.filter { !exercise.words.contains(it) }.random())
+                    exercise.words.add(i, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == VocabularyWord.TYPE_TRANSLATION }.random())
 
             } catch (e: IndexOutOfBoundsException){
                 Log.e("ExerciseBuilder", e.toString())
+                exercise.type = Exercise.TYPE_CHOOSE_OF_THREE_WORDS
+            } catch (e: NoSuchElementException) {
+                Log.w("ExerciseBuilder", e.toString())
                 exercise.type = Exercise.TYPE_CHOOSE_OF_THREE_WORDS
             }
         }
 
         if (exercise.type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS) {
             try{
-                exercise.words.add(1, allWordsToSelectFrom.filter { !exercise.words.contains(it) }.random())
-                exercise.words.add(2, allWordsToSelectFrom.filter { !exercise.words.contains(it) }.random())
+                exercise.words.add(1, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == VocabularyWord.TYPE_TRANSLATION }.random())
+                exercise.words.add(2, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == VocabularyWord.TYPE_TRANSLATION }.random())
             } catch (e: IndexOutOfBoundsException){
                 Log.e("ExerciseBuilder", e.toString())
+                exercise.type = Exercise.TYPE_TRANSLATE_TEXT
+            }catch (e: NoSuchElementException){
+                Log.w("ExerciseBuilder", e.toString())
                 exercise.type = Exercise.TYPE_TRANSLATE_TEXT
             }
         }

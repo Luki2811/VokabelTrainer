@@ -22,7 +22,7 @@ class PracticeOutOfThreeFragment: Fragment() {
     private lateinit var word: VocabularyWord
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private lateinit var wordOptions: ArrayList<VocabularyWord>
+    private var wordOptions = ArrayList<VocabularyWord>()
     private var wordSelected: String = ""
     private var tts: TextToSpeechUtil? = null
 
@@ -139,7 +139,11 @@ class PracticeOutOfThreeFragment: Fragment() {
             val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) word.getSecondWordList().toMutableList() else word.getFirstWordList().toMutableList()
 
             otherAlternatives.replaceAll { it.trim() }
-            otherAlternatives.removeAll{ it.trim().equals(solution.trim(), word.isIgnoreCase)  }
+
+            val inputStrings = solution.trim().split(";").toMutableList()
+            inputStrings.replaceAll { if(exercise.words[0].isIgnoreCase) it.lowercase().trim() else it.trim() }
+
+            otherAlternatives.removeAll{ inputStrings.contains(it.lowercase()) }
 
             alternativeText = if(otherAlternatives.isEmpty()){
                 ""
@@ -159,8 +163,6 @@ class PracticeOutOfThreeFragment: Fragment() {
             else
                 correctionBottomSheet.arguments = bundleOf("alternativesText" to word.firstWord, "isCorrect" to false)
         }
-
-
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
     }

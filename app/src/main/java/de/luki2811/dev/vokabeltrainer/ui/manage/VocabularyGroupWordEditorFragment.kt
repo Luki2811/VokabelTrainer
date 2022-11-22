@@ -259,13 +259,13 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         val secondWord = binding.textEditEditorSecondWord.text.toString().trim()
         secondWord.ifBlank {
-            binding.textEditEditorSecondWordLayout.error = getString(R.string.err_missing_name)
+            binding.textEditEditorSecondWordLayout.error = getString(R.string.err_missing_input)
             isCorrect = false
         }
 
         val firstWord = binding.textEditEditorFirstWord.text.toString().trim()
         firstWord.ifBlank {
-            binding.textEditEditorFirstWordLayout.error = getString(R.string.err_missing_name)
+            binding.textEditEditorFirstWordLayout.error = getString(R.string.err_missing_input)
             isCorrect = false
         }
 

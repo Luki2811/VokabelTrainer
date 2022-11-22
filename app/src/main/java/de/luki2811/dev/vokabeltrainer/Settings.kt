@@ -91,6 +91,11 @@ class Settings(var context: Context) {
     }catch (e: JSONException){
         true
     }
+    var alreadyShownStart: Boolean = try {
+        jsonObject.getBoolean("alreadyShownStart")
+    }catch (e: JSONException){
+        false
+    }
 
     fun saveSettingsInFile(){
         val new = JSONObject()
@@ -106,6 +111,7 @@ class Settings(var context: Context) {
             .put("increaseScreenBrightness", increaseScreenBrightness)
             .put("correctionLevelQrCode", correctionLevelQrCode.value)
             .put("suggestTranslation", suggestTranslation)
+            .put("alreadyShownStart", alreadyShownStart)
         FileUtil.writeInFile(new.toString(), File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))
     }
 }

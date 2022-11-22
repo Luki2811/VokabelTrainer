@@ -57,7 +57,5 @@ class FileUtil(var name: String) {
         const val NAME_FILE_SETTINGS = "settings.json"
         const val NAME_FILE_LIST_WRONG_WORDS = "listWrongWords.json"
         const val NAME_FILE_SHORT_FORMS = "shortForms.json"
-
-        const val TYPE_FILE_VOCABULARY_GROUP = 2
     }
 }

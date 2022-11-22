@@ -125,7 +125,8 @@ data class Lesson(var name: String,
             .put("type", type)
             .put("settings",
             JSONObject()
-                .put("readOutBoth", readOut)
+                .put("readOutFirstWords", readOut[0])
+                .put("readOutSecondWords", readOut[1])
                 .put("askOnlyNewWords", askForSecondWordsOnly)
                 .put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
                 .put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
