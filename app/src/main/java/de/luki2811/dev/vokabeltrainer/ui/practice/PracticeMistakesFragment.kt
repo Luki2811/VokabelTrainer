@@ -24,7 +24,7 @@ class PracticeMistakesFragment : Fragment() {
 
         val mistakes: ArrayList<Mistake> = arrayListOf()
         for (i in args.mistakes)
-            mistakes.add(Mistake(JSONObject(i)))
+            Mistake.fromJson(JSONObject(i))?.let { mistakes.add(it) }
 
         binding.recyclerViewPracticeMistake.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPracticeMistake.adapter = ListMistakesAdapter(mistakes, args.totalNumberExcercies, requireContext())

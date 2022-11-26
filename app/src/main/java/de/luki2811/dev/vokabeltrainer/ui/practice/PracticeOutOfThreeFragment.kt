@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,25 @@ class PracticeOutOfThreeFragment: Fragment() {
             binding.buttonSpeakChooseThree.setOnClickListener { speakWord(binding.textViewPracticeChooseThreeBottom.text.toString()) }
         else
             binding.buttonSpeakChooseThree.setIconResource(R.drawable.ic_outline_volume_off_24)
+
+        binding.buttonSpeakChooseThree.setOnLongClickListener {
+            val settings = Settings(requireContext())
+
+            settings.readOutVocabularyGeneral = !settings.readOutVocabularyGeneral
+
+            if(settings.readOutVocabularyGeneral) {
+                binding.buttonSpeakChooseThree.setIconResource(R.drawable.ic_outline_volume_up_24)
+                binding.buttonSpeakChooseThree.setOnClickListener { speakWord(binding.textViewPracticeChooseThreeBottom.text.toString()) }
+            }
+            else {
+                binding.buttonSpeakChooseThree.setIconResource(R.drawable.ic_outline_volume_off_24)
+                binding.buttonSpeakChooseThree.setOnClickListener {  }
+            }
+
+            settings.saveSettingsInFile()
+
+            true
+        }
 
         // Set words
         wordOptions.addAll(exercise.words)

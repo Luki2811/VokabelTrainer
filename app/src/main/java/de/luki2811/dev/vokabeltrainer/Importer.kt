@@ -162,7 +162,17 @@ class Importer(private val data: String, val context: Context) {
             if(dataAsJson.getJSONObject("settings").getBoolean("useType2")) useTypes.add(Exercise.TYPE_CHOOSE_OF_THREE_WORDS)
             if(dataAsJson.getJSONObject("settings").getBoolean("useType3")) useTypes.add(Exercise.TYPE_MATCH_FIVE_WORDS)
 
-            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, newIdsVocabularyGroups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly)
+            val typesOfWordToPractice = try {
+                val array = arrayListOf<Int>()
+                for (i in 0 until dataAsJson.getJSONObject("settings").getJSONArray("typesOfWordToPractice").length()){
+                    array.add(dataAsJson.getJSONObject("settings").getJSONArray("typesOfWordToPractice").getInt(i))
+                }
+                array
+            }catch (e: JSONException){
+                arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM)
+            }
+
+            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, newIdsVocabularyGroups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly, typesOfWordToPractice = typesOfWordToPractice)
             lesson.saveInFile(context)
             lesson.saveInIndex(context)
 

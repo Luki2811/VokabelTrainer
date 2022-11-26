@@ -85,7 +85,7 @@
     <string name="look_for_case">Note the upper and lower case !</string>
     <string name="word_previous_mistake">Previous mistake</string>
     <string name="ok">OK</string>
-    <string name="err_lesson_enough_words_long">The selected vocabulary group(s) contains less vocabulary than the number of tasks. Add more vocabulary groups or expand your selected vocabulary groups!</string>
+    <string name="err_lesson_enough_words_long">The selected vocabulary group(s) contains less (filtered) vocabulary than the number of tasks. Add more vocabulary groups, expand your selected vocabulary groups or change your filter and try again!</string>
     <string name="import_from_internet">Import from url</string>
     <string name="import_from_qr_code">Import from QR-code</string>
     <string name="import_from_file">Import from file</string>
@@ -315,5 +315,7 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+    <string name="err_no_words_found_with_filter">Error: No words can be found with the selected filter to practice.</string>
+    <string name="types_of_word">Types of words</string>
 
 </resources>

@@ -67,18 +67,8 @@ class PracticeActivity : AppCompatActivity() {
 
         startTimer()
 
-        if(allVocabularyWords.size < numberOfExercises) {
-            MaterialAlertDialogBuilder(this)
-                .setMessage(R.string.err_lesson_enough_words_long)
-                .setTitle(R.string.err)
-                .setIcon(R.drawable.ic_outline_error_24)
-                .setNegativeButton(R.string.ok){ _, _ ->
-                    startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
-                }
-                .setOnCancelListener { startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
-                .show()
+        if(!isLessonFittingForPracticing())
             return
-        }
 
         changeFragment()
 
@@ -110,15 +100,17 @@ class PracticeActivity : AppCompatActivity() {
             }else{
                 correctInARow = 0
 
-                val newMistake = Mistake(exercise.words[0], exerciseResult.answer, exercise.type, LocalDate.now(), position, exercise.isSecondWordAskedAsAnswer)
+                val newMistake = Mistake(word = exercise.words[0], askedForSecondWord = exercise.isSecondWordAskedAsAnswer, typeOfPractice = exercise.type).apply {
+                    wrongAnswer = exerciseResult.answer
+                    this.position = this@PracticeActivity.position
+                    lastTimeWrong = LocalDate.now()
+                }
                 mistakes.add(newMistake)
                 newMistake.addToFile(this)
             }
 
-
             binding.progressBarPractice.setProgress(position, true)
             binding.progressBarPractice.max = numberOfExercises + mistakes.size
-
 
             if(mode == MODE_PRACTICE_MISTAKES){
                 Mistake.loadAllFromFile(this).find { it.word == exercise.words[0] }?.removeFromFile(this)
@@ -127,14 +119,19 @@ class PracticeActivity : AppCompatActivity() {
                 val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
 
                 if(exerciseResult.isCorrect && (exercise.type != Exercise.TYPE_MATCH_FIVE_WORDS)) {
-                    allVocabularyWords.find { it == exercise.words[0] }?.apply { level += 1 }
 
-                    lesson.loadVocabularyGroups(applicationContext).forEach { group ->
-                        val groupWord = group.vocabulary.find { it == exercise.words[0] }
-                        if ((groupWord != null)) {
-                            group.vocabulary[group.vocabulary.indexOf(groupWord)].level += 1
-                            group.saveInFile()
+                    if(allVocabularyWords.find { it == exercise.words[0] } != null){
+                        allVocabularyWords.find { it == exercise.words[0] }?.apply { level += 1 }
+
+                        lesson.loadVocabularyGroups(this).forEach { group ->
+                            if(group.vocabulary.contains(exercise.words[0].copy().apply { level -= 1; alreadyUsedInExercise = false })) {
+                                group.vocabulary.find { it == exercise.words[0].copy().apply { level -= 1; alreadyUsedInExercise = false } }?.apply { level += 1 }
+                                group.saveInFile()
+                                Log.i("PracticeActivity", "Changed level")
+                            }
                         }
+                    }else{
+                        Log.w("PracticeActivity", "Couldn't find word in any vocabulary group")
                     }
                 }
             }
@@ -164,6 +161,28 @@ class PracticeActivity : AppCompatActivity() {
         } **/
     }
 
+    private fun isLessonFittingForPracticing(): Boolean {
+        if(mode == MODE_NORMAL){
+            val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+
+            if(allVocabularyWords.filter { lesson.typesOfWordToPractice.contains(it.typeOfWord) }.size < numberOfExercises) {
+                MaterialAlertDialogBuilder(this)
+                    .setMessage(R.string.err_lesson_enough_words_long)
+                    .setTitle(R.string.err)
+                    .setIcon(R.drawable.ic_outline_error_24)
+                    .setNegativeButton(R.string.ok){ _, _ ->
+                        startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                    }
+                    .setOnCancelListener { startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+                    .show()
+                return false
+
+            }
+        }
+
+        return true
+    }
+
     private fun setNextExercise() {
         if(mode == MODE_NORMAL){
             val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
@@ -175,8 +194,9 @@ class PracticeActivity : AppCompatActivity() {
                 lesson.typesOfExercises,
                 lesson.askForSecondWordsOnly,
                 position > numberOfExercises,
-                mistakes
-            ).build()
+                lesson.typesOfWordToPractice,
+                mistakes,
+                this).build()
         }else if(mode == MODE_PRACTICE_MISTAKES){
             val readOut = if(intent.getBooleanExtra("readOutBoth", false)) arrayListOf(true, true) else arrayListOf(true, false)
             exercise = ExerciseBuilder(
@@ -186,8 +206,9 @@ class PracticeActivity : AppCompatActivity() {
                 arrayListOf(Exercise.TYPE_TRANSLATE_TEXT),
                 false,
                 position > numberOfExercises ,
-                mistakes
-            ).build()
+                arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION),
+                mistakes,
+                this).build()
         }
         allVocabularyWords[allVocabularyWords.indexOf(exercise.words[0])].alreadyUsedInExercise = true
 

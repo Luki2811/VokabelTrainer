@@ -75,7 +75,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 .addOnSuccessListener {
                     Log.i("Translator", "Download successfully")
                     binding.textEditEditorSecondWord.addTextChangedListener {
-                        if(!it.isNullOrBlank()) {
+                        if(!it.isNullOrBlank() && vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION) {
                             secondToFirstTranslator.translate(it.toString())
                                 .addOnSuccessListener { translatedText ->
                                     binding.chipGroupEditorSuggestions.removeAllViews()

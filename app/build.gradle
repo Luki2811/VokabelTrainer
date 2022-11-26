@@ -27,7 +27,7 @@ android {
             minSdk 27
             targetSdk 33
             versionCode = code
-            versionName = "0.2.1 (" + code + ")"
+            versionName = "0.2.2 (" + code + ")"
 
             resConfigs("en", "de")
 

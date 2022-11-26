@@ -76,9 +76,24 @@ class LessonBasicFragment: Fragment() {
             binding.chipTypeLesson2.isChecked = lesson.typesOfExercises.contains(2)
             binding.chipTypeLesson3.isChecked = lesson.typesOfExercises.contains(3)
 
+            binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_TRANSLATION)
+            binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_SYNONYM)
+            binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_ANTONYM)
+
             binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
 
             binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked = lesson.askForAllWords
+        }else{
+            binding.chipTypeLesson1.isChecked = true
+            binding.chipTypeLesson2.isChecked = true
+            binding.chipTypeLesson3.isChecked = true
+
+            binding.chipLessonSettingsChipReadFirstWords.isChecked = true
+            binding.chipLessonSettingsChipReadSecondWords.isChecked = true
+
+            binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = true
+            binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = true
+            binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = true
         }
 
         refreshList()
@@ -128,6 +143,14 @@ class LessonBasicFragment: Fragment() {
         if(binding.chipTypeLesson3.isChecked)
             typesOfLesson.add(3)
 
+        val typesOfWords = arrayListOf<Int>()
+        if(binding.chipLessonSettingsWordsToPracticeTranslation.isChecked)
+            typesOfWords.add(VocabularyWord.TYPE_TRANSLATION)
+        if(binding.chipLessonSettingsWordsToPracticeSynonym.isChecked)
+            typesOfWords.add(VocabularyWord.TYPE_SYNONYM)
+        if(binding.chipLessonSettingsWordsToPracticeAntonym.isChecked)
+            typesOfWords.add(VocabularyWord.TYPE_ANTONYM)
+
         val askForAllWords = binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked
 
         if(typesOfLesson.isEmpty()){
@@ -146,7 +169,7 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_CREATE){
-            lesson = Lesson(name, Id.generate(requireContext()).apply { register(requireContext()) }, typesOfExercises = typesOfLesson, vocabularyGroupIds =  vocabularyGroupsIds, readOut = settingReadOut, askForAllWords =  askForAllWords , askForSecondWordsOnly = settingAskOnlyNewWords, numberOfExercises = numberOfExercises)
+            lesson = Lesson(name, Id.generate(requireContext()).apply { register(requireContext()) }, typesOfExercises = typesOfLesson, vocabularyGroupIds =  vocabularyGroupsIds, readOut = settingReadOut, askForAllWords =  askForAllWords , askForSecondWordsOnly = settingAskOnlyNewWords, numberOfExercises = numberOfExercises, typesOfWordToPractice = typesOfWords)
             lesson.saveInIndex(requireContext())
         }else{
             lesson.name = name
@@ -156,6 +179,7 @@ class LessonBasicFragment: Fragment() {
             lesson.typesOfExercises = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
             lesson.askForAllWords = askForAllWords
+            lesson.typesOfWordToPractice = typesOfWords
         }
 
         lesson.saveInFile(requireContext())

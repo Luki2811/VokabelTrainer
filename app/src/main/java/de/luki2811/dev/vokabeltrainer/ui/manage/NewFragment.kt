@@ -10,8 +10,10 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -294,6 +296,7 @@ class NewFragment : Fragment() {
             }
             Importer.IMPORT_SUCCESSFULLY_LESSON -> {
                 Toast.makeText(context, R.string.import_lesson_successful, Toast.LENGTH_LONG).show()
+                setFragmentResult("finishImportOfLesson", bundleOf())
                 findNavController().popBackStack()
             }
             Importer.IMPORT_SUCCESSFULLY_SHORT_FORM -> {

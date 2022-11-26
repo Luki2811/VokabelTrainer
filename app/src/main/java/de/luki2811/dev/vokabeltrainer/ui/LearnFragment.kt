@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.clearFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.textfield.TextInputLayout
@@ -28,28 +30,23 @@ class LearnFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentLearnBinding.inflate(inflater, container, false)
 
+
+        var allLessons = Lesson.loadAllLessons(requireContext())
+
+        setFragmentResultListener("finishImportOfLesson"){ _, _ ->
+            clearFragmentResult("finishImportOfLesson")
+            allLessons = Lesson.loadAllLessons(requireContext())
+            binding.listOfLessonsCards.adapter?.notifyItemInserted(allLessons.size-1)
+        }
+
         binding.listOfLessonsCards.layoutManager = LinearLayoutManager(requireContext())
 
-        val indexAsJson = JSONObject(FileUtil.loadFromFile(File(requireContext().filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)))
-        val arrayList = ArrayList<Lesson>()
-
-        try {
-            for(i in 0 until indexAsJson.getJSONArray("index").length()){
-                var file = File(requireContext().filesDir, "lessons")
-                file.mkdirs()
-                file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
-                val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
-                arrayList.add(Lesson.fromJSON(jsonOfVocGroup, requireContext(), false)!!)
-            }
-        }catch (e: JSONException){
-            e.printStackTrace()
-        }
 
         binding.buttonPracticeMistakes.setOnClickListener {
             findNavController().navigate(R.id.action_global_createPracticeFragment)
         }
 
-        if(arrayList.isEmpty()){
+        if(allLessons.isEmpty()){
             binding.searchViewLearnLayout.visibility = View.GONE
             binding.searchViewLearn.visibility = View.GONE
             binding.listOfLessonsCards.visibility = View.GONE
@@ -60,7 +57,7 @@ class LearnFragment : Fragment() {
             return binding.root
         }
 
-        adapter = ListLessonsLearnAdapter(arrayList, findNavController(), requireContext(), requireActivity())
+        adapter = ListLessonsLearnAdapter(allLessons, findNavController(), requireContext(), requireActivity())
 
         binding.listOfLessonsCards.adapter = adapter
 

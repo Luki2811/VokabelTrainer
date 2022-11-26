@@ -22,7 +22,8 @@ data class Lesson(var name: String,
                   var askForAllWords: Boolean,
                   var askForSecondWordsOnly: Boolean,
                   var isFavorite: Boolean = false,
-                  var numberOfExercises: Int): Exportable, Parcelable {
+                  var numberOfExercises: Int,
+                  var typesOfWordToPractice: ArrayList<Int> = arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION)): Exportable, Parcelable {
 
     @IgnoredOnParcel
     override val type: Int = Exportable.TYPE_LESSON
@@ -78,64 +79,54 @@ data class Lesson(var name: String,
     }
 
     /**
-     * Get a lesson as JSONObject
+     * Methode to get the JSON of this lesson
+     * @param toExport If true it also loads and share the vocabulary groups as JSON without ID, isFavorite and vocabularyGroupIds
+     * @return JSONObject of lesson
      */
 
-    fun getAsJson(): JSONObject{
-        val jsonObj = JSONObject()
-            .put("name", name)
-            .put("id", id.number)
-        val jsonArr = JSONArray()
-        for(i in vocabularyGroupIds.indices){
-            jsonArr.put(i, vocabularyGroupIds[i])
+    fun getAsJson(toExport: Boolean = false, context: Context? = null): JSONObject{
+        return JSONObject().apply {
+            put("name", name)
+
+            if(toExport && context != null) {
+                put("type", type)
+                put("vocabularyGroups", JSONArray().apply {
+                    val vocabularyGroups = loadVocabularyGroups(context)
+                    for (i in vocabularyGroups){
+                        this.put(i.getAsJson())
+                    }
+                })
+            }else {
+                put("id", id.number)
+                put("vocabularyGroupIds", JSONArray().apply {
+                    for(i in vocabularyGroupIds.indices){
+                        this.put(i, vocabularyGroupIds[i])
+                    }
+                })
+            }
+
+            put("settings", JSONObject().apply {
+                put("readOutFirstWords", readOut[0])
+                put("readOutSecondWords", readOut[1])
+                put("askOnlyNewWords", askForSecondWordsOnly)
+                put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
+                put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
+                put("useType3", typesOfExercises.contains(TYPE_MATCH_FIVE_WORDS))
+                if(!toExport){
+                    put("favorite", isFavorite)
+                }
+                put("numberOfExercises", numberOfExercises)
+                put("askForAllWords", askForAllWords)
+                put("typesOfWordToPractice", JSONArray().apply {
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_TRANSLATION))
+                        put(VocabularyWord.TYPE_TRANSLATION)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_SYNONYM))
+                        put(VocabularyWord.TYPE_SYNONYM)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_ANTONYM))
+                        put(VocabularyWord.TYPE_ANTONYM)
+                })
+            })
         }
-        jsonObj.put("vocabularyGroupIds", jsonArr)
-        val listAsString = arrayListOf<JSONObject>()
-        jsonObj.put("alreadyUsedWords", JSONArray(listAsString))
-        jsonObj.put("settings",
-            JSONObject()
-                .put("readOutFirstWords", readOut[0])
-                .put("readOutSecondWords", readOut[1])
-                .put("askOnlyNewWords", askForSecondWordsOnly)
-                .put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
-                .put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
-                .put("useType3", typesOfExercises.contains(TYPE_MATCH_FIVE_WORDS))
-                .put("favorite", isFavorite)
-                .put("numberOfExercises", numberOfExercises)
-                .put("askForAllWords", askForAllWords)
-        )
-        return jsonObj
-    }
-
-    /**
-     * Methode to SHARE a lesson
-     * This also loads and share the vocabulary groups as JSON
-     * Without Id, alreadyUsedWords, isFavorite and vocabularyGroupIds
-     */
-
-    fun export(context: Context): JSONObject {
-        val vocabularyInOneJson = JSONArray()
-        val vocabularyGroups = loadVocabularyGroups(context)
-        for (i in vocabularyGroups){
-            vocabularyInOneJson.put(i.getAsJson())
-        }
-
-        return JSONObject()
-            .put("name",this.name)
-            .put("type", type)
-            .put("settings",
-            JSONObject()
-                .put("readOutFirstWords", readOut[0])
-                .put("readOutSecondWords", readOut[1])
-                .put("askOnlyNewWords", askForSecondWordsOnly)
-                .put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
-                .put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
-                .put("useType3", typesOfExercises.contains(TYPE_MATCH_FIVE_WORDS))
-                .put("numberOfExercises", numberOfExercises)
-                .put("askForAllWords", askForAllWords)
-            )
-            .put("vocabularyGroups", vocabularyInOneJson)
-
     }
 
     /**
@@ -237,7 +228,17 @@ data class Lesson(var name: String,
                     10
                 }
 
-                return Lesson(name, id, groupIds, typesOfLesson, readOut, askForAllWords, askForSecondWordsOnly, isFavorite, numberOfExercises)
+                val typesOfWordToPractice = try {
+                    val array = arrayListOf<Int>()
+                    for (i in 0 until json.getJSONObject("settings").getJSONArray("typesOfWordToPractice").length()){
+                        array.add(json.getJSONObject("settings").getJSONArray("typesOfWordToPractice").getInt(i))
+                    }
+                    array
+                }catch (e: JSONException){
+                    arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM)
+                }
+
+                return Lesson(name, id, groupIds, typesOfLesson, readOut, askForAllWords, askForSecondWordsOnly, isFavorite, numberOfExercises, typesOfWordToPractice)
 
             } catch (e: JSONException) {
                 e.printStackTrace()
@@ -245,6 +246,24 @@ data class Lesson(var name: String,
             }
 
 
+        }
+
+        fun loadAllLessons(context: Context): ArrayList<Lesson>{
+            val indexAsJson = JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_INDEX_LESSONS)))
+            val allLessons = ArrayList<Lesson>()
+
+            try {
+                for(i in 0 until indexAsJson.getJSONArray("index").length()){
+                    var file = File(context.filesDir, "lessons")
+                    file.mkdirs()
+                    file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
+                    val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
+                    allLessons.add(fromJSON(jsonOfVocGroup, context, false)!!)
+                }
+            }catch (e: JSONException){
+                e.printStackTrace()
+            }
+            return allLessons
         }
 
         /**

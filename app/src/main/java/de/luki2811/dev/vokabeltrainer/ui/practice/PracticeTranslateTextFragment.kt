@@ -71,6 +71,25 @@ class PracticeTranslateTextFragment : Fragment(){
         else
             binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
 
+        binding.buttonSpeakTranslateText.setOnLongClickListener {
+            val settings = Settings(requireContext())
+
+            settings.readOutVocabularyGeneral = !settings.readOutVocabularyGeneral
+
+            if(settings.readOutVocabularyGeneral) {
+                binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_up_24)
+                binding.buttonSpeakTranslateText.setOnClickListener { speakWord(); Log.e("T", "TTTT") }
+            }
+            else {
+                binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
+                binding.buttonSpeakTranslateText.setOnClickListener {  }
+            }
+
+            settings.saveSettingsInFile()
+
+            true
+        }
+
         if(exercise.words[0].isIgnoreCase) {
             binding.textViewPracticeInfo.text = ""
             binding.textViewPracticeInfo.visibility = View.GONE

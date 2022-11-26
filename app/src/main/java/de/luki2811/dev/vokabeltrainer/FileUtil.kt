@@ -7,7 +7,7 @@ import java.io.*
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
-class FileUtil(var name: String) {
+class FileUtil {
     companion object {
 
         /**

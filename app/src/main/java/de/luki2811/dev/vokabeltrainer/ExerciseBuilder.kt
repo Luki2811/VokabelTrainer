@@ -1,6 +1,8 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 
 class ExerciseBuilder(
     private var allWordsToSelectFrom: ArrayList<VocabularyWord>,
@@ -9,7 +11,9 @@ class ExerciseBuilder(
     private val typesOfLesson: ArrayList<Int>,
     private val askForSecondWordsOnly: Boolean,
     private val practiceMistake: Boolean,
-    private val mistake: ArrayList<Mistake>? = null) {
+    private val typesOfWordsToPractice: ArrayList<Int>,
+    private val mistake: ArrayList<Mistake>? = null,
+    private val context: Context) {
 
 
     fun build(): Exercise{
@@ -75,7 +79,16 @@ class ExerciseBuilder(
             mistake!!.filter { !it.isRepeated }.random().word
         }else{
             allWordsToSelectFrom.shuffle()
-            allWordsToSelectFrom.filter { !it.alreadyUsedInExercise }.minWith(Comparator.comparingInt { it.level })
+            try {
+                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.level })
+            } catch (e: NoSuchElementException){
+                Log.e("ExerciseBuilder", "No words with selected filter")
+                Toast.makeText(context, context.getText(R.string.err_no_words_found_with_filter), Toast.LENGTH_LONG).show()
+                allWordsToSelectFrom.forEach {
+                    it.alreadyUsedInExercise = false
+                }
+                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.level })
+            }
         }
     }
 

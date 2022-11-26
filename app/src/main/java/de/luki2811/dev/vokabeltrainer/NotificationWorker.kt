@@ -1,10 +1,14 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.*
@@ -63,7 +67,11 @@ class NotificationWorker(val context: Context, workerParameters: WorkerParameter
                 val notificationId = 100
 
                 with(NotificationManagerCompat.from(context)) {
-                    notify(notificationId, builder.build())
+                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                        Log.e("Permissions", "PostNotification isn\'t granted !!")
+                    }else{
+                        notify(notificationId, builder.build())
+                    }
                 }
             }
             else{

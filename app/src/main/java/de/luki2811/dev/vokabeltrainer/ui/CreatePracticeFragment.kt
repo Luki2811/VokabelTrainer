@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import de.luki2811.dev.vokabeltrainer.Mistake
+import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.adapter.ListMistakesAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreatePracticeBinding
@@ -26,6 +27,7 @@ class CreatePracticeFragment : Fragment() {
 
         binding.appBarCreatePractice.apply {
             setNavigationOnClickListener { findNavController().popBackStack() }
+            subtitle = getString(R.string.number_of_mistakes, allMistakes.size)
         }
 
         binding.switchCreatePracticeSettingsReadOutBoth.apply {

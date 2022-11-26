@@ -8,7 +8,6 @@ import java.util.*
 
 class TextToSpeechUtil(val context: Context) {
 
-    private val settings = Settings(context)
     private var isInitialized = false
     private var queuedRequests = ArrayList<Pair<String, Locale>>()
 
@@ -29,7 +28,7 @@ class TextToSpeechUtil(val context: Context) {
     fun speak(_text: String, language: Locale): Int{
         var text = _text
 
-        if(!settings.readOutVocabularyGeneral)
+        if(!Settings(context).readOutVocabularyGeneral)
             return ERROR_GLOBAL_DEACTIVATED_SPEAKING
 
         if(!isInitialized){
