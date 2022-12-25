@@ -32,7 +32,7 @@ class PracticeActivity : AppCompatActivity() {
     private var position = 0
     private var numberOfExercises = 10
     private var correctInARow: Int = 0
-    private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
+    private var allVocabularyWords: ArrayList<WordTranslation> = arrayListOf()
     private var mistakes: ArrayList<Mistake> = arrayListOf()
     private lateinit var exercise: Exercise
 
@@ -206,7 +206,7 @@ class PracticeActivity : AppCompatActivity() {
                 arrayListOf(Exercise.TYPE_TRANSLATE_TEXT),
                 false,
                 position > numberOfExercises ,
-                arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION),
+                arrayListOf(WordTranslation.TYPE_ANTONYM, WordTranslation.TYPE_SYNONYM, WordTranslation.TYPE_TRANSLATION),
                 mistakes,
                 this).build()
         }
@@ -342,7 +342,6 @@ class PracticeActivity : AppCompatActivity() {
 
         /**
          * Add a dialog before leaving the activity
-         *
          */
         fun quitPractice(activity: Activity, context: Context){
             MaterialAlertDialogBuilder(context)

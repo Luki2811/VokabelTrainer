@@ -39,9 +39,9 @@ class PracticeTranslateTextFragment : Fragment(){
 
         exercise = Exercise(JSONObject(args.exercise))
 
-        if(exercise.typeOfWord != VocabularyWord.TYPE_TRANSLATION){
+        if(exercise.typeOfWord != WordTranslation.TYPE_TRANSLATION){
             binding.textViewPracticeTranslateTextTop.text =
-                if(exercise.typeOfWord == VocabularyWord.TYPE_SYNONYM)
+                if(exercise.typeOfWord == WordTranslation.TYPE_SYNONYM)
                     getString(R.string.action_write_synonyms)
                 else
                     getString(R.string.action_write_antonyms)
@@ -117,7 +117,7 @@ class PracticeTranslateTextFragment : Fragment(){
     }
 
     private fun speakWord(){
-        val lang = if (exercise.isSecondWordAskedAsAnswer && exercise.typeOfWord == VocabularyWord.TYPE_TRANSLATION) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
+        val lang = if (exercise.isSecondWordAskedAsAnswer && exercise.typeOfWord == WordTranslation.TYPE_TRANSLATION) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
         when(tts?.speak(binding.textViewPracticeTranslateTextBottom.text.toString(), lang)){
             TextToSpeechUtil.ERROR_MISSING_LANG_DATA -> Snackbar.make(
                 binding.root,

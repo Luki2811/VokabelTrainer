@@ -8,16 +8,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.practice.PracticeActivity">
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/buttonExitPractice"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:minHeight="48dp"
-        android:background="@drawable/rounded_black_button"
-        android:src="@drawable/ic_baseline_close_24"
-        app:tint="@color/white"
+        style="@style/Widget.Material3.Button.IconButton.Filled"
+        app:icon="@drawable/ic_baseline_close_24"
+        app:iconTint="@color/White"
+        app:backgroundTint="@color/Black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/leave" />

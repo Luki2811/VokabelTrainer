@@ -13,7 +13,7 @@ import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.Exercise
 import de.luki2811.dev.vokabeltrainer.ExerciseResult
 import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
-import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
 import org.json.JSONObject
 
@@ -23,20 +23,20 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private val binding get() = _binding!!
     private val args: PracticeMatchFiveWordsFragmentArgs by navArgs()
     private lateinit var exercise: Exercise
-    private var words: ArrayList<VocabularyWord> = arrayListOf()
+    private var words: ArrayList<WordTranslation> = arrayListOf()
     private var tts: TextToSpeechUtil? = null
 
-    private lateinit var vocKnown0: VocabularyWord
-    private lateinit var vocKnown1: VocabularyWord
-    private lateinit var vocKnown2: VocabularyWord
-    private lateinit var vocKnown3: VocabularyWord
-    private lateinit var vocKnown4: VocabularyWord
+    private lateinit var vocKnown0: WordTranslation
+    private lateinit var vocKnown1: WordTranslation
+    private lateinit var vocKnown2: WordTranslation
+    private lateinit var vocKnown3: WordTranslation
+    private lateinit var vocKnown4: WordTranslation
 
-    private lateinit var vocNew0: VocabularyWord
-    private lateinit var vocNew1: VocabularyWord
-    private lateinit var vocNew2: VocabularyWord
-    private lateinit var vocNew3: VocabularyWord
-    private lateinit var vocNew4: VocabularyWord
+    private lateinit var vocNew0: WordTranslation
+    private lateinit var vocNew1: WordTranslation
+    private lateinit var vocNew2: WordTranslation
+    private lateinit var vocNew3: WordTranslation
+    private lateinit var vocNew4: WordTranslation
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -150,7 +150,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
 
     private fun setWords(){
-        val tempWords = ArrayList<VocabularyWord>()
+        val tempWords = ArrayList<WordTranslation>()
         tempWords.addAll(exercise.words)
 
         vocKnown0 = tempWords.random()
@@ -174,7 +174,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
         binding.chip4LearnNativeLan.text = vocKnown4.getFirstWordList()[0]
 
         // New
-        val tempWords2 = ArrayList<VocabularyWord>()
+        val tempWords2 = ArrayList<WordTranslation>()
         tempWords2.addAll(exercise.words)
 
         vocNew0 = tempWords2.random()

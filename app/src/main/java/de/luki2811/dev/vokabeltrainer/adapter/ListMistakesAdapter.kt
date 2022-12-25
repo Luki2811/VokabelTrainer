@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
 import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
 import java.time.format.DateTimeFormatter
@@ -22,6 +23,7 @@ class ListMistakesAdapter(
         val textViewAnsweredWord: TextView = view.findViewById(R.id.textViewItemAnsweredWord)
         val textViewCorrectWord: TextView = view.findViewById(R.id.textViewItemCorrectAskedWord)
         val textViewAskedWord: TextView = view.findViewById(R.id.textViewItemAskedWord)
+        val buttonDelete: MaterialButton = view.findViewById(R.id.buttonMistakeCardDelete)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -39,12 +41,21 @@ class ListMistakesAdapter(
             1 -> context.getString(R.string.type_of_lesson_1)
             2 -> context.getString(R.string.type_of_lesson_2)
             3 -> context.getString(R.string.type_of_lesson_3)
-            else -> "-1"
+            else -> "-"
         }
         viewHolder.textViewType.text = context.getString(R.string.type_of_lesson, typeAsString)
         viewHolder.textViewAskedWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.firstWord else dataSet[position].word.secondWord
         viewHolder.textViewAnsweredWord.text = dataSet[position].wrongAnswer
         viewHolder.textViewCorrectWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.secondWord else dataSet[position].word.firstWord
+
+        viewHolder.buttonDelete.apply {
+            setOnClickListener {
+                if(viewHolder.layoutPosition >= 0){
+                    dataSet[viewHolder.layoutPosition].removeFromFile(context)
+                    notifyItemRemoved(viewHolder.layoutPosition)
+                }
+            }
+        }
     }
 
     override fun getItemCount() = dataSet.size

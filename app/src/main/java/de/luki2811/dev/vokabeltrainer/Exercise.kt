@@ -9,10 +9,10 @@ class Exercise() {
     var isSecondWordAskedAsAnswer: Boolean = false
     var askAllWords: Boolean = false
     var readOut: ArrayList<Boolean> = arrayListOf(false, false)
-    var words: ArrayList<VocabularyWord> = arrayListOf()
-    var typeOfWord: Int = VocabularyWord.TYPE_UNKNOWN
+    var words: ArrayList<WordTranslation> = arrayListOf()
+    var typeOfWord: Int = WordTranslation.TYPE_UNKNOWN
 
-    constructor(type: Int, words: ArrayList<VocabularyWord>, read: ArrayList<Boolean>, askAllWords: Boolean, askForSecondWord: Boolean) : this() {
+    constructor(type: Int, words: ArrayList<WordTranslation>, read: ArrayList<Boolean>, askAllWords: Boolean, askForSecondWord: Boolean) : this() {
         this.type = type
         this.words = words
         this.typeOfWord = words[0].typeOfWord
@@ -25,7 +25,7 @@ class Exercise() {
         this.type = json.getInt("type")
         this.words = arrayListOf()
         for(i in 0 until json.getJSONArray("words").length())
-            this.words.add(VocabularyWord.getVocabularyWord(json.getJSONArray("words").getJSONObject(i)))
+            this.words.add(WordTranslation.getVocabularyWord(json.getJSONArray("words").getJSONObject(i)))
         this.typeOfWord = words[0].typeOfWord
         val readOutList = json.getString("readOut").split(';')
         this.readOut.add(0, (readOutList[0] == "true"))

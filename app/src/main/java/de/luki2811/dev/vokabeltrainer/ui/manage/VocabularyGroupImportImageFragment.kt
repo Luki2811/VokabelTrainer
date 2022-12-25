@@ -25,7 +25,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
-import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateVocabularyGroupWithImageInfoBinding
 import java.io.File
 import java.io.IOException
@@ -211,7 +211,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
     }
 
     private fun createVocabulary(text: Text) {
-        val vocabulary = arrayListOf<VocabularyWord>()
+        val vocabulary = arrayListOf<WordTranslation>()
         val knownWords = arrayListOf<String>()
         val newWords = arrayListOf<String>()
         var isLoadingNewWord = true
@@ -233,7 +233,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
                         }else{
                             knownWords.add(index, block.text)
                             // Add word
-                            vocabulary.add(index, VocabularyWord(knownWords[index], Locale.ROOT, newWords[index], Locale.ROOT, true))
+                            vocabulary.add(index, WordTranslation(knownWords[index], Locale.ROOT, newWords[index], Locale.ROOT, true))
                             index += 1
                         }
                         isLoadingNewWord = !isLoadingNewWord
@@ -273,7 +273,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
                 }
 
                 for(i in 0 until newWords.size){
-                    vocabulary.add(i, VocabularyWord(knownWords[i], Locale.ROOT, newWords[i], Locale.ROOT, true))
+                    vocabulary.add(i, WordTranslation(knownWords[i], Locale.ROOT, newWords[i], Locale.ROOT, true))
                 }
             }
         }
@@ -294,7 +294,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
         addFirstLanguageToVocabulary(vocabulary)
     }
 
-    private fun addFirstLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
+    private fun addFirstLanguageToVocabulary(vocGroup: ArrayList<WordTranslation>){
         val sb = StringBuilder()
         vocGroup.forEach {
             sb.append(it.firstWord).append("; ")
@@ -316,7 +316,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
             }
     }
 
-    private fun addSecondLanguageToVocabulary(vocGroup: ArrayList<VocabularyWord>){
+    private fun addSecondLanguageToVocabulary(vocGroup: ArrayList<WordTranslation>){
         val sb = StringBuilder()
         vocGroup.forEach {
             sb.append(it.secondWord).append("; ")
@@ -426,7 +426,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
         return word
     }
 
-    private fun createVocabularyGroup(vocGroup: ArrayList<VocabularyWord>) {
+    private fun createVocabularyGroup(vocGroup: ArrayList<WordTranslation>) {
         try {
             val finalVocabularyGroup = VocabularyGroup(
                 name = name,

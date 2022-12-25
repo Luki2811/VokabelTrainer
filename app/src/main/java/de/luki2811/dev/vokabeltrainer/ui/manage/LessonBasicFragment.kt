@@ -76,9 +76,9 @@ class LessonBasicFragment: Fragment() {
             binding.chipTypeLesson2.isChecked = lesson.typesOfExercises.contains(2)
             binding.chipTypeLesson3.isChecked = lesson.typesOfExercises.contains(3)
 
-            binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_TRANSLATION)
-            binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_SYNONYM)
-            binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_ANTONYM)
+            binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = lesson.typesOfWordToPractice.contains(WordTranslation.TYPE_TRANSLATION)
+            binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = lesson.typesOfWordToPractice.contains(WordTranslation.TYPE_SYNONYM)
+            binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = lesson.typesOfWordToPractice.contains(WordTranslation.TYPE_ANTONYM)
 
             binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
 
@@ -145,11 +145,11 @@ class LessonBasicFragment: Fragment() {
 
         val typesOfWords = arrayListOf<Int>()
         if(binding.chipLessonSettingsWordsToPracticeTranslation.isChecked)
-            typesOfWords.add(VocabularyWord.TYPE_TRANSLATION)
+            typesOfWords.add(WordTranslation.TYPE_TRANSLATION)
         if(binding.chipLessonSettingsWordsToPracticeSynonym.isChecked)
-            typesOfWords.add(VocabularyWord.TYPE_SYNONYM)
+            typesOfWords.add(WordTranslation.TYPE_SYNONYM)
         if(binding.chipLessonSettingsWordsToPracticeAntonym.isChecked)
-            typesOfWords.add(VocabularyWord.TYPE_ANTONYM)
+            typesOfWords.add(WordTranslation.TYPE_ANTONYM)
 
         val askForAllWords = binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked
 

@@ -9,7 +9,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class Mistake(var word: VocabularyWord, var askedForSecondWord: Boolean = false, var typeOfPractice: Int) {
+data class Mistake(var word: WordTranslation, var askedForSecondWord: Boolean = false, var typeOfPractice: Int) {
 
     init {
         word.level = 0
@@ -92,7 +92,7 @@ data class Mistake(var word: VocabularyWord, var askedForSecondWord: Boolean = f
         fun fromJson(json: JSONObject): Mistake?{
             return try {
                 val askedForSecondWord = try { json.getBoolean("askedForSecondWord") } catch (e: JSONException){ false }
-                val word = VocabularyWord.getVocabularyWord(json.getJSONObject("vocabularyWord"))
+                val word = WordTranslation.getVocabularyWord(json.getJSONObject("vocabularyWord"))
                 val wrongAnswer = json.getString("wrongAnswer")
                 val typeOfPractice = json.getInt("typeOfPractice")
                 val lastTimeWrong = LocalDate.parse(json.getString("lastTimeWrong"), DateTimeFormatter.ofPattern("dd-MM-yyyy"))

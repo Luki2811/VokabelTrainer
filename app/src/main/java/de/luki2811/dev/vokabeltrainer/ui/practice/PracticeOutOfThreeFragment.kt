@@ -1,7 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.practice
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +19,10 @@ class PracticeOutOfThreeFragment: Fragment() {
     private var _binding: FragmentPracticeOutOfThreeBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeOutOfThreeFragmentArgs by navArgs()
-    private lateinit var word: VocabularyWord
+    private lateinit var word: WordTranslation
     private lateinit var exercise: Exercise
     private var isCorrect = false
-    private var wordOptions = ArrayList<VocabularyWord>()
+    private var wordOptions = ArrayList<WordTranslation>()
     private var wordSelected: String = ""
     private var tts: TextToSpeechUtil? = null
 
