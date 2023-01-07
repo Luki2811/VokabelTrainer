@@ -12,17 +12,17 @@ import androidx.navigation.fragment.navArgs
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeOutOfThreeBinding
 import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity.Companion.quitPractice
-import org.json.JSONObject
+import java.util.*
 
 class PracticeOutOfThreeFragment: Fragment() {
 
     private var _binding: FragmentPracticeOutOfThreeBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeOutOfThreeFragmentArgs by navArgs()
-    private lateinit var word: WordTranslation
-    private lateinit var exercise: Exercise
+    private var exercise: Exercise = args.exercise
+    private lateinit var word: VocabularyWord
     private var isCorrect = false
-    private var wordOptions = ArrayList<WordTranslation>()
+    private var wordOptions = ArrayList<VocabularyWord>()
     private var wordSelected: String = ""
     private var tts: TextToSpeechUtil? = null
 
@@ -35,9 +35,7 @@ class PracticeOutOfThreeFragment: Fragment() {
             quitPractice(requireActivity(),requireContext())
         }
 
-        exercise = Exercise(JSONObject(args.exercise))
         word = exercise.words[0]
-
 
         if(Settings(requireContext()).readOutVocabularyGeneral)
             binding.buttonSpeakChooseThree.setOnClickListener { speakWord(binding.textViewPracticeChooseThreeBottom.text.toString()) }
@@ -67,19 +65,32 @@ class PracticeOutOfThreeFragment: Fragment() {
         wordOptions.addAll(exercise.words)
         wordOptions.shuffle()
 
-        binding.chipPracticeOption1.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[0].firstWord else wordOptions[0].secondWord
-        binding.chipPracticeOption2.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[1].firstWord else wordOptions[1].secondWord
-        binding.chipPracticeOption3.text = if(!exercise.isSecondWordAskedAsAnswer) wordOptions[2].firstWord else wordOptions[2].secondWord
+        binding.chipPracticeOption1.text = if(!exercise.isOtherWordAskedAsAnswer) wordOptions[0].mainWord else wordOptions[0].getSecondWordsAsString()
+        binding.chipPracticeOption2.text = if(!exercise.isOtherWordAskedAsAnswer) wordOptions[1].mainWord else wordOptions[1].getSecondWordsAsString()
+        binding.chipPracticeOption3.text = if(!exercise.isOtherWordAskedAsAnswer) wordOptions[2].mainWord else wordOptions[2].getSecondWordsAsString()
 
-        if(exercise.isSecondWordAskedAsAnswer){
-            binding.textViewPracticeChooseThreeBottom.text = word.firstWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.secondLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+        if(exercise.isOtherWordAskedAsAnswer){
+            binding.textViewPracticeChooseThreeBottom.text = word.mainWord
+            when(word){
+                is WordTranslation -> {
+                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).otherLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+                }
+                is Synonym -> { TODO() }
+                is WordFamily -> { TODO() }
+            }
+
             if(exercise.readOut[0])
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
-            binding.textViewPracticeChooseThreeBottom.text = word.secondWord
-            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, word.firstLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+            binding.textViewPracticeChooseThreeBottom.text = word.getSecondWordsAsString()
+            when(word){
+                is WordTranslation -> {
+                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+                }
+                is Synonym -> { TODO() }
+                is WordFamily -> { TODO() }
+            }
             if(exercise.readOut[1]){
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
             }
@@ -103,19 +114,25 @@ class PracticeOutOfThreeFragment: Fragment() {
                 binding.chipPracticeOption3.id -> wordSelected = binding.chipPracticeOption3.text.toString()
             }
 
-            val lang = if (exercise.isSecondWordAskedAsAnswer) word.secondLanguage else word.firstLanguage
+
+            val lang = when(word){
+                is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (word as WordTranslation).otherLanguage else (word as WordTranslation).mainLanguage }
+                is Synonym -> { (word as Synonym).language }
+                is WordFamily -> { (word as WordFamily).language }
+                else -> { Locale.ENGLISH }
+            }
 
             when(binding.chipGroupPracticeOptions.checkedChipId){
                 binding.chipPracticeOption1.id -> {
-                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption1.text.toString(), lang)
                 }
                 binding.chipPracticeOption2.id -> {
-                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption2.text.toString(), lang)
                 }
                 binding.chipPracticeOption3.id -> {
-                    if((exercise.readOut[0] && !exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isSecondWordAskedAsAnswer))
+                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption3.text.toString(), lang)
                 }
             }
@@ -136,8 +153,13 @@ class PracticeOutOfThreeFragment: Fragment() {
     }
 
     private fun speakWord(text: String){
-        val lang = if (exercise.isSecondWordAskedAsAnswer) word.firstLanguage else word.secondLanguage
-        if((exercise.readOut[0] && exercise.isSecondWordAskedAsAnswer) || (exercise.readOut[1] && !exercise.isSecondWordAskedAsAnswer))
+        val lang = when(word){
+            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (word as WordTranslation).otherLanguage else (word as WordTranslation).mainLanguage }
+            is Synonym -> { (word as Synonym).language }
+            is WordFamily -> { (word as WordFamily).language }
+            else -> { Locale.ENGLISH }
+        }
+        if((exercise.readOut[0] && exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && !exercise.isOtherWordAskedAsAnswer))
             tts?.speak(text, lang)
     }
 
@@ -148,18 +170,29 @@ class PracticeOutOfThreeFragment: Fragment() {
         val alternativeText: String
 
         if(isCorrect){
-            val solution: String = when(binding.chipGroupPracticeOptions.checkedChipId){
+            val answer: String = when(binding.chipGroupPracticeOptions.checkedChipId){
                 binding.chipPracticeOption1.id -> binding.chipPracticeOption1.text.toString()
                 binding.chipPracticeOption2.id -> binding.chipPracticeOption2.text.toString()
                 binding.chipPracticeOption3.id -> binding.chipPracticeOption3.text.toString()
                 else -> ""
             }
 
-            val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) word.getSecondWordList().toMutableList() else word.getFirstWordList().toMutableList()
+            val otherWords: ArrayList<String> = when(word){
+                is WordTranslation -> (word as WordTranslation).otherWords
+                is Synonym -> (word as Synonym).otherWords
+                is WordFamily -> {
+                    val other = ArrayList<String>()
+                    (word as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
+                    other
+                }
+                else -> { ArrayList() }
+            }
+
+            val otherAlternatives = if(exercise.isOtherWordAskedAsAnswer) otherWords else ArrayList<String>().apply { add(word.mainWord) }
 
             otherAlternatives.replaceAll { it.trim() }
 
-            val inputStrings = solution.trim().split(";").toMutableList()
+            val inputStrings = answer.trim().split(";").toMutableList()
             inputStrings.replaceAll { if(exercise.words[0].isIgnoreCase) it.lowercase().trim() else it.trim() }
 
             otherAlternatives.removeAll{ inputStrings.contains(it.lowercase()) }
@@ -177,10 +210,21 @@ class PracticeOutOfThreeFragment: Fragment() {
             }
             correctionBottomSheet.arguments = bundleOf("alternativesText" to alternativeText, "isCorrect" to true)
         }else{
-            if(exercise.isSecondWordAskedAsAnswer)
-                correctionBottomSheet.arguments = bundleOf("alternativesText" to word.secondWord, "isCorrect" to false)
+            if(exercise.isOtherWordAskedAsAnswer) {
+                val otherWords: ArrayList<String> = when(word){
+                    is WordTranslation -> (word as WordTranslation).otherWords
+                    is Synonym -> (word as Synonym).otherWords
+                    /** is WordFamily -> {
+                        val other = ArrayList<String>()
+                        (word as WordFamily).otherWords.forEach { other.add(it.first) }
+                        other
+                    } **/
+                    else -> { ArrayList() }
+                }
+                correctionBottomSheet.arguments = bundleOf("alternativesText" to otherWords, "isCorrect" to false)
+            }
             else
-                correctionBottomSheet.arguments = bundleOf("alternativesText" to word.firstWord, "isCorrect" to false)
+                correctionBottomSheet.arguments = bundleOf("alternativesText" to word.mainWord, "isCorrect" to false)
         }
 
         correctionBottomSheet.show(childFragmentManager, CorrectionBottomSheet.TAG)
@@ -188,17 +232,17 @@ class PracticeOutOfThreeFragment: Fragment() {
 
     private fun isInputCorrect(): Boolean{
 
-        val solution: String = when(binding.chipGroupPracticeOptions.checkedChipId){
+        val answer: String = when(binding.chipGroupPracticeOptions.checkedChipId){
             binding.chipPracticeOption1.id -> binding.chipPracticeOption1.text.toString()
             binding.chipPracticeOption2.id -> binding.chipPracticeOption2.text.toString()
             binding.chipPracticeOption3.id -> binding.chipPracticeOption3.text.toString()
             else -> ""
         }
 
-        return if(exercise.isSecondWordAskedAsAnswer){
-            word.secondWord == solution
+        return if(exercise.isOtherWordAskedAsAnswer){
+            word.getSecondWordsAsString() == answer
         }else{
-            solution.trim().equals(word.firstWord, word.isIgnoreCase)
+            answer.equals(word.mainWord, word.isIgnoreCase)
         }
     }
 }

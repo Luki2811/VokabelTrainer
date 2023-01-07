@@ -33,7 +33,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
     private var _binding: FragmentEditVocabularyGroupBinding? = null
     private val binding get() = _binding!!
     private lateinit var vocabularyGroup: VocabularyGroup
-    private var vocabulary = ArrayList<WordTranslation>()
+    private var vocabulary = ArrayList<VocabularyWord>()
     private lateinit var firstLanguage: Locale
     private lateinit var secondLanguage: Locale
 
@@ -55,10 +55,10 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             }
             vocabulary.addAll(vocabularyGroup.vocabulary)
         } else {
-            vocabulary.add(WordTranslation("", firstLanguage , "", secondLanguage, true))
+            vocabulary.add(WordTranslation("", firstLanguage , arrayListOf(), secondLanguage, true))
         }
 
-        if(Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language) != null && vocabulary[pos].typeOfWord == WordTranslation.TYPE_TRANSLATION){
+        if(Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language) != null && vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION){
             val options = TranslatorOptions.Builder()
                 .setTargetLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language)!!)
                 .setSourceLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language)!!)
@@ -75,7 +75,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 .addOnSuccessListener {
                     Log.i("Translator", "Download successfully")
                     binding.textEditEditorSecondWord.addTextChangedListener {
-                        if(!it.isNullOrBlank() && vocabulary[pos].typeOfWord == WordTranslation.TYPE_TRANSLATION) {
+                        if(!it.isNullOrBlank() && vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION) {
                             secondToFirstTranslator.translate(it.toString())
                                 .addOnSuccessListener { translatedText ->
                                     binding.chipGroupEditorSuggestions.removeAllViews()
@@ -126,9 +126,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         binding.buttonToggleGroupTypeOfWord.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if(isChecked){
                 when(checkedId){
-                    binding.buttonToggleTypeofWord1.id -> setLayoutType(WordTranslation.TYPE_TRANSLATION)
-                    binding.buttonToggleTypeofWord2.id -> setLayoutType(WordTranslation.TYPE_SYNONYM)
-                    binding.buttonToggleTypeofWord3.id -> setLayoutType(WordTranslation.TYPE_ANTONYM)
+                    binding.buttonToggleTypeofWord1.id -> setLayoutType(VocabularyWord.TYPE_TRANSLATION)
+                    binding.buttonToggleTypeofWord2.id -> setLayoutType(VocabularyWord.TYPE_SYNONYM)
+                    binding.buttonToggleTypeofWord3.id -> setLayoutType(VocabularyWord.TYPE_ANTONYM)
                 }
             }
         }
@@ -237,16 +237,16 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         // binding.textEditEditorSecondWordLayout.hint = "Second word"
 
         when(type){
-            WordTranslation.TYPE_TRANSLATION -> {
+            VocabularyWord.TYPE_TRANSLATION -> {
                 binding.textEditEditorFirstWordLayout.helperText = getString(R.string.word_in_first_language)
                 binding.textEditEditorSecondWordLayout.helperText = getString(R.string.word_in_second_language)
             }
-            WordTranslation.TYPE_SYNONYM -> {
+            VocabularyWord.TYPE_SYNONYM -> {
                 binding.textEditEditorFirstWordLayout.helperText = getString(R.string.synonym_main)
                 binding.textEditEditorSecondWordLayout.helperText = getString(R.string.synonym_other)
                 binding.chipGroupEditorSuggestions.removeAllViews()
             }
-            WordTranslation.TYPE_ANTONYM -> {
+            VocabularyWord.TYPE_ANTONYM -> {
                 binding.textEditEditorFirstWordLayout.helperText = getString(R.string.antonym_main)
                 binding.textEditEditorSecondWordLayout.helperText = getString(R.string.antonym_second)
                 binding.chipGroupEditorSuggestions.removeAllViews()
@@ -257,8 +257,11 @@ class VocabularyGroupWordEditorFragment : Fragment() {
     private fun refreshVocabularyWord(): Boolean {
         var isCorrect = true
 
-        val secondWord = binding.textEditEditorSecondWord.text.toString().trim()
-        secondWord.ifBlank {
+        val secondWord = binding.textEditEditorSecondWord.text.toString().split(";").onEach {
+            it.trim()
+        } as ArrayList<String>
+
+        binding.textEditEditorSecondWord.text.toString().ifBlank {
             binding.textEditEditorSecondWordLayout.error = getString(R.string.err_missing_input)
             isCorrect = false
         }
@@ -270,18 +273,18 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         }
 
         val typeOfWord = when(binding.buttonToggleGroupTypeOfWord.checkedButtonId){
-            binding.buttonToggleTypeofWord1.id -> WordTranslation.TYPE_TRANSLATION
-            binding.buttonToggleTypeofWord2.id -> WordTranslation.TYPE_SYNONYM
-            binding.buttonToggleTypeofWord3.id -> WordTranslation.TYPE_ANTONYM
-            else -> WordTranslation.TYPE_UNKNOWN
+            binding.buttonToggleTypeofWord1.id -> VocabularyWord.TYPE_TRANSLATION
+            binding.buttonToggleTypeofWord2.id -> VocabularyWord.TYPE_SYNONYM
+            binding.buttonToggleTypeofWord3.id -> VocabularyWord.TYPE_ANTONYM
+            else -> VocabularyWord.TYPE_UNKNOWN
         }
 
-        if(typeOfWord == WordTranslation.TYPE_UNKNOWN)
+        if(typeOfWord == VocabularyWord.TYPE_UNKNOWN)
             isCorrect = false
 
         val word = WordTranslation(firstWord, vocabularyGroup.firstLanguage, secondWord, vocabularyGroup.secondLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked, typeOfWord = typeOfWord)
 
-        val tempVocGroup = arrayListOf<WordTranslation>()
+        val tempVocGroup = arrayListOf<VocabularyWord>()
         tempVocGroup.addAll(vocabulary)
 
         if(tempVocGroup.apply { removeAt(pos) }.contains(word)){
@@ -305,7 +308,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 }
                 binding.textEditEditorFirstWord.text = null
                 binding.textEditEditorSecondWord.text = null
-                vocabulary.add(pos,WordTranslation("", firstLanguage, "", secondLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked))
+                vocabulary.add(pos,WordTranslation("", firstLanguage, arrayListOf(), secondLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked))
                 binding.textEditEditorSecondWord.requestFocus()
 
                 val imm: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -356,8 +359,8 @@ class VocabularyGroupWordEditorFragment : Fragment() {
     private fun refresh() {
         binding.textEditEditorSecondWordLayout.error = null
         binding.textEditEditorFirstWordLayout.error = null
-        binding.textEditEditorFirstWord.setText(vocabulary[pos].firstWord)
-        binding.textEditEditorSecondWord.setText(vocabulary[pos].secondWord)
+        binding.textEditEditorFirstWord.setText(vocabulary[pos].mainWord)
+        binding.textEditEditorSecondWord.setText(vocabulary[pos].getSecondWordsAsString())
         binding.switchVocabularyWordIgnoreCaseManage.isChecked = vocabulary[pos].isIgnoreCase
         binding.textViewNumberOfVocManage.text = getString(R.string.number_voc_of_rest, (pos + 1), vocabulary.size)
 
@@ -378,9 +381,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         } **/
 
         when(vocabulary[pos].typeOfWord){
-            WordTranslation.TYPE_TRANSLATION -> binding.buttonToggleTypeofWord1.isChecked = true
-            WordTranslation.TYPE_SYNONYM -> binding.buttonToggleTypeofWord2.isChecked = true
-            WordTranslation.TYPE_ANTONYM -> binding.buttonToggleTypeofWord3.isChecked = true
+            VocabularyWord.TYPE_TRANSLATION -> binding.buttonToggleTypeofWord1.isChecked = true
+            VocabularyWord.TYPE_SYNONYM -> binding.buttonToggleTypeofWord2.isChecked = true
+            VocabularyWord.TYPE_ANTONYM -> binding.buttonToggleTypeofWord3.isChecked = true
         }
 
         if(args.keyMode != MODE_CREATE){

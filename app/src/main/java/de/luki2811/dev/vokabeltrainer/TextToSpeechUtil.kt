@@ -65,31 +65,11 @@ class TextToSpeechUtil(val context: Context) {
     companion object{
         fun replaceKnownShorts(textToCheck: String, language: Locale, context: Context): String{
             val allShortForms = ShortForm.loadAllShortForms(context).filter { it.language == language }
-            var text = textToCheck
-            allShortForms.forEach {
-                text = text.replace(it.shortForm, it.longForm, ignoreCase = true)
+            return textToCheck.apply {
+                allShortForms.forEach {
+                    replace(it.shortForm, it.longForm, ignoreCase = true)
+                }
             }
-
-            /**
-            text = text.replace("etw ","etwas ", ignoreCase = true)
-            text = text.replace("etw.","etwas", ignoreCase = true)
-            text = text.replace("sth ", "something ", ignoreCase = true)
-            text = text.replace("sth.", "something", ignoreCase = true)
-            text = text.replace("sb ", "somebody ", ignoreCase = true)
-            text = text.replace("sb.", "somebody", ignoreCase = true)
-            text = text.replace("pl ", "plural ", ignoreCase = true)
-            text = text.replace("pl.", "plural", ignoreCase = true)
-            text = text.replace("sg ", "singular ", ignoreCase = true)
-            text = text.replace("sg.", "singular", ignoreCase = true)
-
-            if(language == Locale.FRENCH){
-                text = text.replace(" qc"," quelque chose", ignoreCase = true)
-                text = text.replace(" qn", " quelqu'un", ignoreCase = true)
-                text = text.replace(" f."," féminin", ignoreCase = true)
-                text = text.replace(" m.", " masculin", ignoreCase = true)
-            } **/
-
-            return text
         }
 
         const val QUEUED_REQUEST = 1

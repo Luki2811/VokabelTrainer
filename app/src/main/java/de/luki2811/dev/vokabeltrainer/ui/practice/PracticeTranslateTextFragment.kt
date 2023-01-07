@@ -16,7 +16,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.luki2811.dev.vokabeltrainer.*
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeTranslateTextBinding
-import org.json.JSONObject
+import java.util.*
 
 
 class PracticeTranslateTextFragment : Fragment(){
@@ -24,7 +24,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private var _binding: FragmentPracticeTranslateTextBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
-    private lateinit var exercise: Exercise
+    private var exercise = args.exercise
     private var isCorrect = false
     private var tts: TextToSpeechUtil? = null
 
@@ -37,32 +37,40 @@ class PracticeTranslateTextFragment : Fragment(){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
-        exercise = Exercise(JSONObject(args.exercise))
-
-        if(exercise.typeOfWord != WordTranslation.TYPE_TRANSLATION){
-            binding.textViewPracticeTranslateTextTop.text =
-                if(exercise.typeOfWord == WordTranslation.TYPE_SYNONYM)
-                    getString(R.string.action_write_synonyms)
-                else
-                    getString(R.string.action_write_antonyms)
-            binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].firstWord
-            if(exercise.readOut[1]){
-                speakWord()
-            }
-        }else{
-            if(exercise.isSecondWordAskedAsAnswer){
-                binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].firstWord
-                binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, exercise.words[0].secondLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
-                if(exercise.readOut[0]){
-                    speakWord()
+        // Set Text
+        when(exercise.typeOfWord){
+            VocabularyWord.TYPE_TRANSLATION -> {
+                if(exercise.isOtherWordAskedAsAnswer){
+                    binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
+                    binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, (exercise.words[0] as WordTranslation).otherLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+                    if(exercise.readOut[0]){
+                        speakWord()
+                    }
+                }
+                else {
+                    binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].getSecondWordsAsString()
+                    binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, (exercise.words[0] as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+                    if(exercise.readOut[1]){
+                        speakWord()
+                    }
                 }
             }
-            else {
-                binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].secondWord
-                binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, exercise.words[0].firstLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
+            VocabularyWord.TYPE_SYNONYM -> {
+                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_synonyms)
+                binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
                 if(exercise.readOut[1]){
                     speakWord()
                 }
+            }
+            VocabularyWord.TYPE_ANTONYM -> {
+                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_antonyms)
+                binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
+                if(exercise.readOut[1]){
+                    speakWord()
+                }
+            }
+            VocabularyWord.TYPE_WORD_FAMILY -> {
+                TODO()
             }
         }
 
@@ -78,7 +86,7 @@ class PracticeTranslateTextFragment : Fragment(){
 
             if(settings.readOutVocabularyGeneral) {
                 binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_up_24)
-                binding.buttonSpeakTranslateText.setOnClickListener { speakWord(); Log.e("T", "TTTT") }
+                binding.buttonSpeakTranslateText.setOnClickListener { speakWord() }
             }
             else {
                 binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
@@ -117,7 +125,12 @@ class PracticeTranslateTextFragment : Fragment(){
     }
 
     private fun speakWord(){
-        val lang = if (exercise.isSecondWordAskedAsAnswer && exercise.typeOfWord == WordTranslation.TYPE_TRANSLATION) exercise.words[0].firstLanguage else exercise.words[0].secondLanguage
+        val lang = when(exercise.words[0]){
+            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
+            is Synonym -> { (exercise.words[0] as Synonym).language }
+            is WordFamily -> { (exercise.words[0] as WordFamily).language }
+            else -> { Locale.ENGLISH }
+        }
         when(tts?.speak(binding.textViewPracticeTranslateTextBottom.text.toString(), lang)){
             TextToSpeechUtil.ERROR_MISSING_LANG_DATA -> Snackbar.make(
                 binding.root,
@@ -139,19 +152,32 @@ class PracticeTranslateTextFragment : Fragment(){
     private fun startCorrection(){
         val correctionBottomSheet = CorrectionBottomSheet()
 
-        val proofreader = if(exercise.isSecondWordAskedAsAnswer){
-            Proofreader(exercise.words[0].getSecondWordList().toMutableList() as ArrayList<String>, binding.practiceTextInput.text.toString(), exercise.askAllWords)
+        val otherWords: ArrayList<String> = when(exercise.words[0]){
+            is WordTranslation -> (exercise.words[0] as WordTranslation).otherWords
+            is Synonym -> (exercise.words[0] as Synonym).otherWords
+            is WordFamily -> {
+                val other = ArrayList<String>()
+                (exercise.words[0] as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
+                other
+            }
+            else -> { ArrayList() }
+        }
+
+        val proofreader = if(exercise.isOtherWordAskedAsAnswer){
+            Proofreader(otherWords, binding.practiceTextInput.text.toString(), exercise.askAllWords)
         }else{
-            Proofreader(exercise.words[0].getFirstWordList().toMutableList() as ArrayList<String>, binding.practiceTextInput.text.toString(), exercise.askAllWords)
+            Proofreader(ArrayList<String>().apply { add(exercise.words[0].mainWord) }, binding.practiceTextInput.text.toString(), exercise.askAllWords)
         }
 
         if(Settings(requireContext()).allowShortFormInAnswer) {
-            val shortFormsForOriginal = if(exercise.isSecondWordAskedAsAnswer){
-                ShortForm.loadAllShortForms(requireContext()).filter { it.language == exercise.words[0].secondLanguage }
-            }else
-                ShortForm.loadAllShortForms(requireContext()).filter { it.language == exercise.words[0].firstLanguage }
+            val lang = when(exercise.words[0]){
+                is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
+                is Synonym -> { (exercise.words[0] as Synonym).language }
+                is WordFamily -> { (exercise.words[0] as WordFamily).language }
+                else -> { Locale.ENGLISH }
+            }
 
-            proofreader.replaceShortForms(shortFormsForOriginal.toMutableList() as ArrayList<ShortForm>)
+            proofreader.replaceShortForms(ShortForm.loadAllShortForms(requireContext()).filter { it.language == lang }.toMutableList() as ArrayList<ShortForm>)
         }
 
         isCorrect = proofreader.correct(exercise.words[0].isIgnoreCase)
@@ -160,7 +186,7 @@ class PracticeTranslateTextFragment : Fragment(){
         var wrongIndex = arrayListOf<Int>()
 
         if(isCorrect){
-            val otherAlternatives = if(exercise.isSecondWordAskedAsAnswer) exercise.words[0].getSecondWordList().toMutableList() else exercise.words[0].getFirstWordList().toMutableList()
+            val otherAlternatives = if(exercise.isOtherWordAskedAsAnswer) otherWords else ArrayList<String>().apply { add(exercise.words[0].mainWord) }
             otherAlternatives.replaceAll { it.trim() }
 
             val inputStrings = binding.practiceTextInput.text.toString().trim().split(";").toMutableList()
@@ -180,7 +206,7 @@ class PracticeTranslateTextFragment : Fragment(){
                 sb.toString()
             }
         }else{
-            alternativeText = if(exercise.isSecondWordAskedAsAnswer) exercise.words[0].secondWord else exercise.words[0].firstWord
+            alternativeText = if(exercise.isOtherWordAskedAsAnswer) exercise.words[0].getSecondWordsAsString() else exercise.words[0].mainWord
             wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)
         }
 

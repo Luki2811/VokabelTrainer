@@ -1,42 +1,33 @@
 package de.luki2811.dev.vokabeltrainer
 
-import org.json.JSONArray
-import org.json.JSONObject
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-class Exercise() {
+@Parcelize
+data class Exercise(var type: Int = TYPE_UNKNOWN,
+                    var isOtherWordAskedAsAnswer: Boolean = false,
+                    var askAllWords: Boolean = false,
+                    var readOut: ArrayList<Boolean> = arrayListOf(false, false),
+                    var words: ArrayList<VocabularyWord> = arrayListOf(),
+                    var typeOfWord: Int = VocabularyWord.TYPE_UNKNOWN,
+                    var typeOfWordInFamily: Int = WordFamily.WORD_NOMEN): Parcelable {
 
-    var type = TYPE_UNKNOWN
-    var isSecondWordAskedAsAnswer: Boolean = false
-    var askAllWords: Boolean = false
-    var readOut: ArrayList<Boolean> = arrayListOf(false, false)
-    var words: ArrayList<WordTranslation> = arrayListOf()
-    var typeOfWord: Int = WordTranslation.TYPE_UNKNOWN
-
-    constructor(type: Int, words: ArrayList<WordTranslation>, read: ArrayList<Boolean>, askAllWords: Boolean, askForSecondWord: Boolean) : this() {
-        this.type = type
-        this.words = words
-        this.typeOfWord = words[0].typeOfWord
-        this.readOut = read
-        this.askAllWords = askAllWords
-        this.isSecondWordAskedAsAnswer = askForSecondWord
-    }
-
-    constructor(json: JSONObject): this(){
+    /** constructor(json: JSONObject): this(){
         this.type = json.getInt("type")
         this.words = arrayListOf()
         for(i in 0 until json.getJSONArray("words").length())
-            this.words.add(WordTranslation.getVocabularyWord(json.getJSONArray("words").getJSONObject(i)))
+            //this.words.add(WordTranslation.loadFromJSON(json.getJSONArray("words").getJSONObject(i)))
         this.typeOfWord = words[0].typeOfWord
         val readOutList = json.getString("readOut").split(';')
         this.readOut.add(0, (readOutList[0] == "true"))
         this.readOut.add(1, (readOutList[1] == "true"))
         this.askAllWords = json.getBoolean("askAllWords")
         this.isSecondWordAskedAsAnswer = json.getBoolean("askForSecondWord")
-    }
+    } **/
 
-    fun getJson(): JSONObject{
+    /** fun getJson(): JSONObject{
         val wordsForJson = JSONArray()
-        words.forEach { wordsForJson.put(it.getJson(true)) }
+        words.forEach { wordsForJson.put(it.getAsJSON(false)) }
         val readOut = "${this.readOut[0]};${this.readOut[1]}"
 
         return JSONObject()
@@ -45,7 +36,7 @@ class Exercise() {
             .put("readOut", readOut)
             .put("askAllWords", askAllWords)
             .put("askForSecondWord", isSecondWordAskedAsAnswer)
-    }
+    } **/
 
     companion object{
         const val TYPE_UNKNOWN = -1

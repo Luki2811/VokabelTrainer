@@ -32,7 +32,7 @@ class PracticeActivity : AppCompatActivity() {
     private var position = 0
     private var numberOfExercises = 10
     private var correctInARow: Int = 0
-    private var allVocabularyWords: ArrayList<WordTranslation> = arrayListOf()
+    private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
     private var mistakes: ArrayList<Mistake> = arrayListOf()
     private lateinit var exercise: Exercise
 
@@ -100,7 +100,7 @@ class PracticeActivity : AppCompatActivity() {
             }else{
                 correctInARow = 0
 
-                val newMistake = Mistake(word = exercise.words[0], askedForSecondWord = exercise.isSecondWordAskedAsAnswer, typeOfPractice = exercise.type).apply {
+                val newMistake = Mistake(word = exercise.words[0], askedForSecondWord = exercise.isOtherWordAskedAsAnswer, typeOfPractice = exercise.type).apply {
                     wrongAnswer = exerciseResult.answer
                     this.position = this@PracticeActivity.position
                     lastTimeWrong = LocalDate.now()
@@ -124,8 +124,8 @@ class PracticeActivity : AppCompatActivity() {
                         allVocabularyWords.find { it == exercise.words[0] }?.apply { level += 1 }
 
                         lesson.loadVocabularyGroups(this).forEach { group ->
-                            if(group.vocabulary.contains(exercise.words[0].copy().apply { level -= 1; alreadyUsedInExercise = false })) {
-                                group.vocabulary.find { it == exercise.words[0].copy().apply { level -= 1; alreadyUsedInExercise = false } }?.apply { level += 1 }
+                            if(group.vocabulary.contains(exercise.words[0].apply { level -= 1; alreadyUsedInExercise = false })) {
+                                group.vocabulary.find { it == exercise.words[0].apply { level -= 1; alreadyUsedInExercise = false } }?.apply { level += 1 }
                                 group.saveInFile()
                                 Log.i("PracticeActivity", "Changed level")
                             }
@@ -206,7 +206,7 @@ class PracticeActivity : AppCompatActivity() {
                 arrayListOf(Exercise.TYPE_TRANSLATE_TEXT),
                 false,
                 position > numberOfExercises ,
-                arrayListOf(WordTranslation.TYPE_ANTONYM, WordTranslation.TYPE_SYNONYM, WordTranslation.TYPE_TRANSLATION),
+                arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_WORD_FAMILY),
                 mistakes,
                 this).build()
         }
@@ -282,13 +282,13 @@ class PracticeActivity : AppCompatActivity() {
             setNextExercise()
             when(exercise.type){
                 Exercise.TYPE_TRANSLATE_TEXT -> {
-                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(exercise.getJson().toString()))
+                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(exercise))
                 }
                 Exercise.TYPE_CHOOSE_OF_THREE_WORDS -> {
-                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(exercise.getJson().toString()))
+                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeOutOfThreeFragment(exercise))
                 }
                 Exercise.TYPE_MATCH_FIVE_WORDS -> {
-                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(exercise.getJson().toString()))
+                    navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeMatchFiveWordsFragment(exercise))
                 }
                 else -> {
                     Toast.makeText(applicationContext, getString(R.string.err_type_not_valid, exercise.type.toString()), Toast.LENGTH_LONG).show()

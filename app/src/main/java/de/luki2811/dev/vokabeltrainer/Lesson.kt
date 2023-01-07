@@ -23,7 +23,7 @@ data class Lesson(var name: String,
                   var askForSecondWordsOnly: Boolean,
                   var isFavorite: Boolean = false,
                   var numberOfExercises: Int,
-                  var typesOfWordToPractice: ArrayList<Int> = arrayListOf(WordTranslation.TYPE_ANTONYM, WordTranslation.TYPE_SYNONYM, WordTranslation.TYPE_TRANSLATION)): Exportable, Parcelable {
+                  var typesOfWordToPractice: ArrayList<Int> = arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_WORD_FAMILY)): Exportable, Parcelable {
 
     @IgnoredOnParcel
     override val type: Int = Exportable.TYPE_LESSON
@@ -118,12 +118,14 @@ data class Lesson(var name: String,
                 put("numberOfExercises", numberOfExercises)
                 put("askForAllWords", askForAllWords)
                 put("typesOfWordToPractice", JSONArray().apply {
-                    if(typesOfWordToPractice.contains(WordTranslation.TYPE_TRANSLATION))
-                        put(WordTranslation.TYPE_TRANSLATION)
-                    if(typesOfWordToPractice.contains(WordTranslation.TYPE_SYNONYM))
-                        put(WordTranslation.TYPE_SYNONYM)
-                    if(typesOfWordToPractice.contains(WordTranslation.TYPE_ANTONYM))
-                        put(WordTranslation.TYPE_ANTONYM)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_TRANSLATION))
+                        put(VocabularyWord.TYPE_TRANSLATION)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_SYNONYM))
+                        put(VocabularyWord.TYPE_SYNONYM)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_ANTONYM))
+                        put(VocabularyWord.TYPE_ANTONYM)
+                    if(typesOfWordToPractice.contains(VocabularyWord.TYPE_WORD_FAMILY))
+                        put(VocabularyWord.TYPE_WORD_FAMILY)
                 })
             })
         }
@@ -235,7 +237,7 @@ data class Lesson(var name: String,
                     }
                     array
                 }catch (e: JSONException){
-                    arrayListOf(WordTranslation.TYPE_TRANSLATION, WordTranslation.TYPE_SYNONYM, WordTranslation.TYPE_ANTONYM)
+                    arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_WORD_FAMILY)
                 }
 
                 return Lesson(name, id, groupIds, typesOfLesson, readOut, askForAllWords, askForSecondWordsOnly, isFavorite, numberOfExercises, typesOfWordToPractice)

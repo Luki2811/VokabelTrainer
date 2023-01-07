@@ -14,13 +14,13 @@ class VocabularyGroup: Exportable {
     var id: Id
     var firstLanguage: Locale
     var secondLanguage: Locale
-    var vocabulary = ArrayList<WordTranslation>()
+    var vocabulary = ArrayList<VocabularyWord>()
     override val type = Exportable.TYPE_VOCABULARY_GROUP
 
     private var context: Context
     private val indexFile: File
 
-    constructor(name: String, firstLanguage: Locale, secondLanguage: Locale, vocabulary: ArrayList<WordTranslation>, context: Context, id: Id? = null) {
+    constructor(name: String, firstLanguage: Locale, secondLanguage: Locale, vocabulary: ArrayList<VocabularyWord>, context: Context, id: Id? = null) {
         this.name = name
         this.id = id ?: Id.generate(context).apply { register(context) }
         this.secondLanguage = secondLanguage
@@ -61,7 +61,20 @@ class VocabularyGroup: Exportable {
         this.context = context
 
         for (i in 0 until json.getJSONArray("vocabulary").length()){
-            vocabulary.add(WordTranslation.getVocabularyWord(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
+            when(json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")){
+                VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM -> {
+                    vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                }
+                VocabularyWord.TYPE_TRANSLATION -> {
+                    vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                }
+                VocabularyWord.TYPE_WORD_FAMILY -> {
+                    vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                }
+                else -> {
+                    Log.w("VocabularyGroup", "Unknown Type of word in group \"$name\" (${id.number}) at $i of ${json.getJSONArray("vocabulary").length()}")
+                }
+            }
         }
     }
 
@@ -137,7 +150,7 @@ class VocabularyGroup: Exportable {
 
     fun getAsJson(): JSONObject{
         val jsonArray = JSONArray()
-        vocabulary.forEach { jsonArray.put(it.getJson(false)) }
+        vocabulary.forEach { jsonArray.put(it.getAsJSON(true)) }
 
         return JSONObject()
             .put("name", name)

@@ -9,7 +9,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class Mistake(var word: WordTranslation, var askedForSecondWord: Boolean = false, var typeOfPractice: Int) {
+data class Mistake(var word: VocabularyWord, var askedForSecondWord: Boolean = false, var typeOfPractice: Int) {
 
     init {
         word.level = 0
@@ -22,7 +22,7 @@ data class Mistake(var word: WordTranslation, var askedForSecondWord: Boolean = 
     var isRepeated = false
 
     fun getAsJson(ignoreDate: Boolean = false): JSONObject {
-        val wordAsJson = word.getJson()
+        val wordAsJson = word.getAsJSON(withoutLanguage = false)
         wordAsJson.remove("isWrong")
         wordAsJson.remove("typeWrong")
         wordAsJson.remove("isAlreadyUsed")
@@ -73,26 +73,17 @@ data class Mistake(var word: WordTranslation, var askedForSecondWord: Boolean = 
         }.toString(), file)
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other == null) return false
-        if (this === other) return true
-        return if (other is Mistake){
-            this.word == other.word
-        }else{
-            false
-        }
-    }
-
-    override fun hashCode(): Int {
-        return word.hashCode()
-    }
-
     companion object{
 
         fun fromJson(json: JSONObject): Mistake?{
             return try {
                 val askedForSecondWord = try { json.getBoolean("askedForSecondWord") } catch (e: JSONException){ false }
-                val word = WordTranslation.getVocabularyWord(json.getJSONObject("vocabularyWord"))
+                val word: VocabularyWord = when(json.getJSONObject("vocabularyWord").getInt("type")){
+                    VocabularyWord.TYPE_TRANSLATION -> WordTranslation.loadFromJSON(json.getJSONObject("vocabularyWord"))
+                    VocabularyWord.TYPE_WORD_FAMILY -> WordFamily.loadFromJSON(json.getJSONObject("vocabularyWord"))
+                    VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM -> Synonym.loadFromJSON(json.getJSONObject("vocabularyWord"))
+                    else -> null
+                } ?: return null
                 val wrongAnswer = json.getString("wrongAnswer")
                 val typeOfPractice = json.getInt("typeOfPractice")
                 val lastTimeWrong = LocalDate.parse(json.getString("lastTimeWrong"), DateTimeFormatter.ofPattern("dd-MM-yyyy"))

@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
+/**
 import android.Manifest.permission.CAMERA
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -25,6 +26,7 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateVocabularyGroupWithImageInfoBinding
 import java.io.File
@@ -211,7 +213,7 @@ class VocabularyGroupImportImageFragment : Fragment() {
     }
 
     private fun createVocabulary(text: Text) {
-        val vocabulary = arrayListOf<WordTranslation>()
+        val vocabulary = arrayListOf<VocabularyWord>()
         val knownWords = arrayListOf<String>()
         val newWords = arrayListOf<String>()
         var isLoadingNewWord = true
@@ -446,3 +448,4 @@ class VocabularyGroupImportImageFragment : Fragment() {
         findNavController().navigate(VocabularyGroupImportImageFragmentDirections.actionGlobalNewVocabularyGroupFragment(keyVocGroup = vocGroup.getAsJson().toString(), keyMode = VocabularyGroupBasicFragment.MODE_IMPORT))
     }
 }
+        **/

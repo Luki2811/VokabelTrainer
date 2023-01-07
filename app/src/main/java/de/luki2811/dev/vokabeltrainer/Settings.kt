@@ -10,7 +10,7 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-class Settings(var context: Context) {
+data class Settings(var context: Context) {
     private val jsonObject = if (File(context.filesDir, FileUtil.NAME_FILE_SETTINGS).exists()) JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))) else JSONObject()
     var dailyObjectiveStreak: Int = try {
         jsonObject.getInt("dailyObjectiveStreak")

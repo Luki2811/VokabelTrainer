@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.WordTranslation
 import java.time.format.DateTimeFormatter
 
 class ListMistakesAdapter(
@@ -44,10 +46,14 @@ class ListMistakesAdapter(
             else -> "-"
         }
         viewHolder.textViewType.text = context.getString(R.string.type_of_lesson, typeAsString)
-        viewHolder.textViewAskedWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.firstWord else dataSet[position].word.secondWord
-        viewHolder.textViewAnsweredWord.text = dataSet[position].wrongAnswer
-        viewHolder.textViewCorrectWord.text = if(dataSet[position].askedForSecondWord) dataSet[position].word.secondWord else dataSet[position].word.firstWord
+        when(dataSet[position].word.typeOfWord){
+            VocabularyWord.TYPE_TRANSLATION -> {
+                viewHolder.textViewAskedWord.text = if(dataSet[position].askedForSecondWord) (dataSet[position].word as WordTranslation).mainWord else (dataSet[position].word as WordTranslation).getSecondWordsAsString()
+                viewHolder.textViewCorrectWord.text = if(dataSet[position].askedForSecondWord) (dataSet[position].word as WordTranslation).getSecondWordsAsString() else (dataSet[position].word as WordTranslation).mainWord
+            }
 
+        }
+        viewHolder.textViewAnsweredWord.text = dataSet[position].wrongAnswer
         viewHolder.buttonDelete.apply {
             setOnClickListener {
                 if(viewHolder.layoutPosition >= 0){

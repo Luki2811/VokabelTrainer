@@ -169,7 +169,7 @@ class Importer(private val data: String, val context: Context) {
                 }
                 array
             }catch (e: JSONException){
-                arrayListOf(WordTranslation.TYPE_TRANSLATION, WordTranslation.TYPE_SYNONYM, WordTranslation.TYPE_ANTONYM)
+                arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM)
             }
 
             val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, newIdsVocabularyGroups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly, typesOfWordToPractice = typesOfWordToPractice)

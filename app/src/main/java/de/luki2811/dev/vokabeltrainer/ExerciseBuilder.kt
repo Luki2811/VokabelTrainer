@@ -5,7 +5,7 @@ import android.util.Log
 import android.widget.Toast
 
 class ExerciseBuilder(
-    private var allWordsToSelectFrom: ArrayList<WordTranslation>,
+    private var allWordsToSelectFrom: ArrayList<VocabularyWord>,
     private val askAllWords: Boolean,
     private val readOut: ArrayList<Boolean>,
     private val typesOfLesson: ArrayList<Int>,
@@ -23,7 +23,7 @@ class ExerciseBuilder(
         exercise.type = getTypeToPractice(exercise.words[0].typeOfWord)
         exercise.askAllWords = askAllWords
         exercise.readOut = readOut
-        exercise.isSecondWordAskedAsAnswer = getAskSecondWord(exercise.words[0])
+        exercise.isOtherWordAskedAsAnswer = getAskSecondWord(exercise.words[0])
 
         // Add more words for an exercise
 
@@ -58,7 +58,7 @@ class ExerciseBuilder(
         return exercise
     }
 
-    private fun getAskSecondWord(word: WordTranslation): Boolean{
+    private fun getAskSecondWord(word: VocabularyWord): Boolean{
         return if(practiceMistake){
             mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.askedForSecondWord
         }else if(askForSecondWordsOnly || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) { true } else { (0..1).random() == 1 }
@@ -74,7 +74,7 @@ class ExerciseBuilder(
         }
     }
 
-    private fun getWordToPractice(): WordTranslation{
+    private fun getWordToPractice(): VocabularyWord{
         return if(practiceMistake){
             mistake!!.filter { !it.isRepeated }.random().word
         }else{

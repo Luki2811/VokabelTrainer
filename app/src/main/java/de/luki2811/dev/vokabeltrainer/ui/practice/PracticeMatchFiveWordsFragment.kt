@@ -15,14 +15,13 @@ import de.luki2811.dev.vokabeltrainer.ExerciseResult
 import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
 import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
-import org.json.JSONObject
 
 class PracticeMatchFiveWordsFragment : Fragment() {
 
     private var _binding: FragmentPracticeMatchFiveWordsBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeMatchFiveWordsFragmentArgs by navArgs()
-    private lateinit var exercise: Exercise
+    private var exercise: Exercise = args.exercise
     private var words: ArrayList<WordTranslation> = arrayListOf()
     private var tts: TextToSpeechUtil? = null
 
@@ -48,9 +47,10 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
-        exercise = Exercise(JSONObject(args.exercise))
-
-        words = exercise.words
+        exercise.words.forEach {
+            if(it is WordTranslation)
+                words.add(it)
+        }
 
         setWords()
 
@@ -82,7 +82,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
             val correctionBottomSheet = CorrectionBottomSheet()
 
             for(word in words){
-                if(word.getFirstWordList()[0] == chipKnownWordChecked.text && word.getSecondWordList()[0] == chipNewWordChecked.text){
+                if(word.mainWord == chipKnownWordChecked.text && word.otherWords[0] == chipNewWordChecked.text){
                     chipKnownWordChecked.isEnabled = false
                     chipNewWordChecked.isEnabled = false
                     resetSelection()
@@ -102,22 +102,22 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
     private fun speakOutWord(chipId: Int){
 
-            when(chipId) {
-                binding.chip0LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.firstLanguage)
-                binding.chip0LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip0LearnNewLan.text.toString(), vocKnown0.secondLanguage)
+        when(chipId) {
+            binding.chip0LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.mainLanguage)
+            binding.chip0LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip0LearnNewLan.text.toString(), vocKnown0.otherLanguage)
 
-                binding.chip1LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.firstLanguage)
-                binding.chip1LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip1LearnNewLan.text.toString(), vocKnown1.secondLanguage)
+            binding.chip1LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.mainLanguage)
+            binding.chip1LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip1LearnNewLan.text.toString(), vocKnown1.otherLanguage)
 
-                binding.chip2LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.firstLanguage)
-                binding.chip2LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip2LearnNewLan.text.toString(), vocKnown2.secondLanguage)
+            binding.chip2LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.mainLanguage)
+            binding.chip2LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip2LearnNewLan.text.toString(), vocKnown2.otherLanguage)
 
-                binding.chip3LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.firstLanguage)
-                binding.chip3LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip3LearnNewLan.text.toString(), vocKnown3.secondLanguage)
+            binding.chip3LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.mainLanguage)
+            binding.chip3LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip3LearnNewLan.text.toString(), vocKnown3.otherLanguage)
 
-                binding.chip4LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.firstLanguage)
-                binding.chip4LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip4LearnNewLan.text.toString(), vocKnown4.secondLanguage)
-            }
+            binding.chip4LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.mainLanguage)
+            binding.chip4LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip4LearnNewLan.text.toString(), vocKnown4.otherLanguage)
+        }
 
     }
 
@@ -151,50 +151,56 @@ class PracticeMatchFiveWordsFragment : Fragment() {
 
     private fun setWords(){
         val tempWords = ArrayList<WordTranslation>()
-        tempWords.addAll(exercise.words)
+        exercise.words.forEach {
+            if(it is WordTranslation)
+                tempWords.add(it)
+        }
 
         vocKnown0 = tempWords.random()
         tempWords.remove(vocKnown0)
-        binding.chip0LearnNativeLan.text = vocKnown0.getFirstWordList()[0]
+        binding.chip0LearnNativeLan.text = vocKnown0.mainWord
 
         vocKnown1 = tempWords.random()
         tempWords.remove(vocKnown1)
-        binding.chip1LearnNativeLan.text = vocKnown1.getFirstWordList()[0]
+        binding.chip1LearnNativeLan.text = vocKnown1.mainWord
 
         vocKnown2 = tempWords.random()
         tempWords.remove(vocKnown2)
-        binding.chip2LearnNativeLan.text = vocKnown2.getFirstWordList()[0]
+        binding.chip2LearnNativeLan.text = vocKnown2.mainWord
 
         vocKnown3 = tempWords.random()
         tempWords.remove(vocKnown3)
-        binding.chip3LearnNativeLan.text = vocKnown3.getFirstWordList()[0]
+        binding.chip3LearnNativeLan.text = vocKnown3.mainWord
 
         vocKnown4 = tempWords.random()
         tempWords.remove(vocKnown4)
-        binding.chip4LearnNativeLan.text = vocKnown4.getFirstWordList()[0]
+        binding.chip4LearnNativeLan.text = vocKnown4.mainWord
 
         // New
         val tempWords2 = ArrayList<WordTranslation>()
-        tempWords2.addAll(exercise.words)
+        exercise.words.forEach {
+            if(it is WordTranslation)
+                tempWords2.add(it)
+        }
 
         vocNew0 = tempWords2.random()
         tempWords2.remove(vocNew0)
-        binding.chip0LearnNewLan.text = vocNew0.getSecondWordList()[0]
+        binding.chip0LearnNewLan.text = vocNew0.otherWords[0]
 
         vocNew1 = tempWords2.random()
         tempWords2.remove(vocNew1)
-        binding.chip1LearnNewLan.text = vocNew1.getSecondWordList()[0]
+        binding.chip1LearnNewLan.text = vocNew1.otherWords[0]
 
         vocNew2 = tempWords2.random()
         tempWords2.remove(vocNew2)
-        binding.chip2LearnNewLan.text = vocNew2.getSecondWordList()[0]
+        binding.chip2LearnNewLan.text = vocNew2.otherWords[0]
 
         vocNew3 = tempWords2.random()
         tempWords2.remove(vocNew3)
-        binding.chip3LearnNewLan.text = vocNew3.getSecondWordList()[0]
+        binding.chip3LearnNewLan.text = vocNew3.otherWords[0]
 
         vocNew4 = tempWords2.random()
         tempWords2.remove(vocNew4)
-        binding.chip4LearnNewLan.text = vocNew4.getSecondWordList()[0]
+        binding.chip4LearnNewLan.text = vocNew4.otherWords[0]
     }
 }

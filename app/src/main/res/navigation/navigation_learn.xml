@@ -19,8 +19,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
         <argument
             android:name="exercise"
-            app:argType="string"
-            android:defaultValue=" " />
+            app:argType="de.luki2811.dev.vokabeltrainer.Exercise" />
     </fragment>
     <fragment
         android:id="@+id/practiceOutOfThreeFragment"
@@ -29,8 +28,7 @@
         tools:layout="@layout/fragment_practice_out_of_three" >
         <argument
             android:name="exercise"
-            app:argType="string"
-            android:defaultValue=" " />
+            app:argType="de.luki2811.dev.vokabeltrainer.Exercise" />
         <action
             android:id="@+id/action_practiceOutOfThreeFragment_to_practiceStartFragment"
             app:destination="@id/practiceStartFragment"
@@ -53,8 +51,7 @@
             app:popExitAnim="@anim/nav_default_pop_exit_anim"/>
         <argument
             android:name="exercise"
-            app:argType="string"
-            android:defaultValue=" " />
+            app:argType="de.luki2811.dev.vokabeltrainer.Exercise" />
     </fragment>
     <fragment
         android:id="@+id/practiceFinishFragment"
