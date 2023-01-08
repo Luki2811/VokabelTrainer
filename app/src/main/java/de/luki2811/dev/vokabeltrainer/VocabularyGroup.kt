@@ -63,13 +63,13 @@ class VocabularyGroup: Exportable {
         for (i in 0 until json.getJSONArray("vocabulary").length()){
             when(json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")){
                 VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM -> {
-                    vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                    vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
                 }
                 VocabularyWord.TYPE_TRANSLATION -> {
-                    vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                    vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
                 }
                 VocabularyWord.TYPE_WORD_FAMILY -> {
-                    vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i)))
+                    vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
                 }
                 else -> {
                     Log.w("VocabularyGroup", "Unknown Type of word in group \"$name\" (${id.number}) at $i of ${json.getJSONArray("vocabulary").length()}")

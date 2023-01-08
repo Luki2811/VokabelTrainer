@@ -21,7 +21,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private var _binding: FragmentPracticeMatchFiveWordsBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeMatchFiveWordsFragmentArgs by navArgs()
-    private var exercise: Exercise = args.exercise
+    private lateinit var exercise: Exercise
     private var words: ArrayList<WordTranslation> = arrayListOf()
     private var tts: TextToSpeechUtil? = null
 
@@ -41,6 +41,7 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeMatchFiveWordsBinding.inflate(layoutInflater, container, false)
 
+        exercise = args.exercise
         tts = TextToSpeechUtil(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){

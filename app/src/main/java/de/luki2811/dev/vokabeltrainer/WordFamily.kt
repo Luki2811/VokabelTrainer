@@ -18,11 +18,11 @@ data class WordFamily(override var mainWord: String,
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
         return JSONObject().apply {
             put("type", VocabularyWord.TYPE_WORD_FAMILY)
-            put("mainWord", mainWord)
+            put("mainWord", mainWord.trim())
             put("otherWords", JSONArray().apply {
                 otherWords.forEach {
                     put(JSONObject().apply {
-                        put("word", it.first)
+                        put("word", it.first.trim())
                         put("type", it.second)
                     })
                 }
@@ -38,7 +38,7 @@ data class WordFamily(override var mainWord: String,
     override fun getSecondWordsAsString(): String{
         return StringBuilder().apply {
             otherWords.forEach {
-                append(it.first)
+                append(it.first.trim())
                 if(otherWords[otherWords.size-1] != it)
                     append("; ")
             }
@@ -47,7 +47,7 @@ data class WordFamily(override var mainWord: String,
 
     companion object{
 
-        fun loadFromJSON(json: JSONObject): WordFamily{
+        fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): WordFamily{
             val mainWord = json.getString("mainWord")
             val otherWords: ArrayList<Pair<String, Int>> = arrayListOf()
             for (i in 0 until json.getJSONArray("otherWords").length()){
@@ -56,7 +56,7 @@ data class WordFamily(override var mainWord: String,
                     json.getJSONArray("otherWords").getJSONObject(i).getInt("type")
                 ))
             }
-            val language = try{
+            val language = tempLanguage ?: try{
                 Locale.forLanguageTag(json.getString("language"))
             }catch (e: JSONException){
                 Locale.ENGLISH

@@ -24,7 +24,7 @@ class PracticeTranslateTextFragment : Fragment(){
     private var _binding: FragmentPracticeTranslateTextBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeTranslateTextFragmentArgs by navArgs()
-    private var exercise = args.exercise
+    private lateinit var exercise: Exercise
     private var isCorrect = false
     private var tts: TextToSpeechUtil? = null
 
@@ -32,6 +32,7 @@ class PracticeTranslateTextFragment : Fragment(){
         _binding = FragmentPracticeTranslateTextBinding.inflate(inflater, container, false)
 
         tts = TextToSpeechUtil(requireContext())
+        exercise = args.exercise
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())

@@ -19,7 +19,7 @@ class PracticeOutOfThreeFragment: Fragment() {
     private var _binding: FragmentPracticeOutOfThreeBinding? = null
     private val binding get() = _binding!!
     private val args: PracticeOutOfThreeFragmentArgs by navArgs()
-    private var exercise: Exercise = args.exercise
+    private lateinit var exercise: Exercise
     private lateinit var word: VocabularyWord
     private var isCorrect = false
     private var wordOptions = ArrayList<VocabularyWord>()
@@ -29,6 +29,7 @@ class PracticeOutOfThreeFragment: Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentPracticeOutOfThreeBinding.inflate(inflater, container, false)
 
+        exercise = args.exercise
         tts = TextToSpeechUtil(requireContext())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){

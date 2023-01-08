@@ -19,12 +19,12 @@ data class WordTranslation(override var mainWord: String,
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
         return JSONObject().apply {
             put("type", VocabularyWord.TYPE_TRANSLATION)
-            put("first", mainWord)
+            put("mainWord", mainWord.trim())
             if(!withoutLanguage)
-                put("firstLanguage", mainLanguage.language)
-            put("second", JSONArray().apply { otherWords.forEach { put(it) }})
+                put("mainLanguage", mainLanguage.language)
+            put("otherWords", JSONArray().apply { otherWords.forEach { put(it.trim()) }})
             if (!withoutLanguage)
-                put("secondLanguage", otherLanguage.language)
+                put("otherLanguage", otherLanguage.language)
             put("ignoreCase", isIgnoreCase)
             put("level", level)
         }
@@ -33,7 +33,7 @@ data class WordTranslation(override var mainWord: String,
     override fun getSecondWordsAsString(): String{
         return StringBuilder().apply {
             otherWords.forEach {
-                append(it)
+                append(it.trim())
                 if(otherWords[otherWords.size-1] != it)
                 append("; ")
             }
@@ -42,40 +42,36 @@ data class WordTranslation(override var mainWord: String,
 
     companion object{
 
-        fun loadFromJSON(json: JSONObject, tempFirstLanguage: Locale? = null, tempSecondLanguage: Locale? = null): WordTranslation{
+        fun loadFromJSON(json: JSONObject, mainLanguage: Locale? = null, otherLanguage: Locale? = null): WordTranslation{
 
-            val firstWord = try {
-                json.getString("first")
-            } catch (e: JSONException){
-                try {
-                    json.getString("knownWord")
-                } catch (e: JSONException){
-                    json.getString("native")
-                }
-            }
-            val firstLanguage = tempFirstLanguage ?: try { Locale(json.getString("firstLanguage")) } catch (e: JSONException){ Locale(json.getString("languageKnownType")) }
-
-            val secondWordString = try {
-                json.getString("second")
+            val mainWord = try {
+                json.getString("mainWord")
             } catch (e: JSONException){
                 try {
                     json.getString("newWord")
                 } catch (e: JSONException){
-                    json.getString("new")
+                    json.getString("second")
                 }
             }
+            val firstLanguage = mainLanguage ?: try { Locale(json.getString("mainLanguage")) } catch (e: JSONException){ Locale(json.getString("secondLanguage")) }
 
-            val secondWord = arrayListOf<String>()
-            secondWordString.split(";").forEach {
-                secondWord.add(it.trim())
+            val otherWords: ArrayList<String> = try {
+                val oWords = arrayListOf<String>()
+                for (i in 0 until json.getJSONArray("otherWords").length()){
+                    oWords.add(json.getJSONArray("otherWords").getString(i))
+                }
+                oWords
+            }catch (e: JSONException){
+                val array = json.getString("first").split(";").toMutableList() as ArrayList<String>
+                array.onEach { it.trim() }
             }
 
-            val secondLanguage = tempSecondLanguage ?: try { Locale(json.getString("secondLanguage")) } catch (e: JSONException){ Locale(json.getString("languageNewType")) }
+            val secondLanguage = otherLanguage ?: try { Locale(json.getString("otherLanguage")) } catch (e: JSONException){ Locale(json.getString("firstLanguage")) }
             val isIgnoreCase = try{ json.getBoolean("ignoreCase") } catch (e: JSONException){ json.getBoolean("isIgnoreCase") }
 
             val level = try { json.getInt("level") } catch (e: JSONException) { 0 }
 
-            return WordTranslation(firstWord, firstLanguage, secondWord, secondLanguage, isIgnoreCase, level = level)
+            return WordTranslation(mainWord, firstLanguage, otherWords, secondLanguage, isIgnoreCase, level = level)
         }
 
     }

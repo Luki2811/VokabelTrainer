@@ -62,10 +62,10 @@
                 app:icon="@drawable/ic_baseline_import_export_24"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textEditEditorSecondWordLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupEditorSuggestionsUpper" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textEditEditorSecondWordLayout"
+                android:id="@+id/textEditEditorUpperInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -76,7 +76,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/buttonToggleGroupTypeOfWord">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textEditEditorSecondWord"
+                    android:id="@+id/textEditEditorUpperInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="textPersonName" />
@@ -84,7 +84,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textEditEditorFirstWordLayout"
+                android:id="@+id/textEditEditorLowerInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/buttonEditorChangeWords">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/textEditEditorFirstWord"
+                    android:id="@+id/textEditEditorLowerInput"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:inputType="textPersonName" />
@@ -104,7 +104,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupEditorSuggestions"
+                android:id="@+id/chipGroupEditorSuggestionsLower"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
@@ -113,7 +113,21 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textEditEditorFirstWordLayout">
+                app:layout_constraintTop_toBottomOf="@+id/textEditEditorLowerInputLayout">
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupEditorSuggestionsUpper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textEditEditorUpperInputLayout">
 
             </com.google.android.material.chip.ChipGroup>
 
@@ -126,7 +140,7 @@
                 android:text="@string/settings"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/chipGroupEditorSuggestions" />
+                app:layout_constraintTop_toBottomOf="@+id/chipGroupEditorSuggestionsLower" />
 
             <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switchVocabularyWordIgnoreCaseManage"
