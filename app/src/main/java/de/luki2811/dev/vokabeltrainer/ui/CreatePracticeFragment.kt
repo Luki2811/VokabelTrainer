@@ -66,6 +66,7 @@ class CreatePracticeFragment : Fragment() {
             putExtra("askAllWords", !binding.switchCreatePracticeSettingsAskAllWords.isChecked)
             putExtra("numberOfMistakes", binding.sliderCreatePracticeNumberOfExercises.value.roundToInt())
             putExtra("readOutBoth", !binding.switchCreatePracticeSettingsReadOutBoth.isChecked)
+            putExtra("practiceMistakes", true)
         }
         startActivity(intent)
     }

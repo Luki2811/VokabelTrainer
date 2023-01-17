@@ -16,7 +16,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.Exercise
+import de.luki2811.dev.vokabeltrainer.ExerciseBuilder
+import de.luki2811.dev.vokabeltrainer.ExerciseResult
+import de.luki2811.dev.vokabeltrainer.Lesson
+import de.luki2811.dev.vokabeltrainer.Mistake
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import kotlinx.coroutines.Runnable
@@ -35,7 +41,6 @@ class PracticeActivity : AppCompatActivity() {
     private var allVocabularyWords: ArrayList<VocabularyWord> = arrayListOf()
     private var mistakes: ArrayList<Mistake> = arrayListOf()
     private lateinit var exercise: Exercise
-
     // Timer
     private var timeInSeconds = 0
     private lateinit var handler: Handler
@@ -47,14 +52,23 @@ class PracticeActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
         binding.buttonExitPractice.setOnClickListener { quitPractice(this, this) }
 
-        if(!intent.getStringExtra("data_lesson").isNullOrEmpty()){
+        // TODO: Add new types to starting activities
+
+        if(!intent.getBooleanExtra("practiceMistakes", false)){
+            val lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("lesson", Lesson::class.java)
+            }else{
+                intent.getParcelableExtra("lesson")
+            }
             mode = MODE_NORMAL
-            val lesson: Lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+            if(lesson == null) {
+                Log.e("PracticeActivity", "Failed to load lesson from intent")
+                return
+            }
             lesson.loadVocabularyGroups(applicationContext).forEach { group ->
                 allVocabularyWords.addAll(group.vocabulary)
             }
             numberOfExercises = lesson.numberOfExercises
-
         }else{
             mode = MODE_PRACTICE_MISTAKES
             val allMistakes = Mistake.loadAllFromFile(this)
