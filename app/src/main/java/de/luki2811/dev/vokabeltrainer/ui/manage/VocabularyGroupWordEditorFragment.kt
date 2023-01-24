@@ -29,7 +29,6 @@ import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.Synonym
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
-import de.luki2811.dev.vokabeltrainer.WordFamily
 import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
 import java.io.File
@@ -111,7 +110,6 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 .addOnFailureListener {
                     Toast.makeText(requireContext(), it.localizedMessage, Toast.LENGTH_LONG).show()
                 }
-
 
         }else
             Log.w("Translator", args.vocabularyGroup.firstLanguage.language + " or " + args.vocabularyGroup.secondLanguage.language + " are no TranslatorLanguages")
@@ -349,6 +347,13 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             isCorrect = false
         }
 
+        if(vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_WORD_FAMILY){
+            if(binding.textInputTypeOfWord.text.isNullOrBlank()){
+                binding.textEditEditorWordTypeInputLayout.error = getString(R.string.err_missing_input)
+                isCorrect = false
+            }
+        }
+
         return isCorrect
     }
 
@@ -464,16 +469,22 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             VocabularyWord.TYPE_TRANSLATION -> {
                 binding.textEditEditorLowerInputLayout.helperText = getString(R.string.word_in_first_language)
                 binding.textEditEditorUpperInputLayout.helperText = getString(R.string.word_in_second_language)
+                binding.textEditEditorWordTypeInputLayout.visibility = View.GONE
             }
             VocabularyWord.TYPE_SYNONYM -> {
                 binding.textEditEditorLowerInputLayout.helperText = getString(R.string.synonym_other)
                 binding.textEditEditorUpperInputLayout.helperText = getString(R.string.synonym_main)
+                binding.textEditEditorWordTypeInputLayout.visibility = View.GONE
             }
             VocabularyWord.TYPE_ANTONYM -> {
                 binding.textEditEditorLowerInputLayout.helperText = getString(R.string.antonym_second)
                 binding.textEditEditorUpperInputLayout.helperText = getString(R.string.antonym_main)
+                binding.textEditEditorWordTypeInputLayout.visibility = View.GONE
             }
             VocabularyWord.TYPE_WORD_FAMILY -> {
+                binding.textEditEditorUpperInputLayout.helperText = getString(R.string.word_family_main)
+                binding.textEditEditorLowerInputLayout.helperText = getString(R.string.word_family_other)
+                binding.textEditEditorWordTypeInputLayout.visibility = View.VISIBLE
 
             }
         }

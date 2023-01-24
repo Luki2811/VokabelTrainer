@@ -318,5 +318,11 @@
     <string name="err_no_words_found_with_filter">Error: No words can be found with the selected filter to practice.</string>
     <string name="types_of_word">Types of words</string>
     <string name="word_family">Word family</string>
+    <string name="word_type_noun">Noun</string>
+    <string name="word_type_verb">Verb</string>
+    <string name="word_type_adjective">Adjective</string>
+    <string name="word_type_adverb">Adverb</string>
+    <string name="word_family_main">Main word</string>
+    <string name="word_family_other">Word of the word family</string>
 
 </resources>
