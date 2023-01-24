@@ -140,7 +140,7 @@ class PracticeActivity : AppCompatActivity() {
                         lesson.loadVocabularyGroups(this).forEach { group ->
                             if(group.vocabulary.contains(exercise.words[0].apply { level -= 1; alreadyUsedInExercise = false })) {
                                 group.vocabulary.find { it == exercise.words[0].apply { level -= 1; alreadyUsedInExercise = false } }?.apply { level += 1 }
-                                group.saveInFile()
+                                group.saveInFile(this)
                                 Log.i("PracticeActivity", "Changed level")
                             }
                         }

@@ -1,99 +1,21 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
+import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
 import java.util.*
+import kotlin.collections.ArrayList
 
-class VocabularyGroup: Exportable {
-
-    var name: String
-    var id: Id
-    var firstLanguage: Locale
-    var secondLanguage: Locale
-    var vocabulary = ArrayList<VocabularyWord>()
-    override val type = Exportable.TYPE_VOCABULARY_GROUP
-
-    private var context: Context
-    private val indexFile: File
-
-    constructor(name: String, firstLanguage: Locale, secondLanguage: Locale, vocabulary: ArrayList<VocabularyWord>, context: Context, id: Id? = null) {
-        this.name = name
-        this.id = id ?: Id.generate(context).apply { register(context) }
-        this.secondLanguage = secondLanguage
-        this.firstLanguage = firstLanguage
-        this.vocabulary = vocabulary
-        this.context = context
-        this.indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
-    }
-
-    constructor(json: JSONObject, context: Context, name: String = "", generateNewId: Boolean = false){
-        indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
-        if(name == "") {
-            this.name = json.getString("name")
-            this.id = if(generateNewId) Id.generate(context).apply { register(context) } else Id(json.getInt("id"))
-        }
-        else {
-            this.name = name
-            this.id = Id.generate(context).apply { register(context) }
-        }
-
-        try {
-            this.firstLanguage = try {
-                Locale(json.getString("firstLanguage"))
-            }catch (e: JSONException){
-                Locale(json.getString("languageKnown"))
-            }
-            this.secondLanguage = try {
-                Locale(json.getString("secondLanguage"))
-            }catch (e: JSONException){
-                Locale(json.getString("languageNew"))
-            }
-
-        }catch (e: JSONException){
-            this.firstLanguage = Locale.GERMAN
-            this.secondLanguage = Locale.ENGLISH
-        }
-
-        this.context = context
-
-        for (i in 0 until json.getJSONArray("vocabulary").length()){
-            when(json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")){
-                VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM -> {
-                    vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
-                }
-                VocabularyWord.TYPE_TRANSLATION -> {
-                    vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
-                }
-                VocabularyWord.TYPE_WORD_FAMILY -> {
-                    vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
-                }
-                else -> {
-                    Log.w("VocabularyGroup", "Unknown Type of word in group \"$name\" (${id.number}) at $i of ${json.getJSONArray("vocabulary").length()}")
-                }
-            }
-        }
-    }
+@Parcelize
+data class VocabularyGroup(var name: String, var id: Id, var firstLanguage: Locale, var secondLanguage: Locale, var vocabulary: ArrayList<VocabularyWord> = ArrayList(), override val type: Int = Exportable.TYPE_VOCABULARY_GROUP): Exportable, Parcelable {
 
     fun export(): JSONObject {
         return getAsJson()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (other == null) return false
-        if (this === other) return true
-        return if (other is VocabularyGroup){
-            this.getAsJson().toString() == other.getAsJson().toString()
-        }else{
-            false
-        }
-    }
-
-    override fun hashCode(): Int {
-        return getAsJson().hashCode()
     }
 
     fun getShareFileName(): String{
@@ -109,7 +31,8 @@ class VocabularyGroup: Exportable {
         return stringBuilder.apply { append("_voc.json") }.toString()
     }
 
-    fun refreshNameInIndex(){
+    fun refreshNameInIndex(context: Context){
+        val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         val index = JSONObject(FileUtil.loadFromFile(File(context.filesDir ,FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
         for(i in 0 until index.getJSONArray("index").length()){
             if(index.getJSONArray("index").getJSONObject(i).getInt("id") == id.number)
@@ -118,7 +41,8 @@ class VocabularyGroup: Exportable {
         FileUtil.writeInFile(index.toString(),indexFile)
     }
 
-    fun saveInIndex(){
+    fun saveInIndex(context: Context){
+        val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         if(File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS).exists()){
             val index = JSONObject(FileUtil.loadFromFile(File(context.filesDir ,FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)))
             val toIndexJson = JSONObject().put("name", name).put("id", id.number)
@@ -131,7 +55,8 @@ class VocabularyGroup: Exportable {
         }
     }
 
-    fun deleteFromIndex(){
+    fun deleteFromIndex(context: Context){
+        val indexFile = File(context.filesDir, FileUtil.NAME_FILE_INDEX_VOCABULARY_GROUPS)
         val index = JSONObject(FileUtil.loadFromFile(indexFile))
         val fieldToDelete = arrayListOf<Int>()
 
@@ -164,7 +89,7 @@ class VocabularyGroup: Exportable {
     /**
      * Creates a file with the ID of VocabularyGroup
      */
-    fun saveInFile() {
+    fun saveInFile(context: Context) {
         if(id.number == 0){
             Log.e("Error", "Couldn't save vocabulary group \"${this.name}\", because ID is 0")
             return
@@ -175,12 +100,12 @@ class VocabularyGroup: Exportable {
         FileUtil.writeInFile(getAsJson().toString(), file)
     }
 
-    fun resetLevels() {
+    fun resetLevels(context: Context) {
         Log.i("VocabularyGroup", "Delete all levels of vocabularyGroup \"$name\" (${id.number})")
         vocabulary.forEach {
             it.level = 0
         }
-        saveInFile()
+        saveInFile(context)
     }
 
     companion object{
@@ -194,12 +119,59 @@ class VocabularyGroup: Exportable {
         const val INVALID_EMPTY = -3
         const val INVALID_NAME_ALREADY_USED = -4
 
+        fun loadFromJSON(json: JSONObject, context: Context, name: String? = null, generateNewId: Boolean = false): VocabularyGroup{
+            val nameOfGroup: String = if(name.isNullOrBlank()) json.getString("name") else name
+
+            val id = if(name.isNullOrBlank()) {
+                if(generateNewId) Id.generate(context).apply { register(context) } else Id(json.getInt("id"))
+            } else { Id.generate(context).apply { register(context) } }
+
+            var firstLanguage: Locale
+            var secondLanguage: Locale
+            try {
+                firstLanguage = try {
+                    Locale(json.getString("firstLanguage"))
+                }catch (e: JSONException){
+                    Locale(json.getString("languageKnown"))
+                }
+                secondLanguage = try {
+                    Locale(json.getString("secondLanguage"))
+                }catch (e: JSONException){
+                    Locale(json.getString("languageNew"))
+                }
+
+            }catch (e: JSONException){
+                firstLanguage = Locale.GERMAN
+                secondLanguage = Locale.ENGLISH
+            }
+
+            val vocabulary = ArrayList<VocabularyWord>()
+
+            for (i in 0 until json.getJSONArray("vocabulary").length()){
+                when(json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")){
+                    VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM -> {
+                        vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
+                    }
+                    VocabularyWord.TYPE_TRANSLATION -> {
+                        vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
+                    }
+                    VocabularyWord.TYPE_WORD_FAMILY -> {
+                        vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
+                    }
+                    else -> {
+                        Log.w("VocabularyGroup", "Unknown Type of word in group \"$name\" (${id.number}) at $i of ${json.getJSONArray("vocabulary").length()}")
+                    }
+                }
+            }
+            return VocabularyGroup(nameOfGroup, id, firstLanguage, secondLanguage, vocabulary)
+        }
+
         fun loadFromFileWithId(id: Id, context: Context): VocabularyGroup?{
             var file = File(context.filesDir, "vocabularyGroups")
             file.mkdirs()
             file = File(file, id.number.toString() + ".json" )
             return if(file.exists())
-                VocabularyGroup(JSONObject(FileUtil.loadFromFile(file)), context = context)
+                loadFromJSON(JSONObject(FileUtil.loadFromFile(file)), context = context)
             else null
         }
 

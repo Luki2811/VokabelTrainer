@@ -19,39 +19,26 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/buttonToggleGroupTypeOfWord"
-                android:layout_width="wrap_content"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInputLayoutTypeOfWord"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:hint="@string/types_of_word"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonToggleTypeofWord1"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
+                <AutoCompleteTextView
+                    android:id="@+id/textInputTypeOfWord"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/translation" />
+                    android:inputType="none" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonToggleTypeofWord2"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/synonym" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonToggleTypeofWord3"
-                    style="?attr/materialButtonOutlinedStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/antonym" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonEditorChangeWords"
@@ -73,7 +60,7 @@
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/buttonToggleGroupTypeOfWord">
+                app:layout_constraintTop_toBottomOf="@+id/textInputLayoutTypeOfWord">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/textEditEditorUpperInput"

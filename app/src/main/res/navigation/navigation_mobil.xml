@@ -44,15 +44,6 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
-        <argument
-            android:name="key_voc_group_with_name"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
-        <argument
-            android:name="key_voc_group_name"
-            app:argType="string"
-            android:defaultValue=" " />
         <action
             android:id="@+id/action_editVocabularyGroupFragment_to_learnFragment"
             app:destination="@id/learnFragment"
@@ -67,13 +58,8 @@
             app:argType="integer"
             android:defaultValue="0" />
         <argument
-            android:name="voc_group_lang_type_known"
-            app:argType="string"
-            android:defaultValue="-1" />
-        <argument
-            android:name="voc_group_lang_type_new"
-            app:argType="string"
-            android:defaultValue="-1" />
+            android:name="vocabularyGroup"
+            app:argType="de.luki2811.dev.vokabeltrainer.VocabularyGroup" />
     </fragment>
     <action
         android:id="@+id/action_global_navigationMain"
@@ -125,10 +111,9 @@
         android:label="fragment_new_vocabulary_group"
         tools:layout="@layout/fragment_new_vocabulary_group" >
         <argument
-            android:name="key_voc_group"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
+            android:name="vocabularyGroup"
+            app:argType="de.luki2811.dev.vokabeltrainer.VocabularyGroup"
+            app:nullable="true" />
         <action
             android:id="@+id/action_newVocabularyGroupFragment_to_editVocabularyGroupFragment"
             app:destination="@id/editVocabularyGroupFragment"
@@ -203,9 +188,9 @@
         tools:layout="@layout/fragment_new_lesson">
 
         <argument
-            android:name="lesson_json"
-            app:argType="string"
-            android:defaultValue="{}" />
+            android:name="lesson"
+            app:argType="de.luki2811.dev.vokabeltrainer.Lesson"
+            app:nullable="true" />
         <action
             android:id="@+id/action_manageLessonFragment_to_navigationMain"
             app:destination="@id/learnFragment"

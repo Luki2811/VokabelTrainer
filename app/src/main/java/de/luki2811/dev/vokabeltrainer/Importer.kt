@@ -72,7 +72,7 @@ class Importer(private val data: String, val context: Context) {
             if(dataAsJson.getJSONArray("vocabulary").length() < 2){
                return VOCABULARY_GROUP_TOO_SHORT
             }
-            val vocabularyGroup = VocabularyGroup(dataAsJson, context = context)
+            val vocabularyGroup = VocabularyGroup.loadFromJSON(dataAsJson, context = context)
             var tempInt = 0
             while(VocabularyGroup.isNameValid(context, vocabularyGroup.name) != 0){
                 tempInt += 1
@@ -106,7 +106,7 @@ class Importer(private val data: String, val context: Context) {
             val vocabularyGroups = dataAsJson.getJSONArray("vocabularyGroups")
 
             for (i in 0 until vocabularyGroups.length()){
-                val vocGroupFromLesson = VocabularyGroup(vocabularyGroups.getJSONObject(i), context = context, generateNewId = true)
+                val vocGroupFromLesson = VocabularyGroup.loadFromJSON(vocabularyGroups.getJSONObject(i), context = context, generateNewId = true)
 
                 var tempInt = 0
                 while(VocabularyGroup.isNameValid(context, vocGroupFromLesson.name) != 0){
@@ -121,8 +121,8 @@ class Importer(private val data: String, val context: Context) {
                 }
                 Log.i("Import ID", vocGroupFromLesson.id.number.toString())
                 newIdsVocabularyGroups.add(vocGroupFromLesson.id.number)
-                vocGroupFromLesson.saveInFile()
-                vocGroupFromLesson.saveInIndex()
+                vocGroupFromLesson.saveInFile(context)
+                vocGroupFromLesson.saveInIndex(context)
             }
 
             var nameOfLesson = dataAsJson.getString("name").trim()

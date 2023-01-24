@@ -129,7 +129,7 @@ class NewFragment : Fragment() {
         binding.buttonCreateVocabularyGroupFromPicture.isEnabled = false
 
         binding.buttonCreateLesson.setOnClickListener {
-            findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = LessonBasicFragment.MODE_CREATE))
+            findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToManageLessonFragment(mode = LessonBasicFragment.MODE_CREATE, lesson = null))
         }
         binding.buttonCreateVocabularyGroup.setOnClickListener {
             findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(null, VocabularyGroupBasicFragment.MODE_CREATE))
@@ -292,7 +292,7 @@ class NewFragment : Fragment() {
         val importer = Importer(data, requireContext())
         when(importer.tryAll()){
             Importer.IMPORT_SUCCESSFULLY_VOCABULARY_GROUP -> {
-                findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(importer.vocabularyGroup!!.getAsJson().toString(), VocabularyGroupBasicFragment.MODE_IMPORT))
+                findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(importer.vocabularyGroup!!, VocabularyGroupBasicFragment.MODE_IMPORT))
             }
             Importer.IMPORT_SUCCESSFULLY_LESSON -> {
                 Toast.makeText(context, R.string.import_lesson_successful, Toast.LENGTH_LONG).show()

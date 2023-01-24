@@ -95,7 +95,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardEdit.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
             setOnClickListener {
-                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lessonJson = dataSetFilter[viewHolder.layoutPosition].getAsJson().toString(), mode = LessonBasicFragment.MODE_EDIT))
+                navController.navigate(MobileNavigationDirections.actionGlobalManageLessonFragment(lesson = dataSetFilter[viewHolder.layoutPosition], mode = LessonBasicFragment.MODE_EDIT))
             }
         }
 

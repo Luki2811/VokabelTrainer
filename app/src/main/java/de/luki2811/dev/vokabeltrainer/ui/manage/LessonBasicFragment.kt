@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +55,11 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_EDIT){
-            lesson = Lesson.fromJSON(JSONObject(args.lessonJson), requireContext(), false)!!
+            if(args.lesson != null){
+                lesson = args.lesson!!
+            }else{
+                Log.e("LessonBasic", "Lesson is null while mode ${args.mode}, can't load lesson")
+            }
 
             vocabularyGroupsSelected.clear()
             for(indexArray in 0 until index.getJSONArray("index").length())
@@ -79,6 +84,7 @@ class LessonBasicFragment: Fragment() {
             binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_TRANSLATION)
             binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_SYNONYM)
             binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_ANTONYM)
+            binding.chipLessonSettingsWordsToPracticeWordFamily.isChecked = lesson.typesOfWordToPractice.contains(VocabularyWord.TYPE_WORD_FAMILY)
 
             binding.sliderCreateLessonNumberExercises.value = lesson.numberOfExercises.toFloat()
 
@@ -94,6 +100,7 @@ class LessonBasicFragment: Fragment() {
             binding.chipLessonSettingsWordsToPracticeTranslation.isChecked = true
             binding.chipLessonSettingsWordsToPracticeSynonym.isChecked = true
             binding.chipLessonSettingsWordsToPracticeAntonym.isChecked = true
+            binding.chipLessonSettingsWordsToPracticeWordFamily.isChecked = true
         }
 
         refreshList()
@@ -150,6 +157,8 @@ class LessonBasicFragment: Fragment() {
             typesOfWords.add(VocabularyWord.TYPE_SYNONYM)
         if(binding.chipLessonSettingsWordsToPracticeAntonym.isChecked)
             typesOfWords.add(VocabularyWord.TYPE_ANTONYM)
+        if(binding.chipLessonSettingsWordsToPracticeWordFamily.isChecked)
+            typesOfWords.add(VocabularyWord.TYPE_WORD_FAMILY)
 
         val askForAllWords = binding.switchLessonSettingsRequestAllPossibleAnswer.isChecked
 
@@ -202,7 +211,7 @@ class LessonBasicFragment: Fragment() {
                 refreshList()
             }
             setOnClickListener {
-                findNavController().navigate(LessonBasicFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup.getAsJson().toString(), keyMode = VocabularyGroupBasicFragment.MODE_EDIT))
+                findNavController().navigate(LessonBasicFragmentDirections.actionGlobalNewVocabularyGroupFragment(vocabularyGroup, keyMode = VocabularyGroupBasicFragment.MODE_EDIT))
             }
         }
 

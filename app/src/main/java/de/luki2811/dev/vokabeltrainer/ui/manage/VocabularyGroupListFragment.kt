@@ -41,7 +41,7 @@ class VocabularyGroupListFragment : Fragment() {
             file.mkdirs()
             file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
             val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
-            arrayList.add(VocabularyGroup(jsonOfVocGroup, context =  requireContext()))
+            arrayList.add(VocabularyGroup.loadFromJSON(jsonOfVocGroup, context =  requireContext()))
         }
 
         val adapter = ListVocabularyGroupsAdapter(arrayList, requireContext(), findNavController(), requireActivity().supportFragmentManager)

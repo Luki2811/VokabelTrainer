@@ -12,13 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import de.luki2811.dev.vokabeltrainer.Id
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentNewVocabularyGroupBinding
-import org.json.JSONObject
 import java.io.File
-import java.util.*
+import java.util.Locale
 
 
 class VocabularyGroupBasicFragment : Fragment() {
@@ -46,8 +46,8 @@ class VocabularyGroupBasicFragment : Fragment() {
         binding.editTextVocabularyGroupFirstLanguage.setAdapter(adapterFirst)
         binding.editTextVocabularyGroupSecondLanguage.setAdapter(adapterSecond)
 
-        if((!args.keyVocGroup.isNullOrEmpty()) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
-            vocabularyGroup = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext())
+        if((args.vocabularyGroup != null) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
+            vocabularyGroup = args.vocabularyGroup!!
             binding.editTextVocabularyGroupName.setText(vocabularyGroup.name)
             binding.editTextVocabularyGroupFirstLanguage.setText(vocabularyGroup.firstLanguage.getDisplayLanguage(appSettings.appLanguage))
             binding.editTextVocabularyGroupSecondLanguage.setText(vocabularyGroup.secondLanguage.getDisplayLanguage(appSettings.appLanguage))
@@ -61,7 +61,7 @@ class VocabularyGroupBasicFragment : Fragment() {
                         .setTitle(context.getString(R.string.title_reset_all_levels))
                         .setMessage(context.getString(R.string.message_reset_levels))
                         .setPositiveButton(R.string.ok){ _, _ ->
-                            vocabularyGroup.resetLevels()
+                            vocabularyGroup.resetLevels(requireContext())
                         }
                         .setNegativeButton(R.string.cancel){_, _ -> }
                         .show()
@@ -107,7 +107,7 @@ class VocabularyGroupBasicFragment : Fragment() {
             Log.w("Error", "Failed to delete vocabularyGroup with id ${vocabularyGroup.id}")
             return
         }
-        vocabularyGroup.deleteFromIndex()
+        vocabularyGroup.deleteFromIndex(requireContext())
         vocabularyGroup.id.unregister(requireContext())
         Log.i("Info", "Successfully deleted vocabularyGroup with id ${vocabularyGroup.id}")
         findNavController().popBackStack()
@@ -135,28 +135,27 @@ class VocabularyGroupBasicFragment : Fragment() {
             VocabularyGroup.VALID -> {
                 binding.editTextVocabularyGroupNameLayout.error = null
 
-                if(args.keyMode == MODE_CREATE){
-                    vocabularyGroup = VocabularyGroup(
+                vocabularyGroup = if(args.keyMode == MODE_CREATE){
+                    VocabularyGroup(
                         name = binding.editTextVocabularyGroupName.text.toString(),
                         firstLanguage = firstLanguage,
                         secondLanguage = secondLanguage,
                         vocabulary = arrayListOf(),
-                        context = requireContext()
+                        id = Id.generate(requireContext())
                     )
-                }else
-                    vocabularyGroup = VocabularyGroup(
+                }else{
+                    VocabularyGroup(
                         name = binding.editTextVocabularyGroupName.text.toString(),
                         firstLanguage = firstLanguage,
                         secondLanguage = secondLanguage,
-                        vocabulary = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext()).vocabulary,
-                        context = requireContext(),
-                        id = VocabularyGroup(JSONObject(args.keyVocGroup.toString()), context = requireContext()).id
+                        vocabulary = args.vocabularyGroup!!.vocabulary,
+                        id = args.vocabularyGroup!!.id
                     )
+                }
 
 
 
-                findNavController().navigate(VocabularyGroupBasicFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(
-                    vocabularyGroup.getAsJson().toString(), "", args.keyMode))
+                findNavController().navigate(VocabularyGroupBasicFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(vocabularyGroup, args.keyMode))
             }
             VocabularyGroup.INVALID_TOO_MANY_LINES -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_too_many_lines, VocabularyGroup.MAX_LINES)

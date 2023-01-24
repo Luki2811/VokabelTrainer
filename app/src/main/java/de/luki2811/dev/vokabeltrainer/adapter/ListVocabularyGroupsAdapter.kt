@@ -79,7 +79,7 @@ class ListVocabularyGroupsAdapter(
 
         viewHolder.buttonEdit.apply {
             setOnClickListener {
-                navController.navigate(VocabularyGroupListFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position].getAsJson().toString(), VocabularyGroupBasicFragment.MODE_EDIT))
+                navController.navigate(VocabularyGroupListFragmentDirections.actionManageVocabularyGroupsFragmentToNewVocabularyGroupFragment(dataSetFilter[position], VocabularyGroupBasicFragment.MODE_EDIT))
             }
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Blue)))
         }

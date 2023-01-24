@@ -218,4 +218,5 @@
     <string name="long_form">Lange Form</string>
     <string name="err_no_words_found_with_filter">Fehler: Es können keine Wörter mit dem ausgewählten Filter zum Üben gefunden werden.</string>
     <string name="types_of_word">Worttypen</string>
+    <string name="word_family">Wortfamilie</string>
 </resources>
