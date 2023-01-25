@@ -3,8 +3,8 @@
     <string name="close">Close</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name of lesson</string>
-    <string name="native_language">First (known) language</string>
-    <string name="new_language">Second (new) language</string>
+    <string name="language_other">Other language</string>
+    <string name="language_main">Main language</string>
     <string name="next">Next</string>
     <string name="ignore_case">Ignore upper and lower case</string>
     <string name="settings">Settings</string>
@@ -196,9 +196,9 @@
     <string name="notification_have_you_reached_your_streak">Have you reached your daily goal ??</string>
     <string name="synonym">Synonym</string>
     <string name="antonym">Antonym</string>
-    <string name="word_in_first_language">Word in native (first) language</string>
-    <string name="word_in_second_language">Word in new (second) language</string>
-    <string name="info_text_second_language">The second (new) language is set for all synonyms and antonyms in this vocabulary group</string>
+    <string name="word_in_other_language">Word in other (known) language</string>
+    <string name="word_in_main_language">Word in main (new) language</string>
+    <string name="info_text_languages_in_voc_group_editor">The main language is set for Translations (the new word), Synonyms, Antonyms and Word Families. The other language is just set for Translations (the known word)</string>
     <string name="synonym_other">Synonyms</string>
     <string name="synonym_main">Main word</string>
     <string name="antonym_main">Main word</string>
@@ -324,5 +324,6 @@
     <string name="word_type_adverb">Adverb</string>
     <string name="word_family_main">Main word</string>
     <string name="word_family_other">Word of the word family</string>
+    <string name="word_family_type">Word type</string>
 
 </resources>

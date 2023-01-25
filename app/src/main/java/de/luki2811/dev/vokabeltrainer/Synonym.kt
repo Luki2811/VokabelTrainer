@@ -59,6 +59,11 @@ data class Synonym(override var mainWord: String,
                 val array = json.getString("second").split(";").toMutableList() as ArrayList<String>
                 array.onEach { it.trim() }
             }
+            val typeOfWord = try {
+                json.getInt("type")
+            }catch (e: JSONException){
+                VocabularyWord.TYPE_SYNONYM
+            }
 
             val language = tempLanguage ?: try{
                 Locale.forLanguageTag(json.getString("language"))
@@ -68,7 +73,7 @@ data class Synonym(override var mainWord: String,
             val ignoreCase = json.getBoolean("ignoreCase")
             val level = json.getInt("level")
 
-            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, level =  level)
+            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, level =  level, typeOfWord = typeOfWord)
         }
     }
 

@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import de.luki2811.dev.vokabeltrainer.adapter.ListVocabularyGroupsAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentManageVocabularyGroupsBinding
 import org.json.JSONObject
 import java.io.File
+import java.io.FileNotFoundException
 
 class VocabularyGroupListFragment : Fragment() {
 
@@ -40,8 +42,15 @@ class VocabularyGroupListFragment : Fragment() {
             var file = File(requireContext().filesDir, "vocabularyGroups")
             file.mkdirs()
             file = File(file, indexAsJson.getJSONArray("index").getJSONObject(i).getInt("id").toString() + ".json" )
-            val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
-            arrayList.add(VocabularyGroup.loadFromJSON(jsonOfVocGroup, context =  requireContext()))
+            try {
+                val jsonOfVocGroup = JSONObject(FileUtil.loadFromFile(file))
+                arrayList.add(VocabularyGroup.loadFromJSON(jsonOfVocGroup, context =  requireContext()))
+            }catch (e: FileNotFoundException){
+                indexAsJson.getJSONArray("index").remove(i)
+                FileUtil.writeInFile(indexAsJson.toString(), indexVocabularyGroupFile)
+                Log.w("VocabularyGroupIndex", "Removed an item from list because file couldn't be found")
+            }
+
         }
 
         val adapter = ListVocabularyGroupsAdapter(arrayList, requireContext(), findNavController(), requireActivity().supportFragmentManager)

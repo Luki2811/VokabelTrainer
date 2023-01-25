@@ -57,10 +57,14 @@ class ListShortFormAdapter(var dataset: ArrayList<ShortForm>,
                 val editSheet = ShortFormEditorBottomSheet(dataset[holder.layoutPosition])
                 editSheet.show(fragmentManager, ShortFormEditorBottomSheet.TAG)
                 fragmentManager.setFragmentResultListener("finishEditShortForm", lifecycleOwner){ _, bundle ->
-                    dataset[holder.layoutPosition] = ShortForm.fromJson(JSONObject(bundle.getString("resultAsJson")!!))
-                    notifyItemChanged(holder.layoutPosition, null)
                     fragmentManager.clearFragmentResult("finishEditShortForm")
                     fragmentManager.clearFragmentResultListener("finishEditShortForm")
+                    try {
+                        dataset[holder.layoutPosition] = ShortForm.fromJson(JSONObject(bundle.getString("resultAsJson")!!))
+                        notifyItemChanged(holder.layoutPosition, null)
+                    }catch (e: ArrayIndexOutOfBoundsException){
+                        e.printStackTrace()
+                    }
                 }
             }
         }

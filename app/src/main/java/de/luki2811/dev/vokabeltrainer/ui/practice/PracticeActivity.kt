@@ -26,10 +26,10 @@ import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityPracticeBinding
 import de.luki2811.dev.vokabeltrainer.ui.MainActivity
 import kotlinx.coroutines.Runnable
-import org.json.JSONObject
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
+@Suppress("DEPRECATION")
 class PracticeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPracticeBinding
@@ -130,7 +130,11 @@ class PracticeActivity : AppCompatActivity() {
                 Mistake.loadAllFromFile(this).find { it.word == exercise.words[0] }?.removeFromFile(this)
 
             }else if(mode == MODE_NORMAL){
-                val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+                val lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra("lesson", Lesson::class.java)
+                } else {
+                    intent.getParcelableExtra("lesson")
+                }!!
 
                 if(exerciseResult.isCorrect && (exercise.type != Exercise.TYPE_MATCH_FIVE_WORDS)) {
 
@@ -177,7 +181,13 @@ class PracticeActivity : AppCompatActivity() {
 
     private fun isLessonFittingForPracticing(): Boolean {
         if(mode == MODE_NORMAL){
-            val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+            val lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("lesson", Lesson::class.java)
+            } else {
+                intent.getParcelableExtra("lesson")
+            }
+
+            if(lesson == null) return false
 
             if(allVocabularyWords.filter { lesson.typesOfWordToPractice.contains(it.typeOfWord) }.size < numberOfExercises) {
                 MaterialAlertDialogBuilder(this)
@@ -199,7 +209,11 @@ class PracticeActivity : AppCompatActivity() {
 
     private fun setNextExercise() {
         if(mode == MODE_NORMAL){
-            val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+            val lesson: Lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("lesson", Lesson::class.java)
+            } else {
+                intent.getParcelableExtra("lesson")
+            }!!
 
             exercise = ExerciseBuilder(
                 allVocabularyWords,
@@ -283,9 +297,13 @@ class PracticeActivity : AppCompatActivity() {
             binding.textViewPracticeInfoMistake.visibility = View.GONE
             binding.textViewPracticeCorrectInRow.visibility = View.GONE
             if(mode == MODE_NORMAL) {
-                val lesson = Lesson.fromJSON(JSONObject(intent.getStringExtra("data_lesson")!!), applicationContext, false)!!
+                val lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra("lesson", Lesson::class.java)
+                } else {
+                    intent.getParcelableExtra("lesson")
+                }
 
-                lesson.saveInFile(applicationContext)
+                lesson!!.saveInFile(applicationContext)
             }
             // Calculate
             val correctInPercent: Double = 100-(mistakes.size.toDouble()/(mistakes.size + numberOfExercises)*100)

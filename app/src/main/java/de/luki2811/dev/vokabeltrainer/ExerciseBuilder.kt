@@ -61,13 +61,17 @@ class ExerciseBuilder(
     private fun getAskSecondWord(word: VocabularyWord): Boolean{
         return if(practiceMistake){
             mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.askedForSecondWord
-        }else if(askForSecondWordsOnly || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) { true } else { (0..1).random() == 1 }
+        }else if(askForSecondWordsOnly || word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
+            true
+        } else {
+            (0..1).random() == 1
+        }
     }
 
     private fun getTypeToPractice(typeOfWord: Int): Int{
         return if(practiceMistake) {
             Exercise.TYPE_TRANSLATE_TEXT
-        } else if(typeOfWord == VocabularyWord.TYPE_SYNONYM || typeOfWord == VocabularyWord.TYPE_ANTONYM){
+        } else if(typeOfWord == VocabularyWord.TYPE_SYNONYM || typeOfWord == VocabularyWord.TYPE_ANTONYM || typeOfWord == VocabularyWord.TYPE_WORD_FAMILY){
             Exercise.TYPE_TRANSLATE_TEXT
         } else{
             typesOfLesson.random()

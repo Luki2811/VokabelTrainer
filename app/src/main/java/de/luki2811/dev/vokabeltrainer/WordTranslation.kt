@@ -53,7 +53,7 @@ data class WordTranslation(override var mainWord: String,
                     json.getString("second")
                 }
             }
-            val firstLanguage = mainLanguage ?: try { Locale(json.getString("mainLanguage")) } catch (e: JSONException){ Locale(json.getString("secondLanguage")) }
+            val mainLanguageWord = mainLanguage ?: try { Locale(json.getString("mainLanguage")) } catch (e: JSONException){ Locale(json.getString("secondLanguage")) }
 
             val otherWords: ArrayList<String> = try {
                 val oWords = arrayListOf<String>()
@@ -66,12 +66,12 @@ data class WordTranslation(override var mainWord: String,
                 array.onEach { it.trim() }
             }
 
-            val secondLanguage = otherLanguage ?: try { Locale(json.getString("otherLanguage")) } catch (e: JSONException){ Locale(json.getString("firstLanguage")) }
+            val otherLanguageWord = otherLanguage ?: try { Locale(json.getString("otherLanguage")) } catch (e: JSONException){ Locale(json.getString("firstLanguage")) }
             val isIgnoreCase = try{ json.getBoolean("ignoreCase") } catch (e: JSONException){ json.getBoolean("isIgnoreCase") }
 
             val level = try { json.getInt("level") } catch (e: JSONException) { 0 }
 
-            return WordTranslation(mainWord, firstLanguage, otherWords, secondLanguage, isIgnoreCase, level = level)
+            return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, level = level)
         }
 
     }

@@ -62,8 +62,8 @@ class ListVocabularyGroupsAdapter(
         // contents of the view with that element
 
         viewHolder.textViewText.text = dataSetFilter[position].name
-        viewHolder.textViewSecondLanguage.text = dataSetFilter[position].secondLanguage.getDisplayLanguage(Settings(context).appLanguage)
-        viewHolder.textViewFirstLanguage.text = dataSetFilter[position].firstLanguage.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.textViewSecondLanguage.text = dataSetFilter[position].mainLanguage.getDisplayLanguage(Settings(context).appLanguage)
+        viewHolder.textViewFirstLanguage.text = dataSetFilter[position].otherLanguage.getDisplayLanguage(Settings(context).appLanguage)
         viewHolder.buttonShare.apply {
             setOnClickListener { share(position) }
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Orange)))

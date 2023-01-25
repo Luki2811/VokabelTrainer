@@ -183,7 +183,8 @@ class PracticeOutOfThreeFragment: Fragment() {
                 is Synonym -> (word as Synonym).otherWords
                 is WordFamily -> {
                     val other = ArrayList<String>()
-                    (word as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
+                    // TODO
+                    // (word as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
                     other
                 }
                 else -> { ArrayList() }

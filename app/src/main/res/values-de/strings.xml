@@ -4,8 +4,8 @@
     <string name="close">Schließen</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name der Lektion</string>
-    <string name="native_language">Bekannte Sprache</string>
-    <string name="new_language">Neue Sprache</string>
+    <string name="language_other">Bekannte Sprache</string>
+    <string name="language_main">Neue Sprache</string>
     <string name="next">Weiter</string>
     <string name="err_missing_name">Fehler: Name fehlt</string>
     <string name="err_name_already_taken">Fehler: Name bereits vergeben</string>
@@ -188,9 +188,9 @@
 
     <string name="synonym">Synonym</string>
     <string name="antonym">Antonym</string>
-    <string name="word_in_first_language">Wort in bekannter (erster) Sprache</string>
-    <string name="word_in_second_language">Wort in neuer (zweiten) Sprache</string>
-    <string name="info_text_second_language" >Die zweite (neue) Sprache wird für alle Synonyme und Antonyme in dieser Vokabelgruppe festgelegt</string>
+    <string name="word_in_other_language">Wort in bekannter (erster) Sprache</string>
+    <string name="word_in_main_language">Wort in neuer (zweiten) Sprache</string>
+    <string name="info_text_languages_in_voc_group_editor" >Die zweite (neue) Sprache wird für alle Synonyme und Antonyme in dieser Vokabelgruppe festgelegt</string>
     <string name="synonym_other">Synonyme</string>
     <string name="synonym_main">Stammwort</string>
     <string name="antonym_main">Stammwort</string>

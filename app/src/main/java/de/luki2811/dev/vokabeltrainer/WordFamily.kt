@@ -11,7 +11,7 @@ data class WordFamily(override var mainWord: String,
                       var otherWords: ArrayList<Pair<String, Int>>,
                       var language: Locale,
                       override var isIgnoreCase: Boolean,
-                      override var level: Int,
+                      override var level: Int = 0,
                       override var alreadyUsedInExercise: Boolean = false,
                       override var typeOfWord: Int = VocabularyWord.TYPE_WORD_FAMILY): VocabularyWord {
 
@@ -67,9 +67,11 @@ data class WordFamily(override var mainWord: String,
             return WordFamily(mainWord, otherWords, language, ignoreCase, level)
         }
 
-        const val WORD_NOMEN = 10
+        const val WORD_UNKNOWN = -10
+        const val WORD_NOUN = 10
         const val WORD_VERB = 11
         const val WORD_ADJECTIVE = 12
+        const val WORD_ADVERB = 13
     }
 
 }

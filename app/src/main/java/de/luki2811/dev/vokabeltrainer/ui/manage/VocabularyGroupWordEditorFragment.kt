@@ -29,6 +29,7 @@ import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.Synonym
 import de.luki2811.dev.vokabeltrainer.VocabularyGroup
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.WordFamily
 import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentEditVocabularyGroupBinding
 import java.io.File
@@ -50,17 +51,17 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         when(args.keyMode){
             MODE_CREATE -> {
-                vocabularyGroup.vocabulary.add(WordTranslation("", vocabularyGroup.firstLanguage, arrayListOf(), vocabularyGroup.secondLanguage, true))
+                vocabularyGroup.vocabulary.add(WordTranslation("", vocabularyGroup.otherLanguage, arrayListOf(), vocabularyGroup.mainLanguage, true))
             }
             MODE_IMPORT -> {
                 vocabularyGroup.id = Id.generate(requireContext()).apply { register(requireContext()) }
             }
         }
 
-        if(Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language) != null && vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION){
+        if(Settings(requireContext()).suggestTranslation && TranslateLanguage.fromLanguageTag(vocabularyGroup.otherLanguage.language) != null && TranslateLanguage.fromLanguageTag(vocabularyGroup.mainLanguage.language) != null && vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION){
             val options = TranslatorOptions.Builder()
-                .setTargetLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.firstLanguage.language)!!)
-                .setSourceLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.secondLanguage.language)!!)
+                .setTargetLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.otherLanguage.language)!!)
+                .setSourceLanguage(TranslateLanguage.fromLanguageTag(vocabularyGroup.mainLanguage.language)!!)
                 .build()
             val secondToFirstTranslator = Translation.getClient(options)
 
@@ -112,7 +113,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 }
 
         }else
-            Log.w("Translator", args.vocabularyGroup.firstLanguage.language + " or " + args.vocabularyGroup.secondLanguage.language + " are no TranslatorLanguages")
+            Log.w("Translator", args.vocabularyGroup.otherLanguage.language + " or " + args.vocabularyGroup.mainLanguage.language + " are no TranslatorLanguages")
 
         Log.d("Editor VocabularyGroups", "Length: ${vocabularyGroup.vocabulary.size}")
 
@@ -134,41 +135,17 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                     1 -> {
                         vocabularyGroup.vocabulary[pos].typeOfWord = VocabularyWord.TYPE_SYNONYM
                         changeLayout()
-                        if(pos != 0 && binding.textEditEditorUpperInput.text.isNullOrBlank()){
-                            binding.chipGroupEditorSuggestionsUpper.addView(
-                                Chip(requireContext()).apply {
-                                    setOnClickListener {
-                                        binding.textEditEditorUpperInput.setText(vocabularyGroup.vocabulary[pos-1].mainWord)
-                                        binding.chipGroupEditorSuggestionsUpper.removeAllViews()
-                                    }
-                                    text = vocabularyGroup.vocabulary[pos-1].mainWord
-                                    chipIcon = getDrawable(requireContext(), R.drawable.ic_outline_add_24)
-                                    isChipIconVisible = true
-                                }
-                            )
-                        }
-
+                        setChipWithMainWordFromPrevious()
                     }
                     2 -> {
                         vocabularyGroup.vocabulary[pos].typeOfWord = VocabularyWord.TYPE_ANTONYM
                         changeLayout()
-                        if(pos != 0 && binding.textEditEditorUpperInput.text.isNullOrBlank()){
-                            binding.chipGroupEditorSuggestionsUpper.addView(
-                                Chip(requireContext()).apply {
-                                    setOnClickListener {
-                                        binding.textEditEditorUpperInput.setText(vocabularyGroup.vocabulary[pos-1].mainWord)
-                                        binding.chipGroupEditorSuggestionsUpper.removeAllViews()
-                                    }
-                                    text = vocabularyGroup.vocabulary[pos-1].mainWord
-                                    chipIcon = getDrawable(requireContext(), R.drawable.ic_outline_add_24)
-                                    isChipIconVisible = true
-                                }
-                            )
-                        }
+                        setChipWithMainWordFromPrevious()
                     }
                     3 -> {
                         vocabularyGroup.vocabulary[pos].typeOfWord = VocabularyWord.TYPE_WORD_FAMILY
                         changeLayout()
+                        setChipWithMainWordFromPrevious()
                     }
                 }
             }
@@ -274,6 +251,22 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         return binding.root
     }
 
+    private fun setChipWithMainWordFromPrevious() {
+        if (pos != 0 && binding.textEditEditorUpperInput.text.isNullOrBlank()) {
+            binding.chipGroupEditorSuggestionsUpper.addView(
+                Chip(requireContext()).apply {
+                    setOnClickListener {
+                        binding.textEditEditorUpperInput.setText(vocabularyGroup.vocabulary[pos - 1].mainWord)
+                        binding.chipGroupEditorSuggestionsUpper.removeAllViews()
+                    }
+                    text = vocabularyGroup.vocabulary[pos - 1].mainWord
+                    chipIcon = getDrawable(requireContext(), R.drawable.ic_outline_add_24)
+                    isChipIconVisible = true
+                }
+            )
+        }
+    }
+
     private fun setWordInLayout(){
         // Remove all from previous word
         binding.chipGroupEditorSuggestionsUpper.removeAllViews()
@@ -281,6 +274,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         binding.textEditEditorUpperInputLayout.error = null
         binding.textEditEditorLowerInputLayout.error = null
+        binding.textEditEditorWordTypeInputLayout.error = null
 
         // Set type of word
         binding.textInputTypeOfWord.setText(
@@ -299,7 +293,15 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 binding.textEditEditorLowerInput.setText(vocabularyGroup.vocabulary[pos].getSecondWordsAsString())
             }
             VocabularyWord.TYPE_WORD_FAMILY -> {
-
+                binding.textEditEditorWordTypeInput.setText(when((vocabularyGroup.vocabulary[pos] as WordFamily).otherWords[0].second){
+                    WordFamily.WORD_NOUN -> getString(R.string.word_type_noun)
+                    WordFamily.WORD_VERB -> getString(R.string.word_type_verb)
+                    WordFamily.WORD_ADJECTIVE -> getString(R.string.word_type_adjective)
+                    WordFamily.WORD_ADVERB -> getString(R.string.word_type_adverb)
+                    else -> ""
+                })
+                binding.textEditEditorUpperInput.setText(vocabularyGroup.vocabulary[pos].mainWord)
+                binding.textEditEditorLowerInput.setText((vocabularyGroup.vocabulary[pos] as WordFamily).otherWords[0].first)
             }
         }
 
@@ -348,7 +350,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         }
 
         if(vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_WORD_FAMILY){
-            if(binding.textInputTypeOfWord.text.isNullOrBlank()){
+            if(binding.textEditEditorWordTypeInput.text.isNullOrBlank()){
                 binding.textEditEditorWordTypeInputLayout.error = getString(R.string.err_missing_input)
                 isCorrect = false
             }
@@ -364,7 +366,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
 
-                WordTranslation(mainWord, vocabularyGroup.firstLanguage, otherWords, vocabularyGroup.secondLanguage, isIgnoreCase)
+                WordTranslation(mainWord, vocabularyGroup.otherLanguage, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase)
 
             }
 
@@ -373,15 +375,25 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
 
-                Synonym(mainWord, otherWords, vocabularyGroup.secondLanguage, isIgnoreCase = isIgnoreCase)
+                Synonym(mainWord, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase = isIgnoreCase, typeOfWord = vocabularyGroup.vocabulary[pos].typeOfWord)
             }
 
-            /** VocabularyWord.TYPE_WORD_FAMILY -> {
-                WordFamily()
-            } **/
+            VocabularyWord.TYPE_WORD_FAMILY -> {
+                val otherWord: Pair<String, Int> = Pair(binding.textEditEditorLowerInput.text.toString().trim(), when(binding.textEditEditorWordTypeInput.text.toString()){
+                    getString(R.string.word_type_noun) -> WordFamily.WORD_NOUN
+                    getString(R.string.word_type_verb) -> WordFamily.WORD_VERB
+                    getString(R.string.word_type_adjective) -> WordFamily.WORD_ADJECTIVE
+                    getString(R.string.word_type_adverb) -> WordFamily.WORD_ADVERB
+                    else -> WordFamily.WORD_UNKNOWN
+                })
+                val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
+                val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
+
+                WordFamily(mainWord, arrayListOf(otherWord), vocabularyGroup.mainLanguage, isIgnoreCase)
+            }
 
             else -> {
-                WordTranslation("", vocabularyGroup.firstLanguage, arrayListOf(), vocabularyGroup.secondLanguage, true)
+                WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, true)
             }
         }
 
@@ -444,7 +456,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                     // DO NOTHING
                 }
             }
-            vocabularyGroup.vocabulary.add(pos, WordTranslation("", vocabularyGroup.firstLanguage, arrayListOf(), vocabularyGroup.secondLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked))
+            vocabularyGroup.vocabulary.add(pos, WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked))
             binding.textEditEditorUpperInput.requestFocus()
             val imm: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.textEditEditorUpperInput, InputMethodManager.SHOW_IMPLICIT)
@@ -467,8 +479,8 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         when(vocabularyGroup.vocabulary[pos].typeOfWord){
             VocabularyWord.TYPE_TRANSLATION -> {
-                binding.textEditEditorLowerInputLayout.helperText = getString(R.string.word_in_first_language)
-                binding.textEditEditorUpperInputLayout.helperText = getString(R.string.word_in_second_language)
+                binding.textEditEditorLowerInputLayout.helperText = getString(R.string.word_in_other_language)
+                binding.textEditEditorUpperInputLayout.helperText = getString(R.string.word_in_main_language)
                 binding.textEditEditorWordTypeInputLayout.visibility = View.GONE
             }
             VocabularyWord.TYPE_SYNONYM -> {
@@ -485,7 +497,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 binding.textEditEditorUpperInputLayout.helperText = getString(R.string.word_family_main)
                 binding.textEditEditorLowerInputLayout.helperText = getString(R.string.word_family_other)
                 binding.textEditEditorWordTypeInputLayout.visibility = View.VISIBLE
-
+                binding.textEditEditorWordTypeInput.setAdapter(ArrayAdapter(requireContext(), R.layout.default_list_item, arrayOf(getString(R.string.word_type_noun), getString(R.string.word_type_verb), getString(R.string.word_type_adjective), getString(R.string.word_type_adverb))))
             }
         }
 

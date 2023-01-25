@@ -8,9 +8,8 @@ data class Exercise(var type: Int = TYPE_UNKNOWN,
                     var isOtherWordAskedAsAnswer: Boolean = false,
                     var askAllWords: Boolean = false,
                     var readOut: ArrayList<Boolean> = arrayListOf(false, false),
-                    var words: ArrayList<VocabularyWord> = arrayListOf(),
-                    var typeOfWord: Int = VocabularyWord.TYPE_UNKNOWN,
-                    var typeOfWordInFamily: Int = WordFamily.WORD_NOMEN): Parcelable {
+                    var words: ArrayList<VocabularyWord> = arrayListOf()
+                    ): Parcelable {
 
     /** constructor(json: JSONObject): this(){
         this.type = json.getInt("type")

@@ -34,12 +34,14 @@ class PracticeTranslateTextFragment : Fragment(){
         tts = TextToSpeechUtil(requireContext())
         exercise = args.exercise
 
+        Log.i("exercise", exercise.toString())
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
         }
 
         // Set Text
-        when(exercise.typeOfWord){
+        when(exercise.words[0].typeOfWord){
             VocabularyWord.TYPE_TRANSLATION -> {
                 if(exercise.isOtherWordAskedAsAnswer){
                     binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
@@ -158,7 +160,8 @@ class PracticeTranslateTextFragment : Fragment(){
             is Synonym -> (exercise.words[0] as Synonym).otherWords
             is WordFamily -> {
                 val other = ArrayList<String>()
-                (exercise.words[0] as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
+                // TODO
+                // (exercise.words[0] as WordFamily).otherWords.forEach { if((exercise.words[0] as WordFamily).otherWords[0].second == it.second) other.add(it.first) }
                 other
             }
             else -> { ArrayList() }

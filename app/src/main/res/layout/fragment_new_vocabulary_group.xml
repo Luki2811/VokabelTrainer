@@ -41,7 +41,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editTextVocabularyGroupFirstLanguageLayout"
+                android:id="@+id/editTextVocabularyGroupOtherLanguageLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -50,19 +50,19 @@
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyGroupSecondLanguageLayout">
+                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyGroupMainLanguageLayout">
 
                 <AutoCompleteTextView
-                    android:id="@+id/editTextVocabularyGroupFirstLanguage"
+                    android:id="@+id/editTextVocabularyGroupOtherLanguage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/native_language"
+                    android:hint="@string/language_other"
                     android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editTextVocabularyGroupSecondLanguageLayout"
+                android:id="@+id/editTextVocabularyGroupMainLanguageLayout"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -75,33 +75,33 @@
                 app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyGroupNameLayout">
 
                 <AutoCompleteTextView
-                    android:id="@+id/editTextVocabularyGroupSecondLanguage"
+                    android:id="@+id/editTextVocabularyGroupMainLanguage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/new_language"
+                    android:hint="@string/language_main"
                     android:inputType="text" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
-                android:id="@+id/textViewVocabularyBasicStettingsInfo"
+                android:id="@+id/textViewVocabularyBasicSettingsInfo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@string/info_text_second_language"
+                android:text="@string/info_text_languages_in_voc_group_editor"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/imageView9"
-                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyGroupFirstLanguageLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/editTextVocabularyGroupOtherLanguageLayout" />
 
             <ImageView
                 android:id="@+id/imageView9"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_outline_info_24"
-                app:layout_constraintBottom_toBottomOf="@+id/textViewVocabularyBasicStettingsInfo"
-                app:layout_constraintStart_toStartOf="@+id/editTextVocabularyGroupFirstLanguageLayout"
-                app:layout_constraintTop_toTopOf="@+id/textViewVocabularyBasicStettingsInfo" />
+                app:layout_constraintBottom_toBottomOf="@+id/textViewVocabularyBasicSettingsInfo"
+                app:layout_constraintStart_toStartOf="@+id/editTextVocabularyGroupOtherLanguageLayout"
+                app:layout_constraintTop_toTopOf="@+id/textViewVocabularyBasicSettingsInfo" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonResetLevels"
@@ -112,10 +112,11 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="@string/reset_all_word_levels"
+                android:visibility="gone"
                 app:icon="@drawable/ic_baseline_refresh_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyBasicStettingsInfo" />
+                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyBasicSettingsInfo" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

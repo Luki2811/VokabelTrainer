@@ -12,7 +12,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 @Parcelize
-data class VocabularyGroup(var name: String, var id: Id, var firstLanguage: Locale, var secondLanguage: Locale, var vocabulary: ArrayList<VocabularyWord> = ArrayList(), override val type: Int = Exportable.TYPE_VOCABULARY_GROUP): Exportable, Parcelable {
+data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Locale, var mainLanguage: Locale, var vocabulary: ArrayList<VocabularyWord> = ArrayList(), override val type: Int = Exportable.TYPE_VOCABULARY_GROUP): Exportable, Parcelable {
 
     fun export(): JSONObject {
         return getAsJson()
@@ -81,8 +81,8 @@ data class VocabularyGroup(var name: String, var id: Id, var firstLanguage: Loca
             .put("name", name)
             .put("id", id.number)
             .put("type", type)
-            .put("firstLanguage", firstLanguage.language)
-            .put("secondLanguage", secondLanguage.language)
+            .put("otherLanguage", otherLanguage.language)
+            .put("mainLanguage", mainLanguage.language)
             .put("vocabulary", jsonArray)
     }
 
@@ -126,44 +126,58 @@ data class VocabularyGroup(var name: String, var id: Id, var firstLanguage: Loca
                 if(generateNewId) Id.generate(context).apply { register(context) } else Id(json.getInt("id"))
             } else { Id.generate(context).apply { register(context) } }
 
-            var firstLanguage: Locale
-            var secondLanguage: Locale
+            var otherLanguage: Locale
+            var mainLanguage: Locale
             try {
-                firstLanguage = try {
-                    Locale(json.getString("firstLanguage"))
-                }catch (e: JSONException){
-                    Locale(json.getString("languageKnown"))
+                otherLanguage = try {
+                    Locale(json.getString("otherLanguage"))
+                } catch (e: JSONException){
+                    try {
+                        Locale(json.getString("firstLanguage"))
+                    }catch (e: JSONException){
+                        Locale(json.getString("languageKnown"))
+                    }
                 }
-                secondLanguage = try {
-                    Locale(json.getString("secondLanguage"))
+
+                mainLanguage = try {
+                    Locale(json.getString("mainLanguage"))
                 }catch (e: JSONException){
-                    Locale(json.getString("languageNew"))
+                    try {
+                        Locale(json.getString("secondLanguage"))
+                    }catch (e: JSONException){
+                        Locale(json.getString("languageNew"))
+                    }
                 }
 
             }catch (e: JSONException){
-                firstLanguage = Locale.GERMAN
-                secondLanguage = Locale.ENGLISH
+                otherLanguage = Locale.GERMAN
+                mainLanguage = Locale.ENGLISH
             }
 
             val vocabulary = ArrayList<VocabularyWord>()
 
             for (i in 0 until json.getJSONArray("vocabulary").length()){
-                when(json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")){
+                val type = try {
+                    json.getJSONArray("vocabulary").getJSONObject(i).getInt("type")
+                }catch (e: JSONException){
+                    VocabularyWord.TYPE_TRANSLATION
+                }
+                when(type){
                     VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM -> {
-                        vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
+                        vocabulary.add(Synonym.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), mainLanguage))
                     }
                     VocabularyWord.TYPE_TRANSLATION -> {
-                        vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage, secondLanguage))
+                        vocabulary.add(WordTranslation.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), mainLanguage = mainLanguage, otherLanguage = otherLanguage))
                     }
                     VocabularyWord.TYPE_WORD_FAMILY -> {
-                        vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), firstLanguage))
+                        vocabulary.add(WordFamily.loadFromJSON(json.getJSONArray("vocabulary").getJSONObject(i), mainLanguage))
                     }
                     else -> {
                         Log.w("VocabularyGroup", "Unknown Type of word in group \"$name\" (${id.number}) at $i of ${json.getJSONArray("vocabulary").length()}")
                     }
                 }
             }
-            return VocabularyGroup(nameOfGroup, id, firstLanguage, secondLanguage, vocabulary)
+            return VocabularyGroup(nameOfGroup, id, otherLanguage, mainLanguage, vocabulary)
         }
 
         fun loadFromFileWithId(id: Id, context: Context): VocabularyGroup?{

@@ -1,17 +1,20 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.util.*
-
+@Parcelize
 data class ShortForm(
     var shortForm: String,
     var longForm: String,
-    var language: Locale): Exportable {
+    var language: Locale,
+    override val type: Int = Exportable.TYPE_SHORT_FORM): Exportable, Parcelable {
 
-    override val type = Exportable.TYPE_SHORT_FORM
+
 
     fun getAsJson(): JSONObject{
         return JSONObject()

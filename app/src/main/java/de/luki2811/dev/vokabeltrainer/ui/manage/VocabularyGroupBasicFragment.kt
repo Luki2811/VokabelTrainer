@@ -43,14 +43,14 @@ class VocabularyGroupBasicFragment : Fragment() {
 
         val adapterFirst = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
         val adapterSecond = ArrayAdapter(requireContext(),R.layout.default_list_item, listNames.toTypedArray())
-        binding.editTextVocabularyGroupFirstLanguage.setAdapter(adapterFirst)
-        binding.editTextVocabularyGroupSecondLanguage.setAdapter(adapterSecond)
+        binding.editTextVocabularyGroupOtherLanguage.setAdapter(adapterFirst)
+        binding.editTextVocabularyGroupMainLanguage.setAdapter(adapterSecond)
 
         if((args.vocabularyGroup != null) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
             vocabularyGroup = args.vocabularyGroup!!
             binding.editTextVocabularyGroupName.setText(vocabularyGroup.name)
-            binding.editTextVocabularyGroupFirstLanguage.setText(vocabularyGroup.firstLanguage.getDisplayLanguage(appSettings.appLanguage))
-            binding.editTextVocabularyGroupSecondLanguage.setText(vocabularyGroup.secondLanguage.getDisplayLanguage(appSettings.appLanguage))
+            binding.editTextVocabularyGroupOtherLanguage.setText(vocabularyGroup.otherLanguage.getDisplayLanguage(appSettings.appLanguage))
+            binding.editTextVocabularyGroupMainLanguage.setText(vocabularyGroup.mainLanguage.getDisplayLanguage(appSettings.appLanguage))
         }
 
         binding.buttonResetLevels.apply {
@@ -117,17 +117,17 @@ class VocabularyGroupBasicFragment : Fragment() {
         val listLocales = arrayListOf<Locale>()
         Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
 
-        val firstLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupFirstLanguage.text.toString()}
-        val secondLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupSecondLanguage.text.toString()}
+        val otherLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupOtherLanguage.text.toString()}
+        val mainLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupMainLanguage.text.toString()}
 
 
-        if(firstLanguage == null) {
-            binding.editTextVocabularyGroupFirstLanguageLayout.error = getString(R.string.err_lang_not_available)
+        if(otherLanguage == null) {
+            binding.editTextVocabularyGroupOtherLanguageLayout.error = getString(R.string.err_lang_not_available)
             return
         }
 
-        if(secondLanguage == null){
-            binding.editTextVocabularyGroupSecondLanguageLayout.error = getString(R.string.err_lang_not_available)
+        if(mainLanguage == null){
+            binding.editTextVocabularyGroupMainLanguageLayout.error = getString(R.string.err_lang_not_available)
             return
         }
 
@@ -138,16 +138,16 @@ class VocabularyGroupBasicFragment : Fragment() {
                 vocabularyGroup = if(args.keyMode == MODE_CREATE){
                     VocabularyGroup(
                         name = binding.editTextVocabularyGroupName.text.toString(),
-                        firstLanguage = firstLanguage,
-                        secondLanguage = secondLanguage,
+                        otherLanguage = otherLanguage,
+                        mainLanguage = mainLanguage,
                         vocabulary = arrayListOf(),
                         id = Id.generate(requireContext())
                     )
                 }else{
                     VocabularyGroup(
                         name = binding.editTextVocabularyGroupName.text.toString(),
-                        firstLanguage = firstLanguage,
-                        secondLanguage = secondLanguage,
+                        otherLanguage = otherLanguage,
+                        mainLanguage = mainLanguage,
                         vocabulary = args.vocabularyGroup!!.vocabulary,
                         id = args.vocabularyGroup!!.id
                     )
