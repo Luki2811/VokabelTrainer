@@ -69,6 +69,8 @@ class PracticeActivity : AppCompatActivity() {
                 allVocabularyWords.addAll(group.vocabulary)
             }
             numberOfExercises = lesson.numberOfExercises
+
+            Log.i("TestLesson", lesson.toString())
         }else{
             mode = MODE_PRACTICE_MISTAKES
             val allMistakes = Mistake.loadAllFromFile(this)
@@ -312,6 +314,7 @@ class PracticeActivity : AppCompatActivity() {
 
         }else{
             setNextExercise()
+            Log.i("TestLesson", exercise.toString())
             when(exercise.type){
                 Exercise.TYPE_TRANSLATE_TEXT -> {
                     navHostFragment.navController.navigate(PracticeStartFragmentDirections.actionPracticeStartFragmentToPracticeTranslateTextFragment(exercise))

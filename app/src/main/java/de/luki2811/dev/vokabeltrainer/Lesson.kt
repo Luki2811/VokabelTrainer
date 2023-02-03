@@ -16,7 +16,7 @@ import java.io.File
 @Parcelize
 data class Lesson(var name: String,
                   var id: Id,
-                  var vocabularyGroupIds: ArrayList<Int>,
+                  var vocabularyGroups: ArrayList<VocabularyGroup>,
                   var typesOfExercises: ArrayList<Int> = arrayListOf(TYPE_TRANSLATE_TEXT, TYPE_CHOOSE_OF_THREE_WORDS, TYPE_MATCH_FIVE_WORDS),
                   var readOut: ArrayList<Boolean>,
                   var askForAllWords: Boolean,
@@ -91,16 +91,15 @@ data class Lesson(var name: String,
             if(toExport && context != null) {
                 put("type", type)
                 put("vocabularyGroups", JSONArray().apply {
-                    val vocabularyGroups = loadVocabularyGroups(context)
-                    for (i in vocabularyGroups){
+                    for (i in this@Lesson.vocabularyGroups){
                         this.put(i.getAsJson())
                     }
                 })
             }else {
                 put("id", id.number)
                 put("vocabularyGroupIds", JSONArray().apply {
-                    for(i in vocabularyGroupIds.indices){
-                        this.put(i, vocabularyGroupIds[i])
+                    for(i in 0 until vocabularyGroups.size){
+                        this.put(i, vocabularyGroups[i].id.number)
                     }
                 })
             }
@@ -132,20 +131,6 @@ data class Lesson(var name: String,
     }
 
     /**
-     * Load vocabulary groups
-     */
-
-    fun loadVocabularyGroups(context: Context): ArrayList<VocabularyGroup>{
-        val vocabularyGroups: ArrayList<VocabularyGroup> = arrayListOf()
-        for(i in this.vocabularyGroupIds){
-            VocabularyGroup.loadFromFileWithId(Id(i), context)?.let {
-                vocabularyGroups.add(it)
-            }
-        }
-        return vocabularyGroups
-    }
-
-    /**
      * Saves the lesson in a file with ID
      */
 
@@ -172,14 +157,14 @@ data class Lesson(var name: String,
          * @return
          */
 
-        fun fromJSON(json: JSONObject, context: Context, registerId: Boolean): Lesson?{
+         fun fromJSON(json: JSONObject, context: Context, registerId: Boolean): Lesson?{
             try {
                 val name = json.getString("name")
                 val id = Id(json.getInt("id"))
                 if(registerId) id.register(context)
-                val groupIds = ArrayList<Int>()
+                val groups = ArrayList<VocabularyGroup>()
                 for(i in 0 until json.getJSONArray("vocabularyGroupIds").length())
-                    groupIds.add(i, json.getJSONArray("vocabularyGroupIds").getInt(i))
+                    groups.add(i, VocabularyGroup.loadFromFileWithId(Id(json.getJSONArray("vocabularyGroupIds").getInt(i)), context)!!)
 
                 val readOut = try {
                     if(json.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)
@@ -240,7 +225,7 @@ data class Lesson(var name: String,
                     arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_WORD_FAMILY)
                 }
 
-                return Lesson(name, id, groupIds, typesOfLesson, readOut, askForAllWords, askForSecondWordsOnly, isFavorite, numberOfExercises, typesOfWordToPractice)
+                return Lesson(name, id, groups, typesOfLesson, readOut, askForAllWords, askForSecondWordsOnly, isFavorite, numberOfExercises, typesOfWordToPractice)
 
             } catch (e: JSONException) {
                 e.printStackTrace()

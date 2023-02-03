@@ -102,7 +102,7 @@ class Importer(private val data: String, val context: Context) {
                 return IMPORT_WRONG_OR_NONE_TYPE
             }
 
-            val newIdsVocabularyGroups = arrayListOf<Int>()
+            val groups = arrayListOf<VocabularyGroup>()
             val vocabularyGroups = dataAsJson.getJSONArray("vocabularyGroups")
 
             for (i in 0 until vocabularyGroups.length()){
@@ -120,7 +120,7 @@ class Importer(private val data: String, val context: Context) {
                     vocGroupFromLesson.name = nameOfVocGroup
                 }
                 Log.i("Import ID", vocGroupFromLesson.id.number.toString())
-                newIdsVocabularyGroups.add(vocGroupFromLesson.id.number)
+                groups.add(vocGroupFromLesson)
                 vocGroupFromLesson.saveInFile(context)
                 vocGroupFromLesson.saveInIndex(context)
             }
@@ -172,7 +172,7 @@ class Importer(private val data: String, val context: Context) {
                 arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM)
             }
 
-            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, newIdsVocabularyGroups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly, typesOfWordToPractice = typesOfWordToPractice)
+            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, groups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly, typesOfWordToPractice = typesOfWordToPractice)
             lesson.saveInFile(context)
             lesson.saveInIndex(context)
 

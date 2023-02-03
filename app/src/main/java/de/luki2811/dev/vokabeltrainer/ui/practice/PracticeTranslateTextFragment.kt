@@ -129,7 +129,7 @@ class PracticeTranslateTextFragment : Fragment(){
 
     private fun speakWord(){
         val lang = when(exercise.words[0]){
-            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
+            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).mainLanguage else (exercise.words[0] as WordTranslation).otherLanguage }
             is Synonym -> { (exercise.words[0] as Synonym).language }
             is WordFamily -> { (exercise.words[0] as WordFamily).language }
             else -> { Locale.ENGLISH }
