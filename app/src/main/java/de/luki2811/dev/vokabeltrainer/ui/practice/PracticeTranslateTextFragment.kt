@@ -3,7 +3,6 @@ package de.luki2811.dev.vokabeltrainer.ui.practice
 import android.content.Intent
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,9 +13,19 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.Exercise
+import de.luki2811.dev.vokabeltrainer.ExerciseResult
+import de.luki2811.dev.vokabeltrainer.Proofreader
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
+import de.luki2811.dev.vokabeltrainer.ShortForm
+import de.luki2811.dev.vokabeltrainer.Synonym
+import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
+import de.luki2811.dev.vokabeltrainer.VocabularyWord
+import de.luki2811.dev.vokabeltrainer.WordFamily
+import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeTranslateTextBinding
-import java.util.*
+import java.util.Locale
 
 
 class PracticeTranslateTextFragment : Fragment(){
@@ -33,8 +42,6 @@ class PracticeTranslateTextFragment : Fragment(){
 
         tts = TextToSpeechUtil(requireContext())
         exercise = args.exercise
-
-        Log.i("exercise", exercise.toString())
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner){
             PracticeActivity.quitPractice(requireActivity(), requireContext())
@@ -59,21 +66,32 @@ class PracticeTranslateTextFragment : Fragment(){
                 }
             }
             VocabularyWord.TYPE_SYNONYM -> {
-                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_synonyms)
+                binding.textViewPracticeTranslateTextTop.text = getText(R.string.action_write_synonyms)
                 binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
                 if(exercise.readOut[1]){
                     speakWord()
                 }
             }
             VocabularyWord.TYPE_ANTONYM -> {
-                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_antonyms)
+                binding.textViewPracticeTranslateTextTop.text = getText(R.string.action_write_antonyms)
                 binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
                 if(exercise.readOut[1]){
                     speakWord()
                 }
             }
             VocabularyWord.TYPE_WORD_FAMILY -> {
-                TODO()
+                val word = exercise.words[0] as WordFamily
+                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_word_familys_type, when(word.otherWordsType){
+                    WordFamily.WORD_NOUN -> getText(R.string.word_type_noun)
+                    WordFamily.WORD_ADVERB -> getText(R.string.word_type_adverb)
+                    WordFamily.WORD_VERB -> getText(R.string.word_type_verb)
+                    WordFamily.WORD_ADJECTIVE -> getText(R.string.word_type_adjective)
+                    else -> "UNKNOWN"
+                })
+                binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
+                if(exercise.readOut[1]){
+                    speakWord()
+                }
             }
         }
 
@@ -155,16 +173,13 @@ class PracticeTranslateTextFragment : Fragment(){
     private fun startCorrection(){
         val correctionBottomSheet = CorrectionBottomSheet()
 
-        val otherWords: ArrayList<String> = when(exercise.words[0]){
-            is WordTranslation -> (exercise.words[0] as WordTranslation).otherWords
-            is Synonym -> (exercise.words[0] as Synonym).otherWords
-            is WordFamily -> {
-                val other = ArrayList<String>()
-                // TODO
-                // (exercise.words[0] as WordFamily).otherWords.forEach { if((exercise.words[0] as WordFamily).otherWords[0].second == it.second) other.add(it.first) }
-                other
-            }
-            else -> { ArrayList() }
+        val otherWords = ArrayList<String>().apply {
+            addAll(when(exercise.words[0]){
+                is WordTranslation -> (exercise.words[0] as WordTranslation).otherWords
+                is Synonym -> (exercise.words[0] as Synonym).otherWords
+                is WordFamily -> { (exercise.words[0] as WordFamily).otherWords }
+                else -> { ArrayList() }
+            })
         }
 
         val proofreader = if(exercise.isOtherWordAskedAsAnswer){
@@ -213,9 +228,6 @@ class PracticeTranslateTextFragment : Fragment(){
             alternativeText = if(exercise.isOtherWordAskedAsAnswer) exercise.words[0].getSecondWordsAsString() else exercise.words[0].mainWord
             wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)
         }
-
-        Log.w("Test", alternativeText)
-        Log.w("TestWrongIndex", wrongIndex.toString())
 
         correctionBottomSheet.arguments = bundleOf("wrongIndex" to wrongIndex, "alternativesText" to alternativeText, "isCorrect" to isCorrect)
 

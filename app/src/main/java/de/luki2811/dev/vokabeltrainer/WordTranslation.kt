@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.util.Log
 import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
@@ -34,7 +35,7 @@ data class WordTranslation(override var mainWord: String,
         return StringBuilder().apply {
             otherWords.forEach {
                 append(it.trim())
-                if(otherWords[otherWords.size-1] != it)
+                if(otherWords.last() != it)
                 append("; ")
             }
         }.toString()
@@ -64,6 +65,10 @@ data class WordTranslation(override var mainWord: String,
             }catch (e: JSONException){
                 val array = json.getString("first").split(";").toMutableList() as ArrayList<String>
                 array.onEach { it.trim() }
+            }
+
+            if(otherWords.isEmpty()){
+                Log.w("WordTranslation","No other words found")
             }
 
             val otherLanguageWord = otherLanguage ?: try { Locale(json.getString("otherLanguage")) } catch (e: JSONException){ Locale(json.getString("firstLanguage")) }

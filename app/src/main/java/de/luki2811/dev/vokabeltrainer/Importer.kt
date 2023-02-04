@@ -6,20 +6,19 @@ import android.widget.Toast
 import org.json.JSONException
 import org.json.JSONObject
 
-class Importer(private val data: String, val context: Context) {
-    // var lesson: Lesson? = null
+class Importer(private val data: String, private val context: Context) {
     var vocabularyGroup: VocabularyGroup? = null
 
-    fun tryAll(): Int{
+    fun start(): Int{
         if(data.isEmpty())
             return IMPORT_EMPTY
         return try {
             val dataAsJson = JSONObject(data)
             try {
                 when(dataAsJson.getInt("type")){
-                    Exportable.TYPE_LESSON -> tryLesson()
-                    Exportable.TYPE_VOCABULARY_GROUP -> tryVocabularyGroup()
-                    Exportable.TYPE_SHORT_FORM -> tryShortForm()
+                    Exportable.TYPE_LESSON -> tryLesson(dataAsJson)
+                    Exportable.TYPE_VOCABULARY_GROUP -> importVocabularyGroup(dataAsJson)
+                    Exportable.TYPE_SHORT_FORM -> importShortForm(dataAsJson)
                     else -> IMPORT_WRONG_OR_NONE_TYPE
                 }
             }catch (e: JSONException){
@@ -30,12 +29,9 @@ class Importer(private val data: String, val context: Context) {
         }
     }
 
-    private fun tryShortForm(): Int{
-        if(data.isEmpty()){
-            return IMPORT_EMPTY
-        }
+    private fun importShortForm(dataObject: JSONObject): Int{
+
         return try {
-            val dataObject = JSONObject(data)
             val dataArray = dataObject.getJSONArray("items")
             val allShortForms = ShortForm.loadAllShortForms(context)
 
@@ -57,12 +53,9 @@ class Importer(private val data: String, val context: Context) {
         }
     }
 
-    private fun tryVocabularyGroup(cancelWithWrongType: Boolean = true): Int{
-        if(data.isEmpty())
-            return IMPORT_EMPTY
-        try {
-            val dataAsJson = JSONObject(data)
+    private fun importVocabularyGroup(dataAsJson: JSONObject,cancelWithWrongType: Boolean = true): Int{
 
+        try {
             if(cancelWithWrongType){
                 if(dataAsJson.getInt("type") != Exportable.TYPE_VOCABULARY_GROUP){
                     return IMPORT_WRONG_OR_NONE_TYPE
@@ -72,7 +65,7 @@ class Importer(private val data: String, val context: Context) {
             if(dataAsJson.getJSONArray("vocabulary").length() < 2){
                return VOCABULARY_GROUP_TOO_SHORT
             }
-            val vocabularyGroup = VocabularyGroup.loadFromJSON(dataAsJson, context = context)
+            val vocabularyGroup = VocabularyGroup.loadFromJSON(dataAsJson, context = context, generateNewId = true)
             var tempInt = 0
             while(VocabularyGroup.isNameValid(context, vocabularyGroup.name) != 0){
                 tempInt += 1
@@ -84,7 +77,9 @@ class Importer(private val data: String, val context: Context) {
 
                 vocabularyGroup.name = nameOfVocGroup
             }
+
             this.vocabularyGroup = vocabularyGroup
+
             return IMPORT_SUCCESSFULLY_VOCABULARY_GROUP
         }catch (e: JSONException){
             e.printStackTrace()
@@ -92,37 +87,31 @@ class Importer(private val data: String, val context: Context) {
         }
     }
 
-    private fun tryLesson(): Int{
-        if(data.isEmpty())
-            return IMPORT_EMPTY
+    private fun tryLesson(dataAsJson: JSONObject): Int{
+
         try {
-            val dataAsJson = JSONObject(data)
-
-            if(dataAsJson.getInt("type") != Exportable.TYPE_LESSON){
-                return IMPORT_WRONG_OR_NONE_TYPE
-            }
-
             val groups = arrayListOf<VocabularyGroup>()
             val vocabularyGroups = dataAsJson.getJSONArray("vocabularyGroups")
 
             for (i in 0 until vocabularyGroups.length()){
-                val vocGroupFromLesson = VocabularyGroup.loadFromJSON(vocabularyGroups.getJSONObject(i), context = context, generateNewId = true)
 
-                var tempInt = 0
-                while(VocabularyGroup.isNameValid(context, vocGroupFromLesson.name) != 0){
-                    tempInt += 1
-                    var nameOfVocGroup = vocGroupFromLesson.name
-                    nameOfVocGroup = if(tempInt > 1)
-                        nameOfVocGroup.replace("(${tempInt - 1})","(${tempInt})")
-                    else
-                        "${vocGroupFromLesson.name} (1)"
-
-                    vocGroupFromLesson.name = nameOfVocGroup
+                when(val errorCode = importVocabularyGroup(vocabularyGroups.getJSONObject(i), cancelWithWrongType = false)){
+                    IMPORT_SUCCESSFULLY_VOCABULARY_GROUP -> {
+                        if(vocabularyGroup != null){
+                            Log.i("Import", "ID: ${vocabularyGroup!!.id}")
+                            groups.add(vocabularyGroup!!)
+                            vocabularyGroup!!.saveInFile(context)
+                            vocabularyGroup!!.saveInIndex(context)
+                        }else{
+                            Log.e("Import","Failed to add vocabularyGroup at $i because is null")
+                        }
+                    }
+                    else -> {
+                        Log.e("Import", "Import  of vocabulary group failed with error code $errorCode")
+                    }
                 }
-                Log.i("Import ID", vocGroupFromLesson.id.number.toString())
-                groups.add(vocGroupFromLesson)
-                vocGroupFromLesson.saveInFile(context)
-                vocGroupFromLesson.saveInIndex(context)
+
+
             }
 
             var nameOfLesson = dataAsJson.getString("name").trim()
@@ -136,47 +125,25 @@ class Importer(private val data: String, val context: Context) {
                     "${dataAsJson.getString("name")} (1)"
 
             }
-            val askOnlyNewWords = dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
-            val readOutBoth = try {
-                if(dataAsJson.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)
-            }catch (e: JSONException){
-                val tempArr = arrayListOf<Boolean>()
-                tempArr.add(0, dataAsJson.getJSONObject("settings").getBoolean("readOutFirstWords"))
-                tempArr.add(1, dataAsJson.getJSONObject("settings").getBoolean("readOutSecondWords"))
-                tempArr
-            }
-            val numberOfExercises = try {
-                dataAsJson.getJSONObject("settings").getInt("numberOfExercises")
-            } catch (e: JSONException){
-                10
-            }
-            val askForSecondWordsOnly = try {
-                dataAsJson.getJSONObject("settings").getBoolean("askOnlyNewWords")
-            }catch (e: JSONException){
-                e.printStackTrace()
-                false
+
+            val ids = ArrayList<Id>()
+            groups.forEach {
+                ids.add(it.id)
             }
 
-            val useTypes = arrayListOf<Int>()
-            if(dataAsJson.getJSONObject("settings").getBoolean("useType1")) useTypes.add(Exercise.TYPE_TRANSLATE_TEXT)
-            if(dataAsJson.getJSONObject("settings").getBoolean("useType2")) useTypes.add(Exercise.TYPE_CHOOSE_OF_THREE_WORDS)
-            if(dataAsJson.getJSONObject("settings").getBoolean("useType3")) useTypes.add(Exercise.TYPE_MATCH_FIVE_WORDS)
-
-            val typesOfWordToPractice = try {
-                val array = arrayListOf<Int>()
-                for (i in 0 until dataAsJson.getJSONObject("settings").getJSONArray("typesOfWordToPractice").length()){
-                    array.add(dataAsJson.getJSONObject("settings").getJSONArray("typesOfWordToPractice").getInt(i))
-                }
-                array
-            }catch (e: JSONException){
-                arrayListOf(VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM)
+            val lesson = Lesson.fromJSON(dataAsJson, context, true, alternativeIdsOfVocGroups = ids)
+            return if(lesson != null){
+                lesson.saveInFile(context)
+                lesson.saveInIndex(context)
+                IMPORT_SUCCESSFULLY_LESSON
+            }else{
+                Log.e("Import", "Failed to import lesson because is null")
+                IMPORT_FAILED_NULL
             }
 
-            val lesson = Lesson(nameOfLesson, Id.generate(context).apply { register(context) }, groups, readOut =  readOutBoth, askForSecondWordsOnly = askOnlyNewWords, typesOfExercises =  useTypes, numberOfExercises =  numberOfExercises, askForAllWords = askForSecondWordsOnly, typesOfWordToPractice = typesOfWordToPractice)
-            lesson.saveInFile(context)
-            lesson.saveInIndex(context)
 
-            return IMPORT_SUCCESSFULLY_LESSON
+
+
 
         } catch (e: JSONException){
             Toast.makeText(context, context.getText(R.string.err_could_not_import_lesson), Toast.LENGTH_LONG).show()
@@ -193,6 +160,7 @@ class Importer(private val data: String, val context: Context) {
         const val IMPORT_WRONG_OR_NONE_TYPE = 1
         const val IMPORT_EMPTY = 2
         const val IMPORT_NO_JSON = 3
+        const val IMPORT_FAILED_NULL = 4
 
         const val VOCABULARY_GROUP_TOO_SHORT = 10
 

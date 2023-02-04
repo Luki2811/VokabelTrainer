@@ -325,5 +325,10 @@
     <string name="word_family_main">Main word</string>
     <string name="word_family_other">Word of the word family</string>
     <string name="word_family_type">Word type</string>
+    <string name="action_write_word_familys_type">Write a(n) <b>%1$s</b> from this word family</string>
+    <string name="action_find_synonym">Find a correct synonym</string>
+    <string name="action_find_antonym">Find a correct antonym</string>
+    <string name="action_find_word_family_type">Find a correct %1$s of this word family</string>
+    <string name="err_no_fitting_exercise_selected">Error: No exercise fits with selected filters. Choose random</string>
 
 </resources>

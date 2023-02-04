@@ -74,6 +74,8 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             secondToFirstTranslator.downloadModelIfNeeded(conditions)
                 .addOnSuccessListener {
                     Log.i("Translator", "Download successfully")
+                    if(_binding == null)
+                        return@addOnSuccessListener
                     binding.textEditEditorUpperInput.addTextChangedListener {
                         if(!it.isNullOrBlank() && vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_TRANSLATION) {
                             secondToFirstTranslator.translate(it.toString())
@@ -293,7 +295,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 binding.textEditEditorLowerInput.setText(vocabularyGroup.vocabulary[pos].getSecondWordsAsString())
             }
             VocabularyWord.TYPE_WORD_FAMILY -> {
-                binding.textEditEditorWordTypeInput.setText(when((vocabularyGroup.vocabulary[pos] as WordFamily).otherWords[0].second){
+                binding.textEditEditorWordTypeInput.setText(when((vocabularyGroup.vocabulary[pos] as WordFamily).otherWordsType){
                     WordFamily.WORD_NOUN -> getString(R.string.word_type_noun)
                     WordFamily.WORD_VERB -> getString(R.string.word_type_verb)
                     WordFamily.WORD_ADJECTIVE -> getString(R.string.word_type_adjective)
@@ -301,7 +303,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                     else -> ""
                 })
                 binding.textEditEditorUpperInput.setText(vocabularyGroup.vocabulary[pos].mainWord)
-                binding.textEditEditorLowerInput.setText((vocabularyGroup.vocabulary[pos] as WordFamily).otherWords[0].first)
+                binding.textEditEditorLowerInput.setText((vocabularyGroup.vocabulary[pos] as WordFamily).getSecondWordsAsString())
             }
         }
 
@@ -379,17 +381,18 @@ class VocabularyGroupWordEditorFragment : Fragment() {
             }
 
             VocabularyWord.TYPE_WORD_FAMILY -> {
-                val otherWord: Pair<String, Int> = Pair(binding.textEditEditorLowerInput.text.toString().trim(), when(binding.textEditEditorWordTypeInput.text.toString()){
+                val otherWords = binding.textEditEditorLowerInput.text.toString().split(";").toMutableList().onEach { it.trim() } as ArrayList<String>
+                val otherWordsType: Int = when(binding.textEditEditorWordTypeInput.text.toString()){
                     getString(R.string.word_type_noun) -> WordFamily.WORD_NOUN
                     getString(R.string.word_type_verb) -> WordFamily.WORD_VERB
                     getString(R.string.word_type_adjective) -> WordFamily.WORD_ADJECTIVE
                     getString(R.string.word_type_adverb) -> WordFamily.WORD_ADVERB
                     else -> WordFamily.WORD_UNKNOWN
-                })
+                }
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
 
-                WordFamily(mainWord, arrayListOf(otherWord), vocabularyGroup.mainLanguage, isIgnoreCase)
+                WordFamily(mainWord, otherWords, otherWordsType, vocabularyGroup.mainLanguage, isIgnoreCase)
             }
 
             else -> {

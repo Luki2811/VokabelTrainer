@@ -81,7 +81,7 @@ class LessonBasicFragment: Fragment() {
             binding.textLessonName.setText(lesson.name)
             binding.chipLessonSettingsChipReadFirstWords.isChecked = lesson.readOut[0]
             binding.chipLessonSettingsChipReadSecondWords.isChecked = lesson.readOut[1]
-            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.askForSecondWordsOnly
+            binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.isOnlyMainWordAskedAsAnswer
 
 
             binding.chipTypeLesson1.isChecked = lesson.typesOfExercises.contains(1)
@@ -185,13 +185,13 @@ class LessonBasicFragment: Fragment() {
         }
 
         if(args.mode == MODE_CREATE){
-            lesson = Lesson(name, Id.generate(requireContext()).apply { register(requireContext()) }, typesOfExercises = typesOfLesson, vocabularyGroups =  vocabularyGroups, readOut = settingReadOut, askForAllWords =  askForAllWords , askForSecondWordsOnly = settingAskOnlyNewWords, numberOfExercises = numberOfExercises, typesOfWordToPractice = typesOfWords)
+            lesson = Lesson(name, Id.generate(requireContext()).apply { register(requireContext()) }, typesOfExercises = typesOfLesson, vocabularyGroups =  vocabularyGroups, readOut = settingReadOut, askForAllWords =  askForAllWords , isOnlyMainWordAskedAsAnswer = settingAskOnlyNewWords, numberOfExercises = numberOfExercises, typesOfWordToPractice = typesOfWords)
             lesson.saveInIndex(requireContext())
         }else{
             lesson.name = name
             lesson.vocabularyGroups = vocabularyGroups
             lesson.readOut = settingReadOut
-            lesson.askForSecondWordsOnly = settingAskOnlyNewWords
+            lesson.isOnlyMainWordAskedAsAnswer = settingAskOnlyNewWords
             lesson.typesOfExercises = typesOfLesson
             lesson.numberOfExercises = numberOfExercises
             lesson.askForAllWords = askForAllWords

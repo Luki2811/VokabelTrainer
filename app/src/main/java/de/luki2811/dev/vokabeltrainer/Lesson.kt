@@ -20,7 +20,7 @@ data class Lesson(var name: String,
                   var typesOfExercises: ArrayList<Int> = arrayListOf(TYPE_TRANSLATE_TEXT, TYPE_CHOOSE_OF_THREE_WORDS, TYPE_MATCH_FIVE_WORDS),
                   var readOut: ArrayList<Boolean>,
                   var askForAllWords: Boolean,
-                  var askForSecondWordsOnly: Boolean,
+                  var isOnlyMainWordAskedAsAnswer: Boolean,
                   var isFavorite: Boolean = false,
                   var numberOfExercises: Int,
                   var typesOfWordToPractice: ArrayList<Int> = arrayListOf(VocabularyWord.TYPE_ANTONYM, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_WORD_FAMILY)): Exportable, Parcelable {
@@ -107,7 +107,7 @@ data class Lesson(var name: String,
             put("settings", JSONObject().apply {
                 put("readOutFirstWords", readOut[0])
                 put("readOutSecondWords", readOut[1])
-                put("askOnlyNewWords", askForSecondWordsOnly)
+                put("askOnlyNewWords", isOnlyMainWordAskedAsAnswer)
                 put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
                 put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
                 put("useType3", typesOfExercises.contains(TYPE_MATCH_FIVE_WORDS))
@@ -157,14 +157,30 @@ data class Lesson(var name: String,
          * @return
          */
 
-         fun fromJSON(json: JSONObject, context: Context, registerId: Boolean): Lesson?{
+         fun fromJSON(json: JSONObject, context: Context, generateNewId: Boolean, alternativeIdsOfVocGroups: ArrayList<Id> = arrayListOf()): Lesson?{
             try {
                 val name = json.getString("name")
-                val id = Id(json.getInt("id"))
-                if(registerId) id.register(context)
-                val groups = ArrayList<VocabularyGroup>()
-                for(i in 0 until json.getJSONArray("vocabularyGroupIds").length())
-                    groups.add(i, VocabularyGroup.loadFromFileWithId(Id(json.getJSONArray("vocabularyGroupIds").getInt(i)), context)!!)
+                val id = if(generateNewId) {
+                    Id.generate(context).apply { register(context) }
+                } else{
+                    Id(json.getInt("id"))
+                }
+                val groups: ArrayList<VocabularyGroup> = if(alternativeIdsOfVocGroups.isEmpty()){
+                    val list = ArrayList<VocabularyGroup>()
+                    for(i in 0 until json.getJSONArray("vocabularyGroupIds").length()){
+                        val group = VocabularyGroup.loadFromFileWithId(Id(json.getJSONArray("vocabularyGroupIds").getInt(i)), context)
+                        if(group != null) list.add(i, group) else Log.e("Lesson","Failed to add vocGroup")
+                    }
+
+                    list
+                }else{
+                    val list = ArrayList<VocabularyGroup>()
+                    for (i in alternativeIdsOfVocGroups){
+                        list.add(VocabularyGroup.loadFromFileWithId(i, context)!!)
+                    }
+                    list
+                }
+
 
                 val readOut = try {
                     if(json.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)

@@ -135,7 +135,7 @@ class ListLessonsLearnAdapter(
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
             activity.startActivity(Intent(context, PracticeActivity::class.java).apply {
                 putExtra("lesson", dataSetFilter[viewHolder.layoutPosition])
-                putExtra("practiceMistakes", false)
+                putExtra("mode", PracticeActivity.MODE_NORMAL)
             })
         }
 

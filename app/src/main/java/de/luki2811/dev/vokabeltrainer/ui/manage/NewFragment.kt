@@ -174,6 +174,9 @@ class NewFragment : Fragment() {
                                 }
                             }
                             .addOnCanceledListener { Log.i("GmsBarcodeScanning","Canceled") }
+                            .addOnCompleteListener {
+                                it.result
+                            }
                             .addOnFailureListener { e ->
                                 MaterialAlertDialogBuilder(requireContext())
                                     .setIcon(R.drawable.ic_outline_error_24)
@@ -290,7 +293,7 @@ class NewFragment : Fragment() {
 
     private fun startFinalImport(data: String){
         val importer = Importer(data, requireContext())
-        when(importer.tryAll()){
+        when(importer.start()){
             Importer.IMPORT_SUCCESSFULLY_VOCABULARY_GROUP -> {
                 findNavController().navigate(NewFragmentDirections.actionCreateNewMainFragmentToNewVocabularyGroupFragment(importer.vocabularyGroup!!, VocabularyGroupBasicFragment.MODE_IMPORT))
             }

@@ -72,26 +72,35 @@ class PracticeOutOfThreeFragment: Fragment() {
 
         if(exercise.isOtherWordAskedAsAnswer){
             binding.textViewPracticeChooseThreeBottom.text = word.mainWord
-            when(word){
-                is WordTranslation -> {
+
+            when(word.typeOfWord){
+                VocabularyWord.TYPE_TRANSLATION -> {
                     binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).otherLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
                 }
-                is Synonym -> { TODO() }
-                is WordFamily -> { TODO() }
+                VocabularyWord.TYPE_SYNONYM -> {
+                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.action_find_synonym)
+                }
+                VocabularyWord.TYPE_ANTONYM -> {
+                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.action_find_antonym)
+                }
+                VocabularyWord.TYPE_WORD_FAMILY -> {
+                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.action_find_word_family_type, when((word as WordFamily).otherWordsType){
+                        WordFamily.WORD_NOUN -> getText(R.string.word_type_noun)
+                        WordFamily.WORD_ADVERB -> getText(R.string.word_type_adverb)
+                        WordFamily.WORD_VERB -> getText(R.string.word_type_verb)
+                        WordFamily.WORD_ADJECTIVE -> getText(R.string.word_type_adjective)
+                        else -> "UNKNOWN"
+                    })
+                }
             }
 
             if(exercise.readOut[0])
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
+            binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
             binding.textViewPracticeChooseThreeBottom.text = word.getSecondWordsAsString()
-            when(word){
-                is WordTranslation -> {
-                    binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
-                }
-                is Synonym -> { TODO() }
-                is WordFamily -> { TODO() }
-            }
+
             if(exercise.readOut[1]){
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
             }
@@ -181,23 +190,19 @@ class PracticeOutOfThreeFragment: Fragment() {
             val otherWords: ArrayList<String> = when(word){
                 is WordTranslation -> (word as WordTranslation).otherWords
                 is Synonym -> (word as Synonym).otherWords
-                is WordFamily -> {
-                    val other = ArrayList<String>()
-                    // TODO
-                    // (word as WordFamily).otherWords.forEach { if(exercise.typeOfWordInFamily == it.second) other.add(it.first) }
-                    other
+                is WordFamily -> { (word as WordFamily).otherWords
                 }
                 else -> { ArrayList() }
             }
 
-            val otherAlternatives = if(exercise.isOtherWordAskedAsAnswer) otherWords else ArrayList<String>().apply { add(word.mainWord) }
+            var otherAlternatives = if(exercise.isOtherWordAskedAsAnswer) otherWords else ArrayList<String>().apply { add(word.mainWord) }
 
             otherAlternatives.replaceAll { it.trim() }
 
             val inputStrings = answer.trim().split(";").toMutableList()
             inputStrings.replaceAll { if(exercise.words[0].isIgnoreCase) it.lowercase().trim() else it.trim() }
 
-            otherAlternatives.removeAll{ inputStrings.contains(it.lowercase()) }
+            otherAlternatives = otherAlternatives.filter { !inputStrings.contains(it.lowercase()) } as ArrayList<String>
 
             alternativeText = if(otherAlternatives.isEmpty()){
                 ""
@@ -216,11 +221,7 @@ class PracticeOutOfThreeFragment: Fragment() {
                 val otherWords: ArrayList<String> = when(word){
                     is WordTranslation -> (word as WordTranslation).otherWords
                     is Synonym -> (word as Synonym).otherWords
-                    /** is WordFamily -> {
-                        val other = ArrayList<String>()
-                        (word as WordFamily).otherWords.forEach { other.add(it.first) }
-                        other
-                    } **/
+                    is WordFamily -> { (word as WordFamily).otherWords }
                     else -> { ArrayList() }
                 }
                 correctionBottomSheet.arguments = bundleOf("alternativesText" to otherWords, "isCorrect" to false)

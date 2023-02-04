@@ -14,7 +14,7 @@ import de.luki2811.dev.vokabeltrainer.WordTranslation
 import java.time.format.DateTimeFormatter
 
 class ListMistakesAdapter(
-    private val dataSet: ArrayList<Mistake>,
+    private var dataSet: ArrayList<Mistake>,
     private val numberExercisesTotal: Int = -1,
     private val context: Context
     ) : RecyclerView.Adapter<ListMistakesAdapter.ViewHolder>() {
@@ -54,11 +54,13 @@ class ListMistakesAdapter(
 
         }
         viewHolder.textViewAnsweredWord.text = dataSet[position].wrongAnswer
+
         viewHolder.buttonDelete.apply {
             setOnClickListener {
                 if(viewHolder.layoutPosition >= 0){
                     dataSet[viewHolder.layoutPosition].removeFromFile(context)
                     notifyItemRemoved(viewHolder.layoutPosition)
+                    dataSet = Mistake.loadAllFromFile(context)
                 }
             }
         }

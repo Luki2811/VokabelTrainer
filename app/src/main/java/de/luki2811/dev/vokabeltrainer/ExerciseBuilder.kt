@@ -9,7 +9,7 @@ class ExerciseBuilder(
     private val askAllWords: Boolean,
     private val readOut: ArrayList<Boolean>,
     private val typesOfLesson: ArrayList<Int>,
-    private val askForSecondWordsOnly: Boolean,
+    private val isOnlyMainWordAskedAsAnswer: Boolean,
     private val practiceMistake: Boolean,
     private val typesOfWordsToPractice: ArrayList<Int>,
     private val mistake: ArrayList<Mistake>? = null,
@@ -23,7 +23,7 @@ class ExerciseBuilder(
         exercise.type = getTypeToPractice(exercise.words[0].typeOfWord)
         exercise.askAllWords = askAllWords
         exercise.readOut = readOut
-        exercise.isOtherWordAskedAsAnswer = getAskSecondWord(exercise.words[0])
+        exercise.isOtherWordAskedAsAnswer = getIsOtherWordAskedAsAnswer(exercise.words[0])
 
         // Add more words for an exercise
 
@@ -44,8 +44,8 @@ class ExerciseBuilder(
 
         if (exercise.type == Exercise.TYPE_CHOOSE_OF_THREE_WORDS) {
             try{
-                exercise.words.add(1, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == VocabularyWord.TYPE_TRANSLATION }.random())
-                exercise.words.add(2, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == VocabularyWord.TYPE_TRANSLATION }.random())
+                exercise.words.add(1, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == exercise.words[0].typeOfWord }.random())
+                exercise.words.add(2, allWordsToSelectFrom.filter { !exercise.words.contains(it) && it.typeOfWord == exercise.words[0].typeOfWord }.random())
             } catch (e: IndexOutOfBoundsException){
                 Log.e("ExerciseBuilder", e.toString())
                 exercise.type = Exercise.TYPE_TRANSLATE_TEXT
@@ -58,11 +58,13 @@ class ExerciseBuilder(
         return exercise
     }
 
-    private fun getAskSecondWord(word: VocabularyWord): Boolean{
-        return if(practiceMistake){
+    private fun getIsOtherWordAskedAsAnswer(word: VocabularyWord): Boolean{
+        return if(practiceMistake) {
             mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.askedForSecondWord
-        }else if(askForSecondWordsOnly || word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
+        }else if(word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
             true
+        }else if(isOnlyMainWordAskedAsAnswer){
+            false
         } else {
             (0..1).random() == 1
         }
@@ -72,7 +74,12 @@ class ExerciseBuilder(
         return if(practiceMistake) {
             Exercise.TYPE_TRANSLATE_TEXT
         } else if(typeOfWord == VocabularyWord.TYPE_SYNONYM || typeOfWord == VocabularyWord.TYPE_ANTONYM || typeOfWord == VocabularyWord.TYPE_WORD_FAMILY){
-            Exercise.TYPE_TRANSLATE_TEXT
+            try {
+                typesOfLesson.filter { it != Exercise.TYPE_MATCH_FIVE_WORDS }.random()
+            }catch (e: NoSuchElementException){
+                Toast.makeText(context, context.getString(R.string.err_no_fitting_exercise_selected), Toast.LENGTH_LONG).show()
+                arrayOf(Exercise.TYPE_TRANSLATE_TEXT, Exercise.TYPE_CHOOSE_OF_THREE_WORDS).random()
+            }
         } else{
             typesOfLesson.random()
         }

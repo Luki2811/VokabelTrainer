@@ -41,6 +41,7 @@ class ListVocabularyGroupsAdapter(
      * (custom ViewHolder).
      */
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
         val textViewText: TextView = view.findViewById(R.id.textViewlistVocabularyGroup)
         val textViewSecondLanguage: TextView = view.findViewById(R.id.textViewSecondLanguage)
         val textViewFirstLanguage: TextView = view.findViewById(R.id.textViewFirstLanguage)
@@ -117,22 +118,49 @@ class ListVocabularyGroupsAdapter(
     override fun getFilter(): Filter {
         return object : Filter() {
             override fun performFiltering(constraint: CharSequence?): FilterResults {
-                val charSearch = constraint.toString()
-                dataSetFilter = if (charSearch.isEmpty()) {
+                val charSearch = constraint.toString().trim()
+                val results = if (charSearch.isEmpty()) {
                     dataSet
-                } else {
+                }else if(charSearch.startsWith("word:", ignoreCase = true)) {
+                    val searchedWord = charSearch.removePrefix("word:").trim()
                     val resultList = ArrayList<VocabularyGroup>()
-                    for (row in dataSet) {
-                        if (row.name.lowercase(Locale.getDefault()).contains(charSearch.lowercase(
-                                Locale.getDefault()))) {
-                            resultList.add(row)
+                    for (group in dataSet) {
+                        if (group.vocabulary.any { vocabularyWord ->
+                                vocabularyWord.mainWord.contains(
+                                    searchedWord,
+                                    ignoreCase = true
+                                ) || vocabularyWord.getSecondWordsAsString()
+                                    .contains(searchedWord.trim(), ignoreCase = true)
+                            })
+                            resultList.add(group)
+                    }
+                    resultList
+                }else if(charSearch.startsWith("lang:", ignoreCase = true)){
+                    val searchedWord = charSearch.removePrefix("lang:").trim()
+                    val resultList = ArrayList<VocabularyGroup>()
+                    for(group in dataSet){
+                        if(
+                            group.mainLanguage.getDisplayLanguage(Settings(context).appLanguage).contains(searchedWord, ignoreCase = true) ||
+                            group.mainLanguage.language.equals(searchedWord, ignoreCase = false) ||
+                            group.otherLanguage.getDisplayLanguage(Settings(context).appLanguage).contains(searchedWord, ignoreCase = true) ||
+                            group.otherLanguage.language.equals(searchedWord, ignoreCase = false)
+                        ){
+                            resultList.add(group)
+                        }
+                    }
+
+                    resultList
+                }else {
+                    val resultList = ArrayList<VocabularyGroup>()
+                    for (group in dataSet) {
+                        if (group.name.lowercase(Locale.getDefault()).contains(charSearch.lowercase(Locale.getDefault()))) {
+                            resultList.add(group)
                         }
                     }
                     resultList
                 }
-                val filterResults = FilterResults()
-                filterResults.values = dataSetFilter
-                return filterResults
+
+                return FilterResults().apply { this.values = results}
             }
 
             @SuppressLint("NotifyDataSetChanged")
@@ -143,6 +171,7 @@ class ListVocabularyGroupsAdapter(
                 result.sortWith(compareBy { it.name })
 
                 dataSetFilter = result
+
                 notifyDataSetChanged()
 
             }

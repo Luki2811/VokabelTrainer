@@ -8,7 +8,8 @@ import java.util.*
 
 @Parcelize
 data class WordFamily(override var mainWord: String,
-                      var otherWords: ArrayList<Pair<String, Int>>,
+                      var otherWords: ArrayList<String>,
+                      var otherWordsType: Int,
                       var language: Locale,
                       override var isIgnoreCase: Boolean,
                       override var level: Int = 0,
@@ -21,12 +22,10 @@ data class WordFamily(override var mainWord: String,
             put("mainWord", mainWord.trim())
             put("otherWords", JSONArray().apply {
                 otherWords.forEach {
-                    put(JSONObject().apply {
-                        put("word", it.first.trim())
-                        put("type", it.second)
-                    })
+                    put(it)
                 }
             })
+            put("otherWordsType", otherWordsType)
             if(!withoutLanguage) {
                 put("language", language.language)
             }
@@ -38,7 +37,7 @@ data class WordFamily(override var mainWord: String,
     override fun getSecondWordsAsString(): String{
         return StringBuilder().apply {
             otherWords.forEach {
-                append(it.first.trim())
+                append(it.trim())
                 if(otherWords[otherWords.size-1] != it)
                     append("; ")
             }
@@ -49,13 +48,11 @@ data class WordFamily(override var mainWord: String,
 
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): WordFamily{
             val mainWord = json.getString("mainWord")
-            val otherWords: ArrayList<Pair<String, Int>> = arrayListOf()
+            val otherWords: ArrayList<String> = arrayListOf()
             for (i in 0 until json.getJSONArray("otherWords").length()){
-                otherWords.add(Pair<String, Int>(
-                    json.getJSONArray("otherWords").getJSONObject(i).getString("word"),
-                    json.getJSONArray("otherWords").getJSONObject(i).getInt("type")
-                ))
+                otherWords.add(json.getJSONArray("otherWords").getString(i))
             }
+            val otherWordsType = json.getInt("otherWordsType")
             val language = tempLanguage ?: try{
                 Locale.forLanguageTag(json.getString("language"))
             }catch (e: JSONException){
@@ -64,7 +61,7 @@ data class WordFamily(override var mainWord: String,
             val ignoreCase = json.getBoolean("ignoreCase")
             val level = json.getInt("level")
 
-            return WordFamily(mainWord, otherWords, language, ignoreCase, level)
+            return WordFamily(mainWord, otherWords, otherWordsType , language, ignoreCase, level)
         }
 
         const val WORD_UNKNOWN = -10
