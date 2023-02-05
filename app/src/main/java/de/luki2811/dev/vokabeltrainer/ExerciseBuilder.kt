@@ -7,7 +7,7 @@ import android.widget.Toast
 class ExerciseBuilder(
     private var allWordsToSelectFrom: ArrayList<VocabularyWord>,
     private val askAllWords: Boolean,
-    private val readOut: ArrayList<Boolean>,
+    private val readOut: ArrayList<Pair<Int, Boolean>>,
     private val typesOfLesson: ArrayList<Int>,
     private val isOnlyMainWordAskedAsAnswer: Boolean,
     private val practiceMistake: Boolean,

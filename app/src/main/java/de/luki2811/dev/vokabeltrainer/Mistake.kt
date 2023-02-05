@@ -1,25 +1,30 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
+import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
+import java.text.FieldPosition
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-data class Mistake(var word: VocabularyWord, var askedForSecondWord: Boolean = false, var typeOfPractice: Int) {
+@Parcelize
+data class Mistake(var word: VocabularyWord,
+                   var askedForSecondWord: Boolean,
+                   var typeOfPractice: Int,
+                   var wrongAnswer: String,
+                   var position: Int,
+                   var lastTimeWrong: LocalDate,
+                   var isRepeated: Boolean = false): Parcelable {
 
     init {
         word.level = 0
         word.alreadyUsedInExercise = false
     }
-
-    var wrongAnswer: String = ""
-    var lastTimeWrong: LocalDate = LocalDate.now()
-    var position: Int = -1
-    var isRepeated = false
 
     fun getAsJson(ignoreDate: Boolean = false): JSONObject {
         val wordAsJson = word.getAsJSON(withoutLanguage = false)
@@ -92,11 +97,7 @@ data class Mistake(var word: VocabularyWord, var askedForSecondWord: Boolean = f
                 }catch (e: JSONException){
                     -1
                 }
-                Mistake(word, askedForSecondWord, typeOfPractice).apply {
-                    this.wrongAnswer = wrongAnswer
-                    this.lastTimeWrong = lastTimeWrong
-                    this.position = position
-                }
+                Mistake(word, askedForSecondWord, typeOfPractice, wrongAnswer, position, lastTimeWrong)
             }catch (e: JSONException){
                 Log.e("Mistake", "Error while create Mistake ${e.printStackTrace()}")
                 null

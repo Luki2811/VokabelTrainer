@@ -137,11 +137,13 @@ class PracticeActivity : AppCompatActivity() {
             }else{
                 correctInARow = 0
 
-                val newMistake = Mistake(word = exercise.words[0], askedForSecondWord = exercise.isOtherWordAskedAsAnswer, typeOfPractice = exercise.type).apply {
-                    wrongAnswer = exerciseResult.answer
-                    this.position = this@PracticeActivity.position
-                    lastTimeWrong = LocalDate.now()
-                }
+                val newMistake = Mistake(
+                    word = exercise.words[0],
+                    askedForSecondWord = exercise.isOtherWordAskedAsAnswer,
+                    typeOfPractice = exercise.type,
+                    wrongAnswer = exerciseResult.answer,
+                    position = position,
+                    lastTimeWrong = LocalDate.now())
                 mistakes.add(newMistake)
                 newMistake.addToFile(this)
             }

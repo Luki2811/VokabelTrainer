@@ -94,14 +94,14 @@ class PracticeOutOfThreeFragment: Fragment() {
                 }
             }
 
-            if(exercise.readOut[0])
+            if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true))
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
         }
         else {
             binding.textViewPracticeChooseThreeTop.text = getString(R.string.translate_in_lang, (word as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
             binding.textViewPracticeChooseThreeBottom.text = word.getSecondWordsAsString()
 
-            if(exercise.readOut[1]){
+            if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)){
                 speakWord(binding.textViewPracticeChooseThreeBottom.text.toString())
             }
         }
@@ -134,15 +134,15 @@ class PracticeOutOfThreeFragment: Fragment() {
 
             when(binding.chipGroupPracticeOptions.checkedChipId){
                 binding.chipPracticeOption1.id -> {
-                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
+                    if((exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption1.text.toString(), lang)
                 }
                 binding.chipPracticeOption2.id -> {
-                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
+                    if((exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption2.text.toString(), lang)
                 }
                 binding.chipPracticeOption3.id -> {
-                    if((exercise.readOut[0] && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && exercise.isOtherWordAskedAsAnswer))
+                    if((exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer))
                         tts?.speak(binding.chipPracticeOption3.text.toString(), lang)
                 }
             }
@@ -164,12 +164,12 @@ class PracticeOutOfThreeFragment: Fragment() {
 
     private fun speakWord(text: String){
         val lang = when(word){
-            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (word as WordTranslation).otherLanguage else (word as WordTranslation).mainLanguage }
+            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (word as WordTranslation).mainLanguage else (word as WordTranslation).otherLanguage }
             is Synonym -> { (word as Synonym).language }
             is WordFamily -> { (word as WordFamily).language }
             else -> { Locale.ENGLISH }
         }
-        if((exercise.readOut[0] && exercise.isOtherWordAskedAsAnswer) || (exercise.readOut[1] && !exercise.isOtherWordAskedAsAnswer))
+        if((exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer))
             tts?.speak(text, lang)
     }
 

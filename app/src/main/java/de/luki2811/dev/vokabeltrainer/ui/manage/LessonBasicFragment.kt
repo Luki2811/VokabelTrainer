@@ -79,8 +79,8 @@ class LessonBasicFragment: Fragment() {
             }
 
             binding.textLessonName.setText(lesson.name)
-            binding.chipLessonSettingsChipReadFirstWords.isChecked = lesson.readOut[0]
-            binding.chipLessonSettingsChipReadSecondWords.isChecked = lesson.readOut[1]
+            binding.chipLessonSettingsChipReadFirstWords.isChecked = lesson.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)
+            binding.chipLessonSettingsChipReadSecondWords.isChecked = lesson.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)
             binding.switchLessonSettingsAskOnlyNewWords.isChecked = lesson.isOnlyMainWordAskedAsAnswer
 
 
@@ -141,10 +141,10 @@ class LessonBasicFragment: Fragment() {
         // Settings
 
         // If selected is it false
-        val settingReadOut = arrayListOf<Boolean>()
+        val settingReadOut = arrayListOf<Pair<Int, Boolean>>()
 
-        settingReadOut.add(0, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadFirstWords.id))
-        settingReadOut.add(1, binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadSecondWords.id))
+        settingReadOut.add(Lesson.READ_OTHER_LANGUAGE to binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadFirstWords.id))
+        settingReadOut.add(Lesson.READ_MAIN_LANGUAGE to binding.chipGroupLessonSettingsReadOutBoth.checkedChipIds.contains(binding.chipLessonSettingsChipReadSecondWords.id))
 
         val settingAskOnlyNewWords = binding.switchLessonSettingsAskOnlyNewWords.isChecked
         val numberOfExercises = binding.sliderCreateLessonNumberExercises.value.toInt()

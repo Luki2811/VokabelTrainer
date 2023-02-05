@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.content.Context
 import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
@@ -42,6 +43,16 @@ data class WordFamily(override var mainWord: String,
                     append("; ")
             }
         }.toString()
+    }
+
+    fun getTypeDisplayName(context: Context): String{
+        return when(otherWordsType){
+            WORD_NOUN -> context.getString(R.string.word_type_noun)
+            WORD_ADVERB -> context.getString(R.string.word_type_adverb)
+            WORD_VERB -> context.getString(R.string.word_type_verb)
+            WORD_ADJECTIVE -> context.getString(R.string.word_type_adjective)
+            else -> "UNKNOWN"
+        }
     }
 
     companion object{

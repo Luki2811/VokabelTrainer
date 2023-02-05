@@ -330,5 +330,6 @@
     <string name="action_find_antonym">Find a correct antonym</string>
     <string name="action_find_word_family_type">Find a correct %1$s of this word family</string>
     <string name="err_no_fitting_exercise_selected">Error: No exercise fits with selected filters. Choose random</string>
+    <string name="word_family_with_type">%1$s (%2$s)</string>
 
 </resources>

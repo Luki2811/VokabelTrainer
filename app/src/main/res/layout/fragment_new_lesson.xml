@@ -136,7 +136,7 @@
                     android:id="@+id/chipLessonSettingsChipReadFirstWords"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/first_words"
+                    android:text="@string/language_other"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:textAppearance="@style/chipText"
                     />
@@ -147,7 +147,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/chipText"
                     style="@style/Widget.Material3.Chip.Filter"
-                    android:text="@string/second_words"/>
+                    android:text="@string/language_main"/>
 
             </com.google.android.material.chip.ChipGroup>
 

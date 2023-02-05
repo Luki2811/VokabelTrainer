@@ -18,7 +18,7 @@ data class Lesson(var name: String,
                   var id: Id,
                   var vocabularyGroups: ArrayList<VocabularyGroup>,
                   var typesOfExercises: ArrayList<Int> = arrayListOf(TYPE_TRANSLATE_TEXT, TYPE_CHOOSE_OF_THREE_WORDS, TYPE_MATCH_FIVE_WORDS),
-                  var readOut: ArrayList<Boolean>,
+                  var readOut: ArrayList<Pair<Int, Boolean>>,
                   var askForAllWords: Boolean,
                   var isOnlyMainWordAskedAsAnswer: Boolean,
                   var isFavorite: Boolean = false,
@@ -105,8 +105,8 @@ data class Lesson(var name: String,
             }
 
             put("settings", JSONObject().apply {
-                put("readOutFirstWords", readOut[0])
-                put("readOutSecondWords", readOut[1])
+                put("readOutFirstWords", readOut.contains(Pair(READ_OTHER_LANGUAGE, true)))
+                put("readOutSecondWords", readOut.contains(Pair(READ_MAIN_LANGUAGE, true)))
                 put("askOnlyNewWords", isOnlyMainWordAskedAsAnswer)
                 put("useType1", typesOfExercises.contains(TYPE_TRANSLATE_TEXT))
                 put("useType2", typesOfExercises.contains(TYPE_CHOOSE_OF_THREE_WORDS))
@@ -152,6 +152,9 @@ data class Lesson(var name: String,
         const val INVALID_EMPTY = -3
         const val INVALID_NAME_ALREADY_USED = -4
 
+        const val READ_MAIN_LANGUAGE = 10
+        const val READ_OTHER_LANGUAGE = 11
+
         /**
          * Create a lesson from a JSONObject
          * @return
@@ -182,12 +185,13 @@ data class Lesson(var name: String,
                 }
 
 
-                val readOut = try {
-                    if(json.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(false, true) else arrayListOf(true, true)
+                val readOut: ArrayList<Pair<Int, Boolean>> = try {
+                    if(json.getJSONObject("settings").getBoolean("readOutBoth")) arrayListOf(
+                        READ_MAIN_LANGUAGE to true, READ_OTHER_LANGUAGE to false) else arrayListOf(READ_MAIN_LANGUAGE to true, READ_OTHER_LANGUAGE to true)
                 }catch (e: JSONException){
-                    val tempArr = arrayListOf<Boolean>()
-                    tempArr.add(0, json.getJSONObject("settings").getBoolean("readOutFirstWords"))
-                    tempArr.add(1, json.getJSONObject("settings").getBoolean("readOutSecondWords"))
+                    val tempArr = arrayListOf<Pair<Int, Boolean>>()
+                    tempArr.add(READ_OTHER_LANGUAGE to json.getJSONObject("settings").getBoolean("readOutFirstWords"))
+                    tempArr.add(READ_MAIN_LANGUAGE to json.getJSONObject("settings").getBoolean("readOutSecondWords"))
                     tempArr
                 }
                 val askForSecondWordsOnly = try {

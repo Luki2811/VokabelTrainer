@@ -12,6 +12,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.chip.Chip
 import de.luki2811.dev.vokabeltrainer.Exercise
 import de.luki2811.dev.vokabeltrainer.ExerciseResult
+import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
 import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentPracticeMatchFiveWordsBinding
@@ -104,20 +105,20 @@ class PracticeMatchFiveWordsFragment : Fragment() {
     private fun speakOutWord(chipId: Int){
 
         when(chipId) {
-            binding.chip0LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.mainLanguage)
-            binding.chip0LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip0LearnNewLan.text.toString(), vocKnown0.otherLanguage)
+            binding.chip0LearnNativeLan.id -> if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)) tts?.speak(binding.chip0LearnNativeLan.text.toString(), vocKnown0.mainLanguage)
+            binding.chip0LearnNewLan.id -> if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)) tts?.speak(binding.chip0LearnNewLan.text.toString(), vocKnown0.otherLanguage)
 
-            binding.chip1LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.mainLanguage)
-            binding.chip1LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip1LearnNewLan.text.toString(), vocKnown1.otherLanguage)
+            binding.chip1LearnNativeLan.id -> if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)) tts?.speak(binding.chip1LearnNativeLan.text.toString(), vocKnown1.mainLanguage)
+            binding.chip1LearnNewLan.id -> if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)) tts?.speak(binding.chip1LearnNewLan.text.toString(), vocKnown1.otherLanguage)
 
-            binding.chip2LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.mainLanguage)
-            binding.chip2LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip2LearnNewLan.text.toString(), vocKnown2.otherLanguage)
+            binding.chip2LearnNativeLan.id -> if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)) tts?.speak(binding.chip2LearnNativeLan.text.toString(), vocKnown2.mainLanguage)
+            binding.chip2LearnNewLan.id -> if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)) tts?.speak(binding.chip2LearnNewLan.text.toString(), vocKnown2.otherLanguage)
 
-            binding.chip3LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.mainLanguage)
-            binding.chip3LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip3LearnNewLan.text.toString(), vocKnown3.otherLanguage)
+            binding.chip3LearnNativeLan.id -> if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)) tts?.speak(binding.chip3LearnNativeLan.text.toString(), vocKnown3.mainLanguage)
+            binding.chip3LearnNewLan.id -> if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)) tts?.speak(binding.chip3LearnNewLan.text.toString(), vocKnown3.otherLanguage)
 
-            binding.chip4LearnNativeLan.id -> if(exercise.readOut[0]) tts?.speak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.mainLanguage)
-            binding.chip4LearnNewLan.id -> if(exercise.readOut[1]) tts?.speak(binding.chip4LearnNewLan.text.toString(), vocKnown4.otherLanguage)
+            binding.chip4LearnNativeLan.id -> if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)) tts?.speak(binding.chip4LearnNativeLan.text.toString(), vocKnown4.mainLanguage)
+            binding.chip4LearnNewLan.id -> if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)) tts?.speak(binding.chip4LearnNewLan.text.toString(), vocKnown4.otherLanguage)
         }
 
     }

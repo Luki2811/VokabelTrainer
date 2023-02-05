@@ -15,6 +15,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.luki2811.dev.vokabeltrainer.Exercise
 import de.luki2811.dev.vokabeltrainer.ExerciseResult
+import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.Proofreader
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
@@ -53,50 +54,44 @@ class PracticeTranslateTextFragment : Fragment(){
                 if(exercise.isOtherWordAskedAsAnswer){
                     binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
                     binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, (exercise.words[0] as WordTranslation).otherLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
-                    if(exercise.readOut[0]){
-                        speakWord()
+                    if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)){
+                        speakWord(false)
                     }
                 }
                 else {
                     binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].getSecondWordsAsString()
                     binding.textViewPracticeTranslateTextTop.text = getString(R.string.translate_in_lang, (exercise.words[0] as WordTranslation).mainLanguage.getDisplayLanguage(Settings(requireContext()).appLanguage))
-                    if(exercise.readOut[1]){
-                        speakWord()
+                    if(exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)){
+                        speakWord(false)
                     }
                 }
             }
             VocabularyWord.TYPE_SYNONYM -> {
                 binding.textViewPracticeTranslateTextTop.text = getText(R.string.action_write_synonyms)
                 binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
-                if(exercise.readOut[1]){
-                    speakWord()
+                if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)){
+                    speakWord(false)
                 }
             }
             VocabularyWord.TYPE_ANTONYM -> {
                 binding.textViewPracticeTranslateTextTop.text = getText(R.string.action_write_antonyms)
                 binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
-                if(exercise.readOut[1]){
-                    speakWord()
+                if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)){
+                    speakWord(false)
                 }
             }
             VocabularyWord.TYPE_WORD_FAMILY -> {
                 val word = exercise.words[0] as WordFamily
-                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_word_familys_type, when(word.otherWordsType){
-                    WordFamily.WORD_NOUN -> getText(R.string.word_type_noun)
-                    WordFamily.WORD_ADVERB -> getText(R.string.word_type_adverb)
-                    WordFamily.WORD_VERB -> getText(R.string.word_type_verb)
-                    WordFamily.WORD_ADJECTIVE -> getText(R.string.word_type_adjective)
-                    else -> "UNKNOWN"
-                })
+                binding.textViewPracticeTranslateTextTop.text = getString(R.string.action_write_word_familys_type, word.getTypeDisplayName(requireContext()) )
                 binding.textViewPracticeTranslateTextBottom.text = exercise.words[0].mainWord
-                if(exercise.readOut[1]){
-                    speakWord()
+                if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)){
+                    speakWord(false)
                 }
             }
         }
 
         if(Settings(requireContext()).readOutVocabularyGeneral)
-            binding.buttonSpeakTranslateText.setOnClickListener { speakWord() }
+            binding.buttonSpeakTranslateText.setOnClickListener { speakWord(false) }
         else
             binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
 
@@ -107,7 +102,7 @@ class PracticeTranslateTextFragment : Fragment(){
 
             if(settings.readOutVocabularyGeneral) {
                 binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_up_24)
-                binding.buttonSpeakTranslateText.setOnClickListener { speakWord() }
+                binding.buttonSpeakTranslateText.setOnClickListener { speakWord(false) }
             }
             else {
                 binding.buttonSpeakTranslateText.setIconResource(R.drawable.ic_outline_volume_off_24)
@@ -145,14 +140,36 @@ class PracticeTranslateTextFragment : Fragment(){
         return binding.root
     }
 
-    private fun speakWord(){
-        val lang = when(exercise.words[0]){
-            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).mainLanguage else (exercise.words[0] as WordTranslation).otherLanguage }
-            is Synonym -> { (exercise.words[0] as Synonym).language }
-            is WordFamily -> { (exercise.words[0] as WordFamily).language }
-            else -> { Locale.ENGLISH }
+    private fun speakWord(speakCorrectAnswer: Boolean, otherText: String = "", otherLang: Locale? = null){
+        var lang: Locale
+        var text: String
+        if(speakCorrectAnswer){
+            lang = when(exercise.words[0]){
+                is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
+                is Synonym -> { (exercise.words[0] as Synonym).language }
+                is WordFamily -> { (exercise.words[0] as WordFamily).language }
+                else -> { Locale.ENGLISH }
+            }
+            text = if(exercise.isOtherWordAskedAsAnswer) exercise.words[0].getSecondWordsAsString() else exercise.words[0].mainWord
+        }else{
+            lang = when(exercise.words[0]){
+                is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).mainLanguage else (exercise.words[0] as WordTranslation).otherLanguage }
+                is Synonym -> { (exercise.words[0] as Synonym).language }
+                is WordFamily -> { (exercise.words[0] as WordFamily).language }
+                else -> { Locale.ENGLISH }
+            }
+            text = binding.textViewPracticeTranslateTextBottom.text.toString()
         }
-        when(tts?.speak(binding.textViewPracticeTranslateTextBottom.text.toString(), lang)){
+
+        if(otherText.isNotBlank()){
+            text = otherText
+        }
+
+        if(otherLang != null){
+            lang = otherLang
+        }
+
+        when(tts?.speak(text, lang)){
             TextToSpeechUtil.ERROR_MISSING_LANG_DATA -> Snackbar.make(
                 binding.root,
                 getString(R.string.err_missing_language_data_tts),
@@ -224,6 +241,8 @@ class PracticeTranslateTextFragment : Fragment(){
                 }
                 sb.toString()
             }
+            if((exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer))
+                speakWord(true, alternativeText)
         }else{
             alternativeText = if(exercise.isOtherWordAskedAsAnswer) exercise.words[0].getSecondWordsAsString() else exercise.words[0].mainWord
             wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)

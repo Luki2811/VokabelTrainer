@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class Exercise(var type: Int = TYPE_UNKNOWN,
                     var isOtherWordAskedAsAnswer: Boolean = false,
                     var askAllWords: Boolean = false,
-                    var readOut: ArrayList<Boolean> = arrayListOf(false, false),
+                    var readOut: ArrayList<Pair<Int, Boolean>> = arrayListOf(Lesson.READ_MAIN_LANGUAGE to false, Lesson.READ_OTHER_LANGUAGE to false),
                     var words: ArrayList<VocabularyWord> = arrayListOf()
                     ): Parcelable {
 
