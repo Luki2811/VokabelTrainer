@@ -12,9 +12,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.google.android.material.sidesheet.SideSheetDialog
+import de.luki2811.dev.vokabeltrainer.Exercise
+import de.luki2811.dev.vokabeltrainer.Id
 import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Synonym
+import de.luki2811.dev.vokabeltrainer.VocabularyGroup
+import de.luki2811.dev.vokabeltrainer.WordFamily
+import de.luki2811.dev.vokabeltrainer.WordTranslation
 import de.luki2811.dev.vokabeltrainer.adapter.ListMistakesAdapter
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreatePracticeBinding
 import de.luki2811.dev.vokabeltrainer.databinding.SideSheetSettingsMistakeLessonBinding
@@ -39,6 +45,13 @@ class CreatePracticeFragment : Fragment() {
         binding.appBarCreatePractice.apply {
             setNavigationOnClickListener { findNavController().popBackStack() }
             subtitle = getString(R.string.number_of_mistakes, allMistakes.size)
+        }
+
+        binding.buttonCreateMistakeLessonStart.apply {
+            isEnabled = (numberOfExercises >= 5 && allMistakes.size >= 5)
+            setOnClickListener {
+                startLesson(createMistakeLesson())
+            }
         }
 
         binding.buttonCreateMistakeLessonSettings.setOnClickListener {
@@ -84,6 +97,9 @@ class CreatePracticeFragment : Fragment() {
                         putInt("numberOfExercises", numberOfExercises)
                         apply()
                     }
+
+                    binding.buttonCreateMistakeLessonStart.isEnabled = (numberOfExercises >= 5 && allMistakes.size >= 5)
+
                 }
             }.show()
         }
@@ -105,7 +121,54 @@ class CreatePracticeFragment : Fragment() {
     }
 
     private fun createMistakeLesson(): Lesson{
-        TODO()
+        val sharedPreferences = requireActivity().getPreferences(Context.MODE_PRIVATE)
+        val vocGroups = ArrayList<VocabularyGroup>()
+        val mistakes = ArrayList<Mistake>()
+
+        for(i in 0 until sharedPreferences.getInt("numberOfExercises", 0)){
+            mistakes.add(allMistakes.filter { !mistakes.contains(it) }.random())
+        }
+
+        allMistakes.forEach {
+            vocGroups.add(
+                when(it.word){
+                    is WordTranslation -> {
+                        with(it.word as WordTranslation){
+                            VocabularyGroup("", Id(0), otherLanguage, mainLanguage, arrayListOf(this))
+                        }
+                    }
+                    is Synonym -> {
+                        with(it.word as Synonym){
+                            VocabularyGroup("", Id(0), language, language, arrayListOf(this))
+                        }
+                    }
+                    is WordFamily -> {
+                        with(it.word as WordFamily){
+                            VocabularyGroup("", Id(0), language, language, arrayListOf(this))
+                        }
+                    }
+                    else -> {
+                        Log.e("CreateMistakeLesson", "Failed to get type of vocabularyWord")
+                        return@forEach
+                    }
+                }
+            )
+        }
+
+        return Lesson(
+            name = "",
+            id = Id(0),
+            vocabularyGroups = vocGroups,
+            typesOfExercises = arrayListOf(Exercise.TYPE_TRANSLATE_TEXT),
+            askForAllWords = sharedPreferences.getBoolean("requestAllOtherWords", false),
+            isOnlyMainWordAskedAsAnswer = false,
+            isFavorite = false,
+            numberOfExercises = sharedPreferences.getInt("numberOfExercises", 0),
+            readOut = arrayListOf(
+                Lesson.READ_MAIN_LANGUAGE to sharedPreferences.getBoolean("readMainLang", true),
+                Lesson.READ_OTHER_LANGUAGE to sharedPreferences.getBoolean("readOtherLang", true)
+            )
+        )
     }
 
     private fun startLesson(lesson: Lesson){

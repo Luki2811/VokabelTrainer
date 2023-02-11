@@ -8,13 +8,12 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.text.FieldPosition
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Parcelize
 data class Mistake(var word: VocabularyWord,
-                   var askedForSecondWord: Boolean,
+                   var isOtherWordAskedAsAnswer: Boolean,
                    var typeOfPractice: Int,
                    var wrongAnswer: String,
                    var position: Int,
@@ -40,7 +39,7 @@ data class Mistake(var word: VocabularyWord,
                 .put("wrongAnswer", wrongAnswer)
                 .put("typeOfPractice", typeOfPractice)
                 .put("position", position)
-                .put("askedForSecondWord", askedForSecondWord)
+                .put("askedForSecondWord", isOtherWordAskedAsAnswer)
         }else{
             JSONObject()
                 .put("vocabularyWord", wordAsJson)
@@ -48,7 +47,7 @@ data class Mistake(var word: VocabularyWord,
                 .put("typeOfPractice", typeOfPractice)
                 .put("lastTimeWrong", dateAsString)
                 .put("position", position)
-                .put("askedForSecondWord",askedForSecondWord)
+                .put("askedForSecondWord",isOtherWordAskedAsAnswer)
         }
     }
 

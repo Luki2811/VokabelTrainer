@@ -134,18 +134,32 @@ class PracticeActivity : AppCompatActivity() {
 
             if(exerciseResult.isCorrect){
                 correctInARow += 1
+                if(mode == MODE_PRACTICE_MISTAKES){
+                    val mistake = Mistake.loadAllFromFile(this).find {
+                        it.word.mainWord == exercise.words[0].mainWord && it.word.typeOfWord == exercise.words[0].typeOfWord && it.isOtherWordAskedAsAnswer == exercise.isOtherWordAskedAsAnswer
+                    }
+                    if(mistake == null){
+                        Log.w("Practice", "Failed to find (and remove) mistake in list")
+                        Log.w("Practice", Mistake.loadAllFromFile(this).toString())
+                        Log.w("Practice", "${exercise.words[0].mainWord },${exercise.words[0].typeOfWord},${exercise.isOtherWordAskedAsAnswer}")
+                    }else{
+                        mistake.removeFromFile(this)
+                    }
+                }
             }else{
                 correctInARow = 0
 
                 val newMistake = Mistake(
                     word = exercise.words[0],
-                    askedForSecondWord = exercise.isOtherWordAskedAsAnswer,
+                    isOtherWordAskedAsAnswer = exercise.isOtherWordAskedAsAnswer,
                     typeOfPractice = exercise.type,
                     wrongAnswer = exerciseResult.answer,
                     position = position,
                     lastTimeWrong = LocalDate.now())
                 mistakes.add(newMistake)
-                newMistake.addToFile(this)
+
+                if(mode == MODE_NORMAL)
+                    newMistake.addToFile(this)
             }
 
             binding.progressBarPractice.setProgress(position, true)
@@ -164,14 +178,12 @@ class PracticeActivity : AppCompatActivity() {
 
         // Send to mistakes
         supportFragmentManager.setFragmentResultListener("sendToMistakes", this) { _, _ ->
-            val mistakesAsArrayListString = arrayListOf<String>()
-            mistakes.forEach { mistakesAsArrayListString.add(it.getAsJson().toString()) }
 
             binding.progressBarPractice.visibility = View.GONE
             binding.buttonExitPractice.visibility = View.GONE
             binding.textViewPracticeInfoMistake.visibility = View.GONE
 
-            navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakesAsArrayListString.toTypedArray(), lesson.numberOfExercises + mistakes.size))
+            navHostFragment.navController.navigate(PracticeFinishFragmentDirections.actionPracticeFinishFragmentToPracticeMistakesFragment(mistakes.toTypedArray(), lesson.numberOfExercises + mistakes.size))
         }
     }
 
@@ -186,6 +198,7 @@ class PracticeActivity : AppCompatActivity() {
             position > lesson.numberOfExercises,
             lesson.typesOfWordToPractice,
             mistakes,
+            mode = mode,
             this).build()
 
 

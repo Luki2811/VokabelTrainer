@@ -122,7 +122,7 @@
         tools:layout="@layout/fragment_practice_mistakes" >
         <argument
             android:name="mistakes"
-            app:argType="string[]" />
+            app:argType="de.luki2811.dev.vokabeltrainer.Mistake[]" />
         <argument
             android:name="totalNumberExcercies"
             app:argType="integer"

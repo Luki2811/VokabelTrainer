@@ -11,7 +11,6 @@ import de.luki2811.dev.vokabeltrainer.Mistake
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
 import de.luki2811.dev.vokabeltrainer.WordFamily
-import de.luki2811.dev.vokabeltrainer.WordTranslation
 import java.time.format.DateTimeFormatter
 
 class ListMistakesAdapter(
@@ -49,12 +48,12 @@ class ListMistakesAdapter(
         viewHolder.textViewType.text = context.getString(R.string.type_of_lesson, typeAsString)
         when(dataSet[position].word.typeOfWord){
             VocabularyWord.TYPE_TRANSLATION, VocabularyWord.TYPE_SYNONYM, VocabularyWord.TYPE_ANTONYM -> {
-                viewHolder.textViewAskedWord.text = if(dataSet[position].askedForSecondWord) {
+                viewHolder.textViewAskedWord.text = if(dataSet[position].isOtherWordAskedAsAnswer) {
                     dataSet[position].word.mainWord
                 } else {
                     dataSet[position].word.getSecondWordsAsString()
                 }
-                viewHolder.textViewCorrectWord.text = if(dataSet[position].askedForSecondWord) {
+                viewHolder.textViewCorrectWord.text = if(dataSet[position].isOtherWordAskedAsAnswer) {
                     dataSet[position].word.getSecondWordsAsString()
                 } else {
                     dataSet[position].word.mainWord

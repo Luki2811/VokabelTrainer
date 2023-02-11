@@ -3,9 +3,10 @@ package de.luki2811.dev.vokabeltrainer
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import de.luki2811.dev.vokabeltrainer.ui.practice.PracticeActivity
 
 class ExerciseBuilder(
-    private var allWordsToSelectFrom: ArrayList<VocabularyWord>,
+    private val allWordsToSelectFrom: ArrayList<VocabularyWord>,
     private val askAllWords: Boolean,
     private val readOut: ArrayList<Pair<Int, Boolean>>,
     private val typesOfLesson: ArrayList<Int>,
@@ -13,6 +14,7 @@ class ExerciseBuilder(
     private val practiceMistake: Boolean,
     private val typesOfWordsToPractice: ArrayList<Int>,
     private val mistake: ArrayList<Mistake>? = null,
+    private val mode: Int,
     private val context: Context) {
 
 
@@ -59,14 +61,20 @@ class ExerciseBuilder(
     }
 
     private fun getIsOtherWordAskedAsAnswer(word: VocabularyWord): Boolean{
-        return if(practiceMistake) {
-            mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.askedForSecondWord
-        }else if(word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
-            true
-        }else if(isOnlyMainWordAskedAsAnswer){
-            false
-        } else {
-            (0..1).random() == 1
+        return if(mode == PracticeActivity.MODE_PRACTICE_MISTAKES){
+            val mistake = Mistake.loadAllFromFile(context).find { word.mainWord == it.word.mainWord && word.typeOfWord == it.word.typeOfWord && word.getSecondWordsAsString() == it.word.getSecondWordsAsString() }
+            Log.d("ExerciseBuilder", "Mistake to practice $mistake")
+            return mistake?.isOtherWordAskedAsAnswer ?: false
+        }else {
+            if(practiceMistake) {
+                mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.isOtherWordAskedAsAnswer
+            }else if(word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
+                true
+            }else if(isOnlyMainWordAskedAsAnswer){
+                false
+            } else {
+                (0..1).random() == 1
+            }
         }
     }
 
