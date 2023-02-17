@@ -109,7 +109,7 @@ class PracticeTranslateTextFragment : Fragment(){
                 binding.buttonSpeakTranslateText.setOnClickListener {  }
             }
 
-            settings.saveSettingsInFile()
+            settings.save()
 
             true
         }
@@ -241,8 +241,15 @@ class PracticeTranslateTextFragment : Fragment(){
                 }
                 sb.toString()
             }
-            if((exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true) && exercise.isOtherWordAskedAsAnswer) || (exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true) && !exercise.isOtherWordAskedAsAnswer))
-                speakWord(true, alternativeText)
+
+            // TODO: Check if it works
+            if(exercise.isOtherWordAskedAsAnswer && exercise.readOut.contains(Lesson.READ_OTHER_LANGUAGE to true)){
+                speakWord(true, exercise.words[0].getSecondWordsAsString())
+            }else if(exercise.readOut.contains(Lesson.READ_MAIN_LANGUAGE to true)){
+                speakWord(true, exercise.words[0].mainWord)
+            }
+
+
         }else{
             alternativeText = if(exercise.isOtherWordAskedAsAnswer) exercise.words[0].getSecondWordsAsString() else exercise.words[0].mainWord
             wrongIndex = proofreader.getWrongCharIndices(exercise.words[0].isIgnoreCase)

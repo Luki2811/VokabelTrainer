@@ -105,18 +105,26 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/buttonResetLevels"
-                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                style="@style/Widget.Material3.Button.IconButton.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/reset_all_word_levels"
+                android:visibility="visible"
+                app:icon="@drawable/ic_baseline_refresh_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyBasicSettingsInfo" />
+
+            <TextView
+                android:id="@+id/textViewIdOfGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
-                android:text="@string/reset_all_word_levels"
-                android:visibility="gone"
-                app:icon="@drawable/ic_baseline_refresh_24"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/id"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textViewVocabularyBasicSettingsInfo" />
+                app:layout_constraintTop_toBottomOf="@+id/buttonResetLevels" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

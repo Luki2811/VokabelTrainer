@@ -1,8 +1,10 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.widget.Toast
 import java.util.*
 
 
@@ -34,6 +36,12 @@ class TextToSpeechUtil(val context: Context) {
         if(!isInitialized){
             queuedRequests.add(text to language)
             return QUEUED_REQUEST
+        }
+
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        if(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC) == 0){
+            Toast.makeText(context, context.getString(R.string.increase_volume), Toast.LENGTH_SHORT).show()
         }
 
         when(tts.setLanguage(language)){

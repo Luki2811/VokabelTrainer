@@ -174,9 +174,6 @@ class NewFragment : Fragment() {
                                 }
                             }
                             .addOnCanceledListener { Log.i("GmsBarcodeScanning","Canceled") }
-                            .addOnCompleteListener {
-                                it.result
-                            }
                             .addOnFailureListener { e ->
                                 MaterialAlertDialogBuilder(requireContext())
                                     .setIcon(R.drawable.ic_outline_error_24)

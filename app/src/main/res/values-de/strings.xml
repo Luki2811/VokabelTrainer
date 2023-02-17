@@ -35,7 +35,6 @@
     <string name="finish_lesson">Übung geschafft</string>
     <string name="voc_in">Vokabel auf %1$s</string>
     <string name="number_voc_of_rest">Vokabel %1$d von %2$d</string>
-    <string name="save_and_next">Speichern und weiter</string>
     <string name="streak_in_days">%1$d\nTage</string>
     <string name="streak_in_day">%1$d\nTag</string>
     <string name="streak_left_to_do_for_next_day">Dir fehlen noch %1$d XP zu deinem %2$d Tage Streak</string>
@@ -66,7 +65,6 @@
     <string name="vocabulary_groups">Vokabelgruppen</string>
     <string name="err_could_not_import_vocabulary_group">Fehler: Vokabelgruppe konnte nicht importiert werden !</string>
     <string name="add">Hinzufügen</string>
-    <string name="to">zu</string>
     <string name="delete_lesson">Lektion löschen</string>
     <string name="do_you_really_want_to_delete_lesson">Möchten sie wirklich die Lektion \"%1$s\" löschen ??</string>
     <string name="loading_data">Daten werden geladen</string>
@@ -106,7 +104,7 @@
     <string name="settings_types_of_lesson">Typen von Übungen</string>
     <string name="err_need_one_type_of_lesson">Fehler: Es wird mindestens 1 Typ von Übungen benötigt</string>
     <string name="settings_main_read_out_forbidden_central">Vokabeln vorlesen zentral deaktivieren</string>
-    <string name="warning">Warnung</string>
+    <string name="warning">Warnung!</string>
     <string name="warning_lose_of_progress">Wenn sie ihr Streak-Tagesziel ändern, wird der heutige Tag evtl. entfernt</string>
     <string name="open_source_licences">Open-Source Lizenzen</string>
     <string name="name_of_imported_vocabulary_group">Name der importierten Vokabelgruppe</string>
@@ -188,9 +186,9 @@
 
     <string name="synonym">Synonym</string>
     <string name="antonym">Antonym</string>
-    <string name="word_in_other_language">Wort in bekannter (erster) Sprache</string>
-    <string name="word_in_main_language">Wort in neuer (zweiten) Sprache</string>
-    <string name="info_text_languages_in_voc_group_editor" >Die zweite (neue) Sprache wird für alle Synonyme und Antonyme in dieser Vokabelgruppe festgelegt</string>
+    <string name="word_in_other_language">Wort in bekannter Sprache</string>
+    <string name="word_in_main_language">Wort in neuer Sprache</string>
+    <string name="info_text_languages_in_voc_group_editor" >Die Hauptsprache ist für Übersetzungen (neue Wörter), Synonyme, Antonyme und Wortfamilien eingestellt. Die andere Sprache ist nur für Übersetzungen (bekannte Wörter) eingestellt.</string>
     <string name="synonym_other">Synonyme</string>
     <string name="synonym_main">Stammwort</string>
     <string name="antonym_main">Stammwort</string>
@@ -198,17 +196,15 @@
     <string name="settings_enable_suggestion_in_editor">Vorschläge im Vokabelgruppen-Editor</string>
     <string name="lesson_request_all_possible_answer">Alle möglichen Antworten fordern</string>
     <string name="alternatives">Alternativen: %1$s</string>
-    <string name="reset_all_word_levels">Alle \"level\" zurücksetzten</string>
+    <string name="reset_all_word_levels">Alle \"Level\" zurücksetzten</string>
     <string name="message_reset_levels">Möchten sie wirklich alle Level zurücksitzen. Dieser Schritt ist nicht umkehrbar !</string>
-    <string name="title_reset_all_levels">Alle level zurücksetzen ??</string>
+    <string name="title_reset_all_levels">Alle Level zurücksetzen ??</string>
     <string name="err_missing_language_data_tts">Fehler: Fehlende Sprachdaten um Wörter vorzulesen</string>
     <string name="action_install">Installieren</string>
     <string name="err_too_many_lines">Fehler: Zu viele Zeilen (max. %1$d)</string>
     <string name="action_write_synonyms">Schreibe die Synonyme</string>
     <string name="action_write_antonyms">Schreibe die Antonyme</string>
     <string name="action_manage_short_forms">Abkürzungen verwalten</string>
-    <string name="first_words">Erste Wörter</string>
-    <string name="second_words">Zweite Wörter</string>
     <string name="settings_lesson_read_out">Vorlesen…</string>
     <string name="all_short_forms">Alle Abkürzungen</string>
     <string name="import_short_form_successful">Neue Abkürzung erfolgreich importiert</string>
@@ -216,7 +212,22 @@
     <string name="err_no_short_forms">Fehler: Keine Abkürzungen</string>
     <string name="short_form">Kurze Form</string>
     <string name="long_form">Lange Form</string>
+    <string name="msg_welcome">Hej</string>
+    <string name="large_text">[...]</string>
     <string name="err_no_words_found_with_filter">Fehler: Es können keine Wörter mit dem ausgewählten Filter zum Üben gefunden werden.</string>
     <string name="types_of_word">Worttypen</string>
     <string name="word_family">Wortfamilie</string>
+    <string name="word_type_noun">Nomen</string>
+    <string name="word_type_verb">Verb</string>
+    <string name="word_type_adjective">Adjektiv</string>
+    <string name="word_type_adverb">Adverb</string>
+    <string name="word_family_main">Stammwort</string>
+    <string name="word_family_other">Wort der Wortfamilie</string>
+    <string name="word_family_type">Worttyp</string>
+    <string name="action_write_word_familys_type">Schreibe ein %1$s von dieser Wortfamilie</string>
+    <string name="action_find_synonym">Finde ein Synonym</string>
+    <string name="action_find_antonym">Finde ein Antonym</string>
+    <string name="action_find_word_family_type">Finde ein %1$s von dieser Wortfamilie</string>
+    <string name="err_no_fitting_exercise_selected">Fehler: Keine Aufgabe passt zu den ausgewählten Filter. Auswahl zufällig</string>
+    <string name="increase_volume">Lautstärke erhöhen!</string>
 </resources>

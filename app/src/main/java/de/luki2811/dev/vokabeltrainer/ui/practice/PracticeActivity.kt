@@ -130,18 +130,24 @@ class PracticeActivity : AppCompatActivity() {
                 }
             }
 
-            Log.i("Mistakes", mistakes.toString())
+            Log.i(LOG_TAG, "Mistake: $mistakes")
 
             if(exerciseResult.isCorrect){
+                if(exercise.isOtherWordAskedAsAnswer){
+                    exercise.words[0].levelOther +=1
+                }else{
+                    exercise.words[0].levelMain += 1
+                }
+
                 correctInARow += 1
                 if(mode == MODE_PRACTICE_MISTAKES){
                     val mistake = Mistake.loadAllFromFile(this).find {
                         it.word.mainWord == exercise.words[0].mainWord && it.word.typeOfWord == exercise.words[0].typeOfWord && it.isOtherWordAskedAsAnswer == exercise.isOtherWordAskedAsAnswer
                     }
                     if(mistake == null){
-                        Log.w("Practice", "Failed to find (and remove) mistake in list")
-                        Log.w("Practice", Mistake.loadAllFromFile(this).toString())
-                        Log.w("Practice", "${exercise.words[0].mainWord },${exercise.words[0].typeOfWord},${exercise.isOtherWordAskedAsAnswer}")
+                        Log.w(LOG_TAG, "Failed to find (and remove) mistake in list")
+                        Log.w(LOG_TAG, Mistake.loadAllFromFile(this).toString())
+                        Log.w(LOG_TAG, "${exercise.words[0].mainWord },${exercise.words[0].typeOfWord},${exercise.isOtherWordAskedAsAnswer}")
                     }else{
                         mistake.removeFromFile(this)
                     }
@@ -162,13 +168,13 @@ class PracticeActivity : AppCompatActivity() {
                     newMistake.addToFile(this)
             }
 
+            allVocabularyWords.find { it == exercise.words[0] }!!.alreadyUsedInExercise = true
             binding.progressBarPractice.setProgress(position, true)
             binding.progressBarPractice.max = lesson.numberOfExercises + mistakes.size
 
             if(mode == MODE_NORMAL){
-                exercise.words[0].level += 1
                 lesson.vocabularyGroups.forEach {
-                    Log.d("Practice", "Saved vocGroup ${lesson.vocabularyGroups}")
+                    Log.d(LOG_TAG, "Saved vocGroup ${lesson.vocabularyGroups}")
                     it.saveInFile(this)
                 }
             }
@@ -200,9 +206,6 @@ class PracticeActivity : AppCompatActivity() {
             mistakes,
             mode = mode,
             this).build()
-
-
-        allVocabularyWords[allVocabularyWords.indexOf(exercise.words[0])].alreadyUsedInExercise = true
 
     }
 
@@ -249,9 +252,6 @@ class PracticeActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_practice) as NavHostFragment
         position += 1
 
-        Log.i("Position", position.toString())
-        Log.i("Mistakes", mistakes.none { !it.isRepeated }.toString())
-
         reset()
 
         if(position > lesson.numberOfExercises && mistakes.none { !it.isRepeated }){
@@ -268,7 +268,7 @@ class PracticeActivity : AppCompatActivity() {
         }else{
             setNextExercise()
 
-            Log.d("Practice", "Set exercise on $position of ${lesson.numberOfExercises + mistakes.size} as $exercise")
+            Log.d(LOG_TAG, "Set exercise on $position of ${lesson.numberOfExercises + mistakes.size} as $exercise")
 
             when(exercise.type){
                 Exercise.TYPE_TRANSLATE_TEXT -> {
@@ -282,7 +282,7 @@ class PracticeActivity : AppCompatActivity() {
                 }
                 else -> {
                     Toast.makeText(applicationContext, getString(R.string.err_type_not_valid, exercise.type.toString()), Toast.LENGTH_LONG).show()
-                    Log.e("Practice", "Type (${exercise.type}) isn't valid -> return to MainActivity")
+                    Log.e(LOG_TAG, "Type (${exercise.type}) isn't valid -> return to MainActivity")
                     startActivity(Intent(applicationContext, MainActivity::class.java))
                 }
             }
@@ -329,6 +329,8 @@ class PracticeActivity : AppCompatActivity() {
 
         const val MODE_NORMAL = 0
         const val MODE_PRACTICE_MISTAKES = 1
+
+        const val LOG_TAG = "Practice"
 
         /**
          * Add a dialog before leaving the activity

@@ -11,7 +11,8 @@ import kotlin.collections.ArrayList
 data class Synonym(override var mainWord: String,
                    var otherWords: ArrayList<String>,
                    var language: Locale,
-                   override var level: Int = 0,
+                   override var levelMain: Int,
+                   override var levelOther: Int,
                    override var isIgnoreCase: Boolean,
                    override var alreadyUsedInExercise: Boolean = false,
                    override var typeOfWord: Int = VocabularyWord.TYPE_SYNONYM): VocabularyWord {
@@ -19,6 +20,7 @@ data class Synonym(override var mainWord: String,
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
         return JSONObject().apply {
+            put("version", CURRENT_JSON_VERSION)
             put("type", typeOfWord)
             put("mainWord", mainWord.trim())
             put("otherWords", JSONArray().apply {
@@ -28,7 +30,8 @@ data class Synonym(override var mainWord: String,
                 put("language", language.language)
             }
             put("ignoreCase", isIgnoreCase)
-            put("level", level)
+            put("levelMain", levelMain)
+            put("levelOther", levelOther)
         }
     }
 
@@ -43,6 +46,9 @@ data class Synonym(override var mainWord: String,
     }
 
     companion object{
+
+        const val CURRENT_JSON_VERSION = 1
+
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): Synonym{
             val mainWord = try {
                 json.getString("mainWord")
@@ -71,9 +77,22 @@ data class Synonym(override var mainWord: String,
                 Locale.ENGLISH
             }
             val ignoreCase = json.getBoolean("ignoreCase")
-            val level = json.getInt("level")
+            val levelMain = try {
+                json.getInt("levelMain")
+            } catch (e: JSONException) {
+                try {
+                    json.getInt("level")
+                }catch (e: JSONException) {
+                    0
+                }
+            }
+            val levelOther = try {
+                json.getInt("levelOther")
+            }catch (e: JSONException) {
+                levelMain
+            }
 
-            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, level =  level, typeOfWord = typeOfWord)
+            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, levelMain = levelMain, levelOther = levelOther, typeOfWord = typeOfWord)
         }
     }
 

@@ -101,9 +101,10 @@ data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Loca
     }
 
     fun resetLevels(context: Context) {
-        Log.i("VocabularyGroup", "Delete all levels of vocabularyGroup \"$name\" (${id.number})")
+        Log.i("VocabularyGroup", "Reset all levels of vocabularyGroup \"$name\" (${id.number})")
         vocabulary.forEach {
-            it.level = 0
+            it.levelMain = 0
+            it.levelOther = 0
         }
         saveInFile(context)
     }

@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
                 Locale.ENGLISH -> Locale.ENGLISH
                 else -> Locale.ENGLISH
             }
-            settings.saveSettingsInFile()
+            settings.save()
         }
 
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
@@ -97,9 +97,6 @@ class MainActivity : AppCompatActivity() {
                 JSONObject().put("index", JSONArray()).toString(),
                 indexVocGroupsFile
             )
-
-        if (!File(this.filesDir, FileUtil.NAME_FILE_SETTINGS).exists())
-            Settings(this).saveSettingsInFile()
 
         val shortFormFile = File(this.filesDir, FileUtil.NAME_FILE_SHORT_FORMS)
         if(!shortFormFile.exists()){

@@ -3,115 +3,55 @@ package de.luki2811.dev.vokabeltrainer
 import android.content.Context
 import android.os.Build
 import io.github.g0dkar.qrcode.ErrorCorrectionLevel
-import org.json.JSONException
-import org.json.JSONObject
-import java.io.File
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import java.util.Locale
 
 data class Settings(var context: Context) {
-    private val jsonObject = if (File(context.filesDir, FileUtil.NAME_FILE_SETTINGS).exists()) JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))) else JSONObject()
-    var dailyObjectiveStreak: Int = try {
-        jsonObject.getInt("dailyObjectiveStreak")
-    }catch (e: JSONException){
-        e.printStackTrace()
-        20
-    }
-    var readOutVocabularyGeneral: Boolean = try {
-        jsonObject.getBoolean("readOutVocabularyGeneral")
-    }catch (e: JSONException){
-        e.printStackTrace()
-        true
-    }
-    var useDynamicColors: Boolean = try {
-        jsonObject.getBoolean("useDynamicColors")
-    }catch (e: JSONException){
-        e.printStackTrace()
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    }
-    var reminderForStreak: Boolean = try {
-        jsonObject.getBoolean("reminderForStreak")
-    }catch (e: JSONException){
-        e.printStackTrace()
-        false
-    }
-    var timeReminderStreak: LocalTime = try {
-        val timeAsString = jsonObject.getString("reminderStreakTime")
-        LocalTime.of(
+    private val sharedPreferences = context.getSharedPreferences(BuildConfig.APPLICATION_ID, Context.MODE_PRIVATE)
+
+    var dailyObjectiveStreak: Int = sharedPreferences.getInt("dailyObjectiveStreak", 20)
+    var readOutVocabularyGeneral: Boolean = sharedPreferences.getBoolean("readOutVocabularyGeneral", true)
+    var useDynamicColors: Boolean = sharedPreferences.getBoolean("useDynamicColors", Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    var reminderForStreak: Boolean = sharedPreferences.getBoolean("reminderForStreak", false)
+
+    private val timeAsString = sharedPreferences.getString("reminderStreakTime", LocalTime.of(12,0).format(DateTimeFormatter.ofPattern("kk:mm")))!!
+    var timeReminderStreak: LocalTime = LocalTime.of(
             timeAsString.replaceAfter(':', "").replace(":", "").toInt(),
             timeAsString.replaceBefore(':', "").replace(":", "").toInt()
         )
-    }catch (e: JSONException){
-        LocalTime.of(12,0)
-    }
-    var appLanguage: Locale = try {
-        Locale(jsonObject.getString("appLanguage"))
-    }catch (e: JSONException){
-        Locale.ENGLISH
-    }
-    var numberOfExercisesToPracticeMistakes: Int = try {
-        jsonObject.getInt("numberOfExercisesToPracticeMistakes")
-    }catch (e:JSONException){
-        5
-    }
-    var readOnlyNewWordsPracticeMistake: Boolean = try {
-        jsonObject.getBoolean("readOnlyNewWordsPracticeMistake")
-    }catch (e: JSONException){
-        false
-    }
-    var streakChartLengthInDays: Int = try {
-        jsonObject.getInt("streakChartLengthInDays")
-    }catch (e: JSONException){
-        7
-    }
-    var increaseScreenBrightness: Boolean = try {
-        jsonObject.getBoolean("increaseScreenBrightness")
-    }catch (e: JSONException){
-        true
-    }
-    var correctionLevelQrCode: ErrorCorrectionLevel = try {
-        when(jsonObject.getInt("correctionLevelQrCode")){
-            ErrorCorrectionLevel.L.value -> ErrorCorrectionLevel.L
-            ErrorCorrectionLevel.M.value -> ErrorCorrectionLevel.M
-            ErrorCorrectionLevel.Q.value -> ErrorCorrectionLevel.Q
-            ErrorCorrectionLevel.H.value -> ErrorCorrectionLevel.H
-            else -> ErrorCorrectionLevel.M
-        }
-    }catch (e: JSONException){
-        ErrorCorrectionLevel.M
-    }
-    var suggestTranslation: Boolean = try {
-        jsonObject.getBoolean("suggestTranslation")
-    }catch (e: JSONException){
-        true
-    }
-    var allowShortFormInAnswer: Boolean = try {
-        jsonObject.getBoolean("allowShortFormInAnswer")
-    }catch (e: JSONException){
-        true
-    }
-    var alreadyShownStart: Boolean = try {
-        jsonObject.getBoolean("alreadyShownStart")
-    }catch (e: JSONException){
-        false
+
+    var appLanguage: Locale = Locale(sharedPreferences.getString("appLanguage", Locale.ENGLISH.language)!!)
+    var streakChartLengthInDays: Int = sharedPreferences.getInt("streakChartLengthInDays", 7)
+    var increaseScreenBrightness: Boolean = sharedPreferences.getBoolean("increaseScreenBrightness", true)
+
+    var correctionLevelQrCode: ErrorCorrectionLevel = when(sharedPreferences.getInt("correctionLevelQrCode", ErrorCorrectionLevel.M.value)){
+        ErrorCorrectionLevel.L.value -> ErrorCorrectionLevel.L
+        ErrorCorrectionLevel.M.value -> ErrorCorrectionLevel.M
+        ErrorCorrectionLevel.Q.value -> ErrorCorrectionLevel.Q
+        ErrorCorrectionLevel.H.value -> ErrorCorrectionLevel.H
+        else -> ErrorCorrectionLevel.M
     }
 
-    fun saveSettingsInFile(){
-        val new = JSONObject()
-            .put("dailyObjectiveStreak",dailyObjectiveStreak)
-            .put("readOutVocabularyGeneral", readOutVocabularyGeneral)
-            .put("useDynamicColors", useDynamicColors)
-            .put("reminderForStreak", reminderForStreak)
-            .put("reminderStreakTime", timeReminderStreak.format(DateTimeFormatter.ofPattern("kk:mm")))
-            .put("appLanguage", appLanguage.language)
-            .put("numberOfExercisesToPracticeMistakes", numberOfExercisesToPracticeMistakes)
-            .put("readOnlyNewWordsPracticeMistake", readOnlyNewWordsPracticeMistake)
-            .put("streakChartLengthInDays", streakChartLengthInDays)
-            .put("increaseScreenBrightness", increaseScreenBrightness)
-            .put("correctionLevelQrCode", correctionLevelQrCode.value)
-            .put("suggestTranslation", suggestTranslation)
-            .put("alreadyShownStart", alreadyShownStart)
-        FileUtil.writeInFile(new.toString(), File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))
+    var suggestTranslation: Boolean = sharedPreferences.getBoolean("suggestTranslation", true)
+    var allowShortFormInAnswer: Boolean = sharedPreferences.getBoolean("allowShortFormInAnswer", true)
+    var alreadyShownStart: Boolean = sharedPreferences.getBoolean("alreadyShownStart", false)
+
+    fun save(){
+        with(sharedPreferences.edit()){
+            putInt("dailyObjectiveStreak", dailyObjectiveStreak)
+            putBoolean("readOutVocabularyGeneral", readOutVocabularyGeneral)
+            putBoolean("useDynamicColors", useDynamicColors)
+            putBoolean("reminderForStreak", reminderForStreak)
+            putString("reminderStreakTime", timeReminderStreak.format(DateTimeFormatter.ofPattern("kk:mm")))
+            putString("appLanguage", appLanguage.language)
+            putInt("streakChartLengthInDays", streakChartLengthInDays)
+            putBoolean("increaseScreenBrightness", increaseScreenBrightness)
+            putInt("correctionLevelQrCode", correctionLevelQrCode.value)
+            putBoolean("suggestTranslation", suggestTranslation)
+            putBoolean("alreadyShownStart", alreadyShownStart)
+
+            apply()
+        }
     }
 }

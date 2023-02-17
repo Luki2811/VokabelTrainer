@@ -57,7 +57,7 @@ class PracticeOutOfThreeFragment: Fragment() {
                 binding.buttonSpeakChooseThree.setOnClickListener {  }
             }
 
-            settings.saveSettingsInFile()
+            settings.save()
 
             true
         }

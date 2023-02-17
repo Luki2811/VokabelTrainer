@@ -49,6 +49,7 @@ class VocabularyGroupBasicFragment : Fragment() {
         if((args.vocabularyGroup != null) && (args.keyMode == MODE_IMPORT || args.keyMode == MODE_EDIT)){
             vocabularyGroup = args.vocabularyGroup!!
             binding.editTextVocabularyGroupName.setText(vocabularyGroup.name)
+            binding.textViewIdOfGroup.text = getString(R.string.id, vocabularyGroup.id.number.toString())
             binding.editTextVocabularyGroupOtherLanguage.setText(vocabularyGroup.otherLanguage.getDisplayLanguage(appSettings.appLanguage))
             binding.editTextVocabularyGroupMainLanguage.setText(vocabularyGroup.mainLanguage.getDisplayLanguage(appSettings.appLanguage))
         }

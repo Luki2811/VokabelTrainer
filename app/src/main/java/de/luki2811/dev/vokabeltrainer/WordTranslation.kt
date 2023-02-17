@@ -14,11 +14,13 @@ data class WordTranslation(override var mainWord: String,
                            var otherLanguage: Locale,
                            override var isIgnoreCase: Boolean,
                            override var alreadyUsedInExercise: Boolean = false,
-                           override var level: Int = 0,
+                           override var levelMain: Int,
+                           override var levelOther: Int,
                            override var typeOfWord: Int = VocabularyWord.TYPE_TRANSLATION): VocabularyWord {
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
         return JSONObject().apply {
+            put("version", CURRENT_JSON_VERSION)
             put("type", VocabularyWord.TYPE_TRANSLATION)
             put("mainWord", mainWord.trim())
             if(!withoutLanguage)
@@ -27,7 +29,8 @@ data class WordTranslation(override var mainWord: String,
             if (!withoutLanguage)
                 put("otherLanguage", otherLanguage.language)
             put("ignoreCase", isIgnoreCase)
-            put("level", level)
+            put("levelMain", levelMain)
+            put("levelOther", levelOther)
         }
     }
 
@@ -42,6 +45,8 @@ data class WordTranslation(override var mainWord: String,
     }
 
     companion object{
+
+        const val CURRENT_JSON_VERSION = 1
 
         fun loadFromJSON(json: JSONObject, mainLanguage: Locale? = null, otherLanguage: Locale? = null): WordTranslation{
 
@@ -74,9 +79,22 @@ data class WordTranslation(override var mainWord: String,
             val otherLanguageWord = otherLanguage ?: try { Locale(json.getString("otherLanguage")) } catch (e: JSONException){ Locale(json.getString("firstLanguage")) }
             val isIgnoreCase = try{ json.getBoolean("ignoreCase") } catch (e: JSONException){ json.getBoolean("isIgnoreCase") }
 
-            val level = try { json.getInt("level") } catch (e: JSONException) { 0 }
+            val levelMain = try {
+                json.getInt("levelMain")
+            } catch (e: JSONException) {
+                try {
+                    json.getInt("level")
+                }catch (e: JSONException) {
+                    0
+                }
+            }
+            val levelOther = try {
+                json.getInt("levelOther")
+            }catch (e: JSONException) {
+                levelMain
+            }
 
-            return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, level = level)
+            return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, levelMain = levelMain, levelOther = levelOther)
         }
 
     }

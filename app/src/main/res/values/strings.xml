@@ -16,7 +16,6 @@
     <string name="incorrect">Incorrect</string>
     <string name="solution">Solution:</string>
     <string name="finish_lesson">Finished lesson</string>
-    <string name="save_and_next">Save and next</string>
     <string name="plus" translatable="false">+</string>
     <string name="learn">Learn</string>
     <string name="create_new_lesson">Create new lesson</string>
@@ -65,7 +64,6 @@
     <string name="vocabulary_groups">Vocabulary groups</string>
     <string name="err_could_not_import_vocabulary_group">Error: Could not import vocabulary group !</string>
     <string name="add">Add</string>
-    <string name="to">to</string>
     <string name="delete_lesson">Delete lesson</string>
     <string name="do_you_really_want_to_delete_lesson">Do you really want to delete the lesson \"%1$s\" ?</string>
     <string name="loading_data">Load data</string>
@@ -77,7 +75,6 @@
     <string name="quite_lesson">Quite lesson</string>
     <string name="quite">Quite</string>
     <string name="yes">Yes</string>
-    <string name="empty_array" translatable="false">[\"\",\"\"]</string>
     <string name="settings_lesson_read_out_both">Read out only new words</string>
     <string name="to_finish">Finish</string>
     <string name="correct_answer">Correct answer: %1$s</string>
@@ -107,11 +104,11 @@
     <string name="settings_types_of_lesson">Types of exercises</string>
     <string name="err_need_one_type_of_lesson">Error: At least one type of exercises is needed</string>
     <string name="settings_main_read_out_forbidden_central">Centrally deactivate read out vocabulary</string>
-    <string name="warning">Warning</string>
+    <string name="warning">Warning!</string>
     <string name="warning_lose_of_progress">If you change your streak goal, then today could be removed…</string>
     <string name="open_source_licences">Open-Source licences</string>
     <string name="name_of_imported_vocabulary_group">Name of imported vocabulary group</string>
-    <string name="tts_settings">Settings for read out loud</string>
+    <string name="tts_settings">Settings for reading</string>
     <string name="err_no_internet_connection">Error: No Internet connection</string>
     <string name="download_successfully">Download successful</string>
     <string name="settings_enable_dynamic_colors">Use Dynamic Colors</string>
@@ -131,7 +128,7 @@
     <string name="pick_time">Choose time</string>
     <string name="when_do_you_want_to_be_remembered">When do you want to be remembered ??</string>
     <string name="err_no_permission_reminder">Error: No permission to create a reminder at the selected specific time.</string>
-    <string name="mistakes_overview">Mistakes overview</string>
+    <string name="mistakes_overview">Overview of mistakes</string>
     <string name="finish">Finish</string>
     <string name="practice_mistakes">Practice mistakes</string>
     <string name="create_lesson_or_vocabulary_group">Create or import a lesson or a vocabulary group. Tap on \"+\" to start.</string>
@@ -198,15 +195,15 @@
     <string name="antonym">Antonym</string>
     <string name="word_in_other_language">Word in other (known) language</string>
     <string name="word_in_main_language">Word in main (new) language</string>
-    <string name="info_text_languages_in_voc_group_editor">The main language is set for Translations (the new word), Synonyms, Antonyms and Word Families. The other language is just set for Translations (the known word)</string>
+    <string name="info_text_languages_in_voc_group_editor">The main language is set for Translations (the new word), Synonyms, Antonyms and Word Families. The other language is just set for Translations (the known word).</string>
     <string name="synonym_other">Synonyms</string>
     <string name="synonym_main">Main word</string>
     <string name="antonym_main">Main word</string>
     <string name="antonym_second">Antonyms</string>
-    <string name="settings_enable_suggestion_in_editor">Enable suggestions in vocabularyGroup-editor</string>
+    <string name="settings_enable_suggestion_in_editor">Suggestions in vocabulary group editor</string>
     <string name="lesson_request_all_possible_answer">Have to answer all possible answers</string>
     <string name="alternatives">Alternatives: %1$s</string>
-    <string name="reset_all_word_levels">Reset \"level\" of all words</string>
+    <string name="reset_all_word_levels">Reset \"level\" for all words</string>
     <string name="message_reset_levels">Do you really want to reset all levels. This step is not reversible</string>
     <string name="title_reset_all_levels">Reset all levels ??</string>
     <string name="err_missing_language_data_tts">Error: Missing language data to read word(s)</string>
@@ -219,8 +216,6 @@
     <string name="import_short_form_successful">New short form successfully imported</string>
     <string name="all_short_forms">All short forms</string>
     <string name="settings_correct_short_forms">Correct short forms</string>
-    <string name="first_words">First words</string>
-    <string name="second_words">Second words</string>
     <string name="settings_lesson_read_out">Read out…</string>
     <string name="err_no_short_forms">Error: There are no short forms</string>
     <string name="short_form">Short form</string>
@@ -326,10 +321,13 @@
     <string name="word_family_other">Word of the word family</string>
     <string name="word_family_type">Word type</string>
     <string name="action_write_word_familys_type">Write a(n) <b>%1$s</b> from this word family</string>
-    <string name="action_find_synonym">Find a correct synonym</string>
-    <string name="action_find_antonym">Find a correct antonym</string>
-    <string name="action_find_word_family_type">Find a correct %1$s of this word family</string>
+    <string name="action_find_synonym">Find a synonym</string>
+    <string name="action_find_antonym">Find a antonym</string>
+    <string name="action_find_word_family_type">Find a %1$s of this word family</string>
     <string name="err_no_fitting_exercise_selected">Error: No exercise fits with selected filters. Choose random</string>
-    <string name="word_family_with_type">%1$s (%2$s)</string>
+    <string name="word_family_with_type" translatable="false">%1$s (%2$s)</string>
+    <string name="id" translatable="false">ID: %1$s</string>
+    <string name="level" translatable="false">LevelMain: %1$s; LevelOther: %2$s</string>
+    <string name="increase_volume">Increase volume!</string>
 
 </resources>

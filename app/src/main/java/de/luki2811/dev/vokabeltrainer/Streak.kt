@@ -36,7 +36,7 @@ class Streak(val context: Context) {
     }
 
     fun refresh(){
-        xpGoal = JSONObject(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_SETTINGS))).getString("dailyObjectiveStreak").removeSuffix("XP").toInt()
+        xpGoal = Settings(context).dailyObjectiveStreak
 
         var streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
         val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))

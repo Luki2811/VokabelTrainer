@@ -21,7 +21,8 @@ data class Mistake(var word: VocabularyWord,
                    var isRepeated: Boolean = false): Parcelable {
 
     init {
-        word.level = 0
+        word.levelMain = 0
+        word.levelOther = 0
         word.alreadyUsedInExercise = false
     }
 

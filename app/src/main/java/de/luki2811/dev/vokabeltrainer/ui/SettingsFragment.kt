@@ -307,7 +307,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun saveSettings(){
-        settings.saveSettingsInFile()
+        settings.save()
     }
 
     override fun onResume() {

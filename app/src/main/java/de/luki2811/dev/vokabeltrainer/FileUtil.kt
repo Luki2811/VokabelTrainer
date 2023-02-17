@@ -54,7 +54,6 @@ class FileUtil {
         const val NAME_FILE_INDEX_LESSONS = "indexLesson.json"
         const val NAME_FILE_INDEX_VOCABULARY_GROUPS = "indexVocabularyGroups.json"
         const val NAME_FILE_INDEX_ID = "indexId.json"
-        const val NAME_FILE_SETTINGS = "settings.json"
         const val NAME_FILE_LIST_WRONG_WORDS = "listWrongWords.json"
         const val NAME_FILE_SHORT_FORMS = "shortForms.json"
     }

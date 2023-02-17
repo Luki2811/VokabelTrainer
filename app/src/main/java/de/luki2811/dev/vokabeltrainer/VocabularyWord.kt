@@ -4,7 +4,8 @@ import android.os.Parcelable
 import org.json.JSONObject
 
 interface VocabularyWord: Parcelable {
-    var level: Int
+    var levelMain: Int
+    var levelOther: Int
     var isIgnoreCase: Boolean
     var alreadyUsedInExercise: Boolean
     var typeOfWord: Int

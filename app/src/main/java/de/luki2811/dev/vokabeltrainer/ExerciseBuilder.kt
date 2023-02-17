@@ -66,12 +66,15 @@ class ExerciseBuilder(
             Log.d("ExerciseBuilder", "Mistake to practice $mistake")
             return mistake?.isOtherWordAskedAsAnswer ?: false
         }else {
-            if(practiceMistake) {
-                mistake?.filter { !it.isRepeated }?.find { it.word == word }!!.isOtherWordAskedAsAnswer
-            }else if(word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
+            if (practiceMistake) {
+                mistake?.filter { !it.isRepeated }
+                    ?.find { it.word == word }!!.isOtherWordAskedAsAnswer
+            } else if (word.typeOfWord == VocabularyWord.TYPE_WORD_FAMILY || word.typeOfWord == VocabularyWord.TYPE_SYNONYM || word.typeOfWord == VocabularyWord.TYPE_ANTONYM) {
                 true
-            }else if(isOnlyMainWordAskedAsAnswer){
+            } else if (isOnlyMainWordAskedAsAnswer) {
                 false
+            } else if (word.levelMain != word.levelOther) {
+                word.levelMain > word.levelOther
             } else {
                 (0..1).random() == 1
             }
@@ -99,14 +102,14 @@ class ExerciseBuilder(
         }else{
             allWordsToSelectFrom.shuffle()
             try {
-                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.level })
+                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.levelMain + it.levelOther })
             } catch (e: NoSuchElementException){
                 Log.e("ExerciseBuilder", "No words with selected filter")
                 Toast.makeText(context, context.getText(R.string.err_no_words_found_with_filter), Toast.LENGTH_LONG).show()
                 allWordsToSelectFrom.forEach {
                     it.alreadyUsedInExercise = false
                 }
-                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.level })
+                allWordsToSelectFrom.filter { typesOfWordsToPractice.contains(it.typeOfWord) &&  !it.alreadyUsedInExercise}.minWith(Comparator.comparingInt { it.levelMain + it.levelOther })
             }
         }
     }
