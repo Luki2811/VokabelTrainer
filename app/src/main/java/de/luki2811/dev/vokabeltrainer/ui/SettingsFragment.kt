@@ -94,6 +94,14 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        binding.switchSettingsMoreInformationDev.apply {
+            isChecked = settings.showMoreInformationDev
+            setOnCheckedChangeListener { _, isChecked ->
+                settings.showMoreInformationDev = isChecked
+                saveSettings()
+            }
+        }
+
         binding.buttonSettingsInfoQrCodeCorrectionLevel.apply {
                 setOnClickListener {
                     val intent = Intent(Intent.ACTION_VIEW).apply {

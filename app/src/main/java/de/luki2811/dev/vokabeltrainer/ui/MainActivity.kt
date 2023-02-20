@@ -13,13 +13,18 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import de.luki2811.dev.vokabeltrainer.*
+import de.luki2811.dev.vokabeltrainer.FileUtil
+import de.luki2811.dev.vokabeltrainer.MobileNavigationDirections
+import de.luki2811.dev.vokabeltrainer.R
+import de.luki2811.dev.vokabeltrainer.Settings
+import de.luki2811.dev.vokabeltrainer.ShortForm
+import de.luki2811.dev.vokabeltrainer.Streak
+import de.luki2811.dev.vokabeltrainer.StreakWidget
 import de.luki2811.dev.vokabeltrainer.databinding.ActivityMainBinding
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.util.*
-
+import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -136,7 +141,7 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.bottomNavigation.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.streakFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
-            binding.floatingActionButtonAdd.visibility = if(destination.id == R.id.learnFragment || destination.id == R.id.settingsFragment) View.VISIBLE else View.GONE
+            binding.floatingActionButtonAdd.visibility = if(destination.id == R.id.learnFragment) View.VISIBLE else View.GONE
         }
     }
 

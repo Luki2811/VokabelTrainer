@@ -329,5 +329,8 @@
     <string name="id" translatable="false">ID: %1$s</string>
     <string name="level" translatable="false">LevelMain: %1$s; LevelOther: %2$s</string>
     <string name="increase_volume">Increase volume!</string>
+    <string name="no_id">No ID</string>
+    <string name="settings_more_information_dev">More Information (dev)</string>
+    <string name="action_try_another_scanner">Try another scanner</string>
 
 </resources>

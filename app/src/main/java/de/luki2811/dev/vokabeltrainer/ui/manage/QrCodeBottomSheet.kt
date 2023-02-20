@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.content.FileProvider
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.color.MaterialColors
 import de.luki2811.dev.vokabeltrainer.R
@@ -22,12 +24,41 @@ class QrCodeBottomSheet(val content: String, private val textToShow: String) : B
     private var _binding: FrameShowQrCodeSheetBinding? = null
     private val binding get() = _binding!!
 
+    private var isQrCodeGenerated: Boolean = false
     private var oldScreenBrightness = 0F
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FrameShowQrCodeSheetBinding.inflate(layoutInflater, container, false)
 
+        val modalBottomSheetBehavior = (this.dialog as BottomSheetDialog).behavior
+        modalBottomSheetBehavior.peekHeight = 900
+
         oldScreenBrightness = requireActivity().window.attributes.screenBrightness
+
+        val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if(newState == BottomSheetBehavior.STATE_EXPANDED){
+                    if(isQrCodeGenerated){
+                        if (Settings(requireContext()).increaseScreenBrightness){
+                            requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = 1F }
+                        }
+
+                    }
+                }else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
+                    if(isQrCodeGenerated){
+                        requireActivity().window.attributes =
+                            requireActivity().window.attributes.apply { screenBrightness = oldScreenBrightness }
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // DO NOTHING
+            }
+        }
+
+        modalBottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
 
         binding.textViewQrCodeFrame.text = textToShow
         binding.progressBarQrCode.visibility = View.VISIBLE
@@ -60,11 +91,12 @@ class QrCodeBottomSheet(val content: String, private val textToShow: String) : B
             }
             try {
                 requireActivity().runOnUiThread {
-                    if (Settings(requireContext()).increaseScreenBrightness)
-                        requireActivity().window.attributes =
-                            requireActivity().window.attributes.apply { screenBrightness = 1F }
-
+                    isQrCodeGenerated = true
                     binding.progressBarQrCode.visibility = View.GONE
+
+                    if (Settings(requireContext()).increaseScreenBrightness && modalBottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED){
+                        requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = 1F }
+                    }
                     binding.imageViewQrCode.setImageBitmap(BitmapFactory.decodeFile(outputFile.absolutePath))
                     binding.buttonQrCodeShare.setOnClickListener {
                         val shareIntent = Intent().apply {
@@ -91,8 +123,7 @@ class QrCodeBottomSheet(val content: String, private val textToShow: String) : B
     }
 
     override fun onDestroy() {
-        requireActivity().window.attributes =
-            requireActivity().window.attributes.apply { screenBrightness = oldScreenBrightness }
+        requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = oldScreenBrightness }
         super.onDestroy()
     }
 

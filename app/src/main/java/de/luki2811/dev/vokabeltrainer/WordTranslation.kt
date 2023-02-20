@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
+import java.util.Locale
 
 @Parcelize
 data class WordTranslation(override var mainWord: String,
@@ -41,6 +41,15 @@ data class WordTranslation(override var mainWord: String,
                 if(otherWords.last() != it)
                 append("; ")
             }
+        }.toString()
+    }
+
+    override fun getAsCSV(): String {
+        return StringBuilder().apply {
+            append(typeOfWord).append(";;")
+            append(mainWord).append(";;")
+            append(getSecondWordsAsString()).append(";;")
+            append(isIgnoreCase)
         }.toString()
     }
 
@@ -95,6 +104,21 @@ data class WordTranslation(override var mainWord: String,
             }
 
             return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, levelMain = levelMain, levelOther = levelOther)
+        }
+
+        fun loadFromCSV(csv: String, langMain: Locale, langOther: Locale): WordTranslation {
+            val elements = csv.split(";;")
+            // 0 is wordType
+            val mainWord = elements[1]
+            val otherWords: ArrayList<String> = with(elements[2]) {
+                val splitString = split(";")
+                splitString.onEach {
+                    it.trim()
+                }.toMutableList() as ArrayList
+            }
+            val ignoreCase = elements[3].toBoolean()
+
+            return WordTranslation(mainWord, langMain, otherWords, langOther, ignoreCase, levelMain = 0, levelOther = 0)
         }
 
     }

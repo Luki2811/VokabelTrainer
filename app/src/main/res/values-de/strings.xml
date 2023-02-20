@@ -4,8 +4,8 @@
     <string name="close">Schließen</string>
     <string name="name">Name</string>
     <string name="lesson_name">Name der Lektion</string>
-    <string name="language_other">Bekannte Sprache</string>
-    <string name="language_main">Neue Sprache</string>
+    <string name="language_other">Andere (bekannte) Sprache</string>
+    <string name="language_main">Hauptsprache (neue) Sprache</string>
     <string name="next">Weiter</string>
     <string name="err_missing_name">Fehler: Name fehlt</string>
     <string name="err_name_already_taken">Fehler: Name bereits vergeben</string>
@@ -197,7 +197,7 @@
     <string name="lesson_request_all_possible_answer">Alle möglichen Antworten fordern</string>
     <string name="alternatives">Alternativen: %1$s</string>
     <string name="reset_all_word_levels">Alle \"Level\" zurücksetzten</string>
-    <string name="message_reset_levels">Möchten sie wirklich alle Level zurücksitzen. Dieser Schritt ist nicht umkehrbar !</string>
+    <string name="message_reset_levels">Möchten sie wirklich alle Level zurücksetzen. Dieser Schritt ist nicht umkehrbar !</string>
     <string name="title_reset_all_levels">Alle Level zurücksetzen ??</string>
     <string name="err_missing_language_data_tts">Fehler: Fehlende Sprachdaten um Wörter vorzulesen</string>
     <string name="action_install">Installieren</string>
@@ -230,4 +230,7 @@
     <string name="action_find_word_family_type">Finde ein %1$s von dieser Wortfamilie</string>
     <string name="err_no_fitting_exercise_selected">Fehler: Keine Aufgabe passt zu den ausgewählten Filter. Auswahl zufällig</string>
     <string name="increase_volume">Lautstärke erhöhen!</string>
+    <string name="no_id">Keine Id</string>
+    <string name="settings_more_information_dev">Mehr Informationen (dev)</string>
+    <string name="action_try_another_scanner">Anderen Scanner versuchen</string>
 </resources>

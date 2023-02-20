@@ -226,8 +226,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                     }
                     .show()
             }
-        else
+        else {
             binding.buttonDeleteVocabularyGroup.visibility = View.GONE
+        }
 
         binding.textEditEditorUpperInput.isFocusableInTouchMode = true
         binding.textEditEditorLowerInput.isFocusableInTouchMode = true
@@ -313,7 +314,12 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         binding.textViewNumberOfVocManage.text = getString(R.string.number_voc_of_rest, (pos + 1), vocabularyGroup.vocabulary.size)
 
         // Update level
-        binding.textViewLevelVocabularyWord.text = getString(R.string.level, vocabularyGroup.vocabulary[pos].levelMain.toString(), vocabularyGroup.vocabulary[pos].levelOther.toString())
+        if(Settings(requireContext()).showMoreInformationDev){
+            binding.textViewLevelVocabularyWord.text = getString(R.string.level, vocabularyGroup.vocabulary[pos].levelMain.toString(), vocabularyGroup.vocabulary[pos].levelOther.toString())
+        }else {
+            binding.textViewLevelVocabularyWord.visibility = View.GONE
+        }
+
 
         // Update slider
         if(args.keyMode != MODE_CREATE){

@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
+import java.util.Locale
 
 @Parcelize
 data class WordFamily(override var mainWord: String,
@@ -38,6 +38,16 @@ data class WordFamily(override var mainWord: String,
         }
     }
 
+    override fun getAsCSV(): String {
+        return StringBuilder().apply {
+            append(typeOfWord).append(";;")
+            append(mainWord).append(";;")
+            append(getSecondWordsAsString()).append(";;")
+            append(isIgnoreCase).append(";;")
+            append(otherWordsType)
+        }.toString()
+    }
+
     override fun getSecondWordsAsString(): String{
         return StringBuilder().apply {
             otherWords.forEach {
@@ -61,6 +71,22 @@ data class WordFamily(override var mainWord: String,
     companion object{
 
         const val CURRENT_JSON_VERSION = 1
+
+        fun loadFromCSV(csv: String, language: Locale): WordFamily {
+            val elements = csv.split(";;")
+            // 0 is wordType
+            val mainWord = elements[1]
+            val otherWords: ArrayList<String> = with(elements[2]) {
+                val splitString = split(";")
+                splitString.onEach {
+                    it.trim()
+                }.toMutableList() as ArrayList
+            }
+            val ignoreCase = elements[3].toBoolean()
+            val typeOfWords = elements[4].toInt()
+
+            return WordFamily(mainWord, otherWords, typeOfWords, language, levelMain = 0, levelOther = 0, isIgnoreCase = ignoreCase)
+        }
 
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): WordFamily{
             val mainWord = json.getString("mainWord")

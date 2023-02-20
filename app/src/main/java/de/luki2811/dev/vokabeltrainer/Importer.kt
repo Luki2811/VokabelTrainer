@@ -17,7 +17,7 @@ class Importer(private val data: String, private val context: Context) {
             try {
                 when(dataAsJson.getInt("type")){
                     Exportable.TYPE_LESSON -> tryLesson(dataAsJson)
-                    Exportable.TYPE_VOCABULARY_GROUP -> importVocabularyGroup(dataAsJson)
+                    Exportable.TYPE_VOCABULARY_GROUP -> importVocabularyGroup(dataAsJson.toString())
                     Exportable.TYPE_SHORT_FORM -> importShortForm(dataAsJson)
                     else -> IMPORT_WRONG_OR_NONE_TYPE
                 }
@@ -25,7 +25,7 @@ class Importer(private val data: String, private val context: Context) {
                 IMPORT_WRONG_OR_NONE_TYPE
             }
         }catch (e: JSONException){
-            IMPORT_NO_JSON
+            importVocabularyGroup(data, isCSV = true)
         }
     }
 
@@ -53,34 +53,47 @@ class Importer(private val data: String, private val context: Context) {
         }
     }
 
-    private fun importVocabularyGroup(dataAsJson: JSONObject,cancelWithWrongType: Boolean = true): Int{
+    private fun importVocabularyGroup(data: String,cancelWithWrongType: Boolean = true, isCSV: Boolean = false): Int{
 
         try {
-            if(cancelWithWrongType){
-                if(dataAsJson.getInt("type") != Exportable.TYPE_VOCABULARY_GROUP){
+            if(!isCSV){
+                val dataAsJson = JSONObject(data)
+                if(cancelWithWrongType){
+                    if(dataAsJson.getInt("type") != Exportable.TYPE_VOCABULARY_GROUP){
+                        return IMPORT_WRONG_OR_NONE_TYPE
+                    }
+                }
+                this.vocabularyGroup = VocabularyGroup.loadFromJSON(dataAsJson, context = context, generateNewId = true)
+            }else{
+                if (data.lines().first().toInt() != Exportable.TYPE_VOCABULARY_GROUP_QR)
+                    return IMPORT_WRONG_OR_NONE_TYPE
+                try {
+                    this.vocabularyGroup = VocabularyGroup.loadFromCSV(data, context)
+                }catch (e: Exception){
+                    e.printStackTrace()
                     return IMPORT_WRONG_OR_NONE_TYPE
                 }
+
             }
 
-            if(dataAsJson.getJSONArray("vocabulary").length() < 2){
-               return VOCABULARY_GROUP_TOO_SHORT
+            if(vocabularyGroup == null){
+                return IMPORT_FAILED_NULL
+            }else{
+                var tempInt = 0
+                while(VocabularyGroup.isNameValid(context, vocabularyGroup!!.name) != 0){
+                    tempInt += 1
+                    var nameOfVocGroup = vocabularyGroup!!.name
+                    nameOfVocGroup = if(tempInt > 1)
+                        nameOfVocGroup.replace("(${tempInt - 1})","(${tempInt})")
+                    else
+                        "${vocabularyGroup!!.name} (1)"
+
+                    vocabularyGroup!!.name = nameOfVocGroup
+                }
+
+                return IMPORT_SUCCESSFULLY_VOCABULARY_GROUP
             }
-            val vocabularyGroup = VocabularyGroup.loadFromJSON(dataAsJson, context = context, generateNewId = true)
-            var tempInt = 0
-            while(VocabularyGroup.isNameValid(context, vocabularyGroup.name) != 0){
-                tempInt += 1
-                var nameOfVocGroup = vocabularyGroup.name
-                nameOfVocGroup = if(tempInt > 1)
-                    nameOfVocGroup.replace("(${tempInt - 1})","(${tempInt})")
-                else
-                    "${vocabularyGroup.name} (1)"
 
-                vocabularyGroup.name = nameOfVocGroup
-            }
-
-            this.vocabularyGroup = vocabularyGroup
-
-            return IMPORT_SUCCESSFULLY_VOCABULARY_GROUP
         }catch (e: JSONException){
             e.printStackTrace()
             return IMPORT_NO_JSON
@@ -95,7 +108,7 @@ class Importer(private val data: String, private val context: Context) {
 
             for (i in 0 until vocabularyGroups.length()){
 
-                when(val errorCode = importVocabularyGroup(vocabularyGroups.getJSONObject(i), cancelWithWrongType = false)){
+                when(val errorCode = importVocabularyGroup(vocabularyGroups.getJSONObject(i).toString(), cancelWithWrongType = false)){
                     IMPORT_SUCCESSFULLY_VOCABULARY_GROUP -> {
                         if(vocabularyGroup != null){
                             Log.i("Import", "ID: ${vocabularyGroup!!.id}")

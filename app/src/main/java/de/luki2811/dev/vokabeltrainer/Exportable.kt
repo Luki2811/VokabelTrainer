@@ -7,6 +7,7 @@ interface Exportable {
 
         const val TYPE_LESSON = 0
         const val TYPE_VOCABULARY_GROUP = 1
+        const val TYPE_VOCABULARY_GROUP_QR = 10
         const val TYPE_SHORT_FORM = 2
     }
 }

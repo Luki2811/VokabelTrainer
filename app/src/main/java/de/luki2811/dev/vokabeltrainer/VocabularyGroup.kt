@@ -8,14 +8,29 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import java.io.File
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 @Parcelize
 data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Locale, var mainLanguage: Locale, var vocabulary: ArrayList<VocabularyWord> = ArrayList(), override val type: Int = Exportable.TYPE_VOCABULARY_GROUP): Exportable, Parcelable {
 
-    fun export(): JSONObject {
-        return getAsJson()
+    fun exportShort(): String {
+        return StringBuilder().apply {
+            // Type for reading out (first line)
+            append(Exportable.TYPE_VOCABULARY_GROUP_QR)
+            appendLine()
+
+            // Base data (second line)
+            append(name).append(";;")
+            append(mainLanguage.language).append(";;")
+            append(otherLanguage.language)
+            appendLine()
+
+            // Each line one word
+            vocabulary.forEach {
+                appendLine(it.getAsCSV())
+            }
+
+        }.toString()
     }
 
     fun getShareFileName(): String{
@@ -188,6 +203,27 @@ data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Loca
             return if(file.exists())
                 loadFromJSON(JSONObject(FileUtil.loadFromFile(file)), context = context)
             else null
+        }
+
+        fun loadFromCSV(csv: String, context: Context): VocabularyGroup{
+            val csvArray = csv.lines()
+            val baseData = csvArray[1].split(";;")
+            val name = baseData[0]
+            val langMain = Locale.forLanguageTag(baseData[1])
+            val langOther = Locale.forLanguageTag(baseData[2])
+
+            val vocabulary = ArrayList<VocabularyWord>()
+            for (line in 2 until csvArray.size-1){
+                val wordAsList = csvArray[line].split(";;")
+                Log.e("Test", wordAsList.toString())
+                when(wordAsList[0].toInt()){
+                    VocabularyWord.TYPE_TRANSLATION -> vocabulary.add(WordTranslation.loadFromCSV(csvArray[line], langMain = langMain, langOther = langOther))
+                    VocabularyWord.TYPE_ANTONYM,  VocabularyWord.TYPE_SYNONYM ->  vocabulary.add(Synonym.loadFromCSV(csvArray[line], language = langMain))
+                    VocabularyWord.TYPE_WORD_FAMILY ->  vocabulary.add(WordFamily.loadFromCSV(csvArray[line], language = langMain))
+                }
+            }
+
+            return VocabularyGroup(name, Id.generate(context).apply { register(context) }, otherLanguage = langOther, mainLanguage = langMain, vocabulary = vocabulary)
         }
 
 

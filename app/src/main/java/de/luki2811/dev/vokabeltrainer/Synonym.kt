@@ -4,8 +4,7 @@ import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Locale
 
 @Parcelize
 data class Synonym(override var mainWord: String,
@@ -16,7 +15,6 @@ data class Synonym(override var mainWord: String,
                    override var isIgnoreCase: Boolean,
                    override var alreadyUsedInExercise: Boolean = false,
                    override var typeOfWord: Int = VocabularyWord.TYPE_SYNONYM): VocabularyWord {
-
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
         return JSONObject().apply {
@@ -35,6 +33,15 @@ data class Synonym(override var mainWord: String,
         }
     }
 
+    override fun getAsCSV(): String {
+        return StringBuilder().apply {
+            append(typeOfWord).append(";;")
+            append(mainWord).append(";;")
+            append(getSecondWordsAsString()).append(";;")
+            append(isIgnoreCase)
+        }.toString()
+    }
+
     override fun getSecondWordsAsString(): String{
         return StringBuilder().apply {
             otherWords.forEach {
@@ -48,6 +55,21 @@ data class Synonym(override var mainWord: String,
     companion object{
 
         const val CURRENT_JSON_VERSION = 1
+
+        fun loadFromCSV(csv: String, language: Locale): Synonym{
+            val elements = csv.split(";;")
+            val type = elements[0].toInt()
+            val mainWord = elements[1]
+            val otherWords: ArrayList<String> = with(elements[2]) {
+                val splitString = split(";")
+                splitString.onEach {
+                    it.trim()
+                }.toMutableList() as ArrayList
+            }
+            val ignoreCase = elements[3].toBoolean()
+
+            return Synonym(mainWord, otherWords, language, levelMain = 0, levelOther = 0, ignoreCase, typeOfWord = type)
+        }
 
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): Synonym{
             val mainWord = try {

@@ -15,7 +15,10 @@ interface VocabularyWord: Parcelable {
 
     fun getSecondWordsAsString(): String
 
+    fun getAsCSV(): String
+
     companion object{
+
         const val TYPE_UNKNOWN = -1
         const val TYPE_TRANSLATION = 0
         const val TYPE_SYNONYM = 1

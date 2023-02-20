@@ -28,7 +28,7 @@
         app:contentDescription="@string/edit"
         app:icon="@drawable/ic_outline_edit_24"
         app:iconTint="@color/White"
-        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -41,7 +41,7 @@
         app:contentDescription="@string/share"
         app:icon="@drawable/ic_baseline_share_24"
         app:iconTint="@color/White"
-        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toStartOf="@+id/buttonEditVocabularyGroup"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,7 +54,7 @@
         app:contentDescription="@string/qr_code"
         app:icon="@drawable/ic_baseline_qr_code_24"
         app:iconTint="@color/White"
-        app:layout_constraintBottom_toBottomOf="@id/dividerListItemVocabularyGroup"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toStartOf="@+id/buttonShareVocabularyGroup"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -72,8 +72,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="Französisch"
-        android:textAlignment="textStart"
+        android:gravity="center_vertical"
+        tools:text="Französisch"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toEndOf="@+id/textViewlistVocabularyGroup"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/imageView7"
@@ -84,8 +85,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="Deutsch"
-        android:textAlignment="textStart"
+        android:gravity="center"
+        tools:text="Deutsch"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView7"
         app:layout_constraintEnd_toStartOf="@+id/imageView7"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/textViewlistVocabularyGroup"
@@ -95,7 +97,7 @@
         android:id="@+id/imageView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textViewSecondLanguage"

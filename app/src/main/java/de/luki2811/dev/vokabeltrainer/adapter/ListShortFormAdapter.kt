@@ -1,5 +1,6 @@
 package de.luki2811.dev.vokabeltrainer.adapter
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +14,7 @@ import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
 import de.luki2811.dev.vokabeltrainer.ShortForm
 import de.luki2811.dev.vokabeltrainer.ui.manage.ShortFormEditorBottomSheet
-import org.json.JSONObject
-import java.util.*
+import java.util.Locale
 
 class ListShortFormAdapter(var dataset: ArrayList<ShortForm>,
                            private val fragmentManager: FragmentManager,
@@ -60,7 +60,11 @@ class ListShortFormAdapter(var dataset: ArrayList<ShortForm>,
                     fragmentManager.clearFragmentResult("finishEditShortForm")
                     fragmentManager.clearFragmentResultListener("finishEditShortForm")
                     try {
-                        dataset[holder.layoutPosition] = ShortForm.fromJson(JSONObject(bundle.getString("resultAsJson")!!))
+                        dataset[holder.layoutPosition] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                            bundle.getParcelable("result", ShortForm::class.java)!!
+                        }else{
+                            bundle.getParcelable("result")!!
+                        }
                         notifyItemChanged(holder.layoutPosition, null)
                     }catch (e: ArrayIndexOutOfBoundsException){
                         e.printStackTrace()
@@ -77,7 +81,11 @@ class ListShortFormAdapter(var dataset: ArrayList<ShortForm>,
         val shortFormEditorBottomSheet = ShortFormEditorBottomSheet(dataset[0])
         shortFormEditorBottomSheet.show(fragmentManager, ShortFormEditorBottomSheet.TAG)
         fragmentManager.setFragmentResultListener("finishEditShortForm", lifecycleOwner){ _, bundle ->
-            dataset[0] = ShortForm.fromJson(JSONObject(bundle.getString("resultAsJson")!!))
+            dataset[0] = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                bundle.getParcelable("result", ShortForm::class.java)!!
+            }else{
+                bundle.getParcelable("result")!!
+            }
             notifyItemChanged(0, null)
             fragmentManager.clearFragmentResultListener("finishEditShortForm")
             fragmentManager.clearFragmentResult("finishEditShortForm")

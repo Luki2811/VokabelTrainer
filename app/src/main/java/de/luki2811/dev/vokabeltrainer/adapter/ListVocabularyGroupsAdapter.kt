@@ -73,7 +73,7 @@ class ListVocabularyGroupsAdapter(
         viewHolder.buttonShowQrCode.apply {
             setBackgroundColor(MaterialColors.harmonizeWithPrimary(context, context.getColor(R.color.Green)))
             setOnClickListener {
-                val qrCodeBottomSheet = QrCodeBottomSheet(dataSetFilter[position].export().toString(), dataSetFilter[position].name)
+                val qrCodeBottomSheet = QrCodeBottomSheet(dataSetFilter[position].exportShort(), dataSetFilter[position].name)
                 qrCodeBottomSheet.show(supportFragmentManager, QrCodeBottomSheet.TAG)
             }
         }

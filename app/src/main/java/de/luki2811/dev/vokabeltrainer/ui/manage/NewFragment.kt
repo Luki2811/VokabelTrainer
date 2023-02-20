@@ -1,6 +1,7 @@
 package de.luki2811.dev.vokabeltrainer.ui.manage
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -27,8 +29,14 @@ import de.luki2811.dev.vokabeltrainer.FileUtil
 import de.luki2811.dev.vokabeltrainer.Importer
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.databinding.FragmentCreateNewMainBinding
+import java.io.File
 import java.io.IOException
-import java.net.*
+import java.net.InetSocketAddress
+import java.net.MalformedURLException
+import java.net.Socket
+import java.net.SocketAddress
+import java.net.URL
+import java.net.UnknownHostException
 import javax.net.ssl.HttpsURLConnection
 
 class NewFragment : Fragment() {
@@ -89,6 +97,65 @@ class NewFragment : Fragment() {
         } else {
             Log.d("FilePicker", "No file selected or file not found")
         }
+    }
+
+    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()){ granted ->
+        if(granted){
+            resultPhotoQrCode.launch(uri)
+        }else{
+            Toast.makeText(requireContext(), R.string.err_no_permission, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    var uri: Uri? = null
+    private val resultPhotoQrCode = registerForActivityResult(ActivityResultContracts.TakePicture()){ taken ->
+
+        if(!taken){
+            return@registerForActivityResult
+        }
+
+        val options = BarcodeScannerOptions.Builder()
+            .setBarcodeFormats(Barcode.FORMAT_QR_CODE)
+            .build()
+
+        val scanner = BarcodeScanning.getClient(options)
+
+        val image: InputImage
+        try {
+            image = InputImage.fromFilePath(requireContext(), uri!!)
+            scanner.process(image)
+                .addOnSuccessListener { barcodes ->
+                    if(barcodes.size == 1){
+                        if(barcodes[0].rawValue != null){
+                            setDataAndSetupViews(barcodes[0].rawValue!!)
+                        }else{
+                            Toast.makeText(requireContext(), R.string.err_cant_load_qr_code, Toast.LENGTH_SHORT).show()
+                            Log.e(LOG_TAG_QR_CODE, "RawValue of QR-Code is null")
+                        }
+
+                    }else {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.err_cant_load_qr_code,
+                            Toast.LENGTH_LONG
+                        ).show()
+                        Log.w(LOG_TAG_QR_CODE, "Too many QR-Codes on selected Photo")
+                    }
+
+                }
+                .addOnFailureListener {
+                    it.printStackTrace()
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setMessage(it.localizedMessage)
+                        .setIcon(R.drawable.ic_outline_error_24)
+                        .setTitle(R.string.err)
+                        .setPositiveButton(R.string.ok){ _, _ -> }
+                }
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -179,7 +246,12 @@ class NewFragment : Fragment() {
                                     .setIcon(R.drawable.ic_outline_error_24)
                                     .setTitle(R.string.err)
                                     .setMessage(e.localizedMessage)
-                                    .setPositiveButton(R.string.ok) { _, _ -> }
+                                    .setPositiveButton(R.string.action_try_another_scanner) { _, _ ->
+                                        uri = FileProvider.getUriForFile(requireContext(), requireContext().packageName + ".provider", File.createTempFile("photoForCache",null))
+                                        requestCameraPermission.launch(android.Manifest.permission.CAMERA)
+
+                                    }
+                                    .setNegativeButton(R.string.cancel) { _, _ -> }
                                     .show()
                                 e.printStackTrace()
                             }
@@ -313,5 +385,9 @@ class NewFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object{
+        const val LOG_TAG_QR_CODE = "QR-Code NewFragment"
     }
 }

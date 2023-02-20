@@ -23,7 +23,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
+import java.util.Locale
 
 class ShortFormEditorBottomSheet(private var shortFormToEdit: ShortForm): BottomSheetDialogFragment() {
 
@@ -155,7 +155,7 @@ class ShortFormEditorBottomSheet(private var shortFormToEdit: ShortForm): Bottom
     override fun onDestroy() {
         super.onDestroy()
         requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = oldScreenBrightness }
-        setFragmentResult("finishEditShortForm", bundleOf("resultAsJson" to shortFormToEdit.getAsJson().toString()))
+        setFragmentResult("finishEditShortForm", bundleOf("result" to shortFormToEdit))
     }
 
     companion object{

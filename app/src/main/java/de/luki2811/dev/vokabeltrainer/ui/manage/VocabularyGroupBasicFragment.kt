@@ -52,10 +52,14 @@ class VocabularyGroupBasicFragment : Fragment() {
             binding.textViewIdOfGroup.text = getString(R.string.id, vocabularyGroup.id.number.toString())
             binding.editTextVocabularyGroupOtherLanguage.setText(vocabularyGroup.otherLanguage.getDisplayLanguage(appSettings.appLanguage))
             binding.editTextVocabularyGroupMainLanguage.setText(vocabularyGroup.mainLanguage.getDisplayLanguage(appSettings.appLanguage))
+        }else{
+            binding.textViewIdOfGroup.text = getString(R.string.id, getString(R.string.no_id))
         }
 
+        binding.textViewIdOfGroup.visibility = if(appSettings.showMoreInformationDev) View.VISIBLE else View.GONE
+
         binding.buttonResetLevels.apply {
-            if(args.keyMode != MODE_CREATE){
+            if(args.keyMode == MODE_EDIT){
                 setOnClickListener {
                     MaterialAlertDialogBuilder(requireContext())
                         .setIcon(R.drawable.ic_baseline_refresh_24)
@@ -117,6 +121,7 @@ class VocabularyGroupBasicFragment : Fragment() {
     private fun goNext() {
         val listLocales = arrayListOf<Locale>()
         Locale.getISOLanguages().forEach { listLocales.add(Locale(it)) }
+        var isCorrect = true
 
         val otherLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupOtherLanguage.text.toString()}
         val mainLanguage = listLocales.find { it.getDisplayLanguage(Settings(requireContext()).appLanguage) == binding.editTextVocabularyGroupMainLanguage.text.toString()}
@@ -124,54 +129,52 @@ class VocabularyGroupBasicFragment : Fragment() {
 
         if(otherLanguage == null) {
             binding.editTextVocabularyGroupOtherLanguageLayout.error = getString(R.string.err_lang_not_available)
-            return
+            isCorrect = false
         }
 
-        if(mainLanguage == null){
+        if(mainLanguage == null) {
             binding.editTextVocabularyGroupMainLanguageLayout.error = getString(R.string.err_lang_not_available)
-            return
+            isCorrect = false
         }
+
+
 
         when (VocabularyGroup.isNameValid(requireContext(), binding.editTextVocabularyGroupName.text.toString(), if (args.keyMode == MODE_EDIT) vocabularyGroup.name else "")) {
-            VocabularyGroup.VALID -> {
+            VocabularyGroup.VALID-> {
                 binding.editTextVocabularyGroupNameLayout.error = null
 
-                vocabularyGroup = if(args.keyMode == MODE_CREATE){
-                    VocabularyGroup(
-                        name = binding.editTextVocabularyGroupName.text.toString(),
-                        otherLanguage = otherLanguage,
-                        mainLanguage = mainLanguage,
-                        vocabulary = arrayListOf(),
-                        id = Id.generate(requireContext())
-                    )
-                }else{
-                    VocabularyGroup(
-                        name = binding.editTextVocabularyGroupName.text.toString(),
-                        otherLanguage = otherLanguage,
-                        mainLanguage = mainLanguage,
-                        vocabulary = args.vocabularyGroup!!.vocabulary,
-                        id = args.vocabularyGroup!!.id
-                    )
+                if(isCorrect){
+                    vocabularyGroup = if(args.keyMode == MODE_CREATE){
+                        VocabularyGroup(
+                            name = binding.editTextVocabularyGroupName.text.toString(),
+                            otherLanguage = otherLanguage!!,
+                            mainLanguage = mainLanguage!!,
+                            vocabulary = arrayListOf(),
+                            id = Id.generate(requireContext())
+                        )
+                    }else{
+                        VocabularyGroup(
+                            name = binding.editTextVocabularyGroupName.text.toString(),
+                            otherLanguage = otherLanguage!!,
+                            mainLanguage = mainLanguage!!,
+                            vocabulary = args.vocabularyGroup!!.vocabulary,
+                            id = args.vocabularyGroup!!.id
+                        )
+                    }
+                    findNavController().navigate(VocabularyGroupBasicFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(vocabularyGroup, args.keyMode))
                 }
-
-
-
-                findNavController().navigate(VocabularyGroupBasicFragmentDirections.actionNewVocabularyGroupFragmentToEditVocabularyGroupFragment(vocabularyGroup, args.keyMode))
             }
             VocabularyGroup.INVALID_TOO_MANY_LINES -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_too_many_lines, VocabularyGroup.MAX_LINES)
             }
             VocabularyGroup.INVALID_NAME_ALREADY_USED -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_already_taken)
-                return
             }
             VocabularyGroup.INVALID_TOO_MANY_CHARS -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_name_too_long_max, VocabularyGroup.MAX_CHARS)
-                return
             }
             VocabularyGroup.INVALID_EMPTY -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_missing_name)
-                return
             }
         }
     }

@@ -36,6 +36,7 @@ data class Settings(var context: Context) {
     var suggestTranslation: Boolean = sharedPreferences.getBoolean("suggestTranslation", true)
     var allowShortFormInAnswer: Boolean = sharedPreferences.getBoolean("allowShortFormInAnswer", true)
     var alreadyShownStart: Boolean = sharedPreferences.getBoolean("alreadyShownStart", false)
+    var showMoreInformationDev: Boolean = sharedPreferences.getBoolean("showMoreInformationDev", false)
 
     fun save(){
         with(sharedPreferences.edit()){
@@ -50,6 +51,7 @@ data class Settings(var context: Context) {
             putInt("correctionLevelQrCode", correctionLevelQrCode.value)
             putBoolean("suggestTranslation", suggestTranslation)
             putBoolean("alreadyShownStart", alreadyShownStart)
+            putBoolean("showMoreInformationDev", showMoreInformationDev)
 
             apply()
         }
