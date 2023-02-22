@@ -14,6 +14,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.FileProvider
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
@@ -133,7 +136,23 @@ class ListLessonsLearnAdapter(
         }
 
         viewHolder.buttonCardPracticeLesson.setOnClickListener {
+            // Update dynamic ShortCut
+            val shortcut = ShortcutInfoCompat.Builder(context, "id_shortcut_last_practice")
+                .setShortLabel(context.getString(R.string.msg_shortcut_short_practice_last))
+                .setLongLabel(context.getString(R.string.msg_shortcut_long_practice_last))
+                .setRank(0)
+                .setIcon(IconCompat.createWithResource(context, R.drawable.ic_book_open_page_variant_outline))
+                .setIntent(Intent(context, PracticeActivity::class.java).apply {
+                    action = "START_LESSON"
+                    putExtra("lessonId", dataSetFilter[viewHolder.layoutPosition].id.number)
+                    putExtra("mode", PracticeActivity.MODE_NORMAL)
+                })
+                .build()
+
+            ShortcutManagerCompat.pushDynamicShortcut(context, shortcut)
+
             activity.startActivity(Intent(context, PracticeActivity::class.java).apply {
+                action = "START_LESSON"
                 putExtra("lesson", dataSetFilter[viewHolder.layoutPosition])
                 putExtra("mode", PracticeActivity.MODE_NORMAL)
             })

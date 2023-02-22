@@ -2,19 +2,19 @@ package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
 import android.os.Parcelable
+import android.util.Log
 import kotlinx.parcelize.Parcelize
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.util.*
+import java.util.Locale
+
 @Parcelize
 data class ShortForm(
     var shortForm: String,
     var longForm: String,
     var language: Locale,
     override val type: Int = Exportable.TYPE_SHORT_FORM): Exportable, Parcelable {
-
-
 
     fun getAsJson(): JSONObject{
         return JSONObject()
@@ -41,14 +41,22 @@ data class ShortForm(
     }
 
     companion object{
+        fun replaceShortFormsWithLongForms(textToCheck: String, language: Locale, context: Context): String{
+            val allShortForms = loadAllShortForms(context).filter { it.language == language }
+            var checkedText = textToCheck
+                allShortForms.forEach {
+                    checkedText = checkedText.replace(it.shortForm, it.longForm, ignoreCase = true)
+                    Log.e("Test", checkedText)
+                }
+            return checkedText
+        }
         fun setNewShortForms(context: Context, arrayList: ArrayList<ShortForm>) {
             val jsonArray = JSONArray()
             arrayList.forEach{
                 jsonArray.put(it.getAsJson())
             }
 
-            val file = File(context.filesDir, FileUtil.NAME_FILE_SHORT_FORMS)
-            FileUtil.writeInFile(jsonArray.toString(), file)
+            FileUtil.writeInFile(jsonArray.toString(), File(context.filesDir, FileUtil.NAME_FILE_SHORT_FORMS))
         }
 
         fun fromJson(jsonObject: JSONObject): ShortForm{

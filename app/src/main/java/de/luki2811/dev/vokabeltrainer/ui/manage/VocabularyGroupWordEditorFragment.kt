@@ -349,14 +349,26 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         // TODO: Check type
 
-        binding.textEditEditorUpperInput.text.toString().trim().ifBlank {
-            binding.textEditEditorUpperInputLayout.error = getString(R.string.err_missing_input)
-            isCorrect = false
+        binding.textEditEditorUpperInput.text.toString().trim().apply {
+            ifBlank {
+                binding.textEditEditorUpperInputLayout.error = getString(R.string.err_missing_input)
+                isCorrect = false
+            }
+            if(this.contains(";;")) {
+                binding.textEditEditorUpperInputLayout.error = getString(R.string.err_contains_seperator)
+                isCorrect = false
+            }
         }
 
-        binding.textEditEditorLowerInput.text.toString().trim().ifBlank {
-            binding.textEditEditorLowerInputLayout.error = getString(R.string.err_missing_input)
-            isCorrect = false
+        binding.textEditEditorLowerInput.text.toString().trim().apply {
+            ifBlank {
+                binding.textEditEditorLowerInputLayout.error = getString(R.string.err_missing_input)
+                isCorrect = false
+            }
+            if(this.contains(";;")){
+                binding.textEditEditorLowerInputLayout.error = getString(R.string.err_contains_seperator)
+                isCorrect = false
+            }
         }
 
         if(vocabularyGroup.vocabulary[pos].typeOfWord == VocabularyWord.TYPE_WORD_FAMILY){

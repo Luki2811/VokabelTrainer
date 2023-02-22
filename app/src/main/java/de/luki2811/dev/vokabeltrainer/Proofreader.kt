@@ -1,21 +1,24 @@
 package de.luki2811.dev.vokabeltrainer
 
+import android.content.Context
 import android.util.Log
+import java.util.Locale
 
 class Proofreader(private var originalStrings: ArrayList<String>,
                   private var stringToCorrect: String,
-                  private val allWordsNeeded: Boolean) {
-
-    fun replaceShortForms(listOfShortForm: ArrayList<ShortForm>){
-        for (shortForm in listOfShortForm) {
-            for(i in 0 until originalStrings.size){
-                originalStrings[i] = originalStrings[i].replace(shortForm.shortForm, shortForm.longForm)
-            }
-            stringToCorrect = stringToCorrect.replace(shortForm.shortForm, shortForm.longForm)
-        }
-    }
+                  private val language: Locale,
+                  private val allWordsNeeded: Boolean,
+                  private val replaceShortForms: Boolean,
+                  private val context: Context) {
 
     fun correct(ignoreCase: Boolean = false): Boolean{
+        if(replaceShortForms){
+            stringToCorrect = ShortForm.replaceShortFormsWithLongForms(stringToCorrect, language, context)
+            for (i in 0 until originalStrings.size){
+                originalStrings[i] = ShortForm.replaceShortFormsWithLongForms(originalStrings[i], language, context)
+            }
+        }
+
         val inputStrings = stringToCorrect.split(";").toMutableList()
         inputStrings.replaceAll { it.trim() }
         inputStrings.replaceAll { if(ignoreCase) it.lowercase() else it }

@@ -233,4 +233,8 @@
     <string name="no_id">Keine Id</string>
     <string name="settings_more_information_dev">Mehr Informationen (dev)</string>
     <string name="action_try_another_scanner">Anderen Scanner versuchen</string>
+    <string name="msg_shortcut_short_practice_last">Üben</string>
+    <string name="msg_shortcut_long_practice_last">Übe letzte Lektion wieder</string>
+    <string name="msg_shortcut_short_create_new">Erstelle</string>
+    <string name="msg_shortcut_long_create_new">Erstelle etwas neues</string>
 </resources>

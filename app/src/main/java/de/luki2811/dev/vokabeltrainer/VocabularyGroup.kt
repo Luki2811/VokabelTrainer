@@ -134,6 +134,7 @@ data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Loca
         const val INVALID_TOO_MANY_LINES = -2
         const val INVALID_EMPTY = -3
         const val INVALID_NAME_ALREADY_USED = -4
+        const val INVAILD_CONTAINS_SEPERATORS = -5
 
         fun loadFromJSON(json: JSONObject, context: Context, name: String? = null, generateNewId: Boolean = false): VocabularyGroup{
             val nameOfGroup: String = if(name.isNullOrBlank()) json.getString("name") else name
@@ -236,6 +237,9 @@ data class VocabularyGroup(var name: String, var id: Id, var otherLanguage: Loca
 
             if (nameToCheck.length > MAX_CHARS)
                 return INVALID_TOO_MANY_CHARS
+
+            if(nameToCheck.contains(";;"))
+                return INVAILD_CONTAINS_SEPERATORS
 
             if(nameToCheck.trim().isEmpty())
                 return INVALID_EMPTY

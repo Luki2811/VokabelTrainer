@@ -19,7 +19,6 @@ import de.luki2811.dev.vokabeltrainer.Lesson
 import de.luki2811.dev.vokabeltrainer.Proofreader
 import de.luki2811.dev.vokabeltrainer.R
 import de.luki2811.dev.vokabeltrainer.Settings
-import de.luki2811.dev.vokabeltrainer.ShortForm
 import de.luki2811.dev.vokabeltrainer.Synonym
 import de.luki2811.dev.vokabeltrainer.TextToSpeechUtil
 import de.luki2811.dev.vokabeltrainer.VocabularyWord
@@ -199,21 +198,17 @@ class PracticeTranslateTextFragment : Fragment(){
             })
         }
 
-        val proofreader = if(exercise.isOtherWordAskedAsAnswer){
-            Proofreader(otherWords, binding.practiceTextInput.text.toString(), exercise.askAllWords)
-        }else{
-            Proofreader(ArrayList<String>().apply { add(exercise.words[0].mainWord) }, binding.practiceTextInput.text.toString(), exercise.askAllWords)
+        val lang = when(exercise.words[0]){
+            is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
+            is Synonym -> { (exercise.words[0] as Synonym).language }
+            is WordFamily -> { (exercise.words[0] as WordFamily).language }
+            else -> { Locale.ENGLISH }
         }
 
-        if(Settings(requireContext()).allowShortFormInAnswer) {
-            val lang = when(exercise.words[0]){
-                is WordTranslation -> { if (exercise.isOtherWordAskedAsAnswer) (exercise.words[0] as WordTranslation).otherLanguage else (exercise.words[0] as WordTranslation).mainLanguage }
-                is Synonym -> { (exercise.words[0] as Synonym).language }
-                is WordFamily -> { (exercise.words[0] as WordFamily).language }
-                else -> { Locale.ENGLISH }
-            }
-
-            proofreader.replaceShortForms(ShortForm.loadAllShortForms(requireContext()).filter { it.language == lang }.toMutableList() as ArrayList<ShortForm>)
+        val proofreader = if(exercise.isOtherWordAskedAsAnswer){
+            Proofreader(otherWords, binding.practiceTextInput.text.toString(), lang, exercise.askAllWords, Settings(requireContext()).allowShortFormInAnswer, requireContext())
+        }else{
+            Proofreader(ArrayList<String>().apply { add(exercise.words[0].mainWord) }, binding.practiceTextInput.text.toString(), lang, exercise.askAllWords, Settings(requireContext()).allowShortFormInAnswer, requireContext())
         }
 
         isCorrect = proofreader.correct(exercise.words[0].isIgnoreCase)

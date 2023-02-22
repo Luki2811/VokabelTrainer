@@ -332,5 +332,10 @@
     <string name="no_id">No ID</string>
     <string name="settings_more_information_dev">More Information (dev)</string>
     <string name="action_try_another_scanner">Try another scanner</string>
+    <string name="msg_shortcut_short_practice_last">Practice</string>
+    <string name="msg_shortcut_long_practice_last">Practice last lesson again</string>
+    <string name="msg_shortcut_short_create_new">Create</string>
+    <string name="msg_shortcut_long_create_new">Create something new</string>
+    <string name="err_contains_seperator">Error: Contains seperator \";;\"</string>
 
 </resources>

@@ -5,7 +5,7 @@ import android.media.AudioManager
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.widget.Toast
-import java.util.*
+import java.util.Locale
 
 
 class TextToSpeechUtil(val context: Context) {
@@ -46,12 +46,13 @@ class TextToSpeechUtil(val context: Context) {
 
         when(tts.setLanguage(language)){
             TextToSpeech.LANG_MISSING_DATA, TextToSpeech.LANG_NOT_SUPPORTED -> {
-                Log.w("TTS", "The Language specified is not supported!")
+                Log.w(LOG_TAG, "The Language specified is not supported!")
                 // Toast.makeText(context, context.getText(R.string.err_lang_not_available), Toast.LENGTH_SHORT).show()
                 return ERROR_MISSING_LANG_DATA
             }
             TextToSpeech.LANG_AVAILABLE, TextToSpeech.LANG_COUNTRY_AVAILABLE, TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE -> {
-                text = replaceKnownShorts(text, language, context)
+                text = ShortForm.replaceShortFormsWithLongForms(text, language, context)
+                Log.d(LOG_TAG, "Text to speak: $text")
                 return when(tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "TTS")){
                     TextToSpeech.SUCCESS -> { SUCCESS }
                     TextToSpeech.ERROR -> {
@@ -71,14 +72,8 @@ class TextToSpeechUtil(val context: Context) {
     }
 
     companion object{
-        fun replaceKnownShorts(textToCheck: String, language: Locale, context: Context): String{
-            val allShortForms = ShortForm.loadAllShortForms(context).filter { it.language == language }
-            return textToCheck.apply {
-                allShortForms.forEach {
-                    replace(it.shortForm, it.longForm, ignoreCase = true)
-                }
-            }
-        }
+
+        const val LOG_TAG = "TTS"
 
         const val QUEUED_REQUEST = 1
         const val SUCCESS = 0

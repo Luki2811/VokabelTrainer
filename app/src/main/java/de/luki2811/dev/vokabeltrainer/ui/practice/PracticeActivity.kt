@@ -56,11 +56,15 @@ class PracticeActivity : AppCompatActivity() {
 
         // Setup and check lesson
 
-        lesson = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("lesson", Lesson::class.java)
+        lesson = if(intent.getIntExtra("lessonId", 0) == 0){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra("lesson", Lesson::class.java)
+            }else{
+                intent.getParcelableExtra("lesson")
+            } ?: return
         }else{
-            intent.getParcelableExtra("lesson")
-        } ?: return
+            Lesson.loadAllLessons(this).find { it.id.number == intent.getIntExtra("lessonId", 0) }?: return
+        }
 
         for (group in lesson.vocabularyGroups){
             allVocabularyWords.addAll(group.vocabulary)
@@ -73,27 +77,16 @@ class PracticeActivity : AppCompatActivity() {
                 .setTitle(R.string.err)
                 .setIcon(R.drawable.ic_outline_error_24)
                 .setNegativeButton(R.string.ok) { _, _ ->
-                    startActivity(
-                        Intent(
-                            this,
-                            MainActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    )
+                    startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 }
                 .setOnCancelListener {
-                    startActivity(
-                        Intent(
-                            this,
-                            MainActivity::class.java
-                        ).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    )
+                    startActivity(Intent(this, MainActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 }
                 .show()
             return
         }
 
-
-        Log.d("Practice", "Loaded lesson $lesson successfully and ready for using!")
+        Log.d(LOG_TAG, "Loaded lesson $lesson successfully and ready for using!")
 
         setupListeners()
 

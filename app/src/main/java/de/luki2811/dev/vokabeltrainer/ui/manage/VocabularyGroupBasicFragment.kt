@@ -137,8 +137,6 @@ class VocabularyGroupBasicFragment : Fragment() {
             isCorrect = false
         }
 
-
-
         when (VocabularyGroup.isNameValid(requireContext(), binding.editTextVocabularyGroupName.text.toString(), if (args.keyMode == MODE_EDIT) vocabularyGroup.name else "")) {
             VocabularyGroup.VALID-> {
                 binding.editTextVocabularyGroupNameLayout.error = null
@@ -175,6 +173,9 @@ class VocabularyGroupBasicFragment : Fragment() {
             }
             VocabularyGroup.INVALID_EMPTY -> {
                 binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_missing_name)
+            }
+            VocabularyGroup.INVAILD_CONTAINS_SEPERATORS -> {
+                binding.editTextVocabularyGroupNameLayout.error = getString(R.string.err_contains_seperator)
             }
         }
     }

@@ -8,6 +8,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.pm.ShortcutInfoCompat
+import androidx.core.content.pm.ShortcutManagerCompat
+import androidx.core.graphics.drawable.IconCompat
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -34,6 +37,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if(intent.action == "CREATE_NEW")
+            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment).findNavController().navigate(MobileNavigationDirections.actionGlobalCreateNewMainFragment())
 
         if(intent.scheme == ContentResolver.SCHEME_CONTENT && intent.action == Intent.ACTION_VIEW){
             MaterialAlertDialogBuilder(this)
@@ -66,6 +72,8 @@ class MainActivity : AppCompatActivity() {
             settings.save()
         }
 
+        setupShortcuts()
+
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(settings.appLanguage.language))
 
         createFiles()
@@ -79,17 +87,20 @@ class MainActivity : AppCompatActivity() {
 
         // Load Streak for correct information
         Streak(applicationContext)
+    }
 
-        /** TEMP to delete a wrong ID without a file
-        // vocabulary group
-        // val tempVocGroup = VocabularyGroup("", Language(0, applicationContext), Language(0, applicationContext), arrayOf(), applicationContext)
-        // tempVocGroup.id = Id(applicationContext, 498725)
-        // tempVocGroup.deleteFromIndex()
+    private fun setupShortcuts() {
+        val shortcut = ShortcutInfoCompat.Builder(this, "id_shortcut_create_new")
+            .setShortLabel(this.getString(R.string.msg_shortcut_short_create_new))
+            .setLongLabel(this.getString(R.string.msg_shortcut_long_create_new))
+            .setRank(1)
+            .setIcon(IconCompat.createWithResource(this, R.drawable.ic_outline_add_24))
+            .setIntent(Intent(this, MainActivity::class.java).apply {
+                action = "CREATE_NEW"
+            })
+            .build()
 
-        // lesson
-        // val tempLesson = Lesson("", arrayOf(), applicationContext)
-        // tempLesson.id = Id(applicationContext, 217531)
-        // tempLesson.deleteFromIndex() **/
+        ShortcutManagerCompat.pushDynamicShortcut(this, shortcut)
     }
 
     /**
