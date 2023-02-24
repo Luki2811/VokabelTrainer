@@ -51,7 +51,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         when(args.keyMode){
             MODE_CREATE -> {
-                vocabularyGroup.vocabulary.add(WordTranslation("", vocabularyGroup.otherLanguage, arrayListOf(), vocabularyGroup.mainLanguage, true, levelOther = 0, levelMain = 0))
+                vocabularyGroup.vocabulary.add(WordTranslation("", vocabularyGroup.otherLanguage, arrayListOf(), vocabularyGroup.mainLanguage, true, levelOther = 0, levelMain = 0, additionalInfo = ""))
             }
             MODE_IMPORT -> {
                 vocabularyGroup.id = Id.generate(requireContext()).apply { register(requireContext()) }
@@ -310,6 +310,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
         // Set ignoreCase
         binding.switchVocabularyWordIgnoreCaseManage.isChecked = vocabularyGroup.vocabulary[pos].isIgnoreCase
 
+        // Set additional information
+        binding.textEditEditorWordMoreInfo.setText(vocabularyGroup.vocabulary[pos].additionalInfo)
+
         // Update textView
         binding.textViewNumberOfVocManage.text = getString(R.string.number_voc_of_rest, (pos + 1), vocabularyGroup.vocabulary.size)
 
@@ -346,8 +349,6 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
     private fun isWordCorrect(): Boolean {
         var isCorrect = true
-
-        // TODO: Check type
 
         binding.textEditEditorUpperInput.text.toString().trim().apply {
             ifBlank {
@@ -387,8 +388,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 val otherWords = binding.textEditEditorLowerInput.text.toString().split(";").toMutableList().onEach { it.trim() } as ArrayList<String>
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
+                val additionalInfo = binding.textEditEditorWordMoreInfo.text.toString().trim()
 
-                WordTranslation(mainWord, vocabularyGroup.otherLanguage, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther)
+                WordTranslation(mainWord, vocabularyGroup.otherLanguage, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther, additionalInfo = additionalInfo)
 
             }
 
@@ -396,8 +398,9 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 val otherWords = binding.textEditEditorLowerInput.text.toString().split(";").toMutableList().onEach { it.trim() } as ArrayList<String>
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
+                val additionalInfo = binding.textEditEditorWordMoreInfo.text.toString().trim()
 
-                Synonym(mainWord, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase = isIgnoreCase, typeOfWord = vocabularyGroup.vocabulary[pos].typeOfWord, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther)
+                Synonym(mainWord, otherWords, vocabularyGroup.mainLanguage, isIgnoreCase = isIgnoreCase, typeOfWord = vocabularyGroup.vocabulary[pos].typeOfWord, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther, additionalInfo = additionalInfo)
             }
 
             VocabularyWord.TYPE_WORD_FAMILY -> {
@@ -411,12 +414,13 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                 }
                 val mainWord = binding.textEditEditorUpperInput.text.toString().trim()
                 val isIgnoreCase = binding.switchVocabularyWordIgnoreCaseManage.isChecked
+                val additionalInfo = binding.textEditEditorWordMoreInfo.text.toString().trim()
 
-                WordFamily(mainWord, otherWords, otherWordsType, vocabularyGroup.mainLanguage, isIgnoreCase, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther)
+                WordFamily(mainWord, otherWords, otherWordsType, vocabularyGroup.mainLanguage, isIgnoreCase, levelMain = vocabularyGroup.vocabulary[pos].levelMain, levelOther = vocabularyGroup.vocabulary[pos].levelOther, additionalInfo = additionalInfo)
             }
 
             else -> {
-                WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, true, levelMain = 0, levelOther = 0)
+                WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, true, levelMain = 0, levelOther = 0, additionalInfo = "")
             }
         }
 
@@ -479,7 +483,7 @@ class VocabularyGroupWordEditorFragment : Fragment() {
                     // DO NOTHING
                 }
             }
-            vocabularyGroup.vocabulary.add(pos, WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked, levelMain = 0, levelOther = 0))
+            vocabularyGroup.vocabulary.add(pos, WordTranslation("", vocabularyGroup.mainLanguage, arrayListOf(), vocabularyGroup.otherLanguage, binding.switchVocabularyWordIgnoreCaseManage.isChecked, levelMain = 0, levelOther = 0, additionalInfo = ""))
             binding.textEditEditorUpperInput.requestFocus()
             val imm: InputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.textEditEditorUpperInput, InputMethodManager.SHOW_IMPLICIT)
@@ -526,6 +530,8 @@ class VocabularyGroupWordEditorFragment : Fragment() {
 
         binding.chipGroupEditorSuggestionsUpper.removeAllViews()
         binding.chipGroupEditorSuggestionsLower.removeAllViews()
+
+        binding.textEditEditorUpperInputLayout.requestFocus()
     }
 
     override fun onDestroyView() {

@@ -11,15 +11,15 @@
     <TextView
         android:id="@+id/textViewQrCodeFrame"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:textSize="20sp"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="@+id/buttonQrCodeShare"
-        app:layout_constraintEnd_toStartOf="@+id/buttonQrCodeShare"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/buttonQrCodeShare"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Hello World" />
 
     <ImageView
@@ -30,13 +30,11 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:contentDescription="@string/qr_code"
         app:contentDescription="@string/qr_code"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonQrCodeShare"
+        app:layout_constraintTop_toBottomOf="@+id/textViewQrCodeFrame"
         tools:layout_height="350sp" />
 
     <ProgressBar
@@ -55,10 +53,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         app:icon="@drawable/ic_baseline_share_24"
         app:iconTint="@color/White"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewQrCode" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

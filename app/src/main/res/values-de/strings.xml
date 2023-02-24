@@ -237,4 +237,6 @@
     <string name="msg_shortcut_long_practice_last">Übe letzte Lektion wieder</string>
     <string name="msg_shortcut_short_create_new">Erstelle</string>
     <string name="msg_shortcut_long_create_new">Erstelle etwas neues</string>
+    <string name="err_contains_seperator">Fehler: Beinhaltet Seperator \";;\"</string>
+    <string name="additional_information">Zusätzliche Informationen</string>
 </resources>

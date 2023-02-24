@@ -16,6 +16,7 @@ data class WordFamily(override var mainWord: String,
                       override var levelMain: Int,
                       override var levelOther: Int,
                       override var alreadyUsedInExercise: Boolean = false,
+                      override var additionalInfo: String,
                       override var typeOfWord: Int = VocabularyWord.TYPE_WORD_FAMILY): VocabularyWord {
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
@@ -35,6 +36,7 @@ data class WordFamily(override var mainWord: String,
             put("ignoreCase", isIgnoreCase)
             put("levelMain", levelMain)
             put("levelOther", levelOther)
+            put("moreInfo", additionalInfo)
         }
     }
 
@@ -44,7 +46,8 @@ data class WordFamily(override var mainWord: String,
             append(mainWord).append(";;")
             append(getSecondWordsAsString()).append(";;")
             append(isIgnoreCase).append(";;")
-            append(otherWordsType)
+            append(otherWordsType).append(";;")
+            append(additionalInfo)
         }.toString()
     }
 
@@ -84,8 +87,9 @@ data class WordFamily(override var mainWord: String,
             }
             val ignoreCase = elements[3].toBoolean()
             val typeOfWords = elements[4].toInt()
+            val additionalInfo = elements[5]
 
-            return WordFamily(mainWord, otherWords, typeOfWords, language, levelMain = 0, levelOther = 0, isIgnoreCase = ignoreCase)
+            return WordFamily(mainWord, otherWords, typeOfWords, language, levelMain = 0, levelOther = 0, isIgnoreCase = ignoreCase, additionalInfo = additionalInfo)
         }
 
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): WordFamily{
@@ -116,7 +120,13 @@ data class WordFamily(override var mainWord: String,
                 levelMain
             }
 
-            return WordFamily(mainWord, otherWords, otherWordsType , language, ignoreCase, levelMain = levelMain, levelOther = levelOther)
+            val additionalInfo = try {
+                json.getString("moreInfo")
+            }catch (e: JSONException){
+                ""
+            }
+
+            return WordFamily(mainWord, otherWords, otherWordsType , language, ignoreCase, levelMain = levelMain, levelOther = levelOther, additionalInfo = additionalInfo)
         }
 
         const val WORD_UNKNOWN = -10

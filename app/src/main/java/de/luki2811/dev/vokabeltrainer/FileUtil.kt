@@ -3,7 +3,11 @@ package de.luki2811.dev.vokabeltrainer
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Log
-import java.io.*
+import java.io.BufferedReader
+import java.io.File
+import java.io.FileNotFoundException
+import java.io.IOException
+import java.io.InputStreamReader
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
@@ -38,7 +42,7 @@ class FileUtil {
             val stringBuilder = StringBuilder()
             try {
                 file.forEachLine(charset) {
-                    stringBuilder.append(it).append('\n')
+                    stringBuilder.append(it).appendLine()
                 }
             }catch (e: FileNotFoundException){
                 Log.e("Exception", "File not found: $e")

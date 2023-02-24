@@ -10,6 +10,7 @@ interface VocabularyWord: Parcelable {
     var alreadyUsedInExercise: Boolean
     var typeOfWord: Int
     var mainWord: String
+    var additionalInfo: String
 
     fun getAsJSON(withoutLanguage: Boolean): JSONObject
 

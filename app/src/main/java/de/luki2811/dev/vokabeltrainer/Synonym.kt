@@ -14,6 +14,7 @@ data class Synonym(override var mainWord: String,
                    override var levelOther: Int,
                    override var isIgnoreCase: Boolean,
                    override var alreadyUsedInExercise: Boolean = false,
+                   override var additionalInfo: String,
                    override var typeOfWord: Int = VocabularyWord.TYPE_SYNONYM): VocabularyWord {
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
@@ -30,6 +31,7 @@ data class Synonym(override var mainWord: String,
             put("ignoreCase", isIgnoreCase)
             put("levelMain", levelMain)
             put("levelOther", levelOther)
+            put("additionalInfo", additionalInfo)
         }
     }
 
@@ -38,7 +40,8 @@ data class Synonym(override var mainWord: String,
             append(typeOfWord).append(";;")
             append(mainWord).append(";;")
             append(getSecondWordsAsString()).append(";;")
-            append(isIgnoreCase)
+            append(isIgnoreCase).append(";;")
+            append(additionalInfo)
         }.toString()
     }
 
@@ -67,8 +70,9 @@ data class Synonym(override var mainWord: String,
                 }.toMutableList() as ArrayList
             }
             val ignoreCase = elements[3].toBoolean()
+            val additionalInfo = elements[4]
 
-            return Synonym(mainWord, otherWords, language, levelMain = 0, levelOther = 0, ignoreCase, typeOfWord = type)
+            return Synonym(mainWord, otherWords, language, levelMain = 0, levelOther = 0, ignoreCase, typeOfWord = type, additionalInfo = additionalInfo)
         }
 
         fun loadFromJSON(json: JSONObject, tempLanguage: Locale? = null): Synonym{
@@ -113,8 +117,13 @@ data class Synonym(override var mainWord: String,
             }catch (e: JSONException) {
                 levelMain
             }
+            val additionalInfo = try {
+                json.getString("moreInfo")
+            }catch (e: JSONException){
+                ""
+            }
 
-            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, levelMain = levelMain, levelOther = levelOther, typeOfWord = typeOfWord)
+            return Synonym(mainWord, otherWords, language, isIgnoreCase = ignoreCase, levelMain = levelMain, levelOther = levelOther, typeOfWord = typeOfWord, additionalInfo = additionalInfo)
         }
     }
 

@@ -43,7 +43,6 @@ class QrCodeBottomSheet(val content: String, private val textToShow: String) : B
                         if (Settings(requireContext()).increaseScreenBrightness){
                             requireActivity().window.attributes = requireActivity().window.attributes.apply { screenBrightness = 1F }
                         }
-
                     }
                 }else if(newState == BottomSheetBehavior.STATE_COLLAPSED){
                     if(isQrCodeGenerated){

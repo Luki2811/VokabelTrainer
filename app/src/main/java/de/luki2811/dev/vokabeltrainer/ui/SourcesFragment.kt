@@ -26,10 +26,10 @@ class SourcesFragment : Fragment() {
         }
 
         val arraySources: ArrayList<Source> = arrayListOf(
-            Source("QRCode Kotlin", "3.2.0", Source.TYPE_MIT, URL("https://raw.githubusercontent.com/g0dkar/qrcode-kotlin/main/LICENSE")),
+            Source("QRCode Kotlin", "3.3.0", Source.TYPE_MIT, URL("https://raw.githubusercontent.com/g0dkar/qrcode-kotlin/main/LICENSE")),
             Source("Android Open Source Project (AOSP)", null, Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
             Source("Kotlin", KotlinVersion.CURRENT.toString() ,Source.TYPE_APACHE_2_0, URL(Source.LINK_APACHE_2_0_DEFAULT)),
-            Source("Material Components for Android", "1.8.0-alpha02", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE")),
+            Source("Material Components for Android", "1.9.0-alpha01", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/google/material-design-icons/master/LICENSE")),
             Source("MPAndroidChart", "3.1.0", Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/PhilJay/MPAndroidChart/master/LICENSE")),
             Source("ML Kit Android", null, Source.TYPE_APACHE_2_0, URL("https://raw.githubusercontent.com/googlecodelabs/mlkit-android/master/LICENSE"))
 

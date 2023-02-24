@@ -16,6 +16,7 @@ data class WordTranslation(override var mainWord: String,
                            override var alreadyUsedInExercise: Boolean = false,
                            override var levelMain: Int,
                            override var levelOther: Int,
+                           override var additionalInfo: String,
                            override var typeOfWord: Int = VocabularyWord.TYPE_TRANSLATION): VocabularyWord {
 
     override fun getAsJSON(withoutLanguage: Boolean): JSONObject {
@@ -31,6 +32,7 @@ data class WordTranslation(override var mainWord: String,
             put("ignoreCase", isIgnoreCase)
             put("levelMain", levelMain)
             put("levelOther", levelOther)
+            put("moreInfo", additionalInfo)
         }
     }
 
@@ -49,7 +51,8 @@ data class WordTranslation(override var mainWord: String,
             append(typeOfWord).append(";;")
             append(mainWord).append(";;")
             append(getSecondWordsAsString()).append(";;")
-            append(isIgnoreCase)
+            append(isIgnoreCase).append(";;")
+            append(additionalInfo)
         }.toString()
     }
 
@@ -102,8 +105,13 @@ data class WordTranslation(override var mainWord: String,
             }catch (e: JSONException) {
                 levelMain
             }
+            val additionalInfo = try {
+                json.getString("moreInfo")
+            }catch (e: JSONException){
+                ""
+            }
 
-            return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, levelMain = levelMain, levelOther = levelOther)
+            return WordTranslation(mainWord, mainLanguageWord, otherWords, otherLanguageWord, isIgnoreCase, levelMain = levelMain, levelOther = levelOther, additionalInfo = additionalInfo)
         }
 
         fun loadFromCSV(csv: String, langMain: Locale, langOther: Locale): WordTranslation {
@@ -117,8 +125,9 @@ data class WordTranslation(override var mainWord: String,
                 }.toMutableList() as ArrayList
             }
             val ignoreCase = elements[3].toBoolean()
+            val moreInfo = elements[4]
 
-            return WordTranslation(mainWord, langMain, otherWords, langOther, ignoreCase, levelMain = 0, levelOther = 0)
+            return WordTranslation(mainWord, langMain, otherWords, langOther, ignoreCase, levelMain = 0, levelOther = 0, additionalInfo = moreInfo)
         }
 
     }

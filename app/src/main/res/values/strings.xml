@@ -337,5 +337,6 @@
     <string name="msg_shortcut_short_create_new">Create</string>
     <string name="msg_shortcut_long_create_new">Create something new</string>
     <string name="err_contains_seperator">Error: Contains seperator \";;\"</string>
+    <string name="additional_information">Additional information</string>
 
 </resources>

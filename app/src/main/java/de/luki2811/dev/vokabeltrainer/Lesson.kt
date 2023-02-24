@@ -172,9 +172,11 @@ data class Lesson(var name: String,
                     val list = ArrayList<VocabularyGroup>()
                     for(i in 0 until json.getJSONArray("vocabularyGroupIds").length()){
                         val group = VocabularyGroup.loadFromFileWithId(Id(json.getJSONArray("vocabularyGroupIds").getInt(i)), context)
-                        if(group != null) list.add(i, group) else Log.e("Lesson","Failed to add vocGroup")
+                        if(group != null)
+                            list.add(group)
+                        else
+                            Log.e("Lesson","Failed to add vocGroup")
                     }
-
                     list
                 }else{
                     val list = ArrayList<VocabularyGroup>()
