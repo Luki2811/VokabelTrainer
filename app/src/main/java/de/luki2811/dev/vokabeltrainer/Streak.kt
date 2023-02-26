@@ -1,91 +1,89 @@
 package de.luki2811.dev.vokabeltrainer
 
 import android.content.Context
+import android.util.Log
 import org.json.JSONArray
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.File
+import java.io.FileNotFoundException
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-class Streak(val context: Context) {
-    var lengthInDay = 0
-        private set
-    var xpGoal = 0
-        private set
-    var xpToday = 0
-
-    // Set last date to 0
-    var allDaysXp = arrayListOf<Pair<LocalDate, Int>>()
-        private set
+class Streak(private val context: Context, val days: ArrayList<StreakDay> = arrayListOf()) {
 
     init {
-        try {
-            val streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
-            val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            for(i in 0 until streakData.length()){
-                val data = streakData.getJSONObject(i)
-                if(data.getString("date").equals(dateToday.toString())){
-                    xpToday = data.getInt("xp")
-                }
+        val json = try {
+             JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
+        }catch (e: FileNotFoundException){
+            JSONArray().apply {
+                put(StreakDay(LocalDate.now(), Settings(context).dailyObjectiveStreak, 0, false).toJSON())
             }
-        }catch (e: JSONException){
-            e.printStackTrace()
         }
-        refresh()
+
+        for (i in 0 until json.length()){
+            days.add(StreakDay.loadFromJSON(json.getJSONObject(i)))
+            days.sortBy { it.date }
+        }
+        fillEmptyDays()
+        saveInFile()
     }
 
-    fun refresh(){
-        xpGoal = Settings(context).dailyObjectiveStreak
-
-        var streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
-        val dateToday = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-
-        lengthInDay = if(xpToday >= xpGoal) streakData.length() else streakData.length()-1
-
-        // Check if streak is still ok
-        var deleteOld = true
-        val dateYesterday = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        for(i in 0 until streakData.length()){
-            if(streakData.getJSONObject(i).getString("date").equals(dateYesterday)){
-                deleteOld = streakData.getJSONObject(i).getInt("xp") < streakData.getJSONObject(i).getInt("goal")
+    fun getCurrentLengthInDays(): Int{
+        var currentDay = getCurrentStreakDay()
+        var length = 0
+        if(currentDay.isDone()){
+            while (currentDay.isDone()){
+                length += 1
+                currentDay = days.find { currentDay.date.minusDays(1) == it.date }?: return length
+            }
+        }else{
+            currentDay = days.find { it.date == currentDay.date.minusDays(1) }?: return 0
+            while (currentDay.isDone()){
+                length += 1
+                currentDay = days.find { currentDay.date.minusDays(1) == it.date }?: return length
             }
         }
-
-        if(deleteOld) { streakData = JSONArray() }
-
-        // Save data in date-object if exist already
-        for(i in 0 until streakData.length()){
-            val data = streakData.getJSONObject(i)
-            if(data.getString("date").equals(dateToday)){
-                streakData.getJSONObject(i).put("xp", xpToday)
-                streakData.getJSONObject(i).put("goal", xpGoal)
-                FileUtil.writeInFile(streakData.toString(), File(context.filesDir, FileUtil.NAME_FILE_STREAK))
-                setMap()
-                return
-            }
-        }
-
-        // Create new date-object if it doesn't exist
-        streakData.put(JSONObject().put("date", dateToday).put("xp", xpToday).put("goal", xpGoal))
-        FileUtil.writeInFile(streakData.toString(), File(context.filesDir, FileUtil.NAME_FILE_STREAK))
-        setMap()
-
+        return length
     }
 
-    private fun setMap(){
-        val streakData = JSONArray(FileUtil.loadFromFile(File(context.filesDir, FileUtil.NAME_FILE_STREAK)))
+    private fun fillEmptyDays(){
+        val currentStreakGoal = Settings(context).dailyObjectiveStreak
+        var posDate = LocalDate.now()
+        while (posDate.isBefore(days.maxBy { it.date }.date)){
+            if(days.none { it.date == posDate }){
+                days.add(StreakDay(posDate, currentStreakGoal, 0, false))
+                days.sortBy { it.date }
+            }
 
-        for(i in 0 until streakData.length()){
-            val date = LocalDate.parse(streakData.getJSONObject(i).getString("date"), DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-            val xp = streakData.getJSONObject(i).getInt("xp")
-            allDaysXp.add(date to xp)
+            posDate = posDate.minusDays(1)
         }
+    }
 
-        allDaysXp.sortWith(compareByDescending { it.first })
+    fun getCurrentStreakDay(): StreakDay = days.find { it.date.isEqual(LocalDate.now()) }?: StreakDay(LocalDate.now(), Settings(context).dailyObjectiveStreak, 0, false)
+
+    fun updateStreakDay(streakDay: StreakDay){
+        val day = days.find { it.date == streakDay.date }
+        if(day != null){
+            days.removeIf { it.date == streakDay.date }
+            days.add(streakDay)
+        }else{
+            days.add(streakDay)
+        }
+        saveInFile()
+    }
+
+    fun saveInFile(){
+        val json = JSONArray()
+        days.forEach { json.put(it.toJSON()) }
+        FileUtil.writeInFile(
+            json.toString(),
+            File(context.filesDir, FileUtil.NAME_FILE_STREAK)
+        )
+        Log.i(LOG_TAG, "Successfully saved Streak in File")
     }
 
     companion object{
+
+        const val LOG_TAG = "Streak"
+
         fun getStreakGoals() = arrayListOf(
             "10XP",
             "20XP",
@@ -119,25 +117,18 @@ class Streak(val context: Context) {
             "300XP"
         )
 
-        fun getRandomStreak(durationInDays: Int): JSONArray{
+        fun getRandomStreak(durationInDays: Int, allDaysDone: Boolean, goal: Int): JSONArray{
+            var posDate = LocalDate.now()
             val json = JSONArray()
-
-            if(durationInDays == 0){
-                val dayJson = JSONObject()
-                    .put("date", LocalDate.now())
-                    .put("xp", 0)
-                    .put("goal", 50)
-                return json.put(dayJson)
-            }
-
             for(i in 0 until durationInDays){
-                val dayJson = JSONObject()
-                    .put("date", LocalDate.now().minusDays(i.toLong()))
-                    .put("xp", (10..150).random())
-                    .put("goal", 10)
-                json.put(dayJson)
-            }
+                if(allDaysDone){
+                    json.put(StreakDay(posDate, goal, (goal..goal+100).random(), false ).toJSON())
+                }else{
+                    json.put(StreakDay(posDate, goal, (0..200).random(), false).toJSON())
+                }
 
+                posDate = posDate.minusDays(1)
+            }
             return json
         }
     }

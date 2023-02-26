@@ -21,7 +21,7 @@ class FileUtil {
          * @param charset set using charset. Default: UTF_8
          */
 
-        fun writeInFile(text: String ,file: File, charset: Charset = StandardCharsets.UTF_8){
+        fun writeInFile(text: String, file: File, charset: Charset = StandardCharsets.UTF_8){
             try {
                 file.writeText(text, charset)
             } catch (e: IOException) {
@@ -54,7 +54,7 @@ class FileUtil {
             return stringBuilder.toString()
         }
 
-        const val NAME_FILE_STREAK = "streak.json"
+        const val NAME_FILE_STREAK = "streak_v2.json"
         const val NAME_FILE_INDEX_LESSONS = "indexLesson.json"
         const val NAME_FILE_INDEX_VOCABULARY_GROUPS = "indexVocabularyGroups.json"
         const val NAME_FILE_INDEX_ID = "indexId.json"

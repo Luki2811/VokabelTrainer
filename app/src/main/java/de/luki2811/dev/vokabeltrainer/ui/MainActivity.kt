@@ -132,8 +132,9 @@ class MainActivity : AppCompatActivity() {
             FileUtil.writeInFile(JSONObject().put("index", JSONArray()).toString(), indexLessonFile)
 
         if (!File(applicationContext.filesDir, FileUtil.NAME_FILE_STREAK).exists()) {
-            val streakData = Streak.getRandomStreak(0)
-            FileUtil.writeInFile(streakData.toString(), File(applicationContext.filesDir, FileUtil.NAME_FILE_STREAK))
+            Streak(this).saveInFile()
+            // FileUtil.writeInFile(Streak.getRandomStreak(1000, true, 50).toString(), File(this.filesDir, FileUtil.NAME_FILE_STREAK))
+
         }
     }
 

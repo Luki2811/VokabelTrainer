@@ -63,17 +63,17 @@ class PracticeFinishFragment : Fragment() {
             binding.textViewFinishedPracticeXp.text = getString(R.string.xp_reached, args.numberOfWords)
 
         // Show Streak Progress
-        val streakForProgressBar = Streak(requireContext())
-        streakForProgressBar.xpToday += args.numberOfWords + extraXp
-        binding.progressBarFinishedLesson.max = streakForProgressBar.xpGoal
-        binding.progressBarFinishedLesson.progress = streakForProgressBar.xpToday
+        val streakDay = Streak(requireContext()).getCurrentStreakDay()
+        streakDay.xp += args.numberOfWords + extraXp
+        binding.progressBarFinishedLesson.max = streakDay.xpGoal
+        binding.progressBarFinishedLesson.progress = streakDay.xp
 
-        binding.textViewFinishedPracticeStreakXp.text = getString(R.string.streak_have_of_goal, streakForProgressBar.xpToday, streakForProgressBar.xpGoal)
+        binding.textViewFinishedPracticeStreakXp.text = getString(R.string.streak_have_of_goal, streakDay.xp, streakDay.xpGoal)
 
-        binding.textViewFinishedPracticeStreakInfo.text = if (streakForProgressBar.xpToday < streakForProgressBar.xpGoal) getString(
+        binding.textViewFinishedPracticeStreakInfo.text = if (streakDay.xp < streakDay.xpGoal) getString(
             R.string.streak_left_to_do_for_next_day,
-            streakForProgressBar.xpGoal - streakForProgressBar.xpToday,
-            streakForProgressBar.lengthInDay + 1
+            streakDay.xpGoal - streakDay.xp,
+            Streak(requireContext()).getCurrentLengthInDays()+1
         ) else getString(R.string.streak_reached_goal)
 
         return binding.root
@@ -82,9 +82,10 @@ class PracticeFinishFragment : Fragment() {
     private fun setXpToStreak() {
         // Basic XP (1XP for 1Word)
         val streak = Streak(requireContext())
-        streak.xpToday += args.numberOfWords
-        if(extraXp >= 0) streak.xpToday += extraXp
-        streak.refresh()
+        val streakDay = streak.getCurrentStreakDay()
+        streakDay.xp += args.numberOfWords
+        if(extraXp >= 0) streakDay.xp += extraXp
+        streak.updateStreakDay(streakDay)
     }
 
     private fun getFormattedTime(): String{

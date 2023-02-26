@@ -29,21 +29,22 @@ class StreakFragment : Fragment() {
 
         // set Streak
         val streak = Streak(requireContext())
+        val streakToday = streak.getCurrentStreakDay()
         binding.progressBarFinishedLesson.apply {
-            setProgress(streak.xpToday, true)
-            max = streak.xpGoal
+            setProgress(streakToday.xp, true)
+            max = streakToday.xpGoal
         }
-        binding.textViewMainProgressStreak.text = getString(R.string.streak_have_of_goal, streak.xpToday, streak.xpGoal)
-        if (streak.xpToday < streak.xpGoal) binding.textViewMainStreakBottom.text = getString(
+        binding.textViewMainProgressStreak.text = getString(R.string.streak_have_of_goal, streakToday.xp, streakToday.xpGoal)
+        if (!streakToday.isDone()) binding.textViewMainStreakBottom.text = getString(
             R.string.streak_left_to_do_for_next_day,
-            streak.xpGoal - streak.xpToday,
-            streak.lengthInDay + 1
+            streakToday.xpGoal - streakToday.xp,
+            streak.getCurrentLengthInDays() + 1
         ) else binding.textViewMainStreakBottom.setText(R.string.streak_reached_goal)
 
-        binding.textViewStreakInDays.text = if(streak.lengthInDay == 1)
+        binding.textViewStreakInDays.text = if(streak.getCurrentLengthInDays() == 1)
             getString(R.string.streak_in_day, 1)
         else
-            getString(R.string.streak_in_days, streak.lengthInDay)
+            getString(R.string.streak_in_days, streak.getCurrentLengthInDays())
 
         setupLineChart()
 
@@ -54,8 +55,8 @@ class StreakFragment : Fragment() {
         val entries = ArrayList<Entry>()
         val streak = Streak(requireContext())
         var index = 1f
-        streak.allDaysXp.forEach {
-            entries.add(Entry(index, it.second.toFloat()))
+        streak.days.forEach {
+            entries.add(Entry(index, it.xp.toFloat()))
             index += 1
         }
 
@@ -85,7 +86,8 @@ class StreakFragment : Fragment() {
             axisLeft.apply {
                 textColor = MaterialColors.getColor(requireContext(), R.attr.colorPrimary, Color.BLACK)
                 axisMinimum = 0f
-                axisMaximum = streak.allDaysXp.filterIndexed { index, _ -> index < 7 }.maxOf { it.second }.toFloat() + 10
+                val max = streak.days.filterIndexed { index, _ -> index < Settings(requireContext()).streakChartLengthInDays }.maxOf { it.xp }.toFloat()
+                axisMaximum = (max + max.div(10).roundToInt())
             }
             legend.isEnabled = false
             description.isEnabled = false
@@ -106,7 +108,7 @@ class StreakFragment : Fragment() {
         override fun getFormattedValue(value: Float): String {
             val formatter = DateTimeFormatter.ofPattern("dd.MM")
             return if(value.roundToInt() >= 1){
-                if(streak.allDaysXp.size >= value.roundToInt()) streak.allDaysXp[value.roundToInt()-1].first.format(formatter) else ""
+                if(streak.days.size >= value.roundToInt()) streak.days[value.roundToInt()-1].date.format(formatter) else ""
             }else
                 ""
            /** return when(value.roundToInt()){

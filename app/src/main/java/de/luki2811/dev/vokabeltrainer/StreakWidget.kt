@@ -29,17 +29,18 @@ class StreakWidget : AppWidgetProvider() {
     companion object{
         fun getUpdatedViews(context: Context): RemoteViews{
             val streak = Streak(context)
+            val streakToday = streak.getCurrentStreakDay()
             val pendingIntent: PendingIntent = PendingIntent.getActivity(context,0,Intent(context, MainActivity::class.java),PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             return RemoteViews(context.packageName, R.layout.streak_widget).apply {
-                setTextViewText(R.id.widget_streak_text, "${streak.xpToday}/${streak.xpGoal}XP")
+                setTextViewText(R.id.widget_streak_text, "${streakToday.xp}/${streakToday.xpGoal}XP")
                 setOnClickPendingIntent(R.id.widget_streak_layout, pendingIntent)
-                if(streak.lengthInDay == 1)
+                if(streak.getCurrentLengthInDays() == 1)
                     setTextViewText(R.id.widgetStreakTextDown, context.getString(R.string.streak_in_day, 1))
                 else
-                    setTextViewText(R.id.widgetStreakTextDown, context.getString(R.string.streak_in_days, streak.lengthInDay))
-                setInt(R.id.progressBarStreakWidget, "setMax", streak.xpGoal)
-                setInt(R.id.progressBarStreakWidget, "setProgress", streak.xpToday)
+                    setTextViewText(R.id.widgetStreakTextDown, context.getString(R.string.streak_in_days, streak.getCurrentLengthInDays()))
+                setInt(R.id.progressBarStreakWidget, "setMax", streakToday.xpGoal)
+                setInt(R.id.progressBarStreakWidget, "setProgress", streakToday.xp)
             }
         }
     }
